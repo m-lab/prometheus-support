@@ -50,7 +50,7 @@ Then copy the file into the prometheus container under the
 `/etc/prometheus/legacy` directory.
 
     podname=$( kubectl get pods -o name --selector='run=demo-prometheus' )
-    kubectl cp <filename.json> ${podname}:/etc/prometheus/legacy/
+    kubectl cp <filename.json> ${podname##*/}:/etc/prometheus/legacy/
 
 Within five minutes, the new targets should be reported in: Status -> Targets
 -> "legacy-targets"
