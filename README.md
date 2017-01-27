@@ -29,7 +29,7 @@ To deploy the published docker image:
     kubectl annotate services demo-prometheus prometheus.io/scrape=true
     sleep 60 && kubectl get service demo-prometheus
 
-After a minute or two, `kubectl get service demo-prometheus` shold report the
+After a minute or two, `kubectl get service demo-prometheus` should report the
 public IP address assigned to the prometheus service.
 
 http://[public-IP]:9090

@@ -55,13 +55,13 @@ scrape_configs:
   #  * service endpoints
   #
   # The separation allows each component to use different authentication
-  # configs, or apply different relabling rules.
+  # configs, or apply different relabeling rules.
 
   # Scrape config for kubernetes master API server.
   #
   # The kubernetes API is exposed as an "endpoint". Since kubernetes may have
   # many endpoints, this configuration restricts the targets monitored to the
-  # default/kubernetes service. The relabelling rules ignore other endpoints.
+  # default/kubernetes service. The relabeling rules ignore other endpoints.
   - job_name: 'kubernetes-apiservers'
     kubernetes_sd_configs:
       - role: endpoints
