@@ -48,6 +48,21 @@ To shutdown the service in the cluster:
 Using the file service discovery configuration, we can add new targets at
 runtime. Create a JSON or YAML input file in the [correct form][file_sd_config].
 
+For example:
+
+```
+[
+    {
+        "labels": {
+            "service": "sidestream"
+        },
+        "targets": [
+            "npad.iupui.mlab4.mia03.measurement-lab.org:9090"
+        ]
+    }
+]
+```
+
 Then copy the file into the prometheus container under the
 `/etc/prometheus/legacy` directory.
 
