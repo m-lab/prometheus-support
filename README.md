@@ -15,10 +15,12 @@ See the [container engine quickstart guide][quickstart] for a simple howto.
 
 To build the demo prometheus docker image:
 
+Log into your personal docker account, to publish the newly built image.
+
     sudo docker login
     sudo docker build -t demo-prometheus .
-    sudo docker tag demo-prometheus <username>/demo-prometheus:latest
-    sudo docker push <username>/demo-prometheus:latest
+    sudo docker tag demo-prometheus <dockerhub-username>/demo-prometheus:latest
+    sudo docker push <dockerhub-username>/demo-prometheus:latest
 
 ## Run
 
