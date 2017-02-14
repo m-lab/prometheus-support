@@ -145,10 +145,11 @@ scrape_configs:
         regex: true
       # Check for the prometheus.io/port=<port> annotation.
       - source_labels: [__address__,
-                        __meta_kubernetes_service_annotation_prometheus_io_port]
+                        __meta_kubernetes_pod_annotation_prometheus_io_port]
         action: replace
         target_label: __address__
-        regex: (.+)(?::\d+);(\d+)
+        # A google/re2 regex, matching addresses with or without default ports.
+        regex: (.+)(?::\d+)?;(\d+)
         replacement: $1:$2
       # Copy all pod labels from kubernetes to the Prometheus metrics.
       - action: labelmap
@@ -189,7 +190,8 @@ scrape_configs:
                         __meta_kubernetes_service_annotation_prometheus_io_port]
         action: replace
         target_label: __address__
-        regex: (.+)(?::\d+);(\d+)
+        # A google/re2 regex, matching addresses with or without default ports.
+        regex: (.+)(?::\d+)?;(\d+)
         replacement: $1:$2
       # Copy all service labels from kubernetes to the Prometheus metrics.
       - action: labelmap
