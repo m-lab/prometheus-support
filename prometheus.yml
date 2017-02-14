@@ -126,6 +126,9 @@ scrape_configs:
   # Kubernetes pods are scraped when they have an annotation:
   #   `prometheus.io/scrape=true`.
   #
+  # Port 80 is sraped by default. To use a different port, use the annotation:
+  #   `prometheus.io/port=9090`.
+  #
   # Configuration expects the default HTTP protocol scheme.
   # Configuration expects the default path of /metrics on targets.
   #
@@ -140,6 +143,13 @@ scrape_configs:
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
         action: keep
         regex: true
+      # Check for the prometheus.io/port=<port> annotation.
+      - source_labels: [__address__,
+                        __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: (.+)(?::\d+);(\d+)
+        replacement: $1:$2
       # Copy all pod labels from kubernetes to the Prometheus metrics.
       - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
@@ -160,6 +170,9 @@ scrape_configs:
   # Service endpoints are scraped when they have an annotation:
   #   `prometheus.io/scrape=true`.
   #
+  # Port 80 is sraped by default. To use a different port, use the annotation:
+  #   `prometheus.io/port=9090`.
+  #
   # Configuration expects the default HTTP protocol scheme.
   # Configuration expects the default path of /metrics on targets.
   - job_name: 'kubernetes-service-endpoints'
@@ -171,6 +184,13 @@ scrape_configs:
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
         action: keep
         regex: true
+      # Check for the prometheus.io/port=<port> annotation.
+      - source_labels: [__address__,
+                        __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: (.+)(?::\d+);(\d+)
+        replacement: $1:$2
       # Copy all service labels from kubernetes to the Prometheus metrics.
       - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
