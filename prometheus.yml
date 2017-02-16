@@ -149,7 +149,7 @@ scrape_configs:
         action: replace
         target_label: __address__
         # A google/re2 regex, matching addresses with or without default ports.
-        regex: (.+)(?::\d+)?;(\d+)
+        regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
       # Copy all pod labels from kubernetes to the Prometheus metrics.
       - action: labelmap
@@ -191,7 +191,7 @@ scrape_configs:
         action: replace
         target_label: __address__
         # A google/re2 regex, matching addresses with or without default ports.
-        regex: (.+)(?::\d+)?;(\d+)
+        regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
       # Copy all service labels from kubernetes to the Prometheus metrics.
       - action: labelmap
