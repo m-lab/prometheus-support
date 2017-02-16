@@ -149,6 +149,8 @@ scrape_configs:
         action: replace
         target_label: __address__
         # A google/re2 regex, matching addresses with or without default ports.
+        # NB: this will not work with IPv6 addresses. But, atm, kubernetes uses
+        # IPv4 addresses for internal network and GCE doesn not support IPv6.
         regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
       # Copy all pod labels from kubernetes to the Prometheus metrics.
@@ -191,6 +193,8 @@ scrape_configs:
         action: replace
         target_label: __address__
         # A google/re2 regex, matching addresses with or without default ports.
+        # NB: this will not work with IPv6 addresses. But, atm, kubernetes uses
+        # IPv4 addresses for internal network and GCE doesn not support IPv6.
         regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
       # Copy all service labels from kubernetes to the Prometheus metrics.
