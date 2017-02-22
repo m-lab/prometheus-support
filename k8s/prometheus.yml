@@ -1,0 +1,59 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: auto-prometheus-disk0
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "slow"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 400Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: prometheus-server
+  name: prometheus-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: prometheus-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      name: prometheus-server
+      labels:
+        run: prometheus-server
+    spec:
+      containers:
+      - image: measurementlab/prometheus:v1.5.2
+        name: prometheus-server
+        ports:
+          - containerPort: 9090
+        resources:
+          requests:
+            memory: "3Gi"
+            cpu: "500m"
+        # TODO: add a ConfigMap for legacy target configuration.
+        # Today the prometheus.yml configuration looks in /etc/prometheus for
+        # legacy target configs, but we should be able to pass configuration
+        # information to the image using k8s. These configmaps will be mounted
+        # as a volume.
+        volumeMounts:
+        - mountPath: /prometheus
+          name: prometheus-storage
+      # Disks created manually, can be named here explicitly using
+      # gcePersistentDisk instead of the persistentVolumeClaim.
+      volumes:
+      - name: prometheus-storage
+        persistentVolumeClaim:
+          claimName: auto-prometheus-disk0

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: prometheus-server
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9090'
+    dns.alpha.kubernetes.io/external: prometheus.mlab.fyi
+  name: prometheus-server
+  namespace: default
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    run: prometheus-server
+  sessionAffinity: None
+  # Allocate a static IP manually in GCP console: Networking -> Load Balancing.
+  externalIPs:
+    - 104.196.164.214
+  type: ClusterIP
