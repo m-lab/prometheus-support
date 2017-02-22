@@ -17,16 +17,17 @@ To build the demo prometheus docker image:
 
 Log into your personal docker account, to publish the newly built image.
 
+    DOCKERUSER=$USER  # Or, actual dockerhub username.
     sudo docker login
     sudo docker build -t demo-prometheus .
-    sudo docker tag demo-prometheus <dockerhub-username>/demo-prometheus:latest
-    sudo docker push <dockerhub-username>/demo-prometheus:latest
+    sudo docker tag demo-prometheus $DOCKERUSER/demo-prometheus:latest
+    sudo docker push $DOCKERUSER/demo-prometheus:latest
 
 ## Run
 
 To deploy the published docker image:
 
-    kubectl run demo-prometheus --image=<username>/demo-prometheus --port=9090
+    kubectl run demo-prometheus --image=$DOCKERUSER/demo-prometheus --port=9090
     kubectl expose deployment demo-prometheus --type="LoadBalancer"
     kubectl annotate services demo-prometheus prometheus.io/scrape=true
     sleep 60 && kubectl get service demo-prometheus
