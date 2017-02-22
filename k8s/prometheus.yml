@@ -1,41 +1,32 @@
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: auto-prometheus-disk0
-  annotations:
-    volume.beta.kubernetes.io/storage-class: "slow"
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 400Gi
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    run: prometheus-server
   name: prometheus-server
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
+      # Used to match pre-existing pods that may be affected during updates.
       run: prometheus-server
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
     type: RollingUpdate
+  # Pod template.
   template:
     metadata:
-      name: prometheus-server
       labels:
+        # Note: run=prometheus-server should match a service config with a
+        # public IP and port so that it is publically accessible.
         run: prometheus-server
     spec:
       containers:
-      - image: measurementlab/prometheus:v1.5.2-1
+      - image: measurementlab/prometheus-server:v1.5.2-1
+        # Note: this value appears to be ignored and the actual pod name is
+        # derived from the Deployment.metadata.name. However, removing this
+        # value results in a configuration error.
         name: prometheus-server
         ports:
           - containerPort: 9090
@@ -43,11 +34,6 @@ spec:
           requests:
             memory: "3Gi"
             cpu: "500m"
-        # TODO: add a ConfigMap for legacy target configuration.
-        # Today the prometheus.yml configuration looks in /etc/prometheus for
-        # legacy target configs, but we should be able to pass configuration
-        # information to the image using k8s. These configmaps will be mounted
-        # as a volume.
         volumeMounts:
         - mountPath: /prometheus
           name: prometheus-storage
