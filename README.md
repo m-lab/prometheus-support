@@ -32,12 +32,12 @@ This option is helpful for testing. There is no persistent storage.
 The `kubectl run` and `kubectl expose` commands automatically create the
 services, deployments, and pods.
 
-    kubectl run demo-prometheus --image=$DOCKERUSER/demo-prometheus --port=9090
-    kubectl expose deployment demo-prometheus --type="LoadBalancer"
-    kubectl annotate services demo-prometheus prometheus.io/scrape=true
-    sleep 60 && kubectl get service demo-prometheus
+    kubectl run prometheus-server --image=$DOCKERUSER/prometheus-server --port=9090
+    kubectl expose deployment prometheus-server --type="LoadBalancer"
+    kubectl annotate services prometheus-server prometheus.io/scrape=true
+    sleep 60 && kubectl get service prometheus-server
 
-After a minute or two, `kubectl get service demo-prometheus` should report the
+After a minute or two, `kubectl get service prometheus-server` should report the
 public IP address assigned to the prometheus service.
 
 For example: [http://127.0.0.1:9090](http://127.0.0.1:9090) (but you should use
@@ -47,8 +47,8 @@ the actual public IP address).
 
 To shutdown the service in the cluster:
 
-    kubectl delete deployment demo-prometheus
-    kubectl delete service demo-prometheus
+    kubectl delete deployment prometheus-server
+    kubectl delete service prometheus-server
 
 Since there is no persistent storage, all data collected will be lost.
 
@@ -75,7 +75,7 @@ For example:
 Then copy the file into the prometheus container under the
 `/legacy-targets` directory.
 
-    podname=$( kubectl get pods -o name --selector='run=demo-prometheus' )
+    podname=$( kubectl get pods -o name --selector='run=prometheus-server' )
     kubectl cp <filename.json> ${podname##*/}:/legacy-targets/
 
 Within five minutes, the new targets should be reported in: Status -> Targets
@@ -154,7 +154,7 @@ Delete the storage class.
 
 ## Public IP appears to hang
 
-After `kubectl get service demo-prometheus` assigns a public IP, you can visit
+After `kubectl get service prometheus-server` assigns a public IP, you can visit
 the service at that IP, e.g. http://[public-ip]:9090. If the service appears to
 hang, the docker instance may have failed to start.
 
@@ -163,7 +163,7 @@ Check using:
 ```
 $ kubectl get pods
 NAME                               READY     STATUS             RESTARTS   AGE
-demo-prometheus-2562116152-9mdrq   0/1       CrashLoopBackOff   9          25m
+prometheus-server-2562116152-9mdrq   0/1       CrashLoopBackOff   9          25m
 ```
 
 In this case, the `READY` status is "0", meaning not yet ready. And, the
@@ -177,7 +177,7 @@ instance using `kubectl logs`. For example, in the case above, we can ask for
 the logs with the pod name.
 
 ```
-$ kubectl logs demo-prometheus-2562116152-9mdrq
+$ kubectl logs prometheus-server-2562116152-9mdrq
 time="2017-02-01T21:02:36Z" level=info msg="Starting prometheus (version=1.5.0, branch=master, revision=d840f2c400629a846b210cf58d65b9fbae0f1d5c)" source="main.go:75"
 time="2017-02-01T21:02:36Z" level=info msg="Build context (go=go1.7.4, user=root@a04ed5b536e3, date=20170123-13:56:24)" source="main.go:76"
 time="2017-02-01T21:02:36Z" level=info msg="Loading configuration file /etc/prometheus/prometheus.yml" source="main.go:248"
