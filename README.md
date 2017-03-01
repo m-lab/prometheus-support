@@ -103,7 +103,10 @@ static IP allocation.
 
 ## Start
 
-Update k8s/prometheus.yml with the most current image.
+Before beginning, verify that you are [operating on the correct kubernetes
+cluster][cluster].
+
+Then, update k8s/prometheus.yml to reference the latest container version.
 
 Then, deploy the service:
 
@@ -125,6 +128,8 @@ and binds to the persistent volume claim. If a persistent volume does not
 already exist, this will create a new one. It will be automatically formatted.
 
     kubectl create -f k8s/prometheus.yml
+
+[cluster]: https://cloud.google.com/container-engine/docs/clusters/operations
 
 ## Shutdown
 
