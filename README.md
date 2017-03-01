@@ -2,7 +2,19 @@
 
 Prometheus configuration for M-Lab.
 
-# Deploying Prometheus with Kubernetes
+# Building an M-Lab Prometheus image
+
+To build the demo prometheus docker image:
+
+Log into your personal docker account, to publish the newly built image.
+
+    DOCKERUSER=$USER   # Use your actual dockerhub username.
+    sudo docker login
+    sudo docker build -t prometheus-server .
+    sudo docker tag prometheus-server $DOCKERUSER/prometheus-server:latest
+    sudo docker push $DOCKERUSER/prometheus-server:latest
+
+# Deploying Prometheus to Kubernetes
 
 The following instructions presume there is already a kubernetes cluster
 configured and accessible with `kubectl`.
@@ -11,39 +23,36 @@ See the [container engine quickstart guide][quickstart] for a simple howto.
 
 [quickstart]: https://cloud.google.com/container-engine/docs/quickstart
 
-## Build
+## Testing: Using explicit kubectl commands
 
-To build the demo prometheus docker image:
+This option is helpful for testing. There is no persistent storage.
 
-Log into your personal docker account, to publish the newly built image.
+### Start
 
-    sudo docker login
-    sudo docker build -t demo-prometheus .
-    sudo docker tag demo-prometheus <dockerhub-username>/demo-prometheus:latest
-    sudo docker push <dockerhub-username>/demo-prometheus:latest
+The `kubectl run` and `kubectl expose` commands automatically create the
+services, deployments, and pods.
 
-## Run
+    kubectl run prometheus-server --image=$DOCKERUSER/prometheus-server --port=9090
+    kubectl expose deployment prometheus-server --type="LoadBalancer"
+    kubectl annotate services prometheus-server prometheus.io/scrape=true
+    sleep 60 && kubectl get service prometheus-server
 
-To deploy the published docker image:
-
-    kubectl run demo-prometheus --image=<username>/demo-prometheus --port=9090
-    kubectl expose deployment demo-prometheus --type="LoadBalancer"
-    kubectl annotate services demo-prometheus prometheus.io/scrape=true
-    sleep 60 && kubectl get service demo-prometheus
-
-After a minute or two, `kubectl get service demo-prometheus` should report the
+After a minute or two, `kubectl get service prometheus-server` should report the
 public IP address assigned to the prometheus service.
 
-http://[public-IP]:9090
+For example: [http://127.0.0.1:9090](http://127.0.0.1:9090) (but you should use
+the actual public IP address).
 
-## Shutdown
+### Shutdown
 
 To shutdown the service in the cluster:
 
-    kubectl delete deployment demo-prometheus
-    kubectl delete service demo-prometheus
+    kubectl delete deployment prometheus-server
+    kubectl delete service prometheus-server
 
-## Add a legacy configuration
+Since there is no persistent storage, all data collected will be lost.
+
+### Add configuration for legacy targets
 
 Using the file service discovery configuration, we can add new targets at
 runtime. Create a JSON or YAML input file in the [correct form][file_sd_config].
@@ -64,21 +73,93 @@ For example:
 ```
 
 Then copy the file into the prometheus container under the
-`/etc/prometheus/legacy` directory.
+`/legacy-targets` directory.
 
-    podname=$( kubectl get pods -o name --selector='run=demo-prometheus' )
-    kubectl cp <filename.json> ${podname##*/}:/etc/prometheus/legacy/
+    podname=$( kubectl get pods -o name --selector='run=prometheus-server' )
+    kubectl cp <filename.json> ${podname##*/}:/legacy-targets/
 
 Within five minutes, the new targets should be reported in: Status -> Targets
 -> "legacy-targets"
 
 [file_sd_config]: https://prometheus.io/docs/operating/configuration/#file_sd_config
 
+
+## Automation: Using predefined Kubernetes config files
+
+Kubernetes config files preserve a deployment configuration and provide a
+convenient mechanism for review and automated deployments.
+
+Some steps cannot be automated. For example, while a LoadBalancer can
+automatically assign a public IP address to a service, it will not ([yet](dns)
+update corresponding DNS records for that IP address. So, we must reserve a
+static IP through the Cloud Console interface first.
+
+*Also, note*: Only one GKE cluster at a time can use the static IPs allocated in
+the `k8s/*/services.yml` files. If you are using an additional GKE cluster (e.g.
+in mlab-sandbox project), create a new services.yml file that uses the new
+static IP allocation.
+
+[dns]: https://github.com/kubernetes-incubator/external-dns
+
+## Start
+
+Before beginning, verify that you are [operating on the correct kubernetes
+cluster][cluster].
+
+Then, update k8s/prometheus.yml to reference the latest container version.
+
+Then, deploy the service:
+
+Creates a storage class for GCE persistent disks.
+
+    kubectl create -f k8s/storage-class.yml
+
+Creates a persistent volume claim that Prometheus will bind to.
+
+    kubectl create -f k8s/persistent-volumes.yml
+
+Creates a service using the public IP address that will send traffic to pods
+with the label "run=prometheus-server".
+
+    kubectl create -f k8s/mlab-sandbox/services.yml
+
+Creates the prometheus deployment. This receives traffic from the service above
+and binds to the persistent volume claim. If a persistent volume does not
+already exist, this will create a new one. It will be automatically formatted.
+
+    kubectl create -f k8s/prometheus.yml
+
+[cluster]: https://cloud.google.com/container-engine/docs/clusters/operations
+
+## Shutdown
+
+Delete the prometheus deployment.
+
+    kubectl delete -f k8s/prometheus.yml
+
+Since the prometheus pod is no longer running, clients connecting to the public
+IP address will try to load and timeout. If we also delete the service, then
+traffic will stop being forwarded form the public IP.
+
+    kubectl delete -f k8s/mlab-sandbox/services.yml
+
+Even if the prometheus deployment is not running, the persistent volume keeps
+the data around. If the cluster is destroyed or if the persistent volume claim
+is deleted, the automatically created disk image will be garbage collected and
+deleted. At that point all data will be lost.
+
+    kubectl delete -f k8s/persistent-volumes.yml
+
+Delete the storage class.
+
+    kubectl delete -f k8s/storage-class.yml
+
+
 # Debugging the steps above
 
 ## Public IP appears to hang
 
-After `kubectl get service demo-prometheus` assigns a public IP, you can visit
+After `kubectl get service prometheus-server` assigns a public IP, you can visit
 the service at that IP, e.g. http://[public-ip]:9090. If the service appears to
 hang, the docker instance may have failed to start.
 
@@ -87,7 +168,7 @@ Check using:
 ```
 $ kubectl get pods
 NAME                               READY     STATUS             RESTARTS   AGE
-demo-prometheus-2562116152-9mdrq   0/1       CrashLoopBackOff   9          25m
+prometheus-server-2562116152-9mdrq   0/1       CrashLoopBackOff   9          25m
 ```
 
 In this case, the `READY` status is "0", meaning not yet ready. And, the
@@ -101,7 +182,7 @@ instance using `kubectl logs`. For example, in the case above, we can ask for
 the logs with the pod name.
 
 ```
-$ kubectl logs demo-prometheus-2562116152-9mdrq
+$ kubectl logs prometheus-server-2562116152-9mdrq
 time="2017-02-01T21:02:36Z" level=info msg="Starting prometheus (version=1.5.0, branch=master, revision=d840f2c400629a846b210cf58d65b9fbae0f1d5c)" source="main.go:75"
 time="2017-02-01T21:02:36Z" level=info msg="Build context (go=go1.7.4, user=root@a04ed5b536e3, date=20170123-13:56:24)" source="main.go:76"
 time="2017-02-01T21:02:36Z" level=info msg="Loading configuration file /etc/prometheus/prometheus.yml" source="main.go:248"
