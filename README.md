@@ -95,11 +95,46 @@ update corresponding DNS records for that IP address. So, we must reserve a
 static IP through the Cloud Console interface first.
 
 *Also, note*: Only one GKE cluster at a time can use the static IPs allocated in
-the `k8s/*/services.yml` files. If you are using an additional GKE cluster (e.g.
+the `k8s/.../services.yml` files. If you are using an additional GKE cluster (e.g.
 in mlab-sandbox project), create a new services.yml file that uses the new
 static IP allocation.
 
 [dns]: https://github.com/kubernetes-incubator/external-dns
+
+## ConfigMaps
+
+Create the ConfigMap for prometheus:
+
+    kubectl create configmap prometheus-config --from-file=prometheus
+
+While the flag is `--from-file` it accepts a directory, and creates a
+ConfigMap with keys equal to the filenames and values equal to the content of
+the file.
+
+    kubectl describe configmap prometheus-config
+    Name:       prometheus-config
+    Namespace:  default
+    Labels:     <none>
+    Annotations:    <none>
+
+    Data
+    ====
+    prometheus.yml: 9754 bytes
+
+We can now refer to this ConfigMap in the deployment configs below. For
+example, k8s/prometheus.yml maps the prometheus configuration as a volume so
+that the file `prometheus.yml` appears under `/etc/config`.
+
+    - containers:
+      ...
+        volumeMounts:
+          # /etc/config/prometheus.yml should contain the M-Lab Prometheus config.
+          - mountPath: /etc/config
+            name: prometheus-config
+      volumes:
+      - name: prometheus-config
+        configMap:
+          name: prometheus-config
 
 ## Start
 
