@@ -124,13 +124,13 @@ the file.
 
 We can now refer to this ConfigMap in the deployment configs below. For
 example, k8s/prometheus.yml maps the prometheus configuration as a volume so
-that the file `prometheus.yml` appears under `/etc/config`.
+that the file `prometheus.yml` appears under `/etc/prometheus`.
 
     - containers:
       ...
         volumeMounts:
-          # /etc/config/prometheus.yml should contain the M-Lab Prometheus config.
-          - mountPath: /etc/config
+          # /etc/prometheus/prometheus.yml should contain the M-Lab Prometheus config.
+          - mountPath: /etc/prometheus
             name: prometheus-config
       volumes:
       - name: prometheus-config
