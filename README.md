@@ -112,14 +112,15 @@ ConfigMap with keys equal to the filenames and values equal to the content of
 the file.
 
     kubectl describe configmap prometheus-config
-    Name:       prometheus-config
-    Namespace:  default
-    Labels:     <none>
-    Annotations:    <none>
 
-    Data
-    ====
-    prometheus.yml: 9754 bytes
+      Name:       prometheus-config
+      Namespace:  default
+      Labels:     <none>
+      Annotations:    <none>
+
+      Data
+      ====
+      prometheus.yml: 9754 bytes
 
 We can now refer to this ConfigMap in the deployment configs below. For
 example, k8s/prometheus.yml maps the prometheus configuration as a volume so
@@ -135,6 +136,18 @@ that the file `prometheus.yml` appears under `/etc/config`.
       - name: prometheus-config
         configMap:
           name: prometheus-config
+
+Note: Configmaps only support text data. Secrets may be an alternative for
+binary data. https://github.com/kubernetes/kubernetes/issues/32432
+
+### Update a ConfigMap
+
+When the content of a configmap value needs to change, you can either delete and
+create the configmap object (not ideal), or replace the new configuration all at
+once.
+
+    kubectl create configmap prometheus-config --from-file=prometheus \
+        --dry-run -o json | kubectl apply -f -
 
 ## Start
 
