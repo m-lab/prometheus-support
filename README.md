@@ -2,18 +2,6 @@
 
 Prometheus configuration for M-Lab.
 
-# Building an M-Lab Prometheus image
-
-To build the demo prometheus docker image:
-
-Log into your personal docker account, to publish the newly built image.
-
-    DOCKERUSER=$USER   # Use your actual dockerhub username.
-    sudo docker login
-    sudo docker build -t prometheus-server .
-    sudo docker tag prometheus-server $DOCKERUSER/prometheus-server:latest
-    sudo docker push $DOCKERUSER/prometheus-server:latest
-
 # Deploying Prometheus to Kubernetes
 
 The following instructions presume there is already a kubernetes cluster
