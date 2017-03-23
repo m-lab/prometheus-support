@@ -17,7 +17,7 @@ Kubernetes config files preserve a deployment configuration and provide a
 convenient mechanism for review and automated deployments.
 
 Some steps cannot be automated. For example, while a LoadBalancer can
-automatically assign a public IP address to a service, it will not ([yet](dns)
+automatically assign a public IP address to a service, it will not ([yet][dns])
 update corresponding DNS records for that IP address. So, we must reserve a
 static IP through the Cloud Console interface first.
 
@@ -39,9 +39,9 @@ Create a ConfigMap for prometheus:
 
     kubectl create configmap prometheus-config --from-file=prometheus
 
-While the flag is `--from-file` it accepts a directory, and creates a
-ConfigMap with keys equal to the filenames and values equal to the content of
-the file.
+Although the flag is named `--from-file`, it accepts a directory. With this
+flag, the kubernetes creates a ConfigMap with keys equal to the filenames, and
+values equal to the content of the file.
 
     kubectl describe configmap prometheus-config
 
@@ -54,7 +54,7 @@ the file.
       ====
       prometheus.yml: 9754 bytes
 
-We can now refer to this ConfigMap in the "deployment" coniguration later. For
+We can now refer to this ConfigMap in the "deployment" configuration later. For
 example, k8s/prometheus.yml declares the prometheus configuration as a volume so
 that the file `prometheus.yml` appears under `/etc/prometheus`.
 
@@ -124,7 +124,7 @@ https://github.com/kubernetes/kubernetes/issues/13488
 Before beginning, verify that you are [operating on the correct kubernetes
 cluster][cluster].
 
-Then, update k8s/prometheus.yml to reference the latest stable prometheus
+Then, update k8s/prometheus.yml to reference the current stable prometheus
 container tag. Now, deploy the service.
 
 Create a storage class for GCE persistent disks:
