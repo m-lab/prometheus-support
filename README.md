@@ -30,17 +30,17 @@ new static IP allocation.
 
 ## ConfigMaps
 
-Many services like prometheus provide canonical docker images publised to
-dockerhub (or other registry). We can customize the deployment by changing the
-configuration at run time using ConfigMaps. For detailed background see the
-[official docs][configmaps].
+Many services like prometheus provide canonical docker images published to
+[Dockerhub][dockerhub] (or other registry). We can customize the deployment by
+changing the configuration at run time using ConfigMaps. For detailed background
+see the [official docs][configmaps].
 
 Create a ConfigMap for prometheus:
 
     kubectl create configmap prometheus-config --from-file=prometheus
 
 Although the flag is named `--from-file`, it accepts a directory. With this
-flag, the kubernetes creates a ConfigMap with keys equal to the filenames, and
+flag, kubernetes creates a ConfigMap with keys equal to the filenames, and
 values equal to the content of the file.
 
     kubectl describe configmap prometheus-config
@@ -75,6 +75,7 @@ For example this will look something like (with abbreviated configuration):
 Note: Configmaps only support text data. Secrets may be an alternative for
 binary data. https://github.com/kubernetes/kubernetes/issues/32432
 
+[dockerhub]: https://hub.docker.com/r/prom/prometheus/
 [configmaps]: https://kubernetes.io/docs/user-guide/configmap/
 
 ### Verify that a ConfigMap is Mounted
