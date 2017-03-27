@@ -39,6 +39,14 @@ Create a ConfigMap for prometheus:
 
     kubectl create configmap prometheus-config --from-file=prometheus
 
+Create a ConfigMaps for grafana:
+
+    kubectl create configmap grafana-config --from-file=grafana
+    kubectl create configmap grafana-env \
+        --from-literal=domain=mlab-sandbox.mlab.fyi
+
+Note: the domain may be the public IP address, if there is no DNS name yet.
+
 Although the flag is named `--from-file`, it accepts a directory. With this
 flag, kubernetes creates a ConfigMap with keys equal to the filenames, and
 values equal to the content of the file.
@@ -120,6 +128,29 @@ The deployment replica set will automatically recreate the pod and the new
 prometheus server will use the updated configmap. This is a known issue:
 https://github.com/kubernetes/kubernetes/issues/13488
 
+# Using Kubernetes Secrets
+
+Secrets are like ConfigMaps in that they can be a source for environment
+variables and volume mounts. Unlike ConfigMaps, Secrets contain confidential
+material, like certificates, passwords, access tokens, or similar.
+
+## Grafana secrets
+
+The Grafana configuration needs a pre-defined password for the admin user.
+Create one using a command like this:
+
+```
+kubectl create secret generic grafana-secrets \
+    --from-literal=admin-password=[redacted text]
+```
+
+To recover the password:
+
+```
+jsonpath='{.items[?(@.metadata.name=="grafana-secrets")].data.admin-password}'
+kubectl get secrets -o jsonpath="${jsonpath}" | base64 --decode && echo ''
+```
+
 ## Create deployment
 
 Before beginning, verify that you are [operating on the correct kubernetes
@@ -145,12 +176,18 @@ with the label "run=prometheus-server":
 
     kubectl create -f k8s/mlab-sandbox/services.yml
 
-Create the prometheus deployment. This is the last step and includes the actual
-prometheus server. The deployment will receive traffic from the service defined
-above and binds to the persistent volume claim. If a persistent volume does not
-already exist, this will create a new one. It will be automatically formatted.
+Create the prometheus deployment. This step starts the actual prometheus
+server. The deployment will receive traffic from the service defined above and
+binds to the persistent volume claim. If a persistent volume does not already
+exist, this will create a new one. It will be automatically formatted.
 
     kubectl create -f k8s/prometheus.yml
+
+Create the grafana deployment. Like the prometheus deployment, this step starts
+the grafana server. (Follow the steps below to [setup the Grafana
+server][setup].)
+
+    kubectl create -f k8s/grafana.yml
 
 After completing the above steps, you can view the status of all objects using
 something like:
@@ -160,6 +197,7 @@ something like:
 `kubectl get` is your friend. See also `kubectl describe` for even more details.
 
 [cluster]: https://cloud.google.com/container-engine/docs/clusters/operations
+[setup]: #grafana-setup
 
 ## Add Legacy Targets
 
@@ -228,6 +266,27 @@ Now, `kubectl get` should not include any of the above objects.
 
     kubectl get services,deployments,pods,configmaps,pvc,pv
 
+# Grafana Setup
+
+For now, we must login to the Grafana web interface and add a datasource
+corresponding to the local prometheus server. It may be possible to automate
+this in the future. Either way, this step should not be necessary too many
+times since `/var/lib/grafana` is a persistent volume.
+
+The steps are:
+
+ * Login to grafana as 'admin' using the password chosen above.
+ * Click "Add data source."
+ * Name the source, e.g. "Prometheus"
+ * Select the Type as "Prometheus"
+ * Use a URI corresponding to the service name, i.e.
+   http://prometheus-public-service.default.svc.cluster.local:9090
+   Note: this DNS name is added automatically within the kubernetes cluster.
+   The name provided must be a fully qualified URL. You may also use the public
+   IP or public DNS name.
+ * Leave the Access as "proxy"
+ * Click "Add"
+
 # Debugging the steps above
 
 ## Public IP appears to hang
@@ -260,4 +319,20 @@ time="2017-02-01T21:02:36Z" level=info msg="Starting prometheus (version=1.5.0, 
 time="2017-02-01T21:02:36Z" level=info msg="Build context (go=go1.7.4, user=root@a04ed5b536e3, date=20170123-13:56:24)" source="main.go:76"
 time="2017-02-01T21:02:36Z" level=info msg="Loading configuration file /etc/prometheus/prometheus.yml" source="main.go:248"
 time="2017-02-01T21:02:36Z" level=error msg="Error loading config: couldn't load configuration (-config.file=/etc/prometheus/prometheus.yml): yaml: line 2: mapping values are not allowed in this context" source="main.go:150"
+```
+
+## Viewing events
+
+Kubernetes events are also an good source of recent actions and their status.
+For example, if we tried to create the grafana deployment before defining the
+grafana-secrets secret, the pods would fail to start and the events would
+include a more specific error message.
+
+```
+$ kubectl get pods,events
+NAME                                    READY     STATUS    RESTARTS   AGE
+po/grafana-server-1476781881-fhr5z      0/1       RunContainerError   0          6m
+
+LASTSEEN   FIRSTSEEN   COUNT     NAME                                 KIND      SUBOBJECT                         TYPE      REASON       SOURCE                                                    MESSAGE
+55s        7m          29        ev/grafana-server-1476781881-fhr5z   Pod                                         Warning   FailedSync   {kubelet gke-soltesz-test-2-default-pool-7151d92d-7dd5}   Error syncing pod, skipping: failed to "StartContainer" for "grafana-server" with RunContainerError: "GenerateRunContainerOptions: secrets \"grafana-secrets\" not found"
 ```
