@@ -176,6 +176,12 @@ with the label "run=prometheus-server":
 
     kubectl create -f k8s/mlab-sandbox/<cluser-name>/services.yml
 
+Create the node-exporter daemonset. A [DaemonSet][daemonset] ensures that all
+nodes in the cluster run a copy of a pod. Our daemonset will run one instance of
+the node-exporter on every node.
+
+    kubectl create -f k8s/node-exporter-daemonset.yml
+
 Create the prometheus deployment. This step starts the actual prometheus
 server. The deployment will receive traffic from the service defined above and
 binds to the persistent volume claim. If a persistent volume does not already
@@ -198,6 +204,7 @@ something like:
 
 [cluster]: https://cloud.google.com/container-engine/docs/clusters/operations
 [setup]: #grafana-setup
+[daemonset]: https://kubernetes.io/docs/admin/daemons/
 
 ## Add Legacy Targets
 
@@ -257,6 +264,10 @@ deleted. At that point all data will be lost.
 Delete the storage class.
 
     kubectl delete -f k8s/storage-class.yml
+
+Delete the node exporter daemonset.
+
+    kubectl delete -f k8s/node-exporter-daemonset.yml
 
 ConfigMaps are managed explicitly for now:
 
