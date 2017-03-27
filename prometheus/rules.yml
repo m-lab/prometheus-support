@@ -1,0 +1,35 @@
+# M-Lab prometheus recording rules.
+#
+# Before adding a new recording rule, review the general documentation and best
+# practices.
+#
+#  * https://prometheus.io/docs/querying/rules/
+#  * https://prometheus.io/docs/practices/rules/
+#
+# NOTE: As of 2017-03, all rules are evalutated in parallel. Their evaluation
+# order is not guaranteed, and dependencies between rules are not respected.
+# Using recording rules on the right hand side of an expression can have
+# undefined behavior and may result in recording old data or other errors.
+#
+#    https://github.com/prometheus/prometheus/blob/master/rules/manager.go#L240
+#
+# DO:
+#  * Do use raw prometheus expressions on the right hand side of a new rule.
+#
+# DO NOT:
+#  * Do not use recording rules on the right hand side of a new rule.
+#  * Do not overwrite a metric name with itself.
+#  * Do not use 'label_replace' to overwrite a metric name.
+
+
+# Precalculate the increase of ipv4 and ipv6 sidestream connections.
+ipv4_and_ipv6:sidestream_connection_count:increase2m =
+    increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m])
+
+# Precalculate the sum of sidestream connections per machine.
+instance:sidestream_connection_count:increase2m =
+    sum by(instance) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
+
+# Precalculate the sum of sidestream connections per experiment "last six bits".
+lsb:sidestream_connection_count:increase2m =
+    sum by(lsb) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
