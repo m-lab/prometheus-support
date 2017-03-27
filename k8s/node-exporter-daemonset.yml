@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: default
+spec:
+  template:
+    metadata:
+      labels:
+        name: node-exporter
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+    spec:
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      containers:
+      - image: prom/node-exporter:v0.13.0
+        name: node-exporter
+        ports:
+        - containerPort: 9100
+        resources:
+          requests:
+            cpu: 0.15
+        securityContext:
+          privileged: true
+        # Specify the host-specific paths to monitor, and ignore pod-local paths.
+        args: ["-collector.procfs=/host/proc",
+               "-collector.sysfs=/host/sys",
+               "-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|etc)($|/)"]
+        # Mount the node volumes into a separate directory to not conflict with
+        # the pod's version.
+        volumeMounts:
+        - name: dev
+          mountPath: /host/dev
+        - name: proc
+          mountPath: /host/proc
+        - name: sys
+          mountPath: /host/sys
+        - name: rootfs
+          mountPath: /rootfs
+      # Define volumes taken from the host context, i.e. the node itself.
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: dev
+        hostPath:
+          path: /dev
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: rootfs
+        hostPath:
+          path: /
