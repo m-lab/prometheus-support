@@ -131,7 +131,7 @@ https://github.com/kubernetes/kubernetes/issues/13488
 # Using Kubernetes Secrets
 
 Secrets are like ConfigMaps in that they can be a source for environment
-variables and volume mounts. Unlike ConfigMaps, Secrets contain confidential
+variables and volume mounts. Unlike ConfigMaps, secrets contain confidential
 material, like certificates, passwords, access tokens, or similar.
 
 ## Grafana secrets
@@ -174,7 +174,7 @@ creations and deletions.
 Create a service using the public IP address that will send traffic to pods
 with the label "run=prometheus-server":
 
-    kubectl create -f k8s/mlab-sandbox/services.yml
+    kubectl create -f k8s/mlab-sandbox/<cluser-name>/services.yml
 
 Create the prometheus deployment. This step starts the actual prometheus
 server. The deployment will receive traffic from the service defined above and
@@ -245,7 +245,7 @@ Since the prometheus pod is no longer running, clients connecting to the public
 IP address will try to load but fail. If we also delete the service, then
 traffic will stop being forwarded from the public IP altogether.
 
-    kubectl delete -f k8s/mlab-sandbox/services.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster name>/services.yml
 
 Even if the prometheus deployment is not running, the persistent volume keeps
 the data around. If the cluster is destroyed or if the persistent volume claim
