@@ -39,7 +39,7 @@ Create a ConfigMap for prometheus:
 
     kubectl create configmap prometheus-config --from-file=prometheus
 
-Create a ConfigMaps for grafana:
+Create ConfigMaps for grafana:
 
     kubectl create configmap grafana-config --from-file=grafana
     kubectl create configmap grafana-env \
