@@ -27,6 +27,10 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9100'
     spec:
+      # Place the pod into the Guaranteed QoS by setting equal resource
+      # requests and limits for *all* containers in the pod.
+      # For more background, see:
+      # https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-qos.md
       containers:
       # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
       # stable version.
@@ -77,6 +81,13 @@ spec:
                 "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)"]
         ports:
           - containerPort: 9100
+        resources:
+          requests:
+            memory: "10Mi"
+            cpu: "50m"
+          limits:
+            memory: "10Mi"
+            cpu: "50m"
         volumeMounts:
         - mountPath: /prometheus
           name: prometheus-storage
