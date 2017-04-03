@@ -237,3 +237,34 @@ scrape_configs:
   - job_name: 'nagios-exporter'
     static_configs:
       - targets: ['nagios.measurementlab.net:5000']
+
+  # Scrape config for federation.
+  #
+  # The '/federate' target allows retrieving a set of timeseries from other
+  # prometheus servers.
+  #
+  # Learn more at:
+  #   https://prometheus.io/docs/operating/federation/#configuring-federation
+  #
+  - job_name: 'federation-targets'
+    # Normally, the prometheus server updates target labels at collection time,
+    # but if we're aggregating from other prometheus servers, we want to take
+    # them as-is.
+    honor_labels: true
+    metrics_path: '/federate'
+
+    params:
+      'match[]':
+        # Note: For now simply collect everything. There must be at least one
+        # match parameter. Prometheus selects the union of all match parameters.
+        - '{__name__=~".*"}'
+
+    file_sd_configs:
+      - files:
+          # NOTE: The path /federation-targets does not exist in the default
+          # image. Mount this path as a volume with the docker or kubernetes
+          # configuration.
+          - /federation-targets/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+

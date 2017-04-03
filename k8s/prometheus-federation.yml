@@ -45,8 +45,11 @@ spec:
           - containerPort: 9090
         resources:
           requests:
-            memory: "3Gi"
-            cpu: "500m"
+            memory: "4Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "1000m"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
@@ -56,6 +59,10 @@ spec:
         - mountPath: /legacy-targets
           name: prometheus-storage
           subPath: legacy-targets
+        # /federation-targets should contain federation target config files.
+        - mountPath: /federation-targets
+          name: prometheus-storage
+          subPath: federation-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
@@ -82,4 +89,4 @@ spec:
           claimName: auto-prometheus-disk0
       - name: prometheus-config
         configMap:
-          name: prometheus-config
+          name: prometheus-federation-config
