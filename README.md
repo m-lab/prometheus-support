@@ -38,13 +38,14 @@ see the [official docs][configmaps].
 Create the ConfigMaps for prometheus:
 
     kubectl create configmap prometheus-federation-config \
-        --from-file=prometheus-federation
+        --from-file=config/federation/prometheus
     kubectl create configmap prometheus-cluster-config \
-        --from-file=prometheus-cluster
+        --from-file=config/cluster/prometheus
 
 Create ConfigMaps for grafana:
 
-    kubectl create configmap grafana-config --from-file=grafana
+    kubectl create configmap grafana-config \
+        --from-file=config/federation/grafana
     kubectl create configmap grafana-env \
         --from-literal=domain=mlab-sandbox.mlab.fyi
 
@@ -196,7 +197,7 @@ server. The deployment will receive traffic from the service defined above and
 binds to the persistent volume claim. If a persistent volume does not already
 exist, this will create a new one. It will be automatically formatted.
 
-    kubectl create -f k8s/prometheus-cluster.yml
+    kubectl create -f k8s/cluster/prometheus.yml
 
 ## Federation deployment
 
@@ -205,13 +206,13 @@ It is designed to monitor the local cluster as well as aggregate metrics from
 other prometheus clusters. The cluster and federation deployments are mutually
 exclusive.
 
-    kubectl create -f k8s/prometheus-federation.yml
+    kubectl create -f k8s/federation/prometheus.yml
 
 Create the grafana deployment. Like the prometheus deployment, this step starts
 the grafana server. (Follow the steps below to [setup the Grafana
 server][setup].)
 
-    kubectl create -f k8s/grafana.yml
+    kubectl create -f k8s/federation/grafana.yml
 
 ## Check deployment
 
@@ -287,11 +288,11 @@ In the Prometheus server, targets are listed under:
 
 Delete the prometheus deployment.
 
-    kubectl delete -f k8s/prometheus-cluster.yml
+    kubectl delete -f k8s/cluster/prometheus.yml
 
 Or,
 
-    kubectl delete -f k8s/prometheus-federation.yml
+    kubectl delete -f k8s/federation/prometheus.yml
 
 Since the prometheus pod is no longer running, clients connecting to the public
 IP address will try to load but fail. If we also delete the service, then
@@ -351,7 +352,7 @@ The steps are:
 
 Delete the grafana deployment.
 
-    kubectl delete -f k8s/grafana.yml
+    kubectl delete -f k8s/federation/grafana.yml
 
 Delete the grafana configmaps:
 
