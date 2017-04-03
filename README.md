@@ -35,13 +35,17 @@ Many services like prometheus provide canonical docker images published to
 changing the configuration at run time using ConfigMaps. For detailed background
 see the [official docs][configmaps].
 
-Create a ConfigMap for prometheus:
+Create the ConfigMaps for prometheus:
 
-    kubectl create configmap prometheus-config --from-file=prometheus
+    kubectl create configmap prometheus-federation-config \
+        --from-file=config/federation/prometheus
+    kubectl create configmap prometheus-cluster-config \
+        --from-file=config/cluster/prometheus
 
 Create ConfigMaps for grafana:
 
-    kubectl create configmap grafana-config --from-file=grafana
+    kubectl create configmap grafana-config \
+        --from-file=config/federation/grafana
     kubectl create configmap grafana-env \
         --from-literal=domain=mlab-sandbox.mlab.fyi
 
@@ -51,9 +55,9 @@ Although the flag is named `--from-file`, it accepts a directory. With this
 flag, kubernetes creates a ConfigMap with keys equal to the filenames, and
 values equal to the content of the file.
 
-    kubectl describe configmap prometheus-config
+    kubectl describe configmap prometheus-cluster-config
 
-      Name:       prometheus-config
+      Name:       prometheus-cluster-config
       Namespace:  default
       Labels:     <none>
       Annotations:    <none>
@@ -78,7 +82,7 @@ For example this will look something like (with abbreviated configuration):
       volumes:
       - name: prometheus-config
         configMap:
-          name: prometheus-config
+          name: prometheus-cluster-config
 
 Note: Configmaps only support text data. Secrets may be an alternative for
 binary data. https://github.com/kubernetes/kubernetes/issues/32432
@@ -104,7 +108,7 @@ For example (with abbreviated output):
           Port:               9090/TCP
           ...
           Volume Mounts:
-            /etc/prometheus from prometheus-config (rw)
+            /etc/prometheus from prometheus-cluster-config (rw)
             /legacy-targets from prometheus-storage (rw)
             /prometheus from prometheus-storage (rw)
           ...
@@ -115,7 +119,7 @@ When the content of a configmap value needs to change, you can either delete and
 create the configmap object (not ideal), or replace the new configuration all at
 once.
 
-    kubectl create configmap prometheus-config --from-file=prometheus \
+    kubectl create configmap prometheus-cluster-config --from-file=prometheus \
         --dry-run -o json | kubectl apply -f -
 
 After updating a configmap, any pods that use this configmap will need to be
@@ -151,7 +155,7 @@ jsonpath='{.items[?(@.metadata.name=="grafana-secrets")].data.admin-password}'
 kubectl get secrets -o jsonpath="${jsonpath}" | base64 --decode && echo ''
 ```
 
-## Create deployment
+# Create deployment
 
 Before beginning, verify that you are [operating on the correct kubernetes
 cluster][cluster].
@@ -182,23 +186,40 @@ the node-exporter on every node.
 
     kubectl create -f k8s/node-exporter-daemonset.yml
 
-Create the prometheus deployment. This step starts the actual prometheus
+## Cluster deployment
+
+The cluster deployment should be the default configuration, unless you know that
+you need to setup the federation deployment. The cluster and federation
+deployments are mutually exclusive.
+
+Create the prometheus cluster deployment. This step starts the actual prometheus
 server. The deployment will receive traffic from the service defined above and
 binds to the persistent volume claim. If a persistent volume does not already
 exist, this will create a new one. It will be automatically formatted.
 
-    kubectl create -f k8s/prometheus.yml
+    kubectl create -f k8s/cluster/prometheus.yml
+
+## Federation deployment
+
+The federation deployment is a super-set of the prometheus cluster deployment.
+It is designed to monitor the local cluster as well as aggregate metrics from
+other prometheus clusters. The cluster and federation deployments are mutually
+exclusive.
+
+    kubectl create -f k8s/federation/prometheus.yml
 
 Create the grafana deployment. Like the prometheus deployment, this step starts
 the grafana server. (Follow the steps below to [setup the Grafana
 server][setup].)
 
-    kubectl create -f k8s/grafana.yml
+    kubectl create -f k8s/federation/grafana.yml
+
+## Check deployment
 
 After completing the above steps, you can view the status of all objects using
 something like:
 
-    kubectl get services,deployments,pods,configmaps,pvc,pv,events
+    kubectl get services,deployments,pods,configmaps,secrets,pvc,pv,events
 
 `kubectl get` is your friend. See also `kubectl describe` for even more details.
 
@@ -206,10 +227,14 @@ something like:
 [setup]: #grafana-setup
 [daemonset]: https://kubernetes.io/docs/admin/daemons/
 
-## Add Legacy Targets
+# Custom Targets
 
-Using the file service discovery configuration, we can add new targets at
-runtime. Create a JSON or YAML input file in the [correct form][file_sd_config].
+With the M-Lab configuration, we can add or remove two kinds of targets at
+runtime: legacy and federation targets.
+
+Using the file service discovery configuration, we create a JSON or YAML input
+file in the [correct form][file_sd_config], and copy the file into the pod
+filesystem.
 
 For example:
 
@@ -226,27 +251,48 @@ For example:
 ]
 ```
 
-Then copy the file into the prometheus container under the `/legacy-targets`
-directory.
+Copy file(s) to the correct directory in the prometheus pod.
 
+    DIRECTORY=/legacy-targets
     podname=$( kubectl get pods -o name --selector='run=prometheus-server' )
-    kubectl cp <filename.json> ${podname##*/}:/legacy-targets/
+    kubectl cp <filename.json> ${podname##*/}:${DIRECTORY}
 
-To look at the available files in the `legacy-targets` directory:
+To look at the available files the target directory:
 
-    kubectl exec -t ${podname##*/} -- /bin/ls -l /legacy-targets
+    kubectl exec -t ${podname##*/} -- /bin/ls -l ${DIRECTORY}
 
 Within five minutes, any file ending with `*.json` or `*.yaml` will be scanned
-and the new targets should be reported by the prometheus server, listed under:
-Status -> Targets -> "legacy-targets"
+and the new targets should be reported by the prometheus server.
 
 [file_sd_config]: https://prometheus.io/docs/operating/configuration/#file_sd_config
 
-## Delete deployment
+## Legacy Targets
+
+For legacy targets (e.g. sidestream), copy the JSON file into the prometheus
+container under the `/legacy-targets` directory.
+
+In the Prometheus server, targets are listed under:
+
+ * Status -> Targets -> "legacy-targets"
+
+## Federation Targets
+
+For federation targets (i.e. other prometheus services), copy the file to the
+prometheus container under the `/federation-targets` directory.
+
+In the Prometheus server, targets are listed under:
+
+ * Status -> Targets -> "federation-targets"
+
+# Delete deployment
 
 Delete the prometheus deployment.
 
-    kubectl delete -f k8s/prometheus.yml
+    kubectl delete -f k8s/cluster/prometheus.yml
+
+Or,
+
+    kubectl delete -f k8s/federation/prometheus.yml
 
 Since the prometheus pod is no longer running, clients connecting to the public
 IP address will try to load but fail. If we also delete the service, then
@@ -271,13 +317,16 @@ Delete the node exporter daemonset.
 
 ConfigMaps are managed explicitly for now:
 
-    kubectl delete configmap prometheus-config
+    kubectl delete configmap prometheus-cluster-config
+    kubectl delete configmap prometheus-federation-config
 
 Now, `kubectl get` should not include any of the above objects.
 
     kubectl get services,deployments,pods,configmaps,pvc,pv
 
-# Grafana Setup
+# Grafana
+
+## Setup
 
 For now, we must login to the Grafana web interface and add a datasource
 corresponding to the local prometheus server. It may be possible to automate
@@ -297,6 +346,22 @@ The steps are:
    IP or public DNS name.
  * Leave the Access as "proxy"
  * Click "Add"
+
+
+## Delete
+
+Delete the grafana deployment.
+
+    kubectl delete -f k8s/federation/grafana.yml
+
+Delete the grafana configmaps:
+
+    kubectl delete configmap grafana-config
+    kubectl delete configmap grafana-env
+
+Delete the grafana secrets:
+
+    kubectl delete secret grafana-secrets
 
 # Debugging the steps above
 
