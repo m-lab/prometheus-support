@@ -359,6 +359,10 @@ Delete the grafana configmaps:
     kubectl delete configmap grafana-config
     kubectl delete configmap grafana-env
 
+Delete the grafana secrets:
+
+    kubectl delete secret grafana-secrets
+
 # Debugging the steps above
 
 ## Public IP appears to hang
