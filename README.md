@@ -219,7 +219,7 @@ server][setup].)
 After completing the above steps, you can view the status of all objects using
 something like:
 
-    kubectl get services,deployments,pods,configmaps,pvc,pv,events
+    kubectl get services,deployments,pods,configmaps,secrets,pvc,pv,events
 
 `kubectl get` is your friend. See also `kubectl describe` for even more details.
 
