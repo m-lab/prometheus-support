@@ -43,6 +43,7 @@ spec:
         args: ["-config.file=/etc/prometheus/prometheus.yml",
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
+               "-alertmanager.url=http://alertmanager-public-service.default.svc.cluster.local:9093",
                "-web.console.libraries=/usr/share/prometheus/console_libraries",
                "-web.console.templates=/usr/share/prometheus/consoles"]
         ports:
