@@ -35,21 +35,13 @@ Many services like prometheus provide canonical docker images published to
 changing the configuration at run time using ConfigMaps. For detailed background
 see the [official docs][configmaps].
 
-Create the ConfigMaps for prometheus:
+Create the ConfigMap for prometheus (only create a ConfigMap for one of cluster
+or federation, not both):
 
     kubectl create configmap prometheus-federation-config \
         --from-file=config/federation/prometheus
     kubectl create configmap prometheus-cluster-config \
         --from-file=config/cluster/prometheus
-
-Create ConfigMaps for grafana:
-
-    kubectl create configmap grafana-config \
-        --from-file=config/federation/grafana
-    kubectl create configmap grafana-env \
-        --from-literal=domain=mlab-sandbox.mlab.fyi
-
-Note: the domain may be the public IP address, if there is no DNS name yet.
 
 Although the flag is named `--from-file`, it accepts a directory. With this
 flag, kubernetes creates a ConfigMap with keys equal to the filenames, and
@@ -208,12 +200,6 @@ exclusive.
 
     kubectl create -f k8s/federation/prometheus.yml
 
-Create the grafana deployment. Like the prometheus deployment, this step starts
-the grafana server. (Follow the steps below to [setup the Grafana
-server][setup].)
-
-    kubectl create -f k8s/federation/grafana.yml
-
 ## Check deployment
 
 After completing the above steps, you can view the status of all objects using
@@ -259,7 +245,7 @@ Copy file(s) to the correct directory in the prometheus pod.
 
 To look at the available files the target directory:
 
-    kubectl exec -t ${podname##*/} -- /bin/ls -l ${DIRECTORY}
+    kubectl exec -c prometheus-server -t ${podname##*/} -- /bin/ls -l ${DIRECTORY}
 
 Within five minutes, any file ending with `*.json` or `*.yaml` will be scanned
 and the new targets should be reported by the prometheus server.
@@ -286,7 +272,7 @@ In the Prometheus server, targets are listed under:
 
 # Delete deployment
 
-Delete the prometheus deployment.
+Delete the prometheus deployment:
 
     kubectl delete -f k8s/cluster/prometheus.yml
 
@@ -326,6 +312,27 @@ Now, `kubectl get` should not include any of the above objects.
 
 # Grafana
 
+## Create
+
+Create ConfigMaps for grafana:
+
+    kubectl create configmap grafana-config \
+        --from-file=config/federation/grafana
+    kubectl create configmap grafana-env \
+        --from-literal=domain=mlab-sandbox.mlab.fyi
+
+Note: the domain may be the public IP address, if there is no DNS name yet.
+
+Create a secret to contain the Grafana admin password:
+
+    kubectl create secret generic grafana-secrets \
+        --from-literal=admin-password=[redacted text]
+
+Finally, Create the grafana deployment. Like the prometheus deployment, this
+step starts the grafana server.
+
+    kubectl create -f k8s/federation/grafana.yml
+
 ## Setup
 
 For now, we must login to the Grafana web interface and add a datasource
@@ -362,6 +369,46 @@ Delete the grafana configmaps:
 Delete the grafana secrets:
 
     kubectl delete secret grafana-secrets
+
+# Alertmanager
+
+The alertmanager configuration depends on the shared service and persistent
+volume configurations. If those are already loaded, then continue to the steps
+below.
+
+Also, note: the alertmanager service will do nothing unless the prometheus
+deployment includes the command line argument that directs alerts to this
+instance of the alertmanager. i.e. `-alertmanager.url=http://bobloblaw.com:9093`
+
+## Create
+
+If you're setting up the alertmanager for the first time, copy
+`config.yml.template` to create `config.yml` and update the `api_uri` entries
+with real values.
+
+Create the configmaps for alertmanager:
+
+    kubectl create configmap alertmanager-config \
+        --from-file=config/federation/alertmanager
+
+    kubectl create configmap alertmanager-env \
+        --from-literal=external-url=http://mlab-sandbox.mlab.fyi:9093
+
+Create the alertmanager deployment.
+
+    kubectl create -f k8s/federation/alertmanager.yml
+
+## Delete
+
+Delete the deployment.
+
+    kubectl delete -f k8s/federation/alertmanager.yml
+
+Delete the configmaps.
+
+    kubectl delete configmap alertmanager-config
+    kubectl delete configmap alertmanage-env
+
 
 # Debugging the steps above
 

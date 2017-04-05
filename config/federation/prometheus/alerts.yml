@@ -1,0 +1,36 @@
+# M-Lab alert configuration.
+#
+# ALERT <alert name>
+#   IF <expression>
+#   [ FOR <duration> ]
+#   [ LABELS <label set> ]
+#   [ ANNOTATIONS <label set> ]
+#
+## Notes about delay.
+#
+# There are inherent delays in the monitoring and alert pipeline. When
+# designing alerts, remember that each step includes some delay:
+#
+#  * the time between reality changing and monitoring observing the change.
+#  * the time between the observed change and the delay defined by the alert.
+#  * the time between a firing alert and the "group_wait" time in alertmanager.
+#  * the time between sending a notification and the notification arriving.
+#
+# For example, for a 60s collection period, a 2m alert delay, a 30s group_wait,
+# and a 15s-3m SMS delivery delay, the time between reality changing and a
+# human knowing could be over six minutes.
+#
+# Your job is to balance false-positives with responsiveness when necessary.
+
+# ClusterDown: when any of the federated prometheus k8s clusters is down for
+# three sample periods, then raise an alert.
+ALERT ClusterDown
+  IF up{job="federation-targets"} == 0
+  FOR 3m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} down",
+    description = "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes.",
+  }
