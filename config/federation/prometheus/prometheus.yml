@@ -269,14 +269,98 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
-  - job_name: 'blackbox-file'
+  - job_name: 'blackbox-ssh-targets'
     metrics_path: /probe
     params:
-      module: [host_online]  # Look for a HTTP 200 response.
+      module: [ssh_v4_online]
 
     file_sd_configs:
       - files:
-          - /blackbox-targets/*.json
+          - /blackbox-targets/ssh_v4_online.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    # This is really very bad. The relabel config juggles the parameters as
+    # well as the address being probed. This is also how they tell you to do
+    # it: https://github.com/prometheus/blackbox_exporter
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 104.197.220.28:9115
+
+  - job_name: 'blackbox-tcp-targets'
+    metrics_path: /probe
+    params:
+      module: [tcp_v4_online]
+
+    file_sd_configs:
+      - files:
+          - /blackbox-targets/tcp_v4_online.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    # This is really very bad. The relabel config juggles the parameters as
+    # well as the address being probed. This is also how they tell you to do
+    # it: https://github.com/prometheus/blackbox_exporter
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 104.197.220.28:9115
+
+  - job_name: 'blackbox-icmp-targets'
+    metrics_path: /probe
+    params:
+      module: [icmp]
+
+    file_sd_configs:
+      - files:
+          - /blackbox-targets/icmp.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    # This is really very bad. The relabel config juggles the parameters as
+    # well as the address being probed. This is also how they tell you to do
+    # it: https://github.com/prometheus/blackbox_exporter
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: 104.197.220.28:9115
+
+  - job_name: 'blackbox-http-targets'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+
+    file_sd_configs:
+      - files:
+          - /blackbox-targets/http_2xx.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
