@@ -35,7 +35,8 @@ Many services like prometheus provide canonical docker images published to
 changing the configuration at run time using ConfigMaps. For detailed background
 see the [official docs][configmaps].
 
-Create the ConfigMap for prometheus (only create one for cluster or federation):
+Create the ConfigMap for prometheus (only create a ConfigMap for one of cluster
+or federation, not both):
 
     kubectl create configmap prometheus-federation-config \
         --from-file=config/federation/prometheus
