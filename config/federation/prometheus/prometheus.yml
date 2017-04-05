@@ -272,14 +272,12 @@ scrape_configs:
   # Blackbox configurations.
   #
   # Each blackbox configuration uses a different probe (tcp, icmp, http, etc).
-  - job_name: 'blackbox-ssh-targets'
+  - job_name: 'blackbox-targets'
     metrics_path: /probe
-    params:
-      module: [ssh_v4_online]
 
     file_sd_configs:
       - files:
-          - /blackbox-targets/ssh_v4_online.json
+          - /blackbox-targets/*.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
@@ -299,6 +297,13 @@ scrape_configs:
         target_label: __param_target
         replacement: ${1}
 
+      # Use the "module" label defined in the input file as the module name for
+      # the blackbox exporter request.
+      - source_labels: [module]
+        regex: .*
+        target_label: __param_module
+        replacement: ${1}
+
       # Use the target parameter defined above and use it to define the
       # "instance" label.
       - source_labels: [__param_target]
@@ -309,81 +314,6 @@ scrape_configs:
       # Since __address__ is the target that prometheus will contact,
       # unconditionally reset the __address__ label to the blackbox exporter
       # address.
-      - source_labels: []
-        regex: .*
-        target_label: __address__
-        replacement: blackbox-public-service.default.svc.cluster.local:9115
-
-  - job_name: 'blackbox-tcp-targets'
-    metrics_path: /probe
-    params:
-      module: [tcp_v4_online]
-
-    file_sd_configs:
-      - files:
-          - /blackbox-targets/tcp_v4_online.json
-        # Attempt to re-read files every five minutes.
-        refresh_interval: 5m
-
-    relabel_configs:
-      - source_labels: [__address__]
-        regex: (.*)(:80)?
-        target_label: __param_target
-        replacement: ${1}
-      - source_labels: [__param_target]
-        regex: (.*)
-        target_label: instance
-        replacement: ${1}
-      - source_labels: []
-        regex: .*
-        target_label: __address__
-        replacement: blackbox-public-service.default.svc.cluster.local:9115
-
-  - job_name: 'blackbox-icmp-targets'
-    metrics_path: /probe
-    params:
-      module: [icmp]
-
-    file_sd_configs:
-      - files:
-          - /blackbox-targets/icmp.json
-        # Attempt to re-read files every five minutes.
-        refresh_interval: 5m
-
-    relabel_configs:
-      - source_labels: [__address__]
-        regex: (.*)(:80)?
-        target_label: __param_target
-        replacement: ${1}
-      - source_labels: [__param_target]
-        regex: (.*)
-        target_label: instance
-        replacement: ${1}
-      - source_labels: []
-        regex: .*
-        target_label: __address__
-        replacement: blackbox-public-service.default.svc.cluster.local:9115
-
-  - job_name: 'blackbox-http-targets'
-    metrics_path: /probe
-    params:
-      module: [http_2xx]  # Look for a HTTP 200 response.
-
-    file_sd_configs:
-      - files:
-          - /blackbox-targets/http_2xx.json
-        # Attempt to re-read files every five minutes.
-        refresh_interval: 5m
-
-    relabel_configs:
-      - source_labels: [__address__]
-        regex: (.*)(:80)?
-        target_label: __param_target
-        replacement: ${1}
-      - source_labels: [__param_target]
-        regex: (.*)
-        target_label: instance
-        replacement: ${1}
       - source_labels: []
         regex: .*
         target_label: __address__
