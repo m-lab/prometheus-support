@@ -68,6 +68,10 @@ spec:
         - mountPath: /federation-targets
           name: prometheus-storage
           subPath: federation-targets
+        # /blackbox-targets should contain blackbox target config files.
+        - mountPath: /blackbox-targets
+          name: prometheus-storage
+          subPath: blackbox-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
