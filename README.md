@@ -369,7 +369,6 @@ Delete the grafana secrets:
 
     kubectl delete secret grafana-secrets
 
-
 # Alertmanager
 
 The alertmanager configuration depends on the shared service and persistent
@@ -381,6 +380,10 @@ deployment includes the command line argument that directs alerts to this
 instance of the alertmanager. i.e. `-alertmanager.url=http://bobloblaw.com:9093`
 
 ## Create
+
+If you're setting up the alertmanager for the first time, copy
+`config.yml.template` to create `config.yml` and update the `api_uri` entries
+with real values.
 
 Create the configmaps for alertmanager:
 
