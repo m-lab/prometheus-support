@@ -269,3 +269,52 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
+  # Blackbox configurations.
+  #
+  # Each blackbox configuration uses a different probe (tcp, icmp, http, etc).
+  - job_name: 'blackbox-targets'
+    metrics_path: /probe
+
+    file_sd_configs:
+      - files:
+          - /blackbox-targets/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    # This relabel config is necessary. The relabel config redefines the address
+    # to scrape and sets the correct parameters to pass to the scrape target.
+    #
+    # While not as direct as other configs, this approach allows us to specify a
+    # dynamic list of targets for a static blackbox exporter. This is also the
+    # supported configuration: https://github.com/prometheus/blackbox_exporter
+    relabel_configs:
+
+      # The default __address__ value is a target host from the config file.
+      # Here, we set (i.e. "replace") a request parameter "target" equal to the
+      # host value.
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+
+      # Use the "module" label defined in the input file as the module name for
+      # the blackbox exporter request.
+      - source_labels: [module]
+        regex: .*
+        target_label: __param_module
+        replacement: ${1}
+
+      # Use the target parameter defined above and use it to define the
+      # "instance" label.
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the blackbox exporter
+      # address.
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: blackbox-public-service.default.svc.cluster.local:9115

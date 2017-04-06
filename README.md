@@ -409,6 +409,56 @@ Delete the configmaps.
     kubectl delete configmap alertmanager-config
     kubectl delete configmap alertmanage-env
 
+# Blackbox exporter
+
+The blackbox exporter allows probes of endpoints over HTTP, HTTPS, DNS, TCP and
+ICMP.
+
+Targets are declared in an input file like legacy targets, however
+blackbox targets require specifying a "module". The module name must match a
+module defined in `config/federation/blackbox/config.yml`. Different modules
+have different format requirements on the targets (e.g. some with ports, some
+without).
+
+```
+[
+    {
+        "labels": {
+            "module": "ssh_v4_online",
+            "service": "sshalt"
+        },
+        "targets": [
+            "mlab1.den02.measurement-lab.org:806",
+            "mlab4.den02.measurement-lab.org:806"
+        ]
+    }
+]
+```
+
+A single input file can define a list of configurations, each with a different
+"module" and independent list of targets.
+
+## Create
+
+Create the configmaps for the blackbox exporter:
+
+    kubectl create configmap blackbox-config \
+        --from-file=config/federation/blackbox
+
+Create the blackbox exporter deployment.
+
+    kubectl create -f k8s/federation/blackbox.yml
+
+## Delete
+
+Delete the deployment.
+
+    kubectl delete -f k8s/federation/blackbox.yml
+
+Delete the configmaps.
+
+    kubectl delete configmap blackbox-config
+
 
 # Debugging the steps above
 
