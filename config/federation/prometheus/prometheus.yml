@@ -318,3 +318,25 @@ scrape_configs:
         regex: .*
         target_label: __address__
         replacement: blackbox-public-service.default.svc.cluster.local:9115
+
+
+  # Scrape config for pushgateway.
+  #
+  # Push gateways allow services to publish metrics for later collection by
+  # prometheus. Push gateways are helpful for processes that cannot run an
+  # exporter, whose exporter is not publically accessible, or processes that
+  # are short-lived.
+  #
+  # Like federation, labels set on the pushgatway should be honored by
+  # prometheus.
+  #
+  # Learn more at:
+  #   https://github.com/prometheus/pushgateway#prometheus-pushgateway
+  - job_name: 'pushgateway-targets'
+    # Normally, the prometheus server updates target labels at collection time,
+    # but here we want to take them as-is.
+    honor_labels: true
+
+    static_configs:
+      - targets:
+        - pushgateway-public-service.default.svc.cluster.local:9091
