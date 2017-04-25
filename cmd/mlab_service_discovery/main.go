@@ -1,217 +1,224 @@
+// mlab_service_discovery contacts the AppEngine Admin API to finds all
+// AppEngine Flexible Environments VMs in a RUNNING and SERVING state.
+// mlab_service_discovery generates a JSON targets file based on the VM
+// metadata suitable for input to prometheus.
+//
+// TODO:
+//   * run continuously as a daemon.
+//   * bundled process in a docker container and deploy with the prometheus pod.
+//   * generalize to read from generic web sources.
+
 package main
 
 import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"regexp"
 	"strings"
-	"time"
 
-	// "github.com/kr/pretty"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 
 	appengine "google.golang.org/api/appengine/v1"
-	compute "google.golang.org/api/compute/v1"
 )
 
-func PrettyPrint(results map[string]string) {
-	b, err := json.MarshalIndent(results, "", "  ")
+const (
+	aefLabel             = "__aef_"
+	aefLabelProject      = aefLabel + "project"
+	aefLabelService      = aefLabel + "service"
+	aefLabelVersion      = aefLabel + "version"
+	aefLabelInstance     = aefLabel + "instance"
+	aefLabelPublicProto  = aefLabel + "public_protocol"
+	aefMaxTotalInstances = aefLabel + "max_total_instances"
+	aefVmDebugEnabled    = aefLabel + "vm_debug_enabled"
+)
+
+var (
+	defaultScopes = []string{appengine.CloudPlatformScope, appengine.AppengineAdminScope}
+)
+
+var (
+	project   = flag.String("project", "mlab-sandbox", "project name")
+	filename  = flag.String("filename", "output.json", "File name to write output targets file.")
+	scopeList = flag.String("scopes", strings.Join(defaultScopes, ","), "Comma separated list of scopes to use.")
+)
+
+// discovery bundles several
+type discovery struct {
+	project string
+
+	client *http.Client
+	apis   *appengine.APIService
+}
+
+// formatTargets generates a JSON string from the slice of maps provided.
+func formatTargets(targets interface{}) string {
+	b, err := json.MarshalIndent(targets, "", "    ")
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	fmt.Print(string(b))
+	return string(b)
 }
 
-const (
-	gceLabel               = "__gce_"
-	gceLabelProject        = gceLabel + "project"
-	gceLabelZone           = gceLabel + "zone"
-	gceLabelNetwork        = gceLabel + "network"
-	gceLabelSubnetwork     = gceLabel + "subnetwork"
-	gceLabelPublicIP       = gceLabel + "public_ip"
-	gceLabelPrivateIP      = gceLabel + "private_ip"
-	gceLabelInstanceName   = gceLabel + "instance_name"
-	gceLabelInstanceStatus = gceLabel + "instance_status"
-	gceLabelTags           = gceLabel + "tags"
-	gceLabelMetadata       = gceLabel + "metadata_"
-
-	// Constants for instrumentation.
-	namespace = "prometheus"
-)
-
-var (
-	defaultScopes = []string{compute.ComputeReadonlyScope, appengine.CloudPlatformScope,
-		appengine.AppengineAdminScope}
-)
-
-var (
-	project     = flag.String("project", "mlab-sandbox", "project name")
-	serviceName = flag.String("service", "etl-parser-soltesz", "service name")
-	versionName = flag.String("version", "20170418t195100", "service version")
-	port        = flag.Int("port", 9090, "port number to scrape.")
-	interval    = flag.Int("interval", 60, "Number of seconds between polling.")
-	scopes      = flag.String("scopes", strings.Join(defaultScopes, ","), "Comma separated list of scopes to use.")
-)
-
-type Discovery struct {
-	project string
-	service string
-	version string
-
-	client  *http.Client
-	apis    *appengine.APIService
-	apisvc  *appengine.AppsServicesService
-	apiver  *appengine.AppsServicesVersionsService
-	apiinst *appengine.AppsServicesVersionsInstancesService
-
-	interval     time.Duration
-	port         int
-	tagSeparator string
-}
-
-// NewAppsServicesVersionsService(s *APIService) *AppsServicesVersionsService
-// NewAppsServicesService(s *APIService) *AppsServicesService
-
-// NewDiscovery returns a new Discovery which periodically refreshes its targets.
-func NewClient() (*Discovery, error) {
-	d := &Discovery{
-		project:      "mlab-sandbox",
-		service:      *serviceName,
-		version:      *versionName,
-		interval:     time.Duration(*interval) * time.Duration(time.Second),
-		port:         *port,
-		tagSeparator: ",",
+// newClient returns a new discovery struct with an authenticated AppEngine client.
+func newClient() (*discovery, error) {
+	d := &discovery{
+		project: "mlab-sandbox",
 	}
 
 	var err error
-	// TODO(soltesz): parse scopes.
-	s := strings.Split(*scopes, ",")
-	d.client, err = google.DefaultClient(oauth2.NoContext, s...)
+	scopes := strings.Split(*scopeList, ",")
+	// Create a new authenticated HTTP client.
+	d.client, err = google.DefaultClient(oauth2.NoContext, scopes...)
 	if err != nil {
-		return nil, fmt.Errorf("error setting up communication with GCE service: %s", err)
+		return nil, fmt.Errorf("Error setting up AppEngine client: %s", err)
 	}
 
-	// AppEngine
+	// Create a new AppEngine service instance.
 	d.apis, err = appengine.New(d.client)
 	if err != nil {
-		return nil, fmt.Errorf("error setting up client for AppEngine service: %s", err)
+		return nil, fmt.Errorf("Error setting up AppEngine client: %s", err)
 	}
-
-	d.apisvc = appengine.NewAppsServicesService(d.apis)
-	d.apiver = appengine.NewAppsServicesVersionsService(d.apis)
-	d.apiinst = appengine.NewAppsServicesVersionsInstancesService(d.apis)
 
 	return d, nil
 }
 
-func listApps(d *Discovery) {
-	s := d.apisvc.List(d.project)
+// getLabels creates a target configuration for a prometheus service discovery
+// file. The given service version should have a "SERVING" status, the instance
+// should be in a "RUNNING" state and have at least one forwarded port.
+//
+// In serialized form, the label set look like:
+//   {
+//       "labels": {
+//           "__aef_instance": "aef-etl--parser-20170418t195100-abcd",
+//           "__aef_max_total_instances": "20",
+//           "__aef_project": "mlab-sandbox",
+//           "__aef_public_protocol": "tcp",
+//           "__aef_service": "etl-parser",
+//           "__aef_version": "20170418t195100",
+//           "__aef_vm_debug_enabled": "true"
+//       },
+//       "targets": [
+//           "104.196.220.184:9090"
+//       ]
+//   }
+func getLabels(service *appengine.Service, version *appengine.Version, instance *appengine.Instance) map[string]interface{} {
+	labels := map[string]string{
+		aefLabelProject:      *project,
+		aefLabelService:      service.Id,
+		aefLabelVersion:      version.Id,
+		aefLabelInstance:     instance.Id,
+		aefMaxTotalInstances: fmt.Sprintf("%d", version.AutomaticScaling.MaxTotalInstances),
+		aefVmDebugEnabled:    fmt.Sprintf("%t", instance.VmDebugEnabled),
+	}
+	if strings.HasSuffix(version.Network.ForwardedPorts[0], "/udp") {
+		labels[aefLabelPublicProto] = "udp"
+	} else if strings.HasSuffix(version.Network.ForwardedPorts[0], "/tcp") {
+		labels[aefLabelPublicProto] = "tcp"
+	} else {
+		labels[aefLabelPublicProto] = "both"
+	}
+
+	// TODO(dev): collect max resource sizes: cpu, memory, disk.
+	//   Resources.Cpu
+	//   Resources.DiskGb
+	//   Resources.MemoryGb
+	//   Resources.Volumes[0].Name
+	//   Resources.Volumes[0].SizeGb
+	//   Resources.Volumes[0].VolumeType
+
+	// TODO: do we need to support multiple forwarded ports? How to choose?
+	// Extract target address in the form of the VM public IP and forwarded port.
+	re := regexp.MustCompile("([0-9]+)(/.*)")
+	port := re.ReplaceAllString(version.Network.ForwardedPorts[0], "$1")
+	targets := []string{fmt.Sprintf("%s:%s", instance.VmIp, port)}
+
+	// Construct a record for the Prometheus file service discovery format.
+	// https://prometheus.io/docs/operating/configuration/#<file_sd_config>
+	values := map[string]interface{}{
+		"labels":  labels,
+		"targets": targets,
+	}
+	return values
+}
+
+// listVms walks through every AppEngine service, looks at every serving
+// version. listVms returns a list of every running instance in a form suitable
+// for export to a prometheus service discovery file.
+func listVms(client *discovery) ([]map[string]interface{}, error) {
+	var err error
+	targets := make([]map[string]interface{}, 0)
+
+	s := client.apis.Apps.Services.List(client.project)
 	// List all services.
-	s.Pages(nil, func(listSvc *appengine.ListServicesResponse) error {
+	err = s.Pages(nil, func(listSvc *appengine.ListServicesResponse) error {
 		for _, service := range listSvc.Services {
+
 			// List all versions of each service.
-			v := d.apiver.List(d.project, service.Id)
-			v.Pages(nil, func(listVer *appengine.ListVersionsResponse) error {
+			v := client.apis.Apps.Services.Versions.List(client.project, service.Id)
+			err = v.Pages(nil, func(listVer *appengine.ListVersionsResponse) error {
 				for _, version := range listVer.Versions {
-					// List instances associated with each service version.
+
 					if version.ServingStatus != "SERVING" {
 						continue
 					}
-					l := d.apiinst.List(d.project, service.Id, version.Id)
-					_ = l.Pages(nil, func(listInst *appengine.ListInstancesResponse) error {
+					// List instances associated with each service version.
+					l := client.apis.Apps.Services.Versions.Instances.List(
+						client.project, service.Id, version.Id)
+					err = l.Pages(nil, func(listInst *appengine.ListInstancesResponse) error {
 						for _, instance := range listInst.Instances {
 							if instance.VmStatus != "RUNNING" {
 								continue
 							}
-							//pretty.Print(service)
-							//pretty.Print(version)
-							//pretty.Print(instance)
-							if version.Network != nil {
-								if len(version.Network.ForwardedPorts) > 0 {
-									fmt.Printf("%s %s:%s\n", service.Id, instance.VmIp, strings.Replace(version.Network.ForwardedPorts[0], "/tcp", "", 1))
-								}
+							// Ignore instances without networks or forwarded ports.
+							if version.Network == nil {
+								continue
 							}
+							if len(version.Network.ForwardedPorts) == 0 {
+								continue
+							}
+							targets = append(targets, getLabels(service, version, instance))
 						}
 						return nil
 					})
 				}
-				return nil
+				return err
 			})
-
 		}
-		return nil
+		return err
 	})
-	return
+	return targets, err
 }
 
 func main() {
 	flag.Parse()
-	d, err := NewClient()
+
+	// TODO(dev): run in a loop as a service.
+	// TODO(dev): handle errors.
+	client, err := newClient()
 	if err != nil {
 		panic(err)
 	}
 
-	listApps(d)
+	// Collect AE Flex targets and labels.
+	values, err := listVms(client)
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+	}
+
+	// Convert to JSON.
+	data, err := json.MarshalIndent(values, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Save targets to output file.
+	err = ioutil.WriteFile(*filename, data, 0644)
+	if err != nil {
+		panic(err)
+	}
 	return
-
-	/*
-		ilc := d.isvc.List(d.project, d.zone)
-		if len(d.filter) > 0 {
-			fmt.Println("USING FILTER:", d.filter)
-			ilc = ilc.Filter(d.filter)
-		}
-		err = ilc.Pages(nil, func(l *compute.InstanceList) error {
-			for _, inst := range l.Items {
-				if len(inst.NetworkInterfaces) == 0 {
-					continue
-				}
-				labels := map[string]string{
-					gceLabelProject:        d.project,
-					gceLabelZone:           inst.Zone,
-					gceLabelInstanceName:   inst.Name,
-					gceLabelInstanceStatus: inst.Status,
-				}
-				priIface := inst.NetworkInterfaces[0]
-				labels[gceLabelNetwork] = priIface.Network
-				labels[gceLabelSubnetwork] = priIface.Subnetwork
-				labels[gceLabelPrivateIP] = priIface.NetworkIP
-				addr := fmt.Sprintf("%s:%d", priIface.NetworkIP, d.port)
-				labels["__address__"] = addr
-
-				// Tags in GCE are usually only used for networking rules.
-				if inst.Tags != nil && len(inst.Tags.Items) > 0 {
-					// We surround the separated list with the separator as well. This way regular expressions
-					// in relabeling rules don't have to consider tag positions.
-					tags := d.tagSeparator + strings.Join(inst.Tags.Items, d.tagSeparator) + d.tagSeparator
-					labels[gceLabelTags] = tags
-				}
-
-				// GCE metadata are key-value pairs for user supplied attributes.
-				if inst.Metadata != nil {
-					for _, i := range inst.Metadata.Items {
-						// Protect against occasional nil pointers.
-						if i.Value == nil {
-							continue
-						}
-						name := i.Key
-						labels[gceLabelMetadata+name] = *i.Value
-					}
-				}
-
-				if len(priIface.AccessConfigs) > 0 {
-					ac := priIface.AccessConfigs[0]
-					if ac.Type == "ONE_TO_ONE_NAT" {
-						labels[gceLabelPublicIP] = ac.NatIP
-					}
-				}
-				PrettyPrint(labels)
-			}
-			return nil
-		})
-		if err != nil {
-			panic(fmt.Errorf("error retrieving refresh targets from gce: %s", err))
-		}
-	*/
 }
