@@ -21,9 +21,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kr/pretty"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 
+	appengine "google.golang.org/api/appengine/v1"
 	compute "google.golang.org/api/compute/v1"
 )
 
@@ -53,8 +55,10 @@ const (
 )
 
 var (
-	zone   = flag.String("zone", "us-east1-b", "GCE zone name to query")
-	filter = flag.String("filter", "", "An Instances.List filter")
+	zone    = flag.String("zone", "us-east1-b", "GCE zone name to query")
+	filter  = flag.String("filter", "", "An Instances.List filter")
+	service = flag.String("service", "etl-parser-soltesz", "service name")
+	version = flag.String("version", "20170418t195100", "service version")
 )
 
 type GCEDiscovery struct {
@@ -64,6 +68,8 @@ type GCEDiscovery struct {
 	client       *http.Client
 	svc          *compute.Service
 	isvc         *compute.InstancesService
+	apps         *appengine.APIService
+	appsvc       *appengine.AppsServicesVersionsInstancesService
 	interval     time.Duration
 	port         int
 	tagSeparator string
@@ -83,16 +89,33 @@ func NewClient() (*GCEDiscovery, error) {
 	fmt.Println("FILTER2:", gd.filter)
 
 	var err error
-	gd.client, err = google.DefaultClient(oauth2.NoContext, compute.ComputeReadonlyScope, "https://www.googleapis.com/auth/cloud-platform")
+	gd.client, err = google.DefaultClient(oauth2.NoContext, compute.ComputeReadonlyScope, appengine.CloudPlatformScope, appengine.AppengineAdminScope)
 	if err != nil {
 		return nil, fmt.Errorf("error setting up communication with GCE service: %s", err)
 	}
+	// compute engine.
 	gd.svc, err = compute.New(gd.client)
 	if err != nil {
 		return nil, fmt.Errorf("error setting up communication with GCE service: %s", err)
 	}
 	gd.isvc = compute.NewInstancesService(gd.svc)
+
+	// app engine
+	gd.apps, err = appengine.New(gd.client)
+	if err != nil {
+		return nil, fmt.Errorf("error setting up client for AppEngine service: %s", err)
+	}
+	gd.appsvc = appengine.NewAppsServicesVersionsInstancesService(gd.apps)
 	return gd, nil
+}
+
+func listApps(gd *GCEDiscovery) {
+	l := gd.appsvc.List("mlab-sandbox", *service, *version)
+	_ = l.Pages(nil, func(resp *appengine.ListInstancesResponse) error {
+		pretty.Print(resp)
+		return nil
+	})
+	return
 }
 
 func main() {
@@ -101,6 +124,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	listApps(gd)
+	return
 
 	ilc := gd.isvc.List(gd.project, gd.zone)
 	if len(gd.filter) > 0 {
