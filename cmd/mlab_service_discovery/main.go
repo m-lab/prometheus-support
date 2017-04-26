@@ -15,9 +15,13 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
+
+	"github.com/kr/pretty"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -41,26 +45,19 @@ var (
 )
 
 var (
-	project   = flag.String("project", "mlab-sandbox", "project name")
-	filename  = flag.String("filename", "output.json", "File name to write output targets file.")
+	project   = flag.String("project", "", "GCP project name.")
+	filename  = flag.String("output", "targets.json", "Write targets configuration to given filename.")
 	scopeList = flag.String("scopes", strings.Join(defaultScopes, ","), "Comma separated list of scopes to use.")
+	refresh   = flag.Duration("refresh", time.Minute, "Number of seconds between refreshing.")
 )
 
 // discovery bundles runtime several variables together.
 type discovery struct {
 	project string
 
-	client *http.Client
-	apis   *appengine.APIService
-}
-
-// formatTargets generates a JSON string from the slice of maps provided.
-func formatTargets(targets interface{}) string {
-	b, err := json.MarshalIndent(targets, "", "    ")
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	return string(b)
+	client  *http.Client
+	apis    *appengine.APIService
+	targets []interface{}
 }
 
 // newClient returns a new discovery object with an authenticated AppEngine client.
@@ -83,6 +80,8 @@ func newClient() (*discovery, error) {
 		return nil, fmt.Errorf("Error setting up AppEngine client: %s", err)
 	}
 
+	// Allocate space for the list of targets.
+	d.targets = make([]interface{}, 0)
 	return d, nil
 }
 
@@ -145,81 +144,106 @@ func getLabels(service *appengine.Service, version *appengine.Version, instance 
 	return values
 }
 
-// TODO(dev): reduce nesting.
 // listVms walks through every AppEngine service, looks at every serving
 // version. listVms returns a list of every running instance in a form suitable
 // for export to a prometheus service discovery file.
-func listVms(client *discovery) ([]map[string]interface{}, error) {
-	var err error
-	targets := make([]map[string]interface{}, 0)
-
+func listVms(client *discovery) error {
 	s := client.apis.Apps.Services.List(client.project)
 	// List all services.
-	err = s.Pages(nil, func(listSvc *appengine.ListServicesResponse) error {
+	err := s.Pages(nil, func(listSvc *appengine.ListServicesResponse) error {
 		for _, service := range listSvc.Services {
-
 			// List all versions of each service.
 			v := client.apis.Apps.Services.Versions.List(client.project, service.Id)
-			err = v.Pages(nil, func(listVer *appengine.ListVersionsResponse) error {
-				for _, version := range listVer.Versions {
-
-					if version.ServingStatus != "SERVING" {
-						continue
-					}
-					// List instances associated with each service version.
-					l := client.apis.Apps.Services.Versions.Instances.List(
-						client.project, service.Id, version.Id)
-					err = l.Pages(nil, func(listInst *appengine.ListInstancesResponse) error {
-						for _, instance := range listInst.Instances {
-							if instance.VmStatus != "RUNNING" {
-								continue
-							}
-							// Ignore instances without networks or forwarded ports.
-							if version.Network == nil {
-								continue
-							}
-							if len(version.Network.ForwardedPorts) == 0 {
-								continue
-							}
-							targets = append(targets, getLabels(service, version, instance))
-						}
-						return nil
-					})
-				}
-				return err
+			err := v.Pages(nil, func(listVer *appengine.ListVersionsResponse) error {
+				// pretty.Print(service)
+				return client.handleVersions(listVer, service)
 			})
+			if err != nil {
+				return err
+			}
 		}
-		return err
+		return nil
 	})
-	return targets, err
+	return err
+}
+
+// handles each version returned by an AppEngine Versions.List.
+func (client *discovery) handleVersions(listVer *appengine.ListVersionsResponse, service *appengine.Service) error {
+	for _, version := range listVer.Versions {
+
+		if version.ServingStatus != "SERVING" {
+			continue
+		}
+		// pretty.Print(version)
+		// List instances associated with each service version.
+		l := client.apis.Apps.Services.Versions.Instances.List(
+			client.project, service.Id, version.Id)
+		err := l.Pages(nil, func(listInst *appengine.ListInstancesResponse) error {
+			return client.handleInstances(listInst, service, version)
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// handles each version returned by an AppEngine Versions.List.
+func (client *discovery) handleInstances(listInst *appengine.ListInstancesResponse, service *appengine.Service, version *appengine.Version) error {
+	for _, instance := range listInst.Instances {
+		// pretty.Print(instance)
+		if instance.VmStatus != "RUNNING" {
+			continue
+		}
+		// Ignore instances without networks or forwarded ports.
+		if version.Network == nil {
+			continue
+		}
+		if len(version.Network.ForwardedPorts) == 0 {
+			continue
+		}
+		client.targets = append(client.targets, getLabels(service, version, instance))
+	}
+	return nil
 }
 
 func main() {
 	flag.Parse()
+	var start time.Time
 
-	// TODO(dev): run in a loop as a service.
-	// TODO(dev): handle errors.
-	client, err := newClient()
-	if err != nil {
-		panic(err)
-	}
+	// Only sleep as long as we need to, before starting a new iteration.
+	for ; ; time.Sleep(*refresh - time.Since(start)) {
+		start = time.Now()
+		log.Printf("Starting a new round at: %s", start)
 
-	// Collect AE Flex targets and labels.
-	values, err := listVms(client)
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-	}
+		// Allocate a new authenticated client for App Engine API.
+		client, err := newClient()
+		if err != nil {
+			log.Printf("Failed to get authenticated client: %s", err)
+			continue
+		}
 
-	// Convert to JSON.
-	data, err := json.MarshalIndent(values, "", "    ")
-	if err != nil {
-		panic(err)
-	}
+		// Collect AE Flex targets and labels.
+		err = listVms(client)
+		if err != nil {
+			log.Printf("Failed to list VMs: %s", err)
+			continue
+		}
 
-	// Save targets to output file.
-	err = ioutil.WriteFile(*filename, data, 0644)
-	if err != nil {
-		panic(err)
+		// Convert to JSON.
+		data, err := json.MarshalIndent(client.targets, "", "    ")
+		if err != nil {
+			log.Printf("Failed to Marshal JSON: %s", err)
+			log.Printf("Pretty data: %s", pretty.Sprint(client.targets))
+			continue
+		}
+
+		// Save targets to output file.
+		err = ioutil.WriteFile(*filename, data, 0644)
+		if err != nil {
+			log.Printf("Failed to write %s: %s", *filename, err)
+			continue
+		}
 	}
 	return
 }
