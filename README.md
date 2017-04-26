@@ -38,8 +38,13 @@ see the [official docs][configmaps].
 Create the ConfigMap for prometheus (only create a ConfigMap for one of cluster
 or federation, not both):
 
+TODO(soltesz): move environment variables (like gcloud-project) to a separate
+directory.
+
     kubectl create configmap prometheus-federation-config \
+        --from-literal=gcloud-project=mlab-sandbox
         --from-file=config/federation/prometheus
+
     kubectl create configmap prometheus-cluster-config \
         --from-file=config/cluster/prometheus
 
@@ -459,6 +464,29 @@ Delete the configmaps.
 
     kubectl delete configmap blackbox-config
 
+# Pushgateway
+
+A prometheus push gateway are useful for short-lived processes, or processes
+that are not network accessible by the prometheus server.
+
+Note that push gateways have limitations. So, consider this an option of last
+resort and understand the limits before proceeding.
+
+For more information, see:
+https://github.com/prometheus/pushgateway#prometheus-pushgateway
+
+## Create
+
+The pushgateway has no configuration file or persistent state. Create the
+deployment.
+
+    kubectl create -f k8s/federation/pushgateway.yml
+
+## Delete
+
+Delete the deployment.
+
+    kubectl delete -f k8s/federation/pushgateway.yml
 
 # Debugging the steps above
 
