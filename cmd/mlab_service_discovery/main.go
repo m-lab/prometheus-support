@@ -46,7 +46,7 @@ var (
 	scopeList = flag.String("scopes", strings.Join(defaultScopes, ","), "Comma separated list of scopes to use.")
 )
 
-// discovery bundles several
+// discovery bundles runtime several variables together.
 type discovery struct {
 	project string
 
@@ -63,7 +63,7 @@ func formatTargets(targets interface{}) string {
 	return string(b)
 }
 
-// newClient returns a new discovery struct with an authenticated AppEngine client.
+// newClient returns a new discovery object with an authenticated AppEngine client.
 func newClient() (*discovery, error) {
 	d := &discovery{
 		project: "mlab-sandbox",
@@ -145,6 +145,7 @@ func getLabels(service *appengine.Service, version *appengine.Version, instance 
 	return values
 }
 
+// TODO(dev): reduce nesting.
 // listVms walks through every AppEngine service, looks at every serving
 // version. listVms returns a list of every running instance in a form suitable
 // for export to a prometheus service discovery file.
