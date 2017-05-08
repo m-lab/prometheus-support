@@ -1,3 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-public-service
+  namespace: default
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9090'
+    gke-prometheus-federation/scrape: 'true'
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    run: prometheus-server
+  sessionAffinity: None
+  type: LoadBalancer
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -49,11 +68,11 @@ spec:
           - containerPort: 9090
         resources:
           requests:
-            memory: "3Gi"
-            cpu: "500m"
+            memory: "8Gi"
+            cpu: "3000m"
           limits:
-            memory: "3Gi"
-            cpu: "500m"
+            memory: "8Gi"
+            cpu: "3000m"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
