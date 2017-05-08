@@ -37,6 +37,17 @@ modules:
       query_response:
         - expect: "SSH-2.0-OpenSSH_.+"
 
+  # target=<hostname:port>
+  rsync_online:
+    prober: tcp
+    timeout: 10s
+    tcp:
+      protocol: "tcp4"
+      query_response:
+        # @RSYNCD: is followed by a version number, e.g. 30.0. For more
+        # flexibility we do not require a specific version here.
+        - expect: "@RSYNCD: .+"
+
   # target=<hostname>
   icmp:
     prober: icmp
