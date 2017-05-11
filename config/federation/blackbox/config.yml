@@ -7,6 +7,11 @@
 # synchronously with the request. Typically, Prometheus will issue the request
 # to the blackbox exporter.
 #
+# The prober timeout setting must be less than the prometheus scrape timeout
+# or the prometheus server will give up and conclude that the blackbox service
+# is down and never receive the probe failure metrics from the blackbox
+# exporter.
+#
 # We can run a sample check. For example:
 #    target=mlab1.lga02.measurement-lab.org:806
 #    module=ssh_v4_online
@@ -31,7 +36,7 @@ modules:
   # target=<hostname:port>
   ssh_v4_online:
     prober: tcp
-    timeout: 10s
+    timeout: 5s
     tcp:
       protocol: "tcp4"
       query_response:
@@ -40,7 +45,7 @@ modules:
   # target=<hostname:port>
   rsync_online:
     prober: tcp
-    timeout: 10s
+    timeout: 5s
     tcp:
       protocol: "tcp4"
       query_response:
