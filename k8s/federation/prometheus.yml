@@ -101,7 +101,7 @@ spec:
         - mountPath: /prometheus
           name: prometheus-storage
 
-      - image: measurementlab/mlab-service-discovery
+      - image: measurementlab/gcp-service-discovery
         name: service-discovery
         env:
         - name: GCLOUD_PROJECT
@@ -109,8 +109,16 @@ spec:
             configMapKeyRef:
               name: prometheus-federation-config
               key: gcloud-project
-        args: [ "-output=/targets/aeflex-targets/aeflex.json",
-                "-project=$(GCLOUD_PROJECT)"]
+        args: [ "-aef-target=/targets/aeflex-targets/aeflex.json",
+                "-gke-target=/targets/federation-targets/prometheus-clusters.json",
+                "-http-target=/targets/legacy-targets/sidestream.json",
+                "-http-target=/targets/blackbox-targets/ssh806.json",
+                "-http-target=/targets/blackbox-targets/rsyncd.json",
+                "-http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/legacy-targets/sidestream.json",
+                "-http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/ssh806.json",
+                "-http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/rsyncd.json",
+                "-project=$(GCLOUD_PROJECT)" ]
+        - mountPath: /federation-targets
         resources:
           requests:
             memory: "10Mi"
