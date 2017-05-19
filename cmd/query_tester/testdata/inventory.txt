@@ -1,0 +1,59 @@
+# Machine and rsync inventory.
+
+# At collection time, prometheus defines the up{} metric. So, up{} is a view
+# of the target inventory. This metric for the ssh806 service should always be
+# present.
+
+# The ssh806 service is a proxy for machine inventory. Prometheus should always
+# be monitoring some machines.
+
+# Service ssh806 is absent.
+clear
+load 1m
+    up{service="unrelated-service"} 1
+
+eval instant at 0m absent(up{service="ssh806"})
+    {service="ssh806"} 1
+
+
+# The number of machines in the ssh806 inventory should equal the number of
+# machines in the rsyncd inventory.
+
+# Counts are equal.
+clear
+load 1m
+    up{service="rsyncd", machine="a", experiment="foo"} 1
+    up{service="ssh806", machine="b"} 1
+
+eval instant at 0m count(up{service="ssh806"}) - scalar( count( count BY(machine) (up{service="rsyncd"}))) != 0
+# EMPTY RESULT
+
+# Counts are not equal.
+clear
+load 1m
+    up{service="rsyncd", machine="a", experiment="foo"} 1
+    up{service="rsyncd", machine="b", experiment="foo"} 1
+    up{service="ssh806", machine="c"} 1
+
+eval instant at 0m count(up{service="ssh806"}) - scalar( count( count BY(machine) (up{service="rsyncd"}))) != 0
+    {} -1
+
+
+# For a complete check, the set of machines that do not have rsyncd services,
+# and the set of rsyncd servers that are not on inventory machines, should both
+# be empty.
+
+clear
+load 1m
+    up{service="rsyncd", machine="a", experiment="foo"} 1
+    up{service="rsyncd", machine="b", experiment="foo"} 1
+    up{service="ssh806", machine="b"} 1
+    up{service="ssh806", machine="c"} 1
+
+# Identify ssh806 that do not have a corresponding rsyncd.
+eval instant at 0m up{service="ssh806"} UNLESS ON(machine) up{service="rsyncd"}
+    up{service="ssh806", machine="c"} 1
+
+# Identify rsyncd that do not have a corresponding ssh806.
+eval instant at 0m up{service="rsyncd"} UNLESS ON(machine) up{service="ssh806"}
+    up{service="rsyncd", machine="a", experiment="foo"} 1
