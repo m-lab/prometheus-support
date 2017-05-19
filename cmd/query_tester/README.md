@@ -13,7 +13,6 @@ The `promql.Test` uses a special purpose syntax for setting up data available
 for a test query, and specifying expected results.
 
 The basic form is:
-
 ```
 clear
 load <step>
@@ -34,16 +33,18 @@ eval instant at 0m absent(up{service="ssh806"})
 ```
 
 * `clear` resets the current data set.
+
 * `load` reads in a set of metrics and sets values for those metrics. The load
    parameter is a step size, in the same form as supported by
    `time.ParseDuration`, e.g. 1m for 1 minute.
+
 * `eval instant at 0m` evaluates an instantaneous query expression evaluated at
-  time 0. Timestamps begin at 0.
+  time 0. Timestamps begin at 0. NOTE: While some queryies may be very long, for
+  now, the entire expression must be on a single line.
 
 ## Advanced test format
 
 When loading metric values, you may specify repeated values. For example:
-
 ```
 clear
 load 1m
@@ -64,7 +65,6 @@ The form is: `<initial value> [+-] <delta> x <number of steps>`
 
 So, using the example, the initial value is 0, and for 20 steps, we'll add 10
 each step. This will save values:
-
 ```
  0m, 0
  1m, 10
