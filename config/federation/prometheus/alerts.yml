@@ -34,3 +34,128 @@ ALERT ClusterDown
     summary = "Instance {{ $labels.instance }} down",
     description = "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes.",
   }
+
+
+##
+## Inventory.
+##
+
+ALERT InventoryConfigurationIsMissing
+  IF absent(up{service="ssh806"}) OR absent(up{service="rsyncd"})
+  FOR 30m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "Inventory configuration {{ $labels.service }} is missing.",
+    description = "Machine or rsyncd service configuration has been missing for too long.",
+    hints = "Check the behavior of the m-lab/operator/.travis.yml deployment,
+             the GCS buckets, and the gcp-service-discovery component of prometheus-support.",
+  }
+
+ALERT InventoryMachinesWithoutRsyncd
+  IF up{service="ssh806"} UNLESS ON(machine) up{service="rsyncd"}
+  FOR 30m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "Rsyncd configuration is missing from some machines.",
+    hints = "",
+  }
+
+ALERT InventoryRsyncdWithoutMachines
+  IF up{service="rsyncd"} UNLESS ON(machine) up{service="ssh806"}
+  FOR 30m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "Machine configuration is missing for some rsyncd services.",
+    hints = "",
+  }
+
+
+##
+## Services.
+##
+
+ALERT SidestreamServicesAreMissing
+  IF absent(up{service="sidestream"})
+  FOR 30m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "",
+    hints = "",
+  }
+
+ALERT SidestreamRunningWithoutMachine
+  IF up{service="sidestream"} UNLESS ON(machine) up{service="ssh806"}
+  FOR 30m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "",
+    hints = "",
+  }
+
+ALERT MachineWithoutSidestreamRunning
+  IF up{service="ssh806"} UNLESS ON(machine) up{service="sidestream"}
+  FOR 30m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "",
+    hints = "",
+  }
+
+
+##
+##
+##
+# Scrapers are configured on machine "c", but machine "c" is not in the rsyncd inventory.
+# ALERT ScraperRunningWithoutRsyncd
+# up{service="scraper"} UNLESS ON(machine, experiment) up{service="rsyncd"}
+
+# Rsync inventory includes machine "b", but machine "b" does not have a configured scraper.
+# ALERT RsyncRunningWithoutScraper
+# up{service="rsyncd"} UNLESS ON(machine, experiment) up{service="scraper"}
+
+
+
+##
+## SLOs
+##
+
+# MachineSLO
+ALERT SidestreamIsNotRunning
+  IF sum_over_time(up{service="sidestream"}[10m]) == 0
+        AND ON(machine)
+           sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
+  FOR 10m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "",
+    description = "",
+  }
+
+
+# ScraperSLO
+ALERT ScraperMostRecentArchivedFileTimeIsTooOld
+  IF (time() - scraper_maxrawfiletimearchived{service="scraper-sync"}) > (36 * 60 * 60)
+        AND ON(machine)
+           (time() - process_start_time_seconds{service=”sidestream”}) > (2 * 60 * 60)
+  FOR 10m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Scraper max file mtime is too old {{ $labels.rsync_url }}",
+    description = "Max file mtime for {{ $labels.rsync_url }} is older than 40 hours.",
+  }
