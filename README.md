@@ -1,4 +1,5 @@
 [![Build Status][svg]][travis]
+
 [svg]: https://travis-ci.org/m-lab/prometheus-support.svg?branch=master
 [travis]: https://travis-ci.org/m-lab/prometheus-support
 
