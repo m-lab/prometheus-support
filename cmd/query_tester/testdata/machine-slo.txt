@@ -1,0 +1,36 @@
+# Machine SLO.
+#
+# Ensure that sidestream is running on every online machine, so that we can
+# read machine up time.
+#
+# When both the machine and sidestream are online or offline, return nothing.
+
+
+# Machine and sidestream are online.
+clear
+load 1m
+    probe_success{service="ssh806", machine="mlab1-sidestream-online"} 1+0x20
+    up{service="sidestream", machine="mlab1-sidestream-online"} 1+0x20
+
+eval instant at 20m sum_over_time(up{service="sidestream"}[10m]) == 0 AND ON(machine) sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
+# EMPTY RESULT.
+
+
+# Machine is online, but sidestream is offline.
+clear
+load 1m
+    probe_success{service="ssh806", machine="mlab1-sidestream-offline"} 1+0x20
+    up{service="sidestream", machine="mlab1-sidestream-offline"} 0+0x20
+
+eval instant at 20m sum_over_time(up{service="sidestream"}[10m]) == 0 AND ON(machine) sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
+    {service="sidestream", machine="mlab1-sidestream-offline"} 0
+
+
+# Machine and sidestream are offline.
+clear
+load 1m
+    probe_success{service="ssh806", machine="mlab1"} 0+0x20
+    up{service="sidestream", machine="mlab1"} 0+0x20
+
+eval instant at 20m sum_over_time(up{service="sidestream"}[10m]) == 0 AND ON(machine) sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
+# EMPTY RESULT.
