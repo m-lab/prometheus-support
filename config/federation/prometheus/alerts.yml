@@ -24,6 +24,8 @@
 
 # ClusterDown: when any of the federated prometheus k8s clusters is down for
 # three sample periods, then raise an alert.
+#
+# All scraper metrics come from federated targets, so this is critical.
 ALERT ClusterDown
   IF up{job="federation-targets"} == 0
   FOR 3m
@@ -35,6 +37,77 @@ ALERT ClusterDown
     description = "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes.",
   }
 
+##
+## SLOs
+##
+
+# MachineSLO
+#
+# SidestreamIsNotRunning: an M-Lab server is online, but the sidestream exporter
+# is not. Since sidestream is a core service, this must be fixed.
+ALERT SidestreamIsNotRunning
+  IF sum_over_time(up{service="sidestream"}[10m]) == 0
+        AND ON(machine)
+           sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
+  FOR 10m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "",
+    description = "",
+  }
+
+
+# ScraperSLO
+#
+# ScraperMostRecentArchivedFileTimeIsTooOld: scraper uploads archives for a
+# machine once a day. If the machine is online (for at least 2 hours), but
+# scraper has not uploaded an archive for that machine for more than 36 hours,
+# there is a problem.
+ALERT ScraperMostRecentArchivedFileTimeIsTooOld
+  IF (time() - scraper_maxrawfiletimearchived{service="scraper-sync"}) > (36 * 60 * 60)
+        AND ON(machine)
+           (time() - process_start_time_seconds{service="sidestream"}) > (2 * 60 * 60)
+  FOR 10m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Scraper max file mtime is too old {{ $labels.rsync_url }}",
+    description = "Max file mtime for {{ $labels.rsync_url }} is older than 40 hours.",
+  }
+
+# Scraper internal consistency.
+#
+# ScraperSyncPresentWithoutScaperCollector,
+#   ScraperCollectorMissingFromScaperSync:
+#
+ALERT ScraperSyncPresentWithoutScaperCollector
+  IF (scraper_maxrawfiletimearchived{service="scraper-sync"}
+        UNLESS ON(machine, experiment, rsync_module)
+           up{service="scraper"})
+  FOR 3h
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "",
+    description = "",
+  }
+
+ALERT ScraperCollectorMissingFromScaperSync
+  IF (up{service="scraper"}
+        UNLESS ON(machine, experiment, rsync_module)
+           scraper_maxrawfiletimearchived{service="scraper-sync"})
+  FOR 3h
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "",
+    description = "",
+  }
 
 ##
 ## Inventory.
@@ -49,8 +122,7 @@ ALERT InventoryConfigurationIsMissing
   ANNOTATIONS {
     summary = "Inventory configuration {{ $labels.service }} is missing.",
     description = "Machine or rsyncd service configuration has been missing for too long.",
-    hints = "Check the behavior of the m-lab/operator/.travis.yml deployment,
-             the GCS buckets, and the gcp-service-discovery component of prometheus-support.",
+    hints = "Check the behavior of the m-lab/operator/.travis.yml deployment, the GCS buckets, and the gcp-service-discovery component of prometheus-support.",
   }
 
 ALERT InventoryMachinesWithoutRsyncd
@@ -113,49 +185,29 @@ ALERT MachineWithoutSidestreamRunning
     hints = "",
   }
 
-
-##
-##
-##
 # Scrapers are configured on machine "c", but machine "c" is not in the rsyncd inventory.
-# ALERT ScraperRunningWithoutRsyncd
-# up{service="scraper"} UNLESS ON(machine, experiment) up{service="rsyncd"}
-
-# Rsync inventory includes machine "b", but machine "b" does not have a configured scraper.
-# ALERT RsyncRunningWithoutScraper
-# up{service="rsyncd"} UNLESS ON(machine, experiment) up{service="scraper"}
-
-
-
-##
-## SLOs
-##
-
-# MachineSLO
-ALERT SidestreamIsNotRunning
-  IF sum_over_time(up{service="sidestream"}[10m]) == 0
-        AND ON(machine)
-           sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
-  FOR 10m
+ALERT ScraperRunningWithoutRsyncd
+  IF up{service="scraper"} UNLESS ON(machine, experiment) up{service="rsyncd"}
+  FOR 30m
   LABELS {
-    severity = "page"
+    severity = "ticket"
   }
   ANNOTATIONS {
     summary = "",
-    description = "",
+    hints = "",
   }
 
-
-# ScraperSLO
-ALERT ScraperMostRecentArchivedFileTimeIsTooOld
-  IF (time() - scraper_maxrawfiletimearchived{service="scraper-sync"}) > (36 * 60 * 60)
-        AND ON(machine)
-           (time() - process_start_time_seconds{service=”sidestream”}) > (2 * 60 * 60)
-  FOR 10m
+# Rsync inventory includes machine "b", but machine "b" does not have a configured scraper.
+ALERT RsyncRunningWithoutScraper
+  IF up{service="rsyncd"} UNLESS ON(machine, experiment) up{service="scraper"}
+  FOR 30m
   LABELS {
-    severity = "page"
+    severity = "ticket"
   }
   ANNOTATIONS {
-    summary = "Scraper max file mtime is too old {{ $labels.rsync_url }}",
-    description = "Max file mtime for {{ $labels.rsync_url }} is older than 40 hours.",
+    summary = "",
+    hints = "",
   }
+
+
+
