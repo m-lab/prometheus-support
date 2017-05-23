@@ -1,0 +1,20 @@
+language: go
+
+# Unconditionally place the repo at GOPATH/src/${go_import_path} to support
+# forks.
+go_import_path: github.com/m-lab/prometheus-support
+
+install:
+- go install github.com/prometheus/prometheus/cmd/promtool
+
+script:
+# Run query "unit tests".
+- go test -v github.com/m-lab/prometheus-support/cmd/query_tester -args -log.level warn
+
+# Use promtool to check current alerts and rules. This is only a syntax check.
+- promtool check-rules config/federation/prometheus/alerts.yml
+- promtool check-rules config/federation/prometheus/rules.yml
+
+# TODO(soltesz): support check-config.
+# promtool check-config config/federation/prometheus/prometheus.yml
+# promtool check-config config/cluster/prometheus/prometheus.yml
