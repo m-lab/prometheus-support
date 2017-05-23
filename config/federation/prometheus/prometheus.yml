@@ -253,6 +253,8 @@ scrape_configs:
     # them as-is.
     honor_labels: true
     metrics_path: '/federate'
+    # Allow more time, since the number of metrics may be large.
+    scrape_timeout: 50s
 
     params:
       'match[]':
