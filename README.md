@@ -11,6 +11,36 @@ See the [container engine quickstart guide][quickstart] for a simple howto.
 
 [quickstart]: https://cloud.google.com/container-engine/docs/quickstart
 
+# Creating a cluster for Prometheus
+
+## Federation
+
+To support service discovery across GCP, the cloud-platform scope is currently
+necessary.
+
+```
+gcloud container \
+  --project "mlab-sandbox" clusters create "prometheus-federation" \
+  --zone "us-central1-a" \
+  --machine-type=n1-standard-8
+  --scopes "https://www.googleapis.com/auth/cloud-platform"
+  --num-nodes 3 \
+  --node-labels=prometheus-node=true
+```
+
+## Within an existing cluster
+
+No special scopes are required for the prometheus cluster configuration.
+
+```
+gcloud --project=mlab-oti container node-pools create prometheus-pool \
+  --cluster=scraper-cluster \
+  --num-nodes=2 \
+  --zone=us-central1-a
+  --node-labels=prometheus-node=true \
+  --machine-type=n1-standard-8
+```
+
 # Using Kubernetes config files
 
 Kubernetes config files preserve a deployment configuration and provide a
@@ -351,11 +381,9 @@ The steps are:
  * Click "Add data source."
  * Name the source, e.g. "Prometheus"
  * Select the Type as "Prometheus"
- * Use a URI corresponding to the service name, i.e.
-   http://prometheus-public-service.default.svc.cluster.local:9090
-   Note: this DNS name is added automatically within the kubernetes cluster.
-   The name provided must be a fully qualified URL. You may also use the public
-   IP or public DNS name.
+ * Use a public URI corresponding to the service name, i.e.
+   http://status-mlab-sandbox.measurementlab.net:9090
+   The name provided must be a fully qualified URL. You may also use the IP.
  * Leave the Access as "proxy"
  * Click "Add"
 
