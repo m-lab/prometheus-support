@@ -124,39 +124,36 @@ scrape_configs:
   # Kubernetes pods are scraped when they have an annotation:
   #   `prometheus.io/scrape=true`.
   #
-  # Port 80 is sraped by default. To use a different port, use the annotation:
-  #   `prometheus.io/port=9090`.
+  # Only container that include an explicit containerPort declaration are
+  # scraped. For example:
+  #
+  #      ports:
+  #        - containerPort: 9090
   #
   # Configuration expects the default HTTP protocol scheme.
   # Configuration expects the default path of /metrics on targets.
-  #
-  # NB: Pods report every declared container port. So, it's possible that not
-  # all ports will be instrumented. So, in the future, we may add some filters.
   - job_name: 'kubernetes-pods'
     kubernetes_sd_configs:
       - role: pod
 
     relabel_configs:
-      # If the pod is ready, keep it. Otierwise, ignore it.
+      # For inventory, record whether a pod is ready. This helps distinguish
+      # between: missing from inventory, not ready and failing, ready but
+      # failing, ready and working.
+      # and working.
       - source_labels: [__meta_kubernetes_pod_ready]
-        regex: true
-        action: keep
+        action: replace
+        target_label: ready
 
       # Check for the prometheus.io/scrape=true annotation.
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
         action: keep
         regex: true
 
-      # Check for the prometheus.io/port=<port> annotation.
-      # Check for the declared container port number.
-      - source_labels: [__address__, __meta_kubernetes_pod_container_port_number]
-        action: replace
-        target_label: __address__
-        # A google/re2 regex, matching addresses with or without default ports.
-        # NB: this will not work with IPv6 addresses. But, atm, kubernetes uses
-        # IPv4 addresses for internal network and GCE doesn not support IPv6.
-        regex: ([^:]+)(?::\d+)?;(\d+)
-        replacement: $1:$2
+      # Only keep containers that have a declared container port.
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: (\d+)
 
       # Copy all pod labels from kubernetes to the Prometheus metrics.
       - action: labelmap
@@ -167,27 +164,40 @@ scrape_configs:
         action: replace
         target_label: namespace
 
-      # Extract the cluster-pool name from the GKE node name.
+      # Extract the "<cluster>-<node-pool>" name from the GKE node name.
       - source_labels: [__meta_kubernetes_pod_node_name]
         action: replace
         regex: gke-(.*)-[^-]+-[^-]+
         replacement: $1
         target_label: cluster
 
-      # bug: this truncates pod names from daemon sets.
+      # Copy a portion of the pod name corresponding to the deployment. This
+      # requires two steps. Two steps are necessary to handle both daemon sets
+      # and deployments correctly.
+      # Step 1: unconditionally remove the last field of a pod name.
+      #   e.g. prometheus-server-3165440997(-ppf9w)
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
-        regex: (.*)-[^-]+-[^-]+
+        regex: (.*)-[^-]+
         replacement: $1
         target_label: deployment
 
-      # Add the kubernetes pod name as a Prometheus label.
-      # TODO(soltesz): pod names include a randomly generated portion. This
-      # could make historical queries more complex. Do we need this?
+      # Step 2: Remove the next trailing field if it's the same as
+      # pod_template_hash. The source labels construct a pattern like:
+      #   e.g. prometheus-server-3165440997-3165440997
+      - source_labels: [deployment, __meta_kubernetes_pod_label_pod_template_hash]
+        action: replace
+        separator: '-'
+        regex: (.*)(-[^-]+){2}
+        replacement: $1
+        target_label: deployment
+
+      # Add the kubernetes pod name.
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod
 
+      # Add the kubernetes pod container name.
       - source_labels: [__meta_kubernetes_pod_container_name]
         action: replace
         target_label: container
