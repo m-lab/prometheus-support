@@ -1,0 +1,54 @@
+# Sidestream exporter.
+#
+# Sidestream is a core service on M-Lab servers. And, it provides a proxy for
+# machine uptime. The sidestream service and machine inventory should match.
+
+# Correct configuration.
+clear
+load 1m
+    up{service="sidestream", machine="a"} 1
+    up{service="sidestream", machine="b"} 1
+    up{service="ssh806", machine="a"} 1
+    up{service="ssh806", machine="b"} 1
+
+# Since it's a core service, it should be monitored.
+eval instant at 0m absent(up{service="sidestream"})
+# EMPTY RESULT.
+
+# Guarantee that there are as many machines as configured sidestream targets.
+eval instant at 0m count(up{service="sidestream"}) - scalar(count(up{service="ssh806"})) != 0
+# EMPTY RESULT.
+
+# Identify sidestream exporters that do not have a corresponding ssh806.
+eval instant at 0m up{service="sidestream"} UNLESS ON(machine) up{service="ssh806"}
+# EMPTY RESULT.
+
+# Identify ssh806 servers that do not have a corresponding sidestream exporter.
+eval instant at 0m up{service="ssh806"} UNLESS ON(machine) up{service="sidestream"}
+# EMPTY RESULT.
+
+
+# Incorrect configuration.
+#
+# The configuration has a sidestream service without a corresponding machine.
+# And, two machines without sidestream services.
+clear
+load 1m
+    up{service="sidestream", machine="a"} 1
+    up{service="sidestream", machine="b"} 1
+    up{service="ssh806", machine="a"} 1
+    up{service="ssh806", machine="c"} 1
+    up{service="ssh806", machine="d"} 1
+
+# Guarantee that there are as many machines as configured sidestream targets.
+eval instant at 0m count(up{service="sidestream"}) - scalar(count(up{service="ssh806"})) != 0
+    {} -1
+
+# Identify sidestream exporters that do not have a corresponding ssh806.
+eval instant at 0m up{service="sidestream"} UNLESS ON(machine) up{service="ssh806"}
+    up{service="sidestream", machine="b"} 1
+
+# Identify ssh806 servers that do not have a corresponding sidestream exporter.
+eval instant at 0m up{service="ssh806"} UNLESS ON(machine) up{service="sidestream"}
+    up{service="ssh806", machine="c"} 1
+    up{service="ssh806", machine="d"} 1
