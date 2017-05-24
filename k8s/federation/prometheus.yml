@@ -27,6 +27,12 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9100'
     spec:
+      # Clusters running a prometheus instance must label nodes exclusively for
+      # use by prometheus. See README for steps to create a GKE cluster for
+      # prometheus.
+      nodeSelector:
+        prometheus-node: 'true'
+
       # Place the pod into the Guaranteed QoS by setting equal resource
       # requests and limits for *all* containers in the pod.
       # For more background, see:
