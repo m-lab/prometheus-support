@@ -167,28 +167,31 @@ scrape_configs:
       # Extract the "<cluster>-<node-pool>" name from the GKE node name.
       - source_labels: [__meta_kubernetes_pod_node_name]
         action: replace
-        regex: gke-(.*)-[^-]+-[^-]+
+        regex: gke-(.*)(-[^-]+){2}
         replacement: $1
         target_label: cluster
 
-      # Copy a portion of the pod name corresponding to the deployment. This
-      # requires two steps. Two steps are necessary to handle both daemon sets
-      # and deployments correctly.
-      # Step 1: unconditionally remove the last field of a pod name.
-      #   e.g. prometheus-server-3165440997(-ppf9w)
+      # Identify the deployment name of a pod or daemon set. This requires two
+      # steps. Two steps are necessary to handle both daemon set pod names and
+      # deployment pod names correctly. And, because, evidently, a combined
+      # regex doesn't work as expected.
+      #
+      # Step 1: unconditionally remove the last field of a pod or daemonset.
+      #   e.g. prometheus-server-3165440997-ppf9w
+      #   e.g. node-exporter-ltxgz
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
-        regex: (.*)-[^-]+
+        regex: (.*)(-[^-]{5})
         replacement: $1
         target_label: deployment
 
-      # Step 2: Remove the next trailing field if it's the same as
-      # pod_template_hash. The source labels construct a pattern like:
-      #   e.g. prometheus-server-3165440997-3165440997
-      - source_labels: [deployment, __meta_kubernetes_pod_label_pod_template_hash]
+      # Step 2: Remove the trailing pod_template_hash if present.
+      # In the case of a daemon set that does not have the trailing hash, the
+      # regex will not match and deployment remains unchanged.
+      #   e.g. prometheus-server-3165440997
+      - source_labels: [deployment]
         action: replace
-        separator: '-'
-        regex: (.*)(-[^-]+){2}
+        regex: (.*)(-[0-9]+)
         replacement: $1
         target_label: deployment
 
