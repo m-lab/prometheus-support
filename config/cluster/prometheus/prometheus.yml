@@ -137,13 +137,19 @@ scrape_configs:
       - role: pod
 
     relabel_configs:
+      # If the pod is ready, keep it. Otierwise, ignore it.
+      - source_labels: [__meta_kubernetes_pod_ready]
+        regex: true
+        action: keep
+
       # Check for the prometheus.io/scrape=true annotation.
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
         action: keep
         regex: true
+
       # Check for the prometheus.io/port=<port> annotation.
-      - source_labels: [__address__,
-                        __meta_kubernetes_pod_annotation_prometheus_io_port]
+      # Check for the declared container port number.
+      - source_labels: [__address__, __meta_kubernetes_pod_container_port_number]
         action: replace
         target_label: __address__
         # A google/re2 regex, matching addresses with or without default ports.
@@ -151,19 +157,40 @@ scrape_configs:
         # IPv4 addresses for internal network and GCE doesn not support IPv6.
         regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
+
       # Copy all pod labels from kubernetes to the Prometheus metrics.
       - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
+
       # Add the kubernetes namespace as a Prometheus label.
       - source_labels: [__meta_kubernetes_namespace]
         action: replace
-        target_label: kubernetes_namespace
+        target_label: namespace
+
+      # Extract the cluster-pool name from the GKE node name.
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        action: replace
+        regex: gke-(.*)-[^-]+-[^-]+
+        replacement: $1
+        target_label: cluster
+
+      # bug: this truncates pod names from daemon sets.
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        regex: (.*)-[^-]+-[^-]+
+        replacement: $1
+        target_label: deployment
+
       # Add the kubernetes pod name as a Prometheus label.
       # TODO(soltesz): pod names include a randomly generated portion. This
       # could make historical queries more complex. Do we need this?
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
-        target_label: kubernetes_pod_name
+        target_label: pod
+
+      - source_labels: [__meta_kubernetes_pod_container_name]
+        action: replace
+        target_label: container
 
 
   # Scrape config for kubernetes service endpoints.

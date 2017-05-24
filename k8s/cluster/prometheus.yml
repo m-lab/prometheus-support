@@ -4,8 +4,8 @@ metadata:
   name: prometheus-public-service
   namespace: default
   annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/port: '9090'
+    # prometheus.io/scrape: 'true'
+    # prometheus.io/port: '9090'
     gke-prometheus-federation/scrape: 'true'
 spec:
   ports:
@@ -44,7 +44,7 @@ spec:
         # Tell prometheus service discovery to scrape the node-exporter running
         # within the prometheus-server pod.
         prometheus.io/scrape: 'true'
-        prometheus.io/port: '9100'
+        # prometheus.io/port: '9100'
     spec:
       # Clusters running a prometheus instance must label nodes exclusively for
       # use by prometheus. See README for steps to create a GKE cluster for
@@ -74,11 +74,11 @@ spec:
           - containerPort: 9090
         resources:
           requests:
-            memory: "8Gi"
-            cpu: "3000m"
+            memory: "3Gi"
+            cpu: "500m"
           limits:
-            memory: "8Gi"
-            cpu: "3000m"
+            memory: "3Gi"
+            cpu: "500m"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
@@ -88,6 +88,18 @@ spec:
         - mountPath: /legacy-targets
           name: prometheus-storage
           subPath: legacy-targets
+        # /federation-targets should contain federation target config files.
+        - mountPath: /federation-targets
+          name: prometheus-storage
+          subPath: federation-targets
+        # /blackbox-targets should contain blackbox target config files.
+        - mountPath: /blackbox-targets
+          name: prometheus-storage
+          subPath: blackbox-targets
+        # /aeflex-targets should contain AppEngine target config files.
+        - mountPath: /aeflex-targets
+          name: prometheus-storage
+          subPath: aeflex-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
@@ -111,6 +123,33 @@ spec:
             cpu: "50m"
         volumeMounts:
         - mountPath: /prometheus
+          name: prometheus-storage
+
+      - image: measurementlab/gcp-service-discovery
+        name: service-discovery
+        env:
+        - name: GCLOUD_PROJECT
+          value: mlab-sandbox
+        args: [ "--aef-target=/targets/aeflex-targets/aeflex.json",
+                "--gke-target=/targets/federation-targets/prometheus-clusters.json",
+                "--http-target=/targets/legacy-targets/sidestream.json",
+                "--http-target=/targets/blackbox-targets/ssh806.json",
+                "--http-target=/targets/blackbox-targets/rsyncd.json",
+                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/legacy-targets/sidestream.json",
+                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/ssh806.json",
+                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/rsyncd.json",
+                "--project=$(GCLOUD_PROJECT)"]
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "50m"
+          limits:
+            memory: "150Mi"
+            cpu: "50m"
+        volumeMounts:
+        # Mount the the prometheus-storage for write access to the target
+        # directories.
+        - mountPath: /targets
           name: prometheus-storage
 
       # Disks created manually, can be named here explicitly using
