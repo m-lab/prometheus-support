@@ -27,8 +27,8 @@ necessary.
 gcloud container \
   --project "mlab-sandbox" clusters create "prometheus-federation" \
   --zone "us-central1-a" \
-  --machine-type=n1-standard-8
-  --scopes "https://www.googleapis.com/auth/cloud-platform"
+  --machine-type=n1-standard-8 \
+  --scopes "https://www.googleapis.com/auth/cloud-platform" \
   --num-nodes 3 \
   --node-labels=prometheus-node=true
 ```
@@ -41,7 +41,7 @@ No special scopes are required for the prometheus cluster configuration.
 gcloud --project=mlab-oti container node-pools create prometheus-pool \
   --cluster=scraper-cluster \
   --num-nodes=2 \
-  --zone=us-central1-a
+  --zone=us-central1-a \
   --node-labels=prometheus-node=true \
   --machine-type=n1-standard-8
 ```
@@ -77,7 +77,7 @@ TODO(soltesz): move environment variables (like gcloud-project) to a separate
 directory.
 
     kubectl create configmap prometheus-federation-config \
-        --from-literal=gcloud-project=mlab-sandbox
+        --from-literal=gcloud-project=mlab-sandbox \
         --from-file=config/federation/prometheus
 
     kubectl create configmap prometheus-cluster-config \

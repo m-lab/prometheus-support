@@ -247,29 +247,29 @@ scrape_configs:
   # Learn more at:
   #   https://prometheus.io/docs/operating/federation/#configuring-federation
   #
-  - job_name: 'federation-targets'
-    # Normally, the prometheus server updates target labels at collection time,
-    # but if we're aggregating from other prometheus servers, we want to take
-    # them as-is.
-    honor_labels: true
-    metrics_path: '/federate'
-    # Allow more time, since the number of metrics may be large.
-    scrape_timeout: 50s
+# - job_name: 'federation-targets'
+#   # Normally, the prometheus server updates target labels at collection time,
+#   # but if we're aggregating from other prometheus servers, we want to take
+#   # them as-is.
+#   honor_labels: true
+#   metrics_path: '/federate'
+#   # Allow more time, since the number of metrics may be large.
+#   scrape_timeout: 50s
 
-    params:
-      'match[]':
-        # Note: For now simply collect everything. There must be at least one
-        # match parameter. Prometheus selects the union of all match parameters.
-        - '{__name__=~".+"}'
-
-    file_sd_configs:
-      - files:
-          # NOTE: The path /federation-targets does not exist in the default
-          # image. Mount this path as a volume with the docker or kubernetes
-          # configuration.
-          - /federation-targets/*.json
-        # Attempt to re-read files every five minutes.
-        refresh_interval: 5m
+#    params:
+#      'match[]':
+#        # Note: For now simply collect everything. There must be at least one
+#        # match parameter. Prometheus selects the union of all match parameters.
+#        - '{__name__=~".+"}'
+#
+#    file_sd_configs:
+#      - files:
+#          # NOTE: The path /federation-targets does not exist in the default
+#          # image. Mount this path as a volume with the docker or kubernetes
+#          # configuration.
+#          - /federation-targets/*.json
+#        # Attempt to re-read files every five minutes.
+#        refresh_interval: 5m
 
   # Blackbox configurations.
   #

@@ -23,4 +23,4 @@ kubectl create configmap prometheus-cluster-config \
 
 # Deployments.
 kubectl apply -f k8s/cluster/prometheus.yml
-kubectl apply -f k8s/node-exporter-daemonset.yml
+# kubectl apply -f k8s/node-exporter-daemonset.yml
