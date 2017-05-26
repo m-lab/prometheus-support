@@ -44,7 +44,7 @@ spec:
         # Note: the container name appears to be ignored and the actual pod name
         # is derived from the Deployment.metadata.name. However, removing this
         # value results in a configuration error.
-        name: prometheus-server
+        name: prometheus
         # Note: Set retention time to 120 days. (default retention is 30d).
         args: ["-config.file=/etc/prometheus/prometheus.yml",
                "-storage.local.path=/prometheus",
@@ -90,7 +90,7 @@ spec:
       # access to the same namespace and volumes as the prometheus-server. This
       # allows simple disk usage monitoring of the "/prometheus" mount point.
       - image: prom/node-exporter:v0.13.0
-        name: fs-exporter
+        name: node-exporter
         # Note: only enable the filesystem collector, and ignore system paths.
         args: [ "--collectors.enabled=filesystem",
                 "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)"]
