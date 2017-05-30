@@ -37,13 +37,15 @@ gcloud container \
 
 No special scopes are required for the prometheus cluster configuration.
 
+However, for very large number of time series a highmem node pool is necessary.
+
 ```
 gcloud --project=mlab-oti container node-pools create prometheus-pool \
   --cluster=scraper-cluster \
   --num-nodes=2 \
   --zone=us-central1-a \
   --node-labels=prometheus-node=true \
-  --machine-type=n1-standard-8
+  --machine-type=n1-highmem-16
 ```
 
 # Using Kubernetes config files
