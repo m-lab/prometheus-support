@@ -70,6 +70,10 @@ spec:
         # of available RAM. They recommend preserving a 50% headroom, but I'm
         # setting it higher right now to over-provision and leave fine-tuning
         # to a later step.
+        #
+        # TODO(soltesz): Update these default values.
+        #   -storage.local.checkpoint-dirty-series-limit 5000
+        #   -storage.local.checkpoint-interval 5m0s
         args: ["-config.file=/etc/prometheus/prometheus.yml",
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
