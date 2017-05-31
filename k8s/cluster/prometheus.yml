@@ -62,6 +62,9 @@ spec:
         # value results in a configuration error.
         name: prometheus
         # Note: Set retention time to 120 days. (default retention is 30d).
+        #   TODO(soltesz): restore long-term retention times after we understand
+        #   the costs of the other settings.
+        #       "-storage.local.retention=2880h",
         #
         # See https://www.youtube.com/watch?v=hPC60ldCGm8 for ~recent
         # configuration best practices.
@@ -71,13 +74,30 @@ spec:
         # setting it higher right now to over-provision and leave fine-tuning
         # to a later step.
         #
-        # TODO(soltesz): Update these default values.
-        #   -storage.local.checkpoint-dirty-series-limit 5000
-        #   -storage.local.checkpoint-interval 5m0s
+        # See: https://prometheus.io/docs/operating/storage/ for more context
+        # on the meaning of the following flags.
+        #
+        # Allow as many series in memory as there are typical metrics scraped.
+        #   -storage.local.checkpoint-dirty-series-limit 1500000
+        #
+        # Allow a longer interval between checkpoints (when above limit is not
+        # violated).
+        #   -storage.local.checkpoint-interval 10m0s
+        #
+        # Just use 10x the default values for all index cache flags:
+        #   -storage.local.index-cache-size.fingerprint-to-metric 104857600
+        #   -storage.local.index-cache-size.fingerprint-to-timerange 52428800
+        #   -storage.local.index-cache-size.label-name-to-label-values 104857600
+        #   -storage.local.index-cache-size.label-pair-to-fingerprints 20971520
         args: ["-config.file=/etc/prometheus/prometheus.yml",
                "-storage.local.path=/prometheus",
-               "-storage.local.retention=2880h",
                "-storage.local.target-heap-size=75161927680",
+               "-storage.local.checkpoint-dirty-series-limit=1500000",
+               "-storage.local.checkpoint-interval=10m0s",
+               "-storage.local.index-cache-size.fingerprint-to-metric=104857600",
+               "-storage.local.index-cache-size.fingerprint-to-timerange=52428800",
+               "-storage.local.index-cache-size.label-name-to-label-values=104857600",
+               "-storage.local.index-cache-size.label-pair-to-fingerprints=20971520",
                "-web.console.libraries=/usr/share/prometheus/console_libraries",
                "-web.console.templates=/usr/share/prometheus/consoles"]
         ports:
