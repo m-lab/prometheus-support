@@ -195,10 +195,13 @@ scrape_configs:
         replacement: $1
         target_label: deployment
 
+      # TODO(soltesz): evaluate and remove from config if no-pod name is helpful
+      # in practice.
+      #
       # Add the kubernetes pod name.
-      - source_labels: [__meta_kubernetes_pod_name]
-        action: replace
-        target_label: pod
+      #- source_labels: [__meta_kubernetes_pod_name]
+      #  action: replace
+      #  target_label: pod
 
       # Add the kubernetes pod container name.
       - source_labels: [__meta_kubernetes_pod_container_name]
