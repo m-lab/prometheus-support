@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# apply-federation.sh applies the global-prometheus configuration to the
+# apply-global-prometheus.sh applies the global-prometheus configuration to the
 # currently configured cluster. This script may be safely run multiple times to
 # load the most recent configurations.
 #
@@ -13,7 +13,7 @@
 # GRAFANA_DOMAIN=status-mlab-staging.measurementlab.net \
 #   GRAFANA_PASSWORD=<password> \
 #   ALERTMANAGER_URL=http://status-mlab-staging.measurementlab.net:9093 \
-#   ./apply-federation.sh mlab-staging global-prometheus
+#   ./apply-global-prometheus.sh mlab-staging global-prometheus
 
 set -x
 set -e
