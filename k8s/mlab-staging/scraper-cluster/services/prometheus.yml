@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-public-service
+  namespace: default
+  annotations:
+    gke-prometheus-federation/scrape: 'true'
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    run: prometheus-server
+  sessionAffinity: None
+  type: LoadBalancer
