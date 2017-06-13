@@ -49,3 +49,16 @@ spec:
   resources:
     requests:
       storage: 200Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: auto-prometheus-ssd1
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "fast"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Gi
