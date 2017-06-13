@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# apply-federation.sh applies the k8s federation configuration to the currently
-# configured cluster. This script may be safely run multiple times to load the
-# most recent configurations.
+# apply-federation.sh applies the global-prometheus configuration to the
+# currently configured cluster. This script may be safely run multiple times to
+# load the most recent configurations.
 #
 # If a config file (config/*) changes, the pod does not automatically restart
 # when the configmap for that config file is updated. You must manually delete
@@ -13,7 +13,7 @@
 # GRAFANA_DOMAIN=status-mlab-staging.measurementlab.net \
 #   GRAFANA_PASSWORD=<password> \
 #   ALERTMANAGER_URL=http://status-mlab-staging.measurementlab.net:9093 \
-#   ./apply-federation.sh mlab-staging
+#   ./apply-federation.sh mlab-staging global-prometheus
 
 set -x
 set -e
@@ -21,13 +21,13 @@ set -u
 
 USAGE="$0 <projectid> [<grafana passwd>]"
 PROJECT=${1:?Please provide project id: $USAGE}
+CLUSTER=${2:?Please provide cluster name: $USAGE}
 
 # Deployent dependencies.
-kubectl apply -f k8s/storage-class.yml
-kubectl apply -f k8s/persistent-volumes.yml
+kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/persistentvolumes
 
 # Services.
-kubectl apply -f k8s/${PROJECT}/prometheus-federation
+kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/services
 
 # Config maps and Secrets
 
@@ -70,8 +70,4 @@ if [[ -n "${ALERTMANAGER_URL}" ]] ; then
 fi
 
 # Deployments
-kubectl apply -f k8s/node-exporter-daemonset.yml
-kubectl apply -f k8s/federation/blackbox.yml
-kubectl apply -f k8s/federation/grafana.yml
-kubectl apply -f k8s/federation/prometheus.yml
-kubectl apply -f k8s/federation/alertmanager.yml
+kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/deployments
