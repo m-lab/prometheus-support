@@ -17,7 +17,7 @@ PROJECT=${1:?Please provide project id: $USAGE}
 CLUSTER=${2:?Please provide cluster name: $USAGE}
 
 # Deployent dependencies.
-kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/persistentvolumes
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
 
 # Prometheus config map.
 kubectl create configmap prometheus-cluster-config \
@@ -25,7 +25,7 @@ kubectl create configmap prometheus-cluster-config \
     --dry-run -o json | kubectl apply -f -
 
 # Services
-kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/services
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/services"
 
 # Deployments
-kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/deployments
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"

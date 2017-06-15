@@ -24,10 +24,10 @@ PROJECT=${1:?Please provide project id: $USAGE}
 CLUSTER=${2:?Please provide cluster name: $USAGE}
 
 # Deployent dependencies.
-kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/persistentvolumes
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
 
 # Services.
-kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/services
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/services"
 
 # Config maps and Secrets
 
@@ -70,4 +70,4 @@ if [[ -n "${ALERTMANAGER_URL}" ]] ; then
 fi
 
 # Deployments
-kubectl apply -f k8s/"${PROJECT}"/"${CLUSTER}"/deployments
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"
