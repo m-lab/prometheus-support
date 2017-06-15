@@ -66,7 +66,7 @@ ALERT SidestreamIsNotRunning
 # scraper has not uploaded an archive for that machine for more than 36 hours,
 # there is a problem.
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
-  IF (time() - scraper_maxrawfiletimearchived{service="scraper-sync"}) > (36 * 60 * 60)
+  IF (time() - scraper_maxrawfiletimearchived{container="scraper-sync"}) > (36 * 60 * 60)
         AND ON(machine)
            (time() - process_start_time_seconds{service="sidestream"}) > (2 * 60 * 60)
   FOR 10m
@@ -84,9 +84,9 @@ ALERT ScraperMostRecentArchivedFileTimeIsTooOld
 #   ScraperCollectorMissingFromScaperSync:
 #
 ALERT ScraperSyncPresentWithoutScaperCollector
-  IF (scraper_maxrawfiletimearchived{service="scraper-sync"}
+  IF (scraper_maxrawfiletimearchived{container="scraper-sync"}
         UNLESS ON(machine, experiment, rsync_module)
-           up{service="scraper"})
+           up{container="scraper"})
   FOR 3h
   LABELS {
     severity = "page"
@@ -97,9 +97,9 @@ ALERT ScraperSyncPresentWithoutScaperCollector
   }
 
 ALERT ScraperCollectorMissingFromScaperSync
-  IF (up{service="scraper"}
+  IF (up{container="scraper"}
         UNLESS ON(machine, experiment, rsync_module)
-           scraper_maxrawfiletimearchived{service="scraper-sync"})
+           scraper_maxrawfiletimearchived{container="scraper-sync"})
   FOR 3h
   LABELS {
     severity = "page"
@@ -187,7 +187,7 @@ ALERT MachineWithoutSidestreamRunning
 
 # Scrapers are configured on machine "c", but machine "c" is not in the rsyncd inventory.
 ALERT ScraperRunningWithoutRsyncd
-  IF up{service="scraper"} UNLESS ON(machine, experiment) up{service="rsyncd"}
+  IF up{container="scraper"} UNLESS ON(machine, experiment) up{service="rsyncd"}
   FOR 30m
   LABELS {
     severity = "ticket"
@@ -199,7 +199,7 @@ ALERT ScraperRunningWithoutRsyncd
 
 # Rsync inventory includes machine "b", but machine "b" does not have a configured scraper.
 ALERT RsyncRunningWithoutScraper
-  IF up{service="rsyncd"} UNLESS ON(machine, experiment) up{service="scraper"}
+  IF up{service="rsyncd"} UNLESS ON(machine, experiment) up{container="scraper"}
   FOR 30m
   LABELS {
     severity = "ticket"
