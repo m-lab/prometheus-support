@@ -16,6 +16,9 @@ USAGE="$0 <project-id> <cluster-name>"
 PROJECT=${1:?Please provide project id: $USAGE}
 CLUSTER=${2:?Please provide cluster name: $USAGE}
 
+# Roles.
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
+
 # Deployent dependencies.
 kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
 

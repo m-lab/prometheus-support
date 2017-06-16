@@ -23,6 +23,9 @@ USAGE="$0 <projectid> [<grafana passwd>]"
 PROJECT=${1:?Please provide project id: $USAGE}
 CLUSTER=${2:?Please provide cluster name: $USAGE}
 
+# Roles.
+kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
+
 # Deployent dependencies.
 kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
 
