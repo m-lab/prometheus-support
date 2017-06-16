@@ -48,6 +48,41 @@ gcloud --project=mlab-oti container node-pools create prometheus-pool \
   --machine-type=n1-highmem-16
 ```
 
+# Roles
+
+Since k8s version 1.6, stricter access controls are the default.
+
+Please understand the [RBAC permission model][rbac] and the objects they apply
+to.
+
+Before you can run either of the `apply-cluster.sh` or
+`apply-global-prometheus.sh` scripts, your user account must have the
+`cluster-admin` role.
+
+To assign this role:
+* You may add the "Container Engine Cluster Admin" role to your account through
+the GCP IAM interface. (UNCONFIRMED: TODO: remove if this does not work.)
+* You may assign yourself the 'cluster-admin' role directly for the cluster.
+(TODO: There may be a simpler way).
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: additional-cluster-admins
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: User
+  name: <username@email.com>
+EOF
+```
+
+[rbac]: https://kubernetes.io/docs/admin/authorization/rbac/
+
 # Using Kubernetes config files
 
 Kubernetes config files preserve a deployment configuration and provide a
