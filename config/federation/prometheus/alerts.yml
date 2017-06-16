@@ -87,7 +87,7 @@ ALERT ScraperMostRecentArchivedFileTimeIsTooOld
 # We use scraper_lastcollectionattempt because scraper_maxrawfiletimearchived
 # is not updated until the first successful upload. This is not possible before
 # a machine comes online.
-ALERT ScraperSyncPresentWithoutScaperCollector
+ALERT ScraperSyncPresentWithoutScraperCollector
   IF (scraper_lastcollectionattempt{container="scraper-sync"}
         UNLESS ON(machine, experiment, rsync_module)
            up{container="scraper"})
@@ -100,7 +100,7 @@ ALERT ScraperSyncPresentWithoutScaperCollector
     description = "",
   }
 
-ALERT ScraperCollectorMissingFromScaperSync
+ALERT ScraperCollectorMissingFromScraperSync
   IF (up{container="scraper"}
         UNLESS ON(machine, experiment, rsync_module)
            scraper_lastcollectionattempt{container="scraper-sync"})
