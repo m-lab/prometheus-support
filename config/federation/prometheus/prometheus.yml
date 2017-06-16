@@ -118,6 +118,14 @@ scrape_configs:
     relabel_configs:
       - action: labelmap
         regex: __meta_kubernetes_node_label_(.+)
+      # Node /metrics in v1.6+ are accessible via a proxy through the
+      # kubernetes api server. So, we must update the target and metric path.
+      - target_label: __address__
+        replacement: kubernetes.default.svc:443
+      - source_labels: [__meta_kubernetes_node_name]
+        regex: (.+)
+        target_label: __metrics_path__
+        replacement: /api/v1/nodes/${1}/proxy/metrics
 
 
   # Scrape config for kubernetes pods.
@@ -301,7 +309,9 @@ scrape_configs:
         # must be at least one match parameter.Prometheus selects the union of
         # all match parameters.
         - 'up{application="scraper"}'
-        - 'scraper_maxrawfiletimearchived{application="scraper-sync"}'
+        - 'up{application="scraper-sync"}'
+        - 'scraper_maxrawfiletimearchived'
+        - 'scraper_lastcollectionattempt'
 
     file_sd_configs:
       - files:
