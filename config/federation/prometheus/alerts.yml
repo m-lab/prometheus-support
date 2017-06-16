@@ -80,11 +80,15 @@ ALERT ScraperMostRecentArchivedFileTimeIsTooOld
 
 # Scraper internal consistency.
 #
-# ScraperSyncPresentWithoutScaperCollector,
-#   ScraperCollectorMissingFromScaperSync:
+# Verify that for every running scraper there is a corresponding metric from
+# scraper-sync indicating that a collection was attempted. These should always
+# be in sync with one another.
 #
+# We use scraper_lastcollectionattempt because scraper_maxrawfiletimearchived
+# is not updated until the first successful upload. This is not possible before
+# a machine comes online.
 ALERT ScraperSyncPresentWithoutScaperCollector
-  IF (scraper_maxrawfiletimearchived{container="scraper-sync"}
+  IF (scraper_lastcollectionattempt{container="scraper-sync"}
         UNLESS ON(machine, experiment, rsync_module)
            up{container="scraper"})
   FOR 3h
@@ -99,7 +103,7 @@ ALERT ScraperSyncPresentWithoutScaperCollector
 ALERT ScraperCollectorMissingFromScaperSync
   IF (up{container="scraper"}
         UNLESS ON(machine, experiment, rsync_module)
-           scraper_maxrawfiletimearchived{container="scraper-sync"})
+           scraper_lastcollectionattempt{container="scraper-sync"})
   FOR 3h
   LABELS {
     severity = "page"
