@@ -27,6 +27,10 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9100'
     spec:
+      # References a service account with RBAC permissions for accessing node
+      # metrics. This is required for k8s version 1.6+.
+      serviceAccountName: prometheus
+
       # Clusters running a prometheus instance must label nodes exclusively for
       # use by prometheus. See README for steps to create a GKE cluster for
       # prometheus.
