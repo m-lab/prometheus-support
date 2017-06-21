@@ -27,6 +27,11 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9100'
     spec:
+      # References a service account with RBAC permissions for accessing node
+      # metrics. This is required for k8s version 1.6+.
+      # TODO(soltesz): enable when cluster is upgraded to 1.6+
+      # serviceAccountName: prometheus
+
       # Clusters running a prometheus instance must label nodes exclusively for
       # use by prometheus. See README for steps to create a GKE cluster for
       # prometheus.
@@ -44,7 +49,7 @@ spec:
       containers:
       # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
       # stable version.
-      - image: prom/prometheus:v1.5.2
+      - image: prom/prometheus:v1.6.2
         # Note: the container name appears to be ignored and the actual pod name
         # is derived from the Deployment.metadata.name. However, removing this
         # value results in a configuration error.
@@ -54,6 +59,7 @@ spec:
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
                "-alertmanager.url=http://alertmanager-public-service.default.svc.cluster.local:9093",
+               "-web.external-url=http://status-mlab-oti.measurementlab.net:9090",
                "-web.console.libraries=/usr/share/prometheus/console_libraries",
                "-web.console.templates=/usr/share/prometheus/consoles"]
         ports:

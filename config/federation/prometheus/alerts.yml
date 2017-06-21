@@ -65,8 +65,10 @@ ALERT SidestreamIsNotRunning
 # machine once a day. If the machine is online (for at least 2 hours), but
 # scraper has not uploaded an archive for that machine for more than 36 hours,
 # there is a problem.
+#
+# TODO(soltesz): remove the != 0 check when legacy records are removed.
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
-  IF (time() - scraper_maxrawfiletimearchived{container="scraper-sync"}) > (36 * 60 * 60)
+  IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (36 * 60 * 60)
         AND ON(machine)
            (time() - process_start_time_seconds{service="sidestream"}) > (2 * 60 * 60)
   FOR 10m
