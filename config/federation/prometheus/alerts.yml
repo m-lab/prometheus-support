@@ -70,7 +70,7 @@ ALERT SidestreamIsNotRunning
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
   IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (36 * 60 * 60)
         AND ON(machine)
-           (time() - process_start_time_seconds{service="sidestream"}) > (2 * 60 * 60)
+           (time() - process_start_time_seconds{service="sidestream"}) > (24 * 60 * 60)
   FOR 10m
   LABELS {
     severity = "page"
