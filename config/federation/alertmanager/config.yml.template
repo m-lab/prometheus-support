@@ -15,7 +15,7 @@ route:
   # Group incoming alerts together with these labels. For example:
   #   For example: multiple individual alerts for instance=A and
   #   alertname=LatencyHigh would be batched into a single group.
-  group_by: ['alertname', 'instance', 'service']
+  group_by: ['alertname']
 
   # By default, wait at least 'group_wait' before sending a notification to get
   # a set of alerts to 'group_by'.
@@ -30,7 +30,7 @@ route:
   repeat_interval: 3h
 
   # When no other routes match, use the default receiver.
-  receiver: slack-alerts-sandbox-email
+  receiver: slack-alerts-email
 
   # The above attributes are inherited by all child routes. Children can
   # overwrite any value.
@@ -48,7 +48,7 @@ route:
     routes:
     - match:
         severity: page
-      receiver: slack-alerts-sandbox-page
+      receiver: slack-alerts-page
 
 
 # When two alerts are firing at the same time, we can "inhibit" one based on
@@ -65,24 +65,38 @@ inhibit_rules:
 - source_match:
     severity: 'page'
   target_match:
-    severity: 'warning'
+    severity: 'ticket'
   # Apply inhibition if the group is the same.
-  equal: ['alertname', 'instance', 'service']
+  equal: ['instance', 'service']
 
 
 receivers:
 # For M-Lab Slack, visit:
 #   https://measurementlab.slack.com/apps/manage/custom-integrations
-- name: 'slack-alerts-sandbox-page'
+- name: 'slack-alerts-page'
   slack_configs:
   - send_resolved: true
+    # sandbox
     api_url: REPLACE-WITH-ACTUAL-WEBHOOK-URL
     channel: alerts-sandbox
+    # staging
+    # api_url:
+    # channel: alerts-staging
+    # production
+    # api_url:
+    # channel: alerts-oti
     username: alert-page
 
-- name: 'slack-alerts-sandbox-email'
+- name: 'slack-alerts-email'
   slack_configs:
   - send_resolved: true
+    # sandbox
     api_url: REPLACE-WITH-ACTUAL-WEBHOOK-URL
     channel: alerts-sandbox
+    # staging
+    # api_url:
+    # channel: alerts-staging
+    # production
+    # api_url:
+    # channel: alerts-oti
     username: alert-email
