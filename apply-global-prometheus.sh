@@ -70,7 +70,7 @@ fi
 
 ## Alertmanager
 # TODO: enable storing slack channels as secrets and generating the config.yml
-# Check to se if the alertmanager-config already exists. Do nothing if so.
+# Check to see if the alertmanager-config already exists. Do nothing if so.
 AM_CONFIG=$( kubectl get configmaps \
     alertmanager-config --output=jsonpath={.metadata.name} )
 if [[ -z "${AM_CONFIG}" ]] ; then
