@@ -67,7 +67,21 @@ deploy:
 
 #########################################
 ## Production
-# TODO: add deploy on tags.
+# TODO: enforce a format on the $TRAVIS_TAG name.
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti prometheus-federation ./apply-global-prometheus.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    tags: true
+
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti scraper-cluster ./apply-cluster.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    tags: true
+
 
 before_install:
 - travis/decrypt.sh "$encrypted_1c8dd3704323_key" "$encrypted_1c8dd3704323_iv"
