@@ -3,12 +3,18 @@ language: go
 go:
  - 1.8.1
 
+
+cache:
+  directories:
+    - "$HOME/google-cloud-sdk/"
+
 # Unconditionally place the repo at GOPATH/src/${go_import_path} to support
 # forks.
 go_import_path: github.com/m-lab/prometheus-support
 
 install:
 - go get github.com/prometheus/prometheus/cmd/promtool
+- $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
 
 script:
 # Run query "unit tests".
@@ -21,3 +27,16 @@ script:
 # TODO(soltesz): support check-config.
 # promtool check-config config/federation/prometheus/prometheus.yml
 # promtool check-config config/cluster/prometheus/prometheus.yml
+
+deploy:
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-global-prometheus.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    all_branches: true
+    condition: $TRAVIS_BRANCH == sandbox-*
+
+before_install:
+- travis/decrypt.sh "$encrypted_1c8dd3704323_key" "$encrypted_1c8dd3704323_iv"
+  keys/service-accounts.tar.enc /tmp/service-accounts.tar /tmp
