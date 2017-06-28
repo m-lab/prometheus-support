@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pushgateway-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      # Used to match pre-existing pods that may be affected during updates.
+      run: pushgateway-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  # Pod template.
+  template:
+    metadata:
+      labels:
+        # Note: run=pushgateway-server should match a service config with a
+        # public IP and port so that it is publically accessible.
+        run: pushgateway-server
+    spec:
+      # Place the pod into the Guaranteed QoS by setting equal resource
+      # requests and limits for *all* containers in the pod.
+      # For more background, see:
+      # https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-qos.md
+      containers:
+      # Check https://hub.docker.com/r/prom/pushgateway/tags/ for the current
+      # stable version.
+      - image: prom/pushgateway:v0.3.1
+        name: pushgateway-server
+
+        # NOTE: push gateway metrics do not expire. Once pushed to the gateway
+        # they remain indefinitely until the gateway restarts or they are
+        # overwritten. For a fixed label set this is okay. However, if the set
+        # of instance names grows over time without reuse, then the gateway
+        # will persist that information indefinitely, but it won't be helpful.
+        # So, do not use file persistence until we're sure it's what we need.
+        # args: ["-persistence.file=/pushgateway/metrics.dat",
+        #        "-persistence.interval=1m"]
+        ports:
+          - containerPort: 9091
+        resources:
+          requests:
+            memory: "400Mi"
+            cpu: "200m"
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
