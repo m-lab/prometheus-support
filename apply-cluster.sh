@@ -6,15 +6,15 @@
 #
 # Example:
 #
-#   ./apply-cluster.sh
+#   PROJECT=mlab-sandbox CLUSTER=scraper-cluster ./apply-cluster.sh
 
 set -x
 set -e
 set -u
 
-USAGE="$0 <project-id> <cluster-name>"
-PROJECT=${1:?Please provide project id: $USAGE}
-CLUSTER=${2:?Please provide cluster name: $USAGE}
+USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
+PROJECT=${PROJECT:?Please provide project id: $USAGE}
+CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
 # Roles.
 kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"

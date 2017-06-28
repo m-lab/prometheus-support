@@ -10,15 +10,18 @@
 #
 # Example:
 #
-#   ./apply-global-prometheus.sh mlab-sandbox prometheus-federation
+#   PROJECT=mlab-sandbox \
+#     CLUSTER=prometheus-federation ./apply-global-prometheus.sh
 
 set -x
 set -e
 set -u
 
-USAGE="$0 <projectid> <cluster>"
-PROJECT=${1:?Please provide project id: $USAGE}
-CLUSTER=${2:?Please provide cluster name: $USAGE}
+# Get project and cluster from the environment.
+
+USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
+PROJECT=${PROJECT:?Please provide project id: $USAGE}
+CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
 export GRAFANA_DOMAIN=status-${PROJECT}.measurementlab.net
 export ALERTMANAGER_URL=http://status-${PROJECT}.measurementlab.net:9093
