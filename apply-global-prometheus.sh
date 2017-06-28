@@ -22,8 +22,6 @@ CLUSTER=${2:?Please provide cluster name: $USAGE}
 
 export GRAFANA_DOMAIN=status-${PROJECT}.measurementlab.net
 export ALERTMANAGER_URL=http://status-${PROJECT}.measurementlab.net:9093
-# It does not really matter what the admin password is.
-export GRAFANA_PASSWORD=$( echo $RANDOM | md5sum | awk '{print $1}' )
 
 # Roles.
 kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
@@ -52,11 +50,15 @@ kubectl create configmap grafana-config \
     --from-file=config/federation/grafana \
     --dry-run -o json | kubectl apply -f -
 
-if [[ -n "$GRAFANA_PASSWORD" ]] ; then
-  kubectl create secret generic grafana-secrets \
-      "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
-      --dry-run -o json | kubectl apply -f -
-fi
+# Keep the password a secret.
+set +x
+# It does not really matter what the admin password is.
+export GRAFANA_PASSWORD=$( echo $RANDOM | md5sum | awk '{print $1}' )
+kubectl create secret generic grafana-secrets \
+    "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
+    --dry-run -o json | kubectl apply -f -
+set -x
+
 if [[ -n "${GRAFANA_DOMAIN}" ]] ; then
   kubectl create configmap grafana-env \
       "--from-literal=domain=${GRAFANA_DOMAIN}" \
