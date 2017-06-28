@@ -10,18 +10,21 @@
 #
 # Example:
 #
-# GRAFANA_DOMAIN=status-mlab-staging.measurementlab.net \
-#   GRAFANA_PASSWORD=<password> \
-#   ALERTMANAGER_URL=http://status-mlab-staging.measurementlab.net:9093 \
-#   ./apply-global-prometheus.sh mlab-staging global-prometheus
+#   PROJECT=mlab-sandbox \
+#     CLUSTER=prometheus-federation ./apply-global-prometheus.sh
 
 set -x
 set -e
 set -u
 
-USAGE="$0 <projectid> [<grafana passwd>]"
-PROJECT=${1:?Please provide project id: $USAGE}
-CLUSTER=${2:?Please provide cluster name: $USAGE}
+# Get project and cluster from the environment.
+
+USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
+PROJECT=${PROJECT:?Please provide project id: $USAGE}
+CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
+
+export GRAFANA_DOMAIN=status-${PROJECT}.measurementlab.net
+export ALERTMANAGER_URL=http://status-${PROJECT}.measurementlab.net:9093
 
 # Roles.
 kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
@@ -50,11 +53,15 @@ kubectl create configmap grafana-config \
     --from-file=config/federation/grafana \
     --dry-run -o json | kubectl apply -f -
 
-if [[ -n "$GRAFANA_PASSWORD" ]] ; then
-  kubectl create secret generic grafana-secrets \
-      "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
-      --dry-run -o json | kubectl apply -f -
-fi
+# Keep the password a secret.
+set +x
+# It does not really matter what the admin password is.
+export GRAFANA_PASSWORD=$( echo $RANDOM | md5sum | awk '{print $1}' )
+kubectl create secret generic grafana-secrets \
+    "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
+    --dry-run -o json | kubectl apply -f -
+set -x
+
 if [[ -n "${GRAFANA_DOMAIN}" ]] ; then
   kubectl create configmap grafana-env \
       "--from-literal=domain=${GRAFANA_DOMAIN}" \
@@ -62,9 +69,20 @@ if [[ -n "${GRAFANA_DOMAIN}" ]] ; then
 fi
 
 ## Alertmanager
-kubectl create configmap alertmanager-config \
-    --from-file=config/federation/alertmanager \
-    --dry-run -o json | kubectl apply -f -
+# TODO: enable storing slack channels as secrets and generating the config.yml
+# Check to see if the alertmanager-config already exists. Do nothing if so.
+AM_CONFIG=$( kubectl get configmaps \
+    alertmanager-config --output=jsonpath={.metadata.name} )
+if [[ -z "${AM_CONFIG}" ]] ; then
+  # Create a default configuration without actual values.
+  cp config/federation/alertmanager/config.yml.template \
+      config/federation/alertmanager/config.yml
+
+  # Create a new configmap.
+  kubectl create configmap alertmanager-config \
+      --from-file=config/federation/alertmanager \
+      --dry-run -o json | kubectl apply -f -
+fi
 
 if [[ -n "${ALERTMANAGER_URL}" ]] ; then
     kubectl create configmap alertmanager-env \
@@ -74,3 +92,10 @@ fi
 
 # Deployments
 kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"
+
+# Reload configurations. If the deployment configuration has changed then this
+# request may fail becuase the container has already shutdown.
+# TODO: there is an indeterminate delay between the time that a configmap is
+# updated and it becomes available to the container. So, this reload may fail
+# since the configmap is not yet up to date.
+curl -X POST http://status-${PROJECT}.measurementlab.net:9090/-/reload || :
