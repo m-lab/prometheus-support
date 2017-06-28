@@ -29,13 +29,45 @@ script:
 # promtool check-config config/cluster/prometheus/prometheus.yml
 
 deploy:
+#########################################
+## Sandbox
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-global-prometheus.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
     all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-*
+    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster-soltesz ./apply-cluster.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    all_branches: true
+    condition: $TRAVIS_BRANCH == sandbox-soltesz && $TRAVIS_EVENT_TYPE == push
+
+#########################################
+## Staging
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging prometheus-federation ./apply-global-prometheus.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    all_branches: true
+    condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
+
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging scraper-cluster ./apply-cluster.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    all_branches: true
+    condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
+
+#########################################
+## Production
+# TODO: add deploy on tags.
 
 before_install:
 - travis/decrypt.sh "$encrypted_1c8dd3704323_key" "$encrypted_1c8dd3704323_iv"
