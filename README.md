@@ -486,8 +486,9 @@ Delete the configmaps.
 
 # Github Receiver
 
-The github receiver implements the Alertmanager Webhook API. So, Alertmanager can
-send alerts to the github receiver and they are converted into Github issues.
+The github receiver implements the Alertmanager Webhook API. So, Alertmanager
+can send alerts to the github receiver and they are converted into Github
+issues.
 
 The github receiver authenticates using Github access tokens. Generate a new one
 at: https://github.com/settings/tokens
