@@ -484,6 +484,40 @@ Delete the configmaps.
     kubectl delete configmap alertmanager-config
     kubectl delete configmap alertmanage-env
 
+# Github Receiver
+
+The github receiver implements the Alertmanager Webhook API. So, Alertmanager
+can send alerts to the github receiver and they are converted into Github
+issues.
+
+The github receiver authenticates using Github access tokens. Generate a new one
+at: https://github.com/settings/tokens
+
+Actions authenticated using the token will be associated with your account.
+
+## Create
+
+Create the secrets for the github receiver:
+
+    kubectl create secret generic github-secrets \
+        --from-literal=auth-token=${AUTH_TOKEN}
+
+Create the service and deployment:
+
+    kubectl create -f k8s/<p>/prometheus-federation/services/github-receiver-public-service.yml
+    kubectl create -f k8s/<p>/prometheus-federation/deployments/github-receiver.yml
+
+## Delete
+
+Delete the service and deployment.
+
+    kubectl delete -f k8s/<p>/prometheus-federation/services/github-receiver-public-service.yml
+    kubectl delete -f k8s/<p>/prometheus-federation/deployments/github-receiver.yml
+
+Delete the secrets:
+
+    kubectl delete secret github-secrets
+
 # Blackbox exporter
 
 The blackbox exporter allows probes of endpoints over HTTP, HTTPS, DNS, TCP and
