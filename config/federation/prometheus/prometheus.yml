@@ -415,7 +415,8 @@ scrape_configs:
       # Copy all labels from the aeflex service discovery.
       - action: labelmap
         regex: __aef_(.+)
-
+  # TODO(JM) make this work with all instances
+  # Scrape config for the annotation service
   - job_name: 'annotation-service'
     static_configs:
       - targets: ['annotator-dot-mlab-sandbox.appspot.com']
