@@ -33,6 +33,39 @@ gcloud container \
   --node-labels=prometheus-node=true
 ```
 
+### Upgrade deployment resource limits
+
+To increase the resources assigned to the prometheus server or the set of all
+services, you may need a larger node pool.
+
+```
+gcloud --project=mlab-staging container node-pools create default-pool-N \
+  --cluster=prometheus-federation \
+  --num-nodes=3 \
+  --zone=us-east1-c \
+  --scopes "https://www.googleapis.com/auth/cloud-platform" \
+  --node-labels=prometheus-node=true \
+  --machine-type=n1-standard-8
+```
+
+Adjust the project, cluster name, and zone as appropriate. If the cluster is
+using static public IPs, use the same zone as the current cluster; static IPs
+are associated with a single zone.
+
+Then update the resource "request" and "limit" in the appropriate deployment
+configuration: `k8s/<project>/<cluster>/deployment/<deployment.yml>`
+
+It may also be necessary to update the:
+
+    GCP -> Networking -> Load Balancer -> Backend
+
+to include the new node pool. Otherwise, network requests will appear to hang.
+
+Also, k8s may fail to detach a peristent volume from one node pool and make it
+available to the other. This will manifest as a deployment's pod
+'CreatingContainer' indefinitely. And, the `kubectl get events` will include
+related error messages.
+
 ## Within an existing cluster
 
 No special scopes are required for the prometheus cluster configuration.
