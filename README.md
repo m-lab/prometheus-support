@@ -69,8 +69,11 @@ related error messages.
 ## Within an existing cluster
 
 No special scopes are required for the prometheus cluster configuration.
+However, node labels can only be added to a new node group using the command
+line.
 
-However, for very large number of time series a highmem node pool is necessary.
+For very large number of time series (e.g. production scraper) a highmem node
+pool is necessary.
 
 ```
 gcloud --project=mlab-oti container node-pools create prometheus-pool \
@@ -128,7 +131,7 @@ static IP through the Cloud Console interface first.
 
 *Also, note*: Only one GKE cluster at a time can use the static IPs allocated
 in the `k8s/.../services.yml` files. If you are using an additional GKE cluster
-(e.g.  in mlab-sandbox project), create a new services.yml file that uses the
+(e.g.  in mlab-sandbox project), update the services yaml files to use the
 new static IP allocation.
 
 [dns]: https://github.com/kubernetes-incubator/external-dns
@@ -146,10 +149,12 @@ or federation, not both):
 TODO(soltesz): move environment variables (like gcloud-project) to a separate
 directory.
 
+    # For federation.
     kubectl create configmap prometheus-federation-config \
         --from-literal=gcloud-project=mlab-sandbox \
         --from-file=config/federation/prometheus
 
+    # For cluster.
     kubectl create configmap prometheus-cluster-config \
         --from-file=config/cluster/prometheus
 
@@ -169,10 +174,11 @@ values equal to the content of the file.
       prometheus.yml: 9754 bytes
 
 We can now refer to this ConfigMap in the "deployment" configuration later. For
-example, k8s/prometheus.yml declares the prometheus configuration as a volume so
-that the file `prometheus.yml` appears under `/etc/prometheus`.
+example, `k8s/mlab-sandbox/prometheus-federation/deployments/prometheus.yml`
+uses a configmap as a volume so that the config file
+`config/federation/prometheus.yml` appears under `/etc/prometheus`.
 
-For example this will look something like (with abbreviated configuration):
+For example, this will look something like (with abbreviated configuration):
 
     - containers:
       ...
@@ -180,11 +186,13 @@ For example this will look something like (with abbreviated configuration):
           # /etc/prometheus/prometheus.yml should contain the M-Lab Prometheus
           # config.
           - mountPath: /etc/prometheus
+            # This name refers to the 'volumes.name'
             name: prometheus-config
       volumes:
       - name: prometheus-config
         configMap:
-          name: prometheus-cluster-config
+          # This name refers to the configmap name.
+          name: prometheus-federation-config
 
 Note: Configmaps only support text data. Secrets may be an alternative for
 binary data. https://github.com/kubernetes/kubernetes/issues/32432
@@ -221,7 +229,7 @@ When the content of a configmap value needs to change, you can either delete and
 create the configmap object (not ideal), or replace the new configuration all at
 once.
 
-    kubectl create configmap prometheus-cluster-config --from-file=prometheus \
+    kubectl create configmap prometheus-federation-config --from-file=prometheus \
         --dry-run -o json | kubectl apply -f -
 
 After updating a configmap, any pods that use this configmap will need to be
@@ -233,6 +241,11 @@ restarted for the change to take effect.
 The deployment replica set will automatically recreate the pod and the new
 prometheus server will use the updated configmap. This is a known issue:
 https://github.com/kubernetes/kubernetes/issues/13488
+
+Preferably the process (like prometheus) will support a 'reload' operation.
+However, it can take several minutes for the configmap to be updated from the
+perspective of the container. So, do not run reload until the configmap is up
+to date. (TODO: how to confirm this from outside the container?)
 
 # Using Kubernetes Secrets
 
@@ -262,16 +275,17 @@ kubectl get secrets -o jsonpath="${jsonpath}" | base64 --decode && echo ''
 Before beginning, verify that you are [operating on the correct kubernetes
 cluster][cluster].
 
-Then, update k8s/prometheus.yml to reference the current stable prometheus
-container tag. Now, deploy the service.
+Then, update `k8s/mlab-sandbox/prometheus-federation/deployments/prometheus.yml`
+to reference the current stable prometheus container tag. Now, deploy the
+service.
 
 Create a storage class for GCE persistent disks:
 
-    kubectl create -f k8s/storage-class.yml
+    kubectl create -f k8s/mlab-sandbox/<cluster-name>/persistentvolumes/storage-class.yml
 
 Create a persistent volume claim that Prometheus will bind to:
 
-    kubectl create -f k8s/persistent-volumes.yml
+    kubectl create -f k8s/mlab-sandbox/<cluster-name>/persistentvolumes/persistent-volumes.yml
 
 Note: Persistent volume claims are intended to exist longer than pods. This
 allows persistent disks to be dynamically allocated and preserved across pod
@@ -280,35 +294,31 @@ creations and deletions.
 Create a service using the public IP address that will send traffic to pods
 with the label "run=prometheus-server":
 
-    kubectl create -f k8s/mlab-sandbox/<cluser-name>/services.yml
-
-Create the node-exporter daemonset. A [DaemonSet][daemonset] ensures that all
-nodes in the cluster run a copy of a pod. Our daemonset will run one instance of
-the node-exporter on every node.
-
-    kubectl create -f k8s/node-exporter-daemonset.yml
+    kubectl create -f k8s/mlab-sandbox/<cluser-name>/services
 
 ## Cluster deployment
 
-The cluster deployment should be the default configuration, unless you know that
-you need to setup the federation deployment. The cluster and federation
-deployments are mutually exclusive.
+The cluster and federation deployments are mutually exclusive. Do not deploy
+both to the same cluster.
 
-Create the prometheus cluster deployment. This step starts the actual prometheus
-server. The deployment will receive traffic from the service defined above and
-binds to the persistent volume claim. If a persistent volume does not already
-exist, this will create a new one. It will be automatically formatted.
+Create the prometheus cluster deployment for scraper or other stand-alone
+cluster deployments. This step starts the actual prometheus server. The
+deployment will receive traffic from the service defined above and binds to the
+persistent volume claim. If a persistent volume does not already exist, this
+will create a new one. It will be automatically formatted.
 
-    kubectl create -f k8s/cluster/prometheus.yml
+    kubectl create -f k8s/mlab-sandbox/scraper-cluster/deployments/prometheus.yml
 
 ## Federation deployment
 
+The cluster and federation deployments are mutually exclusive. Do not deploy
+both to the same cluster.
+
 The federation deployment is a super-set of the prometheus cluster deployment.
 It is designed to monitor the local cluster as well as aggregate metrics from
-other prometheus clusters. The cluster and federation deployments are mutually
-exclusive.
+other prometheus clusters.
 
-    kubectl create -f k8s/federation/prometheus.yml
+    kubectl create -f k8s/mlab-sandbox/<cluster-name>/deployments/prometheus.yml
 
 ## Check deployment
 
@@ -384,32 +394,24 @@ In the Prometheus server, targets are listed under:
 
 Delete the prometheus deployment:
 
-    kubectl delete -f k8s/cluster/prometheus.yml
-
-Or,
-
-    kubectl delete -f k8s/federation/prometheus.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/deployments/prometheus.yml
 
 Since the prometheus pod is no longer running, clients connecting to the public
 IP address will try to load but fail. If we also delete the service, then
 traffic will stop being forwarded from the public IP altogether.
 
-    kubectl delete -f k8s/mlab-sandbox/<cluster name>/services.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster name>/services
 
 Even if the prometheus deployment is not running, the persistent volume keeps
 the data around. If the cluster is destroyed or if the persistent volume claim
 is deleted, the automatically created disk image will be garbage collected and
 deleted. At that point all data will be lost.
 
-    kubectl delete -f k8s/persistent-volumes.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/persistentvolumes/persistent-volumes.yml
 
 Delete the storage class.
 
-    kubectl delete -f k8s/storage-class.yml
-
-Delete the node exporter daemonset.
-
-    kubectl delete -f k8s/node-exporter-daemonset.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/persistentvolumes/storage-class.yml
 
 ConfigMaps are managed explicitly for now:
 
@@ -429,7 +431,7 @@ Create ConfigMaps for grafana:
     kubectl create configmap grafana-config \
         --from-file=config/federation/grafana
     kubectl create configmap grafana-env \
-        --from-literal=domain=mlab-sandbox.mlab.fyi
+        --from-literal=domain=<static ip address allocated from GCP console>
 
 Note: the domain may be the public IP address, if there is no DNS name yet.
 
@@ -441,7 +443,7 @@ Create a secret to contain the Grafana admin password:
 Finally, Create the grafana deployment. Like the prometheus deployment, this
 step starts the grafana server.
 
-    kubectl create -f k8s/federation/grafana.yml
+    kubectl create -f k8s/mlab-sandbox/<cluster-name>/deployments/grafana.yml
 
 ## Setup
 
@@ -458,7 +460,8 @@ The steps are:
  * Select the Type as "Prometheus"
  * Use a public URI corresponding to the service name, i.e.
    http://status-mlab-sandbox.measurementlab.net:9090
-   The name provided must be a fully qualified URL. You may also use the IP.
+   The name provided must be a fully qualified URL. You may also use the public
+   IP.
  * Leave the Access as "proxy"
  * Click "Add"
 
@@ -467,7 +470,7 @@ The steps are:
 
 Delete the grafana deployment.
 
-    kubectl delete -f k8s/federation/grafana.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/deployments/grafana.yml
 
 Delete the grafana configmaps:
 
@@ -492,7 +495,7 @@ instance of the alertmanager. i.e. `-alertmanager.url=http://bobloblaw.com:9093`
 
 If you're setting up the alertmanager for the first time, copy
 `config.yml.template` to create `config.yml` and update the `api_uri` entries
-with real values.
+with real values. See the template comments for how to do that.
 
 Create the configmaps for alertmanager:
 
@@ -500,17 +503,17 @@ Create the configmaps for alertmanager:
         --from-file=config/federation/alertmanager
 
     kubectl create configmap alertmanager-env \
-        --from-literal=external-url=http://mlab-sandbox.mlab.fyi:9093
+        --from-literal=external-url=http://<public ip address>:9093
 
 Create the alertmanager deployment.
 
-    kubectl create -f k8s/federation/alertmanager.yml
+    kubectl create -f k8s/mlab-sandbox/<cluster-name>/deployments/alertmanager.yml
 
 ## Delete
 
 Delete the deployment.
 
-    kubectl delete -f k8s/federation/alertmanager.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/deployments/alertmanager.yml
 
 Delete the configmaps.
 
@@ -528,6 +531,8 @@ at: https://github.com/settings/tokens
 
 Actions authenticated using the token will be associated with your account.
 
+Note: only one github receiver should target a given github repository.
+
 ## Create
 
 Create the secrets for the github receiver:
@@ -537,15 +542,15 @@ Create the secrets for the github receiver:
 
 Create the service and deployment:
 
-    kubectl create -f k8s/<p>/prometheus-federation/services/github-receiver-public-service.yml
-    kubectl create -f k8s/<p>/prometheus-federation/deployments/github-receiver.yml
+    kubectl create -f k8s/mlab-oti/<cluster-name>/services/github-receiver-public-service.yml
+    kubectl create -f k8s/mlab-oti/<cluster-name>/deployments/github-receiver.yml
 
 ## Delete
 
 Delete the service and deployment.
 
-    kubectl delete -f k8s/<p>/prometheus-federation/services/github-receiver-public-service.yml
-    kubectl delete -f k8s/<p>/prometheus-federation/deployments/github-receiver.yml
+    kubectl delete -f k8s/mlab-oti/<cluster-name>/services/github-receiver-public-service.yml
+    kubectl delete -f k8s/mlab-oti/<cluster-name>/deployments/github-receiver.yml
 
 Delete the secrets:
 
@@ -589,13 +594,13 @@ Create the configmaps for the blackbox exporter:
 
 Create the blackbox exporter deployment.
 
-    kubectl create -f k8s/federation/blackbox.yml
+    kubectl create -f k8s/mlab-sandbox/<cluster-name>/deployments/blackbox.yml
 
 ## Delete
 
 Delete the deployment.
 
-    kubectl delete -f k8s/federation/blackbox.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/deployments/blackbox.yml
 
 Delete the configmaps.
 
@@ -617,13 +622,13 @@ https://github.com/prometheus/pushgateway#prometheus-pushgateway
 The pushgateway has no configuration file or persistent state. Create the
 deployment.
 
-    kubectl create -f k8s/federation/pushgateway.yml
+    kubectl create -f k8s/mlab-sandbox/<cluster-name>/deployments/pushgateway.yml
 
 ## Delete
 
 Delete the deployment.
 
-    kubectl delete -f k8s/federation/pushgateway.yml
+    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/deployments/pushgateway.yml
 
 # Debugging the steps above
 
