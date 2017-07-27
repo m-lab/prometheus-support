@@ -82,7 +82,7 @@ spec:
         #   -storage.local.index-cache-size.label-pair-to-fingerprints 20971520
         args: ["-config.file=/etc/prometheus/prometheus.yml",
                "-storage.local.path=/prometheus",
-               "-storage.local.target-heap-size=75161927680",
+               #"-storage.local.target-heap-size=75161927680",
                "-storage.local.checkpoint-dirty-series-limit=1500000",
                "-storage.local.checkpoint-interval=10m0s",
                "-storage.local.index-cache-size.fingerprint-to-metric=104857600",
@@ -95,11 +95,11 @@ spec:
           - containerPort: 9090
         resources:
           requests:
-            memory: "96Gi"
-            cpu: "8000m"
+            memory: "5Gi"
+            cpu: "1000m"
           limits:
-            memory: "96Gi"
-            cpu: "8000m"
+            memory: "5Gi"
+            cpu: "1000m"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
