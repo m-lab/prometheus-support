@@ -1,0 +1,25 @@
+# M-Lab Prometheus configuration.
+
+global:
+  # These are settings helpful for testing not for production. Feel free to
+  # change them.
+  scrape_interval:     10s
+  evaluation_interval: 10s  # Evaluate rules every n seconds.
+  # scrape_timeout is set to the global default (10s).
+
+rule_files:
+  # - /etc/prometheus/rules.yml
+
+# For testing exporters, static configs are probably easiest. If you
+# need to test new discovery methods, see the relevant docs:
+#   https://prometheus.io/docs/operating/configuration/#<scrape_config>
+scrape_configs:
+
+  - job_name: 'prometheus'
+    static_configs:
+      # Have prometheus scrape itself at least.
+      - targets: ['localhost:9090']
+
+#  - job_name: 'fake-target'
+#    static_configs:
+#      - targets: ['123.45.67.89:9091']
