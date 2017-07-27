@@ -40,7 +40,9 @@ deploy:
     condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster ./apply-cluster.sh
+  script:
+    - $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster ./apply-cluster.sh
+    - $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
