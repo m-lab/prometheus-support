@@ -218,7 +218,7 @@ ALERT RsyncRunningWithoutScraper
 
 # DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in at least 21 hours, meaning that at least the last two download attempts have failed.
 ALERT DownloaderIsFailingToUpdate
-  IF time()-downloader_Last_Successful_Time > (21 * 60 * 60)
+  IF time()-downloader_last_success_time_seconds > (21 * 60 * 60)
   FOR 5m
   LABELS {
     severity = "page"
