@@ -216,4 +216,14 @@ ALERT RsyncRunningWithoutScraper
   }
 
 
-
+# DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in at least 21 hours, meaning that at least the last two download attempts have failed.
+ALERT DownloaderIsFailingToUpdate
+  IF time()-downloader_Last_Successful_Time > (21 * 60 * 60)
+  FOR 5m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Neither of the last two attempts to download the maxmind/routeviews feeds were successful.",
+    hints = "Check for errors with the downloader service on grafana with the downloader_Error_Count metric, or check the stackdriver logs for the downloader cluster."
+  }
