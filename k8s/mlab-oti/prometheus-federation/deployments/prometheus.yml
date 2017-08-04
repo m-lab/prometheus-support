@@ -22,15 +22,12 @@ spec:
         # public IP and port so that it is publically accessible.
         run: prometheus-server
       annotations:
-        # Tell prometheus service discovery to scrape the node-exporter running
-        # within the prometheus-server pod.
+        # Tell prometheus service discovery to scrape the pod containers.
         prometheus.io/scrape: 'true'
-        prometheus.io/port: '9100'
     spec:
       # References a service account with RBAC permissions for accessing node
       # metrics. This is required for k8s version 1.6+.
-      # TODO(soltesz): enable when cluster is upgraded to 1.6+
-      # serviceAccountName: prometheus
+      serviceAccountName: prometheus
 
       # Clusters running a prometheus instance must label nodes exclusively for
       # use by prometheus. See README for steps to create a GKE cluster for
