@@ -21,6 +21,9 @@ spec:
         # Note: run=blackbox-server should match a service config with a
         # public IP and port so that it is publically accessible.
         run: blackbox-server
+      annotations:
+        # Tell prometheus service discovery to scrape the blackbox container.
+        prometheus.io/scrape: 'true'
     spec:
       # Place the pod into the Guaranteed QoS by setting equal resource
       # requests and limits for *all* containers in the pod.
