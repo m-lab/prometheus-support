@@ -1,0 +1,138 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: prometheus-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      # Used to match pre-existing pods that may be affected during updates.
+      run: prometheus-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  # Pod template.
+  template:
+    metadata:
+      labels:
+        # Note: run=prometheus-server should match a service config with a
+        # public IP and port so that it is publically accessible.
+        run: prometheus-server
+      annotations:
+        # Tell prometheus service discovery to scrape the node-exporter running
+        # within the prometheus-server pod.
+        prometheus.io/scrape: 'true'
+    spec:
+      # References a service account with RBAC permissions for accessing node
+      # metrics. This is required for k8s version 1.6+.
+      serviceAccountName: prometheus
+
+      # Clusters running a prometheus instance must label nodes exclusively for
+      # use by prometheus. See README for steps to create a GKE cluster for
+      # prometheus.
+      nodeSelector:
+        prometheus-node: 'true'
+
+      # When prometheus receives SIGTERM, it begins a new checkpoint. This can
+      # take longer than the default grace period of 30s.
+      terminationGracePeriodSeconds: 240
+
+      # Place the pod into the Guaranteed QoS by setting equal resource
+      # requests and limits for *all* containers in the pod.
+      # For more background, see:
+      # https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-qos.md
+      containers:
+      # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
+      # stable version.
+      - image: prom/prometheus:v1.6.3
+        # Note: the container name appears to be ignored and the actual pod name
+        # is derived from the Deployment.metadata.name. However, removing this
+        # value results in a configuration error.
+        name: prometheus
+        # Note: Set retention time to 120 days. (default retention is 30d).
+        #   TODO(soltesz): restore long-term retention times after we understand
+        #   the costs of the other settings.
+        #       "-storage.local.retention=2880h",
+        #
+        # See https://www.youtube.com/watch?v=hPC60ldCGm8 for ~recent
+        # configuration best practices.
+        #
+        # TODO(soltesz): we're setting -storage.local.target-heap-size to ~75%
+        # of available RAM. They recommend preserving a 50% headroom, but I'm
+        # setting it higher right now to over-provision and leave fine-tuning
+        # to a later step.
+        #
+        # See: https://prometheus.io/docs/operating/storage/ for more context
+        # on the meaning of the following flags.
+        #
+        # Allow as many series in memory as there are typical metrics scraped.
+        #   -storage.local.checkpoint-dirty-series-limit 1500000
+        #
+        # Allow a longer interval between checkpoints (when above limit is not
+        # violated).
+        #   -storage.local.checkpoint-interval 10m0s
+        #
+        # Just use 10x the default values for all index cache flags:
+        #   -storage.local.index-cache-size.fingerprint-to-metric 104857600
+        #   -storage.local.index-cache-size.fingerprint-to-timerange 52428800
+        #   -storage.local.index-cache-size.label-name-to-label-values 104857600
+        #   -storage.local.index-cache-size.label-pair-to-fingerprints 20971520
+        args: ["-config.file=/etc/prometheus/prometheus.yml",
+               "-storage.local.path=/prometheus",
+               "-web.console.libraries=/usr/share/prometheus/console_libraries",
+               "-web.console.templates=/usr/share/prometheus/consoles"]
+        ports:
+          - containerPort: 9090
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "500m"
+        volumeMounts:
+        # /prometheus stores all metric data. Declared as VOLUME in base image.
+        - mountPath: /prometheus
+          name: prometheus-storage
+          subPath: prometheus-data
+        # /legacy-targets should contain legacy target configuration files.
+        - mountPath: /legacy-targets
+          name: prometheus-storage
+          subPath: legacy-targets
+        # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
+        - mountPath: /etc/prometheus
+          name: prometheus-config
+
+      # Run a node-exporter as part of the prometheus-server pod so that it has
+      # access to the same namespace and volumes as the prometheus-server. This
+      # allows simple disk usage monitoring of the "/prometheus" mount point.
+      - image: prom/node-exporter:v0.13.0
+        name: node-exporter
+        # Note: only enable the filesystem collector, and ignore system paths.
+        args: [ "--collectors.enabled=filesystem",
+                "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)"]
+        ports:
+          - containerPort: 9100
+        resources:
+          requests:
+            memory: "10Mi"
+            cpu: "50m"
+          limits:
+            memory: "10Mi"
+            cpu: "50m"
+        volumeMounts:
+        - mountPath: /prometheus
+          name: prometheus-storage
+
+      # Disks created manually, can be named here explicitly using
+      # gcePersistentDisk instead of the persistentVolumeClaim.
+      volumes:
+      - name: prometheus-storage
+        persistentVolumeClaim:
+          claimName: auto-prometheus-ssd0
+      - name: prometheus-config
+        configMap:
+          name: prometheus-cluster-config

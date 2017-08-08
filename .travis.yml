@@ -47,6 +47,14 @@ deploy:
     all_branches: true
     condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
 
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    all_branches: true
+    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+
 #########################################
 ## Staging
 - provider: script
@@ -65,6 +73,14 @@ deploy:
     all_branches: true
     condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
 
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging downloader ./apply-cluster.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    all_branches: true
+    condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
+
 #########################################
 ## Production
 # TODO: enforce a format on the $TRAVIS_TAG name.
@@ -77,6 +93,13 @@ deploy:
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti scraper-cluster ./apply-cluster.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    tags: true
+
+- provider: script
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti downloader ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
