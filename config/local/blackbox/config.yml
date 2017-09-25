@@ -1,0 +1,76 @@
+# M-Lab blackbox exporter configuration.
+#
+# The blackbox exporter allows probes of endpoints over HTTP, HTTPS, DNS, TCP
+# and ICMP.
+#
+# Every probe takes a "target" and "module" as parameters. The probe runs
+# synchronously with the request. Typically, Prometheus will issue the request
+# to the blackbox exporter.
+#
+# The prober timeout setting must be less than the prometheus scrape timeout
+# or the prometheus server will give up and conclude that the blackbox service
+# is down and never receive the probe failure metrics from the blackbox
+# exporter.
+#
+# We can run a sample check. For example:
+#    target=mlab1.lga02.measurement-lab.org:806
+#    module=ssh_v4_online
+#    wget "http://<blackbox-ip>:9115/probe?target=${target}&module=${module}"
+#
+# Returns:
+#
+#    probe_ip_protocol 4
+#    probe_duration_seconds 0.179516
+#    probe_success 1
+#
+# See https://github.com/prometheus/blackbox_exporter for additional examples.
+
+modules:
+  # target=<hostname:port>
+  tcp_v4_online:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      protocol: "tcp4"
+
+  # target=<hostname:port>
+  ssh_v4_online:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      protocol: "tcp4"
+      query_response:
+        - expect: "SSH-2.0-OpenSSH_.+"
+
+  # target=<hostname:port>
+  rsyncd_online:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      protocol: "tcp4"
+      query_response:
+        # @RSYNCD: is followed by a version number, e.g. 30.0. For more
+        # flexibility we do not require a specific version here.
+        - expect: "@RSYNCD: .+"
+        - send: "@RSYNCD: 30.0\n#list"
+        - expect: "@RSYNCD: EXIT"
+
+  # target=<hostname>
+  icmp:
+    prober: icmp
+    timeout: 5s
+    icmp:
+      protocol: "icmp"
+      preferred_ip_protocol: "ip4"
+
+  # target=<http[s]://host:port>
+  #
+  # Works with http or https targets.
+  #
+  # NOTE: M-Lab DRACs are network filtered.
+  # NOTE: NDT ports do not return valid HTTP responses and appear to fail.
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
