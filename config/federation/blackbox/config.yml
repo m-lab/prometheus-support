@@ -49,9 +49,13 @@ modules:
     tcp:
       protocol: "tcp4"
       query_response:
-        # @RSYNCD: is followed by a version number, e.g. 30.0. For more
-        # flexibility we do not require a specific version here.
+        # @RSYNCD: is followed by a version number, e.g. 30.0. Rather than
+        # dropping the connection immediately, we simulate a module list
+        # request to the rsyncd server. Rsyncd automatically closes the
+        # connection in response.
         - expect: "@RSYNCD: .+"
+        - send: "@RSYNCD: 30.0\n#list"
+        - expect: "@RSYNCD: EXIT"
 
   # target=<hostname>
   icmp:
