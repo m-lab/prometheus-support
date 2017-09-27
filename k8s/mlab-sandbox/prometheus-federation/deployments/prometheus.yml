@@ -89,6 +89,10 @@ spec:
         - mountPath: /aeflex-targets
           name: prometheus-storage
           subPath: aeflex-targets
+        # /snmp-targets should contain snmp_exporter target config files.
+        - mountPath: /snmp-targets
+          name: prometheus-storage
+          subPath: snmp-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
@@ -127,9 +131,11 @@ spec:
                 "--http-target=/targets/legacy-targets/sidestream.json",
                 "--http-target=/targets/blackbox-targets/ssh806.json",
                 "--http-target=/targets/blackbox-targets/rsyncd.json",
+                "--http-target=/targets/snmp-targets/snmpexporter.json",
                 "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/legacy-targets/sidestream.json",
                 "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/ssh806.json",
                 "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/rsyncd.json",
+                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/snmp-targets/snmpexporter.json",
                 "--project=$(GCLOUD_PROJECT)"]
         resources:
           requests:
