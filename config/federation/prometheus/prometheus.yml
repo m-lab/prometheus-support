@@ -405,7 +405,7 @@ scrape_configs:
       # The "__exporter-project" label will contain a shortened GCP project
       # name. We use this to construct the domain name of the GCE instance
       # running the snmp_exporer in that project.
-      - source_labels: [__exporter-project]
+      - source_labels: [__exporter_project]
         regex: (.*)
         target_label: __address__
         replacement: snmp-exporter.${1}.measurementlab.net:9116
