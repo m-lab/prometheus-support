@@ -373,6 +373,42 @@ scrape_configs:
         target_label: __address__
         replacement: blackbox-public-service.default.svc.cluster.local:9115
 
+  # SNMP configurations.
+  - job_name: 'snmp-targets'
+    metrics_path: /snmp
+
+    file_sd_configs:
+      - files:
+          - /snmp-targets/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    # This relabel config is necessary. The relabel config redefines the address
+    # to scrape and sets the correct parameters to pass to the scrape target.
+    relabel_configs:
+
+      # The default __address__ value is a target host from the config file.
+      # Here, we set (i.e. "replace") a request parameter "target" equal to the
+      # host value.
+      - source_labels: [__address__]
+        regex: (.*)
+        target_label: __param_target
+        replacement: ${1}
+
+      # Use the "site" label defined in the input file as the module name for
+      # the snmp_exporter request.
+      - source_labels: [site]
+        regex: (.*)
+        target_label: __param_module
+        replacement: ${1}
+
+      # The "__exporter_project" label will contain a shortened GCP project
+      # name. We use this to construct the domain name of the GCE instance
+      # running the snmp_exporer in that project.
+      - source_labels: [__exporter_project]
+        regex: (.*)
+        target_label: __address__
+        replacement: snmp-exporter.${1}.measurementlab.net:9116
 
   # Scrape config for pushgateway.
   #
