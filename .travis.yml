@@ -18,7 +18,7 @@ install:
 
 script:
 # Run query "unit tests".
-- go test -v github.com/m-lab/prometheus-support/cmd/query_tester -args -log.level warn
+- go test -v github.com/m-lab/prometheus-support/cmd/query_tester
 
 # Use promtool to check current alerts and rules. This is only a syntax check.
 - promtool check-rules config/federation/prometheus/alerts.yml
