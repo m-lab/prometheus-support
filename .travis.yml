@@ -21,8 +21,8 @@ script:
 - go test -v github.com/m-lab/prometheus-support/cmd/query_tester
 
 # Use promtool to check current alerts and rules. This is only a syntax check.
-- promtool check-rules config/federation/prometheus/alerts.yml
-- promtool check-rules config/federation/prometheus/rules.yml
+- promtool check rules config/federation/prometheus/alerts.yml
+- promtool check rules config/federation/prometheus/rules.yml
 
 # TODO(soltesz): support check-config.
 # promtool check-config config/federation/prometheus/prometheus.yml
