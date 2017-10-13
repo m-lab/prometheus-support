@@ -13,7 +13,9 @@ cache:
 go_import_path: github.com/m-lab/prometheus-support
 
 install:
-- go get github.com/prometheus/prometheus/cmd/promtool
+- go get -d github.com/prometheus/prometheus/cmd/promtool
+- git -C $GOPATH/src/github.com/prometheus/prometheus/cmd/promtool/ checkout -b 1.8.0 tags/v1.8.0
+- go install github.com/prometheus/prometheus/cmd/promtool
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
 
 script:
@@ -21,8 +23,8 @@ script:
 - go test -v github.com/m-lab/prometheus-support/cmd/query_tester
 
 # Use promtool to check current alerts and rules. This is only a syntax check.
-- promtool check rules config/federation/prometheus/alerts.yml
-- promtool check rules config/federation/prometheus/rules.yml
+- promtool check-rules config/federation/prometheus/alerts.yml
+- promtool check-rules config/federation/prometheus/rules.yml
 
 # TODO(soltesz): support check-config.
 # promtool check-config config/federation/prometheus/prometheus.yml
