@@ -15,7 +15,7 @@ go_import_path: github.com/m-lab/prometheus-support
 install:
 - PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
   PROMTOOL_VERSION=1.8.0;
-  go get -d $PROMTOOL_URL;
+  go get -d $PROMTOOL_URI;
   git -C $GOPATH/src/$PROMTOOL_URI
   checkout -b $PROMTOOL_VERSION tags/v$PROMTOOL_VERSION;
   go install $PROMTOOL_URI
