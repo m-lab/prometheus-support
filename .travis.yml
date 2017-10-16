@@ -13,7 +13,13 @@ cache:
 go_import_path: github.com/m-lab/prometheus-support
 
 install:
-- go get github.com/prometheus/prometheus/cmd/promtool
+  # Install promtool and pin it at the latest stable version, currently 1.8.0
+- PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
+  PROMTOOL_VERSION=1.8.0;
+  go get -d $PROMTOOL_URI;
+  git -C $GOPATH/src/$PROMTOOL_URI
+  checkout -b $PROMTOOL_VERSION tags/v$PROMTOOL_VERSION;
+  go install $PROMTOOL_URI
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
 
 script:
