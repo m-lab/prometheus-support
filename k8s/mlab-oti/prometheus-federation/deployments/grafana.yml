@@ -25,7 +25,7 @@ spec:
       containers:
       # Check https://hub.docker.com/r/grafana/grafana/tags/ for the current
       # stable version.
-      - image: grafana/grafana:4.2.0
+      - image: grafana/grafana:4.5.2
         name: grafana-server
         env:
         - name: GF_SECURITY_ADMIN_PASSWORD
@@ -40,6 +40,17 @@ spec:
             configMapKeyRef:
               name: grafana-env
               key: domain
+        - name: GF_AUTH_GOOGLE_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: grafana-env
+              key: gf_auth_google_client_secret
+        - name: GF_AUTH_GOOGLE_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: grafana-env
+              key: gf_auth_google_client_id
+
         ports:
           - containerPort: 3000
         resources:
