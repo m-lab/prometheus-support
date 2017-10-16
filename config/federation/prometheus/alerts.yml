@@ -70,14 +70,14 @@ ALERT SidestreamIsNotRunning
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
   IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (36 * 60 * 60)
         AND ON(machine)
-           (time() - process_start_time_seconds{service="sidestream"}) > (24 * 60 * 60)
+           (time() - process_start_time_seconds{service="sidestream"}) > (30 * 60 * 60)
   FOR 10m
   LABELS {
     severity = "page"
   }
   ANNOTATIONS {
     summary = "Scraper max file mtime is too old {{ $labels.rsync_url }}",
-    description = "Max file mtime for {{ $labels.rsync_url }} is older than 40 hours.",
+    description = "Max file mtime for {{ $labels.rsync_url }} is older than 36 hours.",
   }
 
 # Scraper internal consistency.
