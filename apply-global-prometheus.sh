@@ -26,15 +26,6 @@ CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 export GRAFANA_DOMAIN=status-${PROJECT}.measurementlab.net
 export ALERTMANAGER_URL=http://status-${PROJECT}.measurementlab.net:9093
 
-# Roles.
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
-
-# Deployent dependencies.
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
-
-# Services.
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/services"
-
 # Config maps and Secrets
 
 ## Blackbox exporter.
@@ -97,8 +88,29 @@ if [[ -n "${ALERTMANAGER_URL}" ]] ; then
         --dry-run -o json | kubectl apply -f -
 fi
 
-# Deployments
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"
+
+# Apply templates
+if [[ -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
+
+    CFG=/tmp/${CLUSTER}-${PROJECT}.yml
+    kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
+        -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
+    kubectl apply -f ${CFG}
+
+else
+    # TODO: remove when all project files support the new templates.
+    # Roles.
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
+
+    # Deployent dependencies.
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
+
+    # Services.
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/services"
+
+    # Deployments
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"
+fi
 
 # Reload configurations. If the deployment configuration has changed then this
 # request may fail becuase the container has already shutdown.

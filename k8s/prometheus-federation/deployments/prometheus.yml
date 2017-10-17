@@ -56,18 +56,18 @@ spec:
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
                "-alertmanager.url=http://alertmanager-public-service.default.svc.cluster.local:9093",
-               "-web.external-url=http://status-mlab-sandbox.measurementlab.net:9090",
+               "-web.external-url=http://status-{{GCLOUD_PROJECT}}.measurementlab.net:9090",
                "-web.console.libraries=/usr/share/prometheus/console_libraries",
                "-web.console.templates=/usr/share/prometheus/consoles"]
         ports:
           - containerPort: 9090
         resources:
           requests:
-            memory: "12Gi"
-            cpu: "3000m"
+            memory: "{{PROMETHEUS_RAM}}"
+            cpu: "{{PROMETHEUS_CPU}}"
           limits:
-            memory: "12Gi"
-            cpu: "3000m"
+            memory: "{{PROMETHEUS_RAM}}"
+            cpu: "{{PROMETHEUS_CPU}}"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
@@ -120,12 +120,6 @@ spec:
 
       - image: measurementlab/gcp-service-discovery
         name: service-discovery
-        env:
-        - name: GCLOUD_PROJECT
-          valueFrom:
-            configMapKeyRef:
-              name: prometheus-federation-config
-              key: gcloud-project
         args: [ "--aef-target=/targets/aeflex-targets/aeflex.json",
                 "--gke-target=/targets/federation-targets/prometheus-clusters.json",
                 "--http-target=/targets/legacy-targets/sidestream.json",
@@ -133,12 +127,12 @@ spec:
                 "--http-target=/targets/blackbox-targets/ssh806.json",
                 "--http-target=/targets/blackbox-targets/rsyncd.json",
                 "--http-target=/targets/snmp-targets/snmpexporter.json",
-                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/legacy-targets/sidestream.json",
-                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/legacy-targets/lameduck.json",
-                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/ssh806.json",
-                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/blackbox-targets/rsyncd.json",
-                "--http-source=https://storage.googleapis.com/operator-$(GCLOUD_PROJECT)/prometheus/snmp-targets/snmpexporter.json",
-                "--project=$(GCLOUD_PROJECT)"]
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/legacy-targets/sidestream.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/legacy-targets/lameduck.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/ssh806.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/rsyncd.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/snmp-targets/snmpexporter.json",
+                "--project={{GCLOUD_PROJECT}}"]
         resources:
           requests:
             memory: "150Mi"
