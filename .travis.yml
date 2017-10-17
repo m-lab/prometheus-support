@@ -24,8 +24,8 @@ install:
 - KEXPAND_URI=github.com/kopeio/kexpand;
   KEXPAND_VERSION=0.2;
   go get -d $KEXPAND_URI;
-  git -C $GOPATH/src/$KEXPAND_URI checkout 0.2;
-  make
+  git -C $GOPATH/src/$KEXPAND_URI checkout -b $KEXPAND_VERSION $KEXPAND_VERSION;
+  cd $GOPATH/src/$KEXPAND_URI && make
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
 
 script:
