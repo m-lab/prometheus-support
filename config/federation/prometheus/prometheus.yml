@@ -280,12 +280,9 @@ scrape_configs:
   # Scrape config for the nagios exporter.
   #
   # The nagios exporter generates its own labels.
-  #
-  # TODO(soltesz): the "job=nagios.measurementlab.net:5000" label may be
-  # unnecessary; consider removing or replacing the job label.
   - job_name: 'nagios-exporter'
     static_configs:
-      - targets: ['nagios.measurementlab.net:5000']
+      - targets: ['nagios.measurementlab.net:9267']
 
   # Scrape config for federation.
   #
