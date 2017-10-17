@@ -24,9 +24,9 @@ kubectl create configmap prometheus-cluster-config \
 # Apply templates
 if [[ -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
 
-    CFG=/tmp/${CLUSTER}-${PROJECT}.yml && rm -f ${CFG}
+    CFG=/tmp/${CLUSTER}-${PROJECT}.yml
     kexpand expand k8s/${CLUSTER}/*/*.yml \
-        -f k8s/${CLUSTER}/${PROJECT}.yml >> ${CFG}
+        -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
     kubectl apply -f ${CFG}
 
 else
