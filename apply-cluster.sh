@@ -16,22 +16,35 @@ USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
-# Roles.
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
-
-# Deployent dependencies.
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
-
 # Prometheus config map.
 kubectl create configmap prometheus-cluster-config \
     --from-file=config/cluster/prometheus \
     --dry-run -o json | kubectl apply -f -
 
-# Services
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/services"
+# Apply templates
+if [[ -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
 
-# Deployments
-kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"
+    CFG=/tmp/${CLUSTER}-${PROJECT}.yml
+    kexpand expand k8s/${CLUSTER}/*/*.yml \
+        -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
+    kubectl apply -f ${CFG}
+
+else
+    # TODO: remove when all project files support the new templates.
+    # Roles.
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
+
+    # Deployent dependencies.
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
+
+    # Services
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/services"
+
+    # Deployments
+    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"
+fi
+
+exit
 
 # Get the public IP for the prometheus service.
 PUBLIC_IP=$( kubectl get services \
