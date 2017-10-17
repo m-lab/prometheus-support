@@ -93,7 +93,7 @@ fi
 if [[ -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
 
     CFG=/tmp/${CLUSTER}-${PROJECT}.yml
-    kexpand expand k8s/${CLUSTER}/*/*.yml \
+    kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
         -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
     kubectl apply -f ${CFG}
 
