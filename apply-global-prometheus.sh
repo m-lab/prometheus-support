@@ -96,28 +96,19 @@ if [[ -n "${ALERTMANAGER_URL}" ]] ; then
 fi
 
 
-# Apply templates
-if [[ -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
-
-    CFG=/tmp/${CLUSTER}-${PROJECT}.yml
-    kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
-        -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
-    kubectl apply -f ${CFG}
-
-else
-    # TODO: remove when all project files support the new templates.
-    # Roles.
-    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/roles"
-
-    # Deployent dependencies.
-    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/persistentvolumes"
-
-    # Services.
-    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/services"
-
-    # Deployments
-    kubectl apply -f "k8s/${PROJECT}/${CLUSTER}/deployments"
+# Check for per-project template variables.
+if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
+  echo "No template variables found for k8s/${CLUSTER}/${PROJECT}.yml"
+  # This is not necessarily an error, so exit cleanly.
+  exit 0
 fi
+
+# Apply templates
+CFG=/tmp/${CLUSTER}-${PROJECT}.yml
+kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
+    -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
+kubectl apply -f ${CFG}
+
 
 # Reload configurations. If the deployment configuration has changed then this
 # request may fail becuase the container has already shutdown.
