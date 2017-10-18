@@ -71,8 +71,9 @@ kubectl create configmap grafana-env \
 # Evaluate the configuration template.
 # Note: Slack configuration depends on travis environment variables.
 # Note: Only enable the github reciever for the production project: mlab-oti.
-SHORT_PROJECT=${PROJECT/mlab-/}
 SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
+GITHUB_RECEIVER_URL=
+SHORT_PROJECT=${PROJECT/mlab-/}
 if [[ ${PROJECT} == mlab-oti ]] ; then
   GITHUB_RECEIVER_URL=http://status-mlab-oti.measurementlab.net:9393/v1/receiver
 fi
