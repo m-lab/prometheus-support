@@ -67,20 +67,27 @@ kubectl create configmap grafana-env \
 
 
 ## Alertmanager
-# TODO: enable storing slack channels as secrets and generating the config.yml
-# Check to see if the alertmanager-config already exists. Do nothing if so.
-AM_CONFIG=$( kubectl get configmaps \
-    alertmanager-config --output=jsonpath={.metadata.name} )
-if [[ -z "${AM_CONFIG}" ]] ; then
-  # Create a default configuration without actual values.
-  cp config/federation/alertmanager/config.yml.template \
-      config/federation/alertmanager/config.yml
 
-  # Create a new configmap.
-  kubectl create configmap alertmanager-config \
-      --from-file=config/federation/alertmanager \
-      --dry-run -o json | kubectl apply -f -
+# Evaluate the configuration template.
+# Note: Slack configuration depends on travis environment variables.
+# Note: Only enable the github reciever for the production project: mlab-oti.
+SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
+GITHUB_RECEIVER_URL=
+SHORT_PROJECT=${PROJECT/mlab-/}
+if [[ ${PROJECT} == mlab-oti ]] ; then
+  GITHUB_RECEIVER_URL=http://status-mlab-oti.measurementlab.net:9393/v1/receiver
 fi
+sed -e 's|{{SLACK_CHANNEL_URL}}|'${!SLACK_CHANNEL_URL_NAME}'|g' \
+    -e 's|{{GITHUB_RECEIVER_URL}}|'$GITHUB_RECEIVER_URL'|g' \
+    -e 's|{{SHORT_PROJECT}}|'$SHORT_PROJECT'|g' \
+    config/federation/alertmanager/config.yml.template > \
+    config/federation/alertmanager/config.yml
+
+# Apply the above configmap.
+kubectl create configmap alertmanager-config \
+    --from-file=config/federation/alertmanager \
+    --dry-run -o json | kubectl apply -f -
+
 
 if [[ -n "${ALERTMANAGER_URL}" ]] ; then
     kubectl create configmap alertmanager-env \
