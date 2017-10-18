@@ -80,31 +80,17 @@ receivers:
 - name: 'slack-alerts-page'
   slack_configs:
   - send_resolved: true
-    # sandbox
-    api_url: REPLACE-WITH-ACTUAL-WEBHOOK-URL
-    channel: alerts-sandbox
-    # staging
-    # api_url:
-    # channel: alerts-staging
-    # production
-    # api_url:
-    # channel: alerts-oti
+    api_url: {{SLACK_CHANNEL_URL}}
+    channel: alerts-{{SHORT_PROJECT}}
     username: alert-page
-  #webhook_configs:
-  #- url: 'http://status-mlab-oti.measurementlab.net:9393/v1/receiver'
+  webhook_configs:
+  - url: '{{GITHUB_RECEIVER_URL}}'
 
 - name: 'slack-alerts-email'
   slack_configs:
   - send_resolved: true
-    # sandbox
-    api_url: REPLACE-WITH-ACTUAL-WEBHOOK-URL
-    channel: alerts-sandbox
-    # staging
-    # api_url:
-    # channel: alerts-staging
-    # production
-    # api_url:
-    # channel: alerts-oti
+    api_url: {{SLACK_CHANNEL_URL}}
+    channel: alerts-{{SHORT_PROJECT}}
     username: alert-email
-  #webhook_configs:
-  #- url: 'http://status-mlab-oti.measurementlab.net:9393/v1/receiver'
+  webhook_configs:
+  - url: '{{GITHUB_RECEIVER_URL}}'
