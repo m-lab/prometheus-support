@@ -77,9 +77,9 @@ SHORT_PROJECT=${PROJECT/mlab-/}
 if [[ ${PROJECT} == mlab-oti ]] ; then
   GITHUB_RECEIVER_URL=http://status-mlab-oti.measurementlab.net:9393/v1/receiver
 fi
-sed -e 's/{{SLACK_CHANNEL_URL}}/'${!SLACK_CHANNEL_URL_NAME}'/g' \
-    -e 's/{{GITHUB_RECEIVER_URL}}/'$GITHUB_RECEIVER_URL'/g' \
-    -e 's/{{SHORT_PROJECT}}/'$SHORT_PROJECT'/g' \
+sed -e 's|{{SLACK_CHANNEL_URL}}|'${!SLACK_CHANNEL_URL_NAME}'|g' \
+    -e 's|{{GITHUB_RECEIVER_URL}}|'$GITHUB_RECEIVER_URL'|g' \
+    -e 's|{{SHORT_PROJECT}}|'$SHORT_PROJECT'|g' \
     config/federation/alertmanager/config.yml.template > \
     config/federation/alertmanager/config.yml
 
