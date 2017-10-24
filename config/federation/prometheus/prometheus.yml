@@ -408,6 +408,18 @@ scrape_configs:
         target_label: __address__
         replacement: snmp-exporter.${1}.measurementlab.net:9116
 
+    # This relabel config is the last relabel processed before ingesting data
+    # into the datastore.
+    metric_relabel_configs:
+
+      # Most all 'ifAlias' labels will be empty. Rather than pollute the
+      # datastore with a bunch of empty labels, only keep the ones that have
+      # some value.
+      - source_labels: [ifAlias]
+        regex: ^$
+        target_label: ifAlias
+        replacement: ""
+
   # Scrape config for pushgateway.
   #
   # Push gateways allow services to publish metrics for later collection by
