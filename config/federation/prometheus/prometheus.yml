@@ -416,8 +416,9 @@ scrape_configs:
       # datastore with a bunch of empty labels, only keep the ones that have
       # some value.
       - source_labels: [ifAlias]
-        regex: .+
-        action: labelkeep
+        regex: ^$
+        target_label: ifAlias
+        replacement: ""
 
   # Scrape config for pushgateway.
   #
