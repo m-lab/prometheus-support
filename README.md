@@ -459,7 +459,7 @@ The steps are:
  * Name the source, e.g. "Prometheus"
  * Select the Type as "Prometheus"
  * Use a public URI corresponding to the service name, i.e.
-   http://status-mlab-sandbox.measurementlab.net:9090
+   http://status.mlab-sandbox.measurementlab.net:9090
    The name provided must be a fully qualified URL. You may also use the public
    IP.
  * Leave the Access as "proxy"
