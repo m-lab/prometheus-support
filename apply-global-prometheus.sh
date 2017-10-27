@@ -34,6 +34,13 @@ kubectl create configmap blackbox-config \
     --dry-run -o json | kubectl apply -f -
 
 ## Prometheus
+
+# Evaluate the configuration template.
+sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
+    config/federation/prometheus/prometheus.yml.template > \
+    config/federation/prometheus/prometheus.yml
+
+# Apply the above configmap.
 kubectl create configmap prometheus-federation-config \
     --from-literal=gcloud-project=${PROJECT} \
     --from-file=config/federation/prometheus \
