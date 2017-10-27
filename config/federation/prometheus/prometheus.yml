@@ -284,6 +284,19 @@ scrape_configs:
     static_configs:
       - targets: ['nagios.measurementlab.net:9267']
 
+
+  # Scrape config for the snmp_exporter. There is one snmp_exporter service
+  # running in a Docker container on a GCE VM in each GCP project.
+  #
+  # The snmp_exporter generates its own labels.
+  - job_name: 'snmp-exporter'
+    static_configs:
+      - targets:
+        - snmp-exporter.mlab-sandbox.measurementlab.net:9116/metrics
+        - snmp-exporter.mlab-staging.measurementlab.net:9116/metrics
+        - snmp-exporter.mlab-oti.measurementlab.net:9116/metrics
+
+
   # Scrape config for federation.
   #
   # The '/federate' target allows retrieving a set of timeseries from other
