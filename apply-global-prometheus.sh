@@ -23,8 +23,8 @@ USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
-export GRAFANA_DOMAIN=status-${PROJECT}.measurementlab.net
-export ALERTMANAGER_URL=http://status-${PROJECT}.measurementlab.net:9093
+export GRAFANA_DOMAIN=status.${PROJECT}.measurementlab.net
+export ALERTMANAGER_URL=http://status.${PROJECT}.measurementlab.net:9093
 
 # Config maps and Secrets
 
@@ -75,7 +75,7 @@ SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
 GITHUB_RECEIVER_URL=
 SHORT_PROJECT=${PROJECT/mlab-/}
 if [[ ${PROJECT} == mlab-oti ]] ; then
-  GITHUB_RECEIVER_URL=http://status-mlab-oti.measurementlab.net:9393/v1/receiver
+  GITHUB_RECEIVER_URL=http://status.${PROJECT}.measurementlab.net:9393/v1/receiver
 fi
 sed -e 's|{{SLACK_CHANNEL_URL}}|'${!SLACK_CHANNEL_URL_NAME}'|g' \
     -e 's|{{GITHUB_RECEIVER_URL}}|'$GITHUB_RECEIVER_URL'|g' \
@@ -115,4 +115,4 @@ kubectl apply -f ${CFG}
 # TODO: there is an indeterminate delay between the time that a configmap is
 # updated and it becomes available to the container. So, this reload may fail
 # since the configmap is not yet up to date.
-curl -X POST http://status-${PROJECT}.measurementlab.net:9090/-/reload || :
+curl -X POST http://status.${PROJECT}.measurementlab.net:9090/-/reload || :
