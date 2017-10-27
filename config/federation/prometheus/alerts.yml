@@ -230,12 +230,12 @@ ALERT DownloaderIsFailingToUpdate
 
 # Prometheus is unable to get data from the snmp_exporter service.
 ALERT SnmpExporterDown
-  IF up{job="snmp-exporter"} == 0
+  IF absent(up{job="snmp-exporter"} == 0)
   FOR 10m
   LABELS {
     severity = "ticket"
   }
   ANNOTATIONS {
-    summary = "Prometheus think that the snmp_exporter service is down on {{ $labels.instance }}.",
+    summary = "The snmp_exporter service is down on {{ $labels.instance }}.",
     hints = "The snmp_exporter service runs in a Docker container on a GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys for m-lab/prometheus-snmp-exporter, or SSH to the VM and poke around."
   }
