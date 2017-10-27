@@ -227,3 +227,15 @@ ALERT DownloaderIsFailingToUpdate
     summary = "Neither of the last two attempts to download the maxmind/routeviews feeds were successful.",
     hints = "Check for errors with the downloader service on grafana with the downloader_Error_Count metric, or check the stackdriver logs for the downloader cluster."
   }
+
+# Prometheus is unable to get data from the snmp_exporter service.
+ALERT SnmpExporterDown
+  IF up{job="snmp-exporter"} == 0
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "Prometheus think that the snmp_exporter service is down on {{ $labels.instance }}.",
+    hints = "The snmp_exporter service runs in a Docker container on a GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys for m-lab/prometheus-snmp-exporter, or SSH to the VM and poke around."
+  }
