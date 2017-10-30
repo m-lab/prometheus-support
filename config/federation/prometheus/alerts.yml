@@ -229,7 +229,7 @@ ALERT DownloaderIsFailingToUpdate
   }
 
 # Prometheus is unable to get data from the snmp_exporter service.
-ALERT SnmpExporterDown
+ALERT SnmpExporterDownOrMissing
   IF up{job="snmp-exporter"} == 0 OR absent(up{job="snmp-exporter"})
   FOR 10m
   LABELS {
