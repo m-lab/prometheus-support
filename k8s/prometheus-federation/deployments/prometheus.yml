@@ -93,6 +93,10 @@ spec:
         - mountPath: /snmp-targets
           name: prometheus-storage
           subPath: snmp-targets
+        # /slow-targets should contain slow target config files.
+        - mountPath: /slow-targets
+          name: prometheus-storage
+          subPath: slow-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config

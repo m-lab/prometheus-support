@@ -473,3 +473,14 @@ scrape_configs:
       # Copy all labels from the aeflex service discovery.
       - action: labelmap
         regex: __aef_(.+)
+
+  # Scrape slow targets every 5m (NOTE: do not poll less frequently without
+  # updating the prometheus flag -query.staleness-delta).
+  - job_name: 'slow-5m-targets'
+    scrape_interval: 5m
+    file_sd_configs:
+      - files:
+          - /slow-targets/*-5m.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
