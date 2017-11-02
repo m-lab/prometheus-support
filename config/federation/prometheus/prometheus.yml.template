@@ -476,6 +476,14 @@ scrape_configs:
 
   # Scrape slow targets every 5m (NOTE: do not poll less frequently without
   # updating the prometheus flag -query.staleness-delta).
+  #
+  # TODO(soltesz): make this pattern more generic and consistent. Consider:
+  #  * per-target directories exclusively.
+  #  * create per-interval directories instead of per-target directories,
+  #      e.g. 1m-targets, 5m-targets, 30m-targets.
+  #  * place all target files into a single directory, named appropriately.
+  #      e.g. blackbox-1m-*.json, bq-exporter-5m-*.json, etc.
+  #
   - job_name: 'slow-5m-targets'
     scrape_interval: 5m
     file_sd_configs:
