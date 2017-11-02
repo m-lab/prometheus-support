@@ -48,8 +48,9 @@ ALERT ClusterDown
 ALERT SidestreamIsNotRunning
   IF sum_over_time(up{service="sidestream"}[10m]) == 0
         AND ON(machine)
-           sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
-        UNLESS ON(machine) lame_duck_node == 1
+     sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
+        UNLESS ON(machine)
+     lame_duck_node == 1
   FOR 10m
   LABELS {
     severity = "page"
@@ -71,8 +72,9 @@ ALERT SidestreamIsNotRunning
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
   IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (36 * 60 * 60)
         AND ON(machine)
-           (time() - process_start_time_seconds{service="sidestream"}) > (30 * 60 * 60)
-        UNLESS ON(machine) lame_duck_node == 1
+     (time() - process_start_time_seconds{service="sidestream"}) > (30 * 60 * 60)
+        UNLESS ON(machine)
+     lame_duck_node == 1
   FOR 10m
   LABELS {
     severity = "page"
