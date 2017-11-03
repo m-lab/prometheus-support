@@ -43,6 +43,23 @@ modules:
         - expect: "SSH-2.0-OpenSSH_.+"
 
   # target=<hostname:port>
+  tcp_v4_tls_online:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      protocol: "tcp4"
+      tls: true
+
+  # target=<hostname>:9773/sapi/state
+  neubot_online:
+    prober: http
+    timeout: 5s
+    http:
+      protocol: "tcp4"
+      fail_if_not_matches_regexp:
+        - "queue_len_cur"
+
+  # target=<hostname:port>
   rsyncd_online:
     prober: tcp
     timeout: 5s
