@@ -102,6 +102,11 @@ if [[ -n "${ALERTMANAGER_URL}" ]] ; then
         --dry-run -o json | kubectl apply -f -
 fi
 
+# Apply the bigquery exporter configurations.
+kubectl create configmap bigquery-exporter-config \
+    --from-file=config/federation/bigquery \
+    --dry-run -o json | kubectl apply -f -
+
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
