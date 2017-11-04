@@ -18,8 +18,8 @@ spec:
       - name: bigquery-exporter
         image: measurementlab/prometheus-bigquery-exporter:production-0.1
         args: [ "--project={{GCLOUD_PROJECT}}",
-                "--type=gauge",
-                "--query=/queries/bq_ndt_tests2.sql" ]
+                "--type=gauge", "--query=/queries/bq_ndt_tests2.sql",
+                "--type=gauge", "--query=/queries/ndt_test_count_total2.sql" ]
         ports:
         - containerPort: 9050
         volumeMounts:
