@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bigquery-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: bigquery-exporter
+  template:
+    metadata:
+      labels:
+        run: bigquery-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+      - name: bigquery-exporter
+        image: measurementlab/prometheus-bigquery-exporter:production-0.1
+        args: [ "--project={{GCLOUD_PROJECT}}",
+                "--type=gauge",
+                "--query=/queries/bq_ndt_tests2.sql" ]
+        ports:
+        - containerPort: 9050
+        volumeMounts:
+        # /prometheus stores all metric data. Declared as VOLUME in base image.
+        - mountPath: /queries
+          name: bigquery-config
+
+      volumes:
+      - name: bigquery-config
+        configMap:
+          name: bigquery-exporter-config
