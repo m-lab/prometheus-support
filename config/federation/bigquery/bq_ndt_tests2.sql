@@ -1,3 +1,4 @@
+-- TODO: Do not use Legacy SQL. Retire this script in favor of bq_ndt_test.sql.
 SELECT
   CASE 
     WHEN connection_spec.data_direction == 0 THEN "c2s"

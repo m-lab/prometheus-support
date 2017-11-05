@@ -1,3 +1,4 @@
+-- TODO: Do not use Legacy SQL. Retire this script in favor of ndt_test_count_total.sql.
 SELECT
     828544145 + count(test_id) as value
 FROM
