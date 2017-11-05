@@ -17,6 +17,7 @@ spec:
       containers:
       - name: bigquery-exporter
         image: measurementlab/prometheus-bigquery-exporter:production-0.1
+        # TODO: replace queries with Standard SQL versions when bqe is v1.0.
         args: [ "--project={{GCLOUD_PROJECT}}",
                 "--type=gauge", "--query=/queries/bq_ndt_tests2.sql",
                 "--type=gauge", "--query=/queries/ndt_test_count_total2.sql" ]
