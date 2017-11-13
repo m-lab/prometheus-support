@@ -243,14 +243,3 @@ ALERT SnmpExporterDownOrMissing
     summary = "The snmp_exporter service is down on {{ $labels.instance }}.",
     hints = "The snmp_exporter service runs in a Docker container on a GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys for m-lab/prometheus-snmp-exporter, or SSH to the VM and poke around."
   }
-
-ALERT OverOneBillion
-  IF ndt_test_count_total >= 1000000000
-  FOR 1m
-  LABELS {
-    severity = "page"
-  }
-  ANNOTATIONS {
-    summary = "The total number of s2c + c2s tests in our BigQuery DB of tests",
-    hints = "Unlike most alerts, when this one fires, we throw a party"
-  }
