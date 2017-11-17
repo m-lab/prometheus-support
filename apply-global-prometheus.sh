@@ -119,7 +119,7 @@ fi
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
 kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
     -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
-kubectl apply -f ${CFG}
+kubectl apply -f ${CFG} || cat ${CFG}
 
 
 # Reload configurations. If the deployment configuration has changed then this
