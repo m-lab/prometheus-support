@@ -22,9 +22,9 @@ FROM (
     WHERE
         SUBSTR(connection_spec.server_hostname, 7, 5) in ('lax01', 'mia03', 'ham01', 'hnd01')
         # phase 1 IPv6 canary
-    -- AND _PARTITIONTIME = TIMESTAMP('2017-11-11')   # test code to speed testing
-        UNIX_SECONDS(log_time) > CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (86400) AS INT64) * (86400) - (36 * 60 * 60)
-    AND UNIX_SECONDS(log_time) < CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (86400) AS INT64) * (86400) - (36 * 60 * 60) + (86400)
+    -- TODO: use _PARTITIONTIME as date boundaries. e.g. _PARTITIONTIME = (CURRENT_DATE() - 1day)
+    AND UNIX_SECONDS(log_time) < CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (86400) AS INT64) * (86400) - (36 * 60 * 60)
+    AND UNIX_SECONDS(log_time) > CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (86400) AS INT64) * (86400) - (36 * 60 * 60) - (86400)
 )
 
 GROUP BY
