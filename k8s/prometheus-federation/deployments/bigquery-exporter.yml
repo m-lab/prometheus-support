@@ -16,16 +16,15 @@ spec:
     spec:
       containers:
       - name: bigquery-exporter
-        image: measurementlab/prometheus-bigquery-exporter:production-0.2
-        # TODO: replace queries with Standard SQL versions when bqe is v1.0.
+        image: measurementlab/prometheus-bigquery-exporter:production-0.3
         args: [ "--project={{GCLOUD_PROJECT}}",
                 "--type=gauge", "--query=/queries/bq_ndt_tests.sql",
                 "--type=gauge", "--query=/queries/ndt_test_count_total.sql",
-                "--type=gauge", "--query=/queries/bq_ipv6_bias.sql" ]
+                "--type=gauge", "--query=/queries/bq_ipv6_bias.sql",
+                "--type=gauge", "--query=/queries/bq_ndt_server.sql" ]
         ports:
         - containerPort: 9050
         volumeMounts:
-        # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /queries
           name: bigquery-config
 
