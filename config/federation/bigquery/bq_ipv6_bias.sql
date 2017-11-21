@@ -1,31 +1,29 @@
--- bq_ipv6_bias collects the number of tests within a given day that 
+-- bq_ipv6_bias collects the number of daily tests broken down by site, address
+-- type an window scale. The query reports data from two days ago according to
+-- the public ndt table's _PARTITIONTIME.
 #standardSQL
 
 SELECT
-    site, address_type, window_scale, count(*) as value
+  SUBSTR(connection_spec.server_hostname, 7, 5) AS site,
+  IF(REGEXP_CONTAINS(connection_spec.server_ip, ':'), "v6", "v4") AS address_type,
+  CASE WHEN web100_log_entry.snap.SndWindScale = -1 THEN "wsnone"
+       WHEN web100_log_entry.snap.SndWindScale =  0 THEN "ws0"
+       WHEN 1 <= web100_log_entry.snap.SndWindScale AND web100_log_entry.snap.SndWindScale <= 2 THEN "ws12"
+       WHEN 3 <= web100_log_entry.snap.SndWindScale AND web100_log_entry.snap.SndWindScale <= 5 THEN "ws345"
+       WHEN 6 <= web100_log_entry.snap.SndWindScale AND web100_log_entry.snap.SndWindScale <= 8 THEN "ws678"
+       WHEN 9 <= web100_log_entry.snap.SndWindScale THEN "ws9up"
+       ELSE "wsUnknown"
+       END AS window_scale,
+   COUNT(*) AS value
 
-FROM (
-    SELECT
-      substr(connection_spec.server_hostname, 7, 5) AS site,
-      IF(REGEXP_CONTAINS(connection_spec.server_ip, ':'), "v6", "v4") as address_type,
-      CASE WHEN web100_log_entry.snap.SndWindScale = -1 THEN "ws0"
-           WHEN 1 <= web100_log_entry.snap.SndWindScale AND web100_log_entry.snap.SndWindScale <= 2 THEN "ws12"
-           WHEN 3 <= web100_log_entry.snap.SndWindScale AND web100_log_entry.snap.SndWindScale <= 5 THEN "ws345"
-           WHEN 6 <= web100_log_entry.snap.SndWindScale AND web100_log_entry.snap.SndWindScale <= 8 THEN "ws678"
-           WHEN 9 <= web100_log_entry.snap.SndWindScale THEN "ws9up"
-           ELSE "wsUnknown"
-           END as window_scale
+FROM
+    `measurement-lab.public.ndt`
 
-    FROM
-        `measurement-lab.public.ndt`
-
-    WHERE
-        SUBSTR(connection_spec.server_hostname, 7, 5) in ('lax01', 'mia03', 'ham01', 'hnd01')
-        # phase 1 IPv6 canary
-    -- TODO: use _PARTITIONTIME as date boundaries. e.g. _PARTITIONTIME = (CURRENT_DATE() - 1day)
-    AND UNIX_SECONDS(log_time) < CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (86400) AS INT64) * (86400) - (36 * 60 * 60)
-    AND UNIX_SECONDS(log_time) > CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (86400) AS INT64) * (86400) - (36 * 60 * 60) - (86400)
-)
+WHERE
+    -- To guarantee the period queried is up to date (all data collected and
+    -- parsed), we should wait 36hours after the start of day. To also use
+    -- _PARTITIONTIME boundaries, we must look 2 days in the past.
+    _PARTITIONTIME = TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY))
 
 GROUP BY
    site, address_type, window_scale
