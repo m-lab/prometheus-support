@@ -1,3 +1,4 @@
+#standardSQL
 -- bq_ndt_metrics calculates the daily median rtt as well as avg and median
 -- upload and download rates per machine. These values can help recognize major
 -- performance regressions of servers or kernels.
@@ -10,7 +11,6 @@
 --   bq_ndt_server_upload_avg_rate
 --   bq_ndt_server_upload_median_rate
 --   bq_ndt_server_upload_median_rtt
-#standardSQL
 
 SELECT
     machine,
