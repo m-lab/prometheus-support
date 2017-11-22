@@ -56,16 +56,16 @@ FROM (
        `measurement-lab.public.ndt`
 
     WHERE
-        -- NOTE: to guarantee the _PARTITIONTIME data is up to date we should
-        -- wait 36hours. So, this query should be run either at the end of the
-        -- following day, or more often (e.g. hourly) so future queries see all
-        -- data.
+        -- For faster queries we use _PARTITIONTIME boundaries. And, to
+        -- guarantee the _PARTITIONTIME data is "complete" (all data collected
+        -- and parsed) we should wait 36 hours after start of a given day.
+        -- The following is equivalent to the pseudo code:
+        --     date(now() - 12h) - 1d
         _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
-
-    -- Basic test quality filters for safe division.
-    AND web100_log_entry.snap.Duration > 0
-    AND (web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) > 0
-    AND web100_log_entry.snap.CountRTT > 0
+        -- Basic test quality filters for safe division.
+        AND web100_log_entry.snap.Duration > 0
+        AND (web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) > 0
+        AND web100_log_entry.snap.CountRTT > 0
 )
 GROUP BY
     machine

@@ -23,11 +23,11 @@ FROM
     `measurement-lab.public.ndt`
 
 WHERE
-    -- To guarantee the period queried is up to date (all data collected and
-    -- parsed), we should wait 36hours after the start of a given day. To also
-    -- use _PARTITIONTIME boundaries, we must look at least one day in the past.
-    -- The following calculates the most recent "complete" _PARTITIONTIME. The following
-    -- should be equivalent to pseudo code: TruncateTimeToDay(now() - 12h) - 1d
+    -- For faster queries we use _PARTITIONTIME boundaries. And, to guarantee
+    -- the _PARTITIONTIME data is "complete" (all data collected and parsed) we
+    -- should wait 36 hours after start of a given day.  The following is
+    -- equivalent to the pseudo code:
+    --     date(now() - 12h) - 1d
     _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
 
 GROUP BY
