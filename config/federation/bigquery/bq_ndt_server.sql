@@ -1,5 +1,5 @@
 #standardSQL
--- bq_ndt_metrics calculates the daily median rtt AS well AS avg and median
+-- bq_ndt_metrics calculates the daily median rtt as well as avg and median
 -- upload and download rates per machine. These values can help recognize major
 -- performance regressions of servers or kernels.
 --
@@ -39,17 +39,17 @@ FROM (
           ELSE "error"
           END AS direction,
 
-        -- Download AS bits-per-second
+        -- Download as bits-per-second
         8 * 1000000 * (web100_log_entry.snap.HCThruOctetsAcked /
               (web100_log_entry.snap.SndLimTimeRwin +
                     web100_log_entry.snap.SndLimTimeCwnd +
                         web100_log_entry.snap.SndLimTimeSnd)) AS download,
 
-        -- Upload AS bits-per-second
+        -- Upload as bits-per-second
         8 * 1000000 * (web100_log_entry.snap.HCThruOctetsReceived /
               web100_log_entry.snap.Duration) AS upload,
 
-        -- Average RTT AS seconds
+        -- Average RTT as seconds
         web100_log_entry.snap.SumRTT/web100_log_entry.snap.CountRTT/1000 AS rtt
 
     FROM
