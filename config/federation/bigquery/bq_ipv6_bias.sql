@@ -1,7 +1,8 @@
 #standardSQL
 -- bq_ipv6_bias collects the number of daily tests broken down by site, address
--- type and window scale. The query reports data from two days ago according to
--- the public ndt table's _PARTITIONTIME.
+-- type and window scale. The query reports data from the most recent "complete"
+-- day, where complete is defined as current time is at least 36hours since
+-- start of that day.
 
 SELECT
   SUBSTR(connection_spec.server_hostname, 7, 5) AS site,
@@ -23,9 +24,11 @@ FROM
 
 WHERE
     -- To guarantee the period queried is up to date (all data collected and
-    -- parsed), we should wait 36hours after the start of day. To also use
-    -- _PARTITIONTIME boundaries, we must look 2 days in the past.
-    _PARTITIONTIME = TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY))
+    -- parsed), we should wait 36hours after the start of a given day. To also
+    -- use _PARTITIONTIME boundaries, we must look at least one day in the past.
+    -- The following calculates the most recent "complete" _PARTITIONTIME. The following
+    -- should be equivalent to pseudo code: TruncateTimeToDay(now() - 12h) - 1d
+    _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
 
 GROUP BY
    site, address_type, window_scale
