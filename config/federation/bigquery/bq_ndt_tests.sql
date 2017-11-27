@@ -1,32 +1,63 @@
+#standardSQL
 -- bq_ndt_tests counts the number of NDT tests within a REFRESH_RATE_SEC
 -- interval 36 hours earlier than the time of query. The 36 hour offset
 -- maximizes the number of NDT tests processed by the pipeline for that period.
-#standardSQL
+
+-- timestampAlign aligns the given timestamp to a multiple of alignment seconds.
+-- And, before returning, timestampAlign adds the given offset to the result.
+CREATE TEMPORARY FUNCTION timestampAlign (ts TIMESTAMP, alignment_seconds INT64, offset_seconds INT64)
+  RETURNS TIMESTAMP
+  AS (
+      TIMESTAMP_ADD(
+          TIMESTAMP_SECONDS(
+              CAST(UNIX_SECONDS(ts) / alignment_seconds AS INT64) * alignment_seconds),
+          INTERVAL offset_seconds SECOND
+      )
+  );
+
 SELECT
-  CASE connection_spec.data_direction
-    WHEN 0 THEN "c2s"
-    WHEN 1 THEN "s2c"
-    ELSE "error"
-    END as direction,
+  machine,
+  direction,
+  -- The inner query operates on a window 6 times larger than REFRESH_RATE_SEC.
+  -- We do this so every machine is present in the result and so COUNTIF can equal
+  -- zero when no tests occur during the current interval of interest.
+  COUNTIF(
+          log_time >= TIMESTAMP_SUB(timestampAlign(CURRENT_TIMESTAMP(), REFRESH_RATE_SEC,                0), INTERVAL 36 HOUR)
+      AND log_time <  TIMESTAMP_SUB(timestampAlign(CURRENT_TIMESTAMP(), REFRESH_RATE_SEC, REFRESH_RATE_SEC), INTERVAL 36 HOUR)
+  ) as value
+FROM (
+  -- De-duplicate results from the inner most query.
+  SELECT
+      log_time,
+      direction,
+      machine
+  FROM (
+    -- Return all tests from a wider range of time than our area of interest.
+    SELECT
+      log_time,
+      CASE connection_spec.data_direction
+        WHEN 0 THEN "c2s"
+        WHEN 1 THEN "s2c"
+        ELSE "error"
+        END as direction,
+      connection_spec.server_hostname AS machine,
+      ROW_NUMBER() OVER (PARTITION BY test_id) row_number
+    FROM
+      `measurement-lab.public.ndt`
+    WHERE
+      -- Restrict queries to tests in the range 2d <= log_time < today()
+          _PARTITIONTIME >= TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY))
+      AND _PARTITIONTIME <  TIMESTAMP(CURRENT_DATE())
+      -- Further restrict queries to a 3x refresh rate window on both sides of the interval of interest.
+      AND log_time >= TIMESTAMP_SUB(timestampAlign(CURRENT_TIMESTAMP(), REFRESH_RATE_SEC, -3 * REFRESH_RATE_SEC), INTERVAL 36 HOUR)
+      AND log_time <  TIMESTAMP_SUB(timestampAlign(CURRENT_TIMESTAMP(), REFRESH_RATE_SEC,  4 * REFRESH_RATE_SEC), INTERVAL 36 HOUR)
+  )
+  WHERE
+    row_number = 1
+)
 
-    CONCAT(
-        REPLACE(
-            REGEXP_EXTRACT(
-                task_filename,
-                r'gs://.*-(mlab[1-4]-[a-z]{3}[0-9]+)-ndt.*.tgz'),
-            "-", "."),
-        ".measurement-lab.org") AS machine,
+GROUP BY
+  machine, direction
 
-    COUNT(*) as value
-
-FROM
-    `measurement-lab.public.ndt`
-
-WHERE
-    -- Count all tests with in a REFRESH_RATE_SEC interval 36 hours ago.
-    -- REFRESH_RATE_SEC is a template value replaced by the bigquery exporter at run time.
-    UNIX_SECONDS(log_time) > CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (REFRESH_RATE_SEC) AS INT64) * (REFRESH_RATE_SEC) - (36 * 60 * 60)
-AND UNIX_SECONDS(log_time) < CAST(UNIX_SECONDS(CURRENT_TIMESTAMP()) / (REFRESH_RATE_SEC) AS INT64) * (REFRESH_RATE_SEC) - (36 * 60 * 60) + (REFRESH_RATE_SEC)
-
-GROUP BY machine, direction
-ORDER BY value
+ORDER BY
+  machine, direction
