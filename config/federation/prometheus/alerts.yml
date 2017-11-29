@@ -254,7 +254,7 @@ ALERT SnmpExporterDownOrMissing
 # ignores batch processing.
 ALERT ParserDailyVolumeTooLow
   IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[2h]))
-     < 0.20 * quantile by(service) (.5,
+     < 0.20 * quantile by(service) (0.50,
          sum by(service) (increase(etl_test_count[2h] offset 1d))
             OR
          sum by(service) (increase(etl_test_count[2h] offset 3d))
