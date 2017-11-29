@@ -243,3 +243,17 @@ ALERT SnmpExporterDownOrMissing
     summary = "The snmp_exporter service is down on {{ $labels.instance }}.",
     hints = "The snmp_exporter service runs in a Docker container on a GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys for m-lab/prometheus-snmp-exporter, or SSH to the VM and poke around."
   }
+
+
+# ParserDailyVolumeTooLow: today's test volume has dropped over 80% compared to yesterday's volume. The alert condition ignores batch processing.
+ALERT ParserDailyVolumeTooLow
+  IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[2h]))
+        < 0.20 * sum by(service) (increase(etl_test_count[2h] offset 24h))
+  FOR 1h
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Today's test volume is less than 20% of yesterday's volume.",
+    hints = "Are machines online? Is data being collected? Is the parser working?"
+  }
