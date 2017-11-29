@@ -249,14 +249,17 @@ ALERT SnmpExporterDownOrMissing
   }
 
 
-# ParserDailyVolumeTooLow: today's test volume has dropped over 80% compared to yesterday's
-# or last week's test volume. The alert condition ignores batch processing.
+# ParserDailyVolumeTooLow: today's test volume has dropped over 80% compared to
+# the 50th percentile test volume from the last three days. The alert condition
+# ignores batch processing.
 ALERT ParserDailyVolumeTooLow
   IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[2h]))
-     < 0.20 * max by(service) (
-         sum by(service) (increase(etl_test_count[2h] offset 24h))
+     < 0.20 * quantile by(service) (.5,
+         sum by(service) (increase(etl_test_count[2h] offset 1d))
             OR
-         sum by(service) (increase(etl_test_count[2h] offset 1w))
+         sum by(service) (increase(etl_test_count[2h] offset 2d))
+            OR
+         sum by(service) (increase(etl_test_count[2h] offset 3d))
      )
   FOR 1h
   LABELS {
