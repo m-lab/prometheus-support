@@ -64,13 +64,17 @@ ALERT SidestreamIsNotRunning
 # ScraperSLO
 #
 # ScraperMostRecentArchivedFileTimeIsTooOld: scraper uploads archives for a
-# machine once a day. If the machine is online (for at least 2 hours), but
-# scraper has not uploaded an archive for that machine for more than 36 hours,
-# there is a problem.
+# machine once a day. If the machine is online (for at least 30 hours), but
+# scraper has not uploaded an archive for that machine for more than two days
+# plus 8 hours, there is a problem.
+#
+# Note: we can wait two days because we expect that either a) few machines are
+# affected by this at once, or b) many machines are affected and the
+# ParserDailyVolumeTooLow will trigger first.
 #
 # TODO(soltesz): remove the != 0 check when legacy records are removed.
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
-  IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (36 * 60 * 60)
+  IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (56 * 60 * 60)
         AND ON(machine)
      (time() - process_start_time_seconds{service="sidestream"}) > (30 * 60 * 60)
         UNLESS ON(machine)
@@ -81,7 +85,7 @@ ALERT ScraperMostRecentArchivedFileTimeIsTooOld
   }
   ANNOTATIONS {
     summary = "Scraper max file mtime is too old {{ $labels.rsync_url }}",
-    description = "Max file mtime for {{ $labels.rsync_url }} is older than 36 hours.",
+    description = "Max file mtime for {{ $labels.rsync_url }} is older than 60 hours.",
   }
 
 # Scraper internal consistency.
