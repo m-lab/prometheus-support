@@ -257,9 +257,11 @@ ALERT ParserDailyVolumeTooLow
      < 0.20 * quantile by(service) (.5,
          sum by(service) (increase(etl_test_count[2h] offset 1d))
             OR
-         sum by(service) (increase(etl_test_count[2h] offset 2d))
-            OR
          sum by(service) (increase(etl_test_count[2h] offset 3d))
+            OR
+         sum by(service) (increase(etl_test_count[2h] offset 5d))
+            OR
+         sum by(service) (increase(etl_test_count[2h] offset 7d))
      )
   FOR 1h
   LABELS {
