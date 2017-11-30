@@ -5,6 +5,8 @@
 -- start of that day.
 
 SELECT
+  -- NB: we must export the machine for globally unique sets of labels.
+  connection_spec.server_hostname AS machine,
   SUBSTR(connection_spec.server_hostname, 7, 5) AS site,
   IF(REGEXP_CONTAINS(connection_spec.server_ip, ':'), "v6", "v4") AS address_type,
   CASE WHEN -1 = web100_log_entry.snap.SndWindScale THEN "wsnone"
@@ -31,7 +33,7 @@ WHERE
     _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
 
 GROUP BY
-   site, address_type, window_scale
+   machine, site, address_type, window_scale
 
 ORDER BY
-   site, address_type, window_scale
+   machine, site, address_type, window_scale
