@@ -1,5 +1,16 @@
 # Local Testing
 
+## Installing grafanalib
+
+Grafanalib depends on python3. On Ubuntu 14.04, I was able to install and run
+the generator using:
+
+```
+apt-get install -y python3-pip
+pip3 install grafanalib
+python3 /usr/local/bin/generate-dashboard -o example.json example.dashboard.py
+```
+
 ## Start grafana with docker
 
 The following mounts local directories for Grafana dashboards so we can use an
