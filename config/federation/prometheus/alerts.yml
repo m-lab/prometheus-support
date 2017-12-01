@@ -236,6 +236,18 @@ ALERT DownloaderIsFailingToUpdate
     hints = "Check for errors with the downloader service on grafana with the downloader_Error_Count metric, or check the stackdriver logs for the downloader cluster."
   }
 
+# DownloaderNotRunning: The downloader cluster crashed and not running at all.
+ALERT DownloaderDownOrMissing
+  IF up{job="downloader"} == 0 OR absent(up{job="downloader"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The downloader for maxmind/routeviews feeds is down on {{ $labels.instance }}.",
+    hints = "Check the status of Kubernetes clusters on each M-Lab GCP project. Look at the travis deployment history for m-lab/downloader."
+  }
+
 # Prometheus is unable to get data from the snmp_exporter service.
 ALERT SnmpExporterDownOrMissing
   IF up{job="snmp-exporter"} == 0 OR absent(up{job="snmp-exporter"})
