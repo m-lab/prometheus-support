@@ -26,10 +26,11 @@ directory are 644 and 755.
 cd $HOME/src/github.com/m-lab/prometheus-support/config/local/grafana
 ```
 
-The first time we run the docker image we will create a persistent volume where
-the grafana.db and other settings are saved across runs. The first start up will
-take about two minutes. Just wait for the server to start and then Ctrl-C to
-exit.
+The first time we run the docker image, docker creates a persistent volume
+(transparently saved within the docker root directory, i.e. /var/lib/docker by
+default) where the grafana.db and other settings are saved across runs. The
+first start up will take about two minutes. Just wait for the server to start
+and then Ctrl-C to exit.
 
 ```
 docker run -it -p 3000:3000 -v /var/lib/grafana --name grafana-storage \
@@ -61,4 +62,5 @@ NOTE: permissions on the dashboards files and directory must allow world
 reading. Also, if any file or subdirectory cannot be read, grafana fails to load
 everything. Ask me how I learned this. (╯°□°）╯︵┻━┻
 
-Visit: http://localhost:3000/
+Next, visit http://localhost:3000 and login with the username/password
+"admin"/"secret" (without quotes).
