@@ -238,7 +238,7 @@ ALERT DownloaderIsFailingToUpdate
 
 # DownloaderNotRunning: The downloader cluster crashed and not running at all.
 ALERT DownloaderDownOrMissing
-  IF up{job="downloader"} == 0 OR absent(up{job="downloader"})
+  IF up{container="downloader"} == 0 OR absent(up{container="downloader"})
   FOR 10m
   LABELS {
     severity = "ticket"
