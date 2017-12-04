@@ -55,6 +55,7 @@ spec:
         args: ["-config.file=/etc/prometheus/prometheus.yml",
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
+               "-log.level=debug",
                "-alertmanager.url=http://alertmanager-public-service.default.svc.cluster.local:9093",
                "-web.external-url=http://status.{{GCLOUD_PROJECT}}.measurementlab.net:9090",
                "-web.console.libraries=/usr/share/prometheus/console_libraries",
