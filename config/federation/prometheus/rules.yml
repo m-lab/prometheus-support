@@ -6,15 +6,20 @@
 #  * https://prometheus.io/docs/querying/rules/
 #  * https://prometheus.io/docs/practices/rules/
 #
-# NOTE: As of 2017-03, all rules are evalutated in parallel. Their evaluation
-# order is not guaranteed, and dependencies between rules are not respected.
-# Using recording rules on the right hand side of an expression can have
-# undefined behavior and may result in recording old data or other errors.
+# NOTE: As of 2017-11, the Prometheus v1.x series evaluates all rules in
+# parallel. So, rule evaluation order is not guaranteed, and dependencies
+# between rules are not respected. Using recording rules on the right hand
+# side of an expression can have undefined behavior and may result in recording
+# old data or other errors. This is also true for Alerts. This limitation is
+# fixed in the Prometheus v2.x series.
 #
-#    https://github.com/prometheus/prometheus/blob/master/rules/manager.go#L240
+# TODO: Prometheus v2.x rules are evaluated in order.
+#
+#    https://github.com/prometheus/prometheus/blob/v1.8.2/rules/manager.go#L254
 #
 # DO:
 #  * Do use raw prometheus expressions on the right hand side of a new rule.
+#  * "Recording rules should be of the general form level:metric:operations."
 #
 # DO NOT:
 #  * Do not use recording rules on the right hand side of a new rule.
@@ -33,3 +38,29 @@ instance:sidestream_connection_count:increase2m =
 # Precalculate the sum of sidestream connections per experiment "last six bits".
 lsb:sidestream_connection_count:increase2m =
     sum by(lsb) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
+
+
+
+## NDT Early Warning aggregation rules.
+
+# Per-machine inotify creation rates, using only c2s_snaplog + s2c_snaplog files.
+# Units: requests per minute.
+machine:inotify_extension_create:rpm2m =
+    # NOTE: using 'without' instead of 'by' preserves all other labels.
+    60.0 * sum without(ext) (rate(inotify_extension_create_total{ext=~".*_snaplog"}[2m]))
+
+# TODO: aggregate on per-machine interface aliases when available.
+# Per-switch "Out" (i.e. Download) bits per second.
+# Units: bits per second.
+switch:ifHCOutOctets:bps2m =
+    8 * rate(ifHCOutOctets{ifAlias="uplink"}[2m])
+
+# Per-machine maximum ratio of time spent performing I/O on all devices.
+# Units: none
+machine:node_disk_io_time_ms:max_ratio2m =
+    max without(device) (rate(node_disk_io_time_ms{service="nodeexporter"}[2m])) / 1000
+
+# NDT vserver disk quota utilization, 12 hour estimate.
+# Units: KB
+ndt:vdlimit_used:predict_linear1h_12h =
+    predict_linear(vdlimit_used{experiment="ndt.iupui"}[1h], 12*60*60)
