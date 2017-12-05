@@ -44,18 +44,22 @@ lsb:sidestream_connection_count:increase2m =
 ## NDT Early Warning aggregation rules.
 
 # Per-machine inotify creation rates, using only c2s_snaplog + s2c_snaplog files.
-machine:inotify_extension_create:rate2m =
+# Units: requests per minute.
+machine:inotify_extension_create:rpm2m =
     # NOTE: using 'without' instead of 'by' preserves all other labels.
     60.0 * sum without(ext) (rate(inotify_extension_create_total{ext=~".*_snaplog"}[2m]))
 
 # Per-switch "Out" (i.e. Download) bits per second.
-uplink:ifHCOutOctets:bits_per_second_rate2m =
+# Units: bits per second.
+uplink:ifHCOutOctets:bps2m =
     8 * rate(ifHCOutOctets{ifAlias="uplink"}[2m])
 
-# Ratio of time spent performing I/O on the /vservers partition.
-vserver_partition:node_disk_io_time_ms:ratio_rate2m =
-    rate(node_disk_io_time_ms{device="dm-2"}[2m]) / 1000
+# The maximum ratio of time spent performing I/O of all devices per machine.
+# Units: none
+machine:node_disk_io_time_ms:max_ratio2m =
+    max without(device) (rate(node_disk_io_time_ms{service="nodeexporter"}[2m])) / 1000
 
 # NDT vserver disk quota utilization, 12 hour estimate.
+# Units: KB
 ndt:vdlimit_used:predict_linear1h_12h =
     predict_linear(vdlimit_used{experiment="ndt.iupui"}[1h], 12*60*60)
