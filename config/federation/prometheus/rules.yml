@@ -52,7 +52,7 @@ machine:inotify_extension_create:rpm2m =
 # TODO: aggregate on per-machine aliases when available.
 # Per-switch "Out" (i.e. Download) bits per second.
 # Units: bits per second.
-uplink:ifHCOutOctets:bps2m =
+switch:ifHCOutOctets:bps2m =
     8 * rate(ifHCOutOctets{ifAlias="uplink"}[2m])
 
 # The maximum ratio of time spent performing I/O of all devices per machine.
