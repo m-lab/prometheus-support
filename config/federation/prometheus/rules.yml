@@ -55,7 +55,7 @@ machine:inotify_extension_create:rpm2m =
 switch:ifHCOutOctets:bps2m =
     8 * rate(ifHCOutOctets{ifAlias="uplink"}[2m])
 
-# The maximum ratio of time spent performing I/O of all devices per machine.
+# Per-machine maximum ratio of time spent performing I/O on all devices.
 # Units: none
 machine:node_disk_io_time_ms:max_ratio2m =
     max without(device) (rate(node_disk_io_time_ms{service="nodeexporter"}[2m])) / 1000
