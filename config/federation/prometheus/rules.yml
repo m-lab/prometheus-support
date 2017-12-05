@@ -49,6 +49,7 @@ machine:inotify_extension_create:rpm2m =
     # NOTE: using 'without' instead of 'by' preserves all other labels.
     60.0 * sum without(ext) (rate(inotify_extension_create_total{ext=~".*_snaplog"}[2m]))
 
+# TODO: aggregate on per-machine aliases when available.
 # Per-switch "Out" (i.e. Download) bits per second.
 # Units: bits per second.
 uplink:ifHCOutOctets:bps2m =
