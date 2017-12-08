@@ -62,7 +62,8 @@ machine:inotify_extension_create:rpm2m =
     60.0 * sum without(ext) (irate(inotify_extension_create_total{ext=~".*_snaplog"}[4m]))
 
 # TODO: aggregate on per-machine interface aliases when available.
-# Per-switch "Out" (i.e. Download) bits per second. We use irate to calculate rates over the last two samples only.
+# Per-switch "Out" (i.e. Download) bits per second. We use irate to calculate
+# rates over the last two samples only.
 # Units: bits per second.
 switch:ifHCOutOctets:bps2m =
     8 * irate(ifHCOutOctets{ifAlias="uplink"}[4m])
