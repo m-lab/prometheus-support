@@ -80,11 +80,19 @@ ndt:vdlimit_used:predict_linear3h_12h =
     predict_linear(vdlimit_used{experiment="ndt.iupui"}[3h], 12*60*60)
 
 
+##############################################################################
+# Candidate recording rules.
+##############################################################################
+# TODO: remove rules that are not actively used.
+#
+# Do not build dependencies on these rules until they have been moved out of
+# this candidate rule area.
+
 ## NDT Early Warning 2x site capacity thresholds.
 #
-# Shorter time ranges are chosen to favor faster sensitivity and longer time
-# ranges are chosen for slower sensitivity.
-
+# Shorter time ranges are chosen to favor higher sensitivity and longer time
+# ranges are chosen for lower sensitivity.
+#
 # 90th percentile boolean threshold violations.
 site:uplink:90th_quantile_gt_500mbps =
     quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[15m]) > bool 500000000
@@ -99,6 +107,8 @@ ndt:vdlimit_used_12h_prediction:90th_quantile_gt_50000000 =
     quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[3h]) > bool 50000000
 
 
+## NDT Early Warning 2x site capacity thresholds.
+#
 # Raw boolean threshold violations.
 site:uplink:gt_500mbps =
     switch:ifHCOutOctets:bps2m{ifAlias="uplink"} > bool 500000000
