@@ -94,30 +94,30 @@ ndt:vdlimit_used:predict_linear3h_12h =
 # ranges are chosen for lower sensitivity.
 #
 # 90th percentile boolean threshold violations.
-site:uplink:90th_quantile_gt_500mbps =
-    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[15m]) > bool 500000000
+candidate_site:uplink:90th_quantile =
+    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[15m])
 
-machine:inotify_extension_create_rpm:90th_quantile_gt_60 =
-    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[30m]) > bool 60
+candidate_machine:inotify_extension_create_rpm:90th_quantile =
+    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[30m])
 
-machine:node_disk_io_time_ratio:90th_quantile_gt_50_pct =
-    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[1h]) > bool 0.5
+candidate_machine:node_disk_io_time_ratio:90th_quantile =
+    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[1h])
 
-ndt:vdlimit_used_12h_prediction:90th_quantile_gt_50000000 =
-    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[3h]) > bool 50000000
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile =
+    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[3h])
 
 
 ## NDT Early Warning 2x site capacity thresholds.
 #
 # Raw boolean threshold violations.
-site:uplink:gt_500mbps =
+candidate_site:uplink:gt_500mbps =
     switch:ifHCOutOctets:bps2m{ifAlias="uplink"} > bool 500000000
 
-machine:inotify_extension_create_rpm:gt_60 =
+candidate_machine:inotify_extension_create_rpm:gt_60 =
     machine:inotify_extension_create:rpm2m > bool 60
 
-machine:node_disk_io_time_ratio:gt_50_pct =
+candidate_machine:node_disk_io_time_ratio:gt_50_pct =
     machine:node_disk_io_time_ms:max_ratio2m > bool 0.5
 
-ndt:vdlimit_used_12h_prediction:gt_50000000 =
+candidate_ndt:vdlimit_used_12h_prediction:gt_50gb =
     ndt:vdlimit_used:predict_linear3h_12h > bool 50000000
