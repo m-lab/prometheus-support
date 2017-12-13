@@ -73,7 +73,51 @@ switch:ifHCOutOctets:bps2m =
 machine:node_disk_io_time_ms:max_ratio2m =
     max without(device) (irate(node_disk_io_time_ms{service="nodeexporter"}[4m])) / 1000
 
-# NDT vserver disk quota utilization, 12 hour estimate.
+# NDT vserver disk quota utilization, 12 hour estimate. Base 12h estimate on a
+# time range at least 25% of the time forward.
 # Units: KB
-ndt:vdlimit_used:predict_linear1h_12h =
-    predict_linear(vdlimit_used{experiment="ndt.iupui"}[1h], 12*60*60)
+ndt:vdlimit_used:predict_linear3h_12h =
+    predict_linear(vdlimit_used{experiment="ndt.iupui"}[3h], 12*60*60)
+
+
+##############################################################################
+# Candidate recording rules.
+##############################################################################
+# TODO: remove rules that are not actively used.
+#
+# Do not build dependencies on these rules until they have been moved out of
+# this candidate rule area.
+
+## NDT Early Warning 2x site capacity thresholds.
+#
+# Shorter time ranges are chosen to favor higher sensitivity and longer time
+# ranges are chosen for lower sensitivity.
+#
+# 90th percentile boolean threshold violations.
+candidate_site:uplink:90th_quantile =
+    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[15m])
+
+candidate_machine:inotify_extension_create_rpm:90th_quantile =
+    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[30m])
+
+candidate_machine:node_disk_io_time_ratio:90th_quantile =
+    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[1h])
+
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile =
+    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[3h])
+
+
+## NDT Early Warning 2x site capacity thresholds.
+#
+# Raw boolean threshold violations.
+candidate_site:uplink:gt_500mbps =
+    switch:ifHCOutOctets:bps2m{ifAlias="uplink"} > bool 500000000
+
+candidate_machine:inotify_extension_create_rpm:gt_60 =
+    machine:inotify_extension_create:rpm2m > bool 60
+
+candidate_machine:node_disk_io_time_ratio:gt_50_pct =
+    machine:node_disk_io_time_ms:max_ratio2m > bool 0.5
+
+candidate_ndt:vdlimit_used_12h_prediction:gt_50gb =
+    ndt:vdlimit_used:predict_linear3h_12h > bool 50000000
