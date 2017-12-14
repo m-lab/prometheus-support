@@ -423,10 +423,9 @@ scrape_configs:
     # This relabel config is the last relabel processed before ingesting data
     # into the datastore.
     metric_relabel_configs:
-
       # 'ifAlias' labels use the format "uplink-<speed>" where speed is one of
-	  # "1g" or "10g". These rules split the two fields and adds a new label
-	  # for the speed.
+      # "1g" or "10g". These rules split the two fields and adds a new label
+      # for the speed.
       - source_labels: [ifAlias]
         regex: uplink-(.*)
         target_label: speed
