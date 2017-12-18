@@ -93,18 +93,84 @@ ndt:vdlimit_used:predict_linear3h_12h =
 # Shorter time ranges are chosen to favor higher sensitivity and longer time
 # ranges are chosen for lower sensitivity.
 #
-# 90th percentile boolean threshold violations.
-candidate_site:uplink:90th_quantile =
-    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[15m])
+# 90th percentiles @ 30m
+candidate_site:uplink:90th_quantile_30m =
+    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[30m])
 
-candidate_machine:inotify_extension_create_rpm:90th_quantile =
+candidate_machine:inotify_extension_create_rpm:90th_quantile_30m =
     quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[30m])
 
-candidate_machine:node_disk_io_time_ratio:90th_quantile =
+candidate_machine:node_disk_io_time_ratio:90th_quantile_30m =
+    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[30m])
+
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_30m =
+    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[30m])
+
+# 90th percentiles @ 1h.
+candidate_site:uplink:90th_quantile_1h =
+    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[1h])
+
+candidate_machine:inotify_extension_create_rpm:90th_quantile_1h =
+    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[1h])
+
+candidate_machine:node_disk_io_time_ratio:90th_quantile_1h =
     quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[1h])
 
-candidate_ndt:vdlimit_used_12h_prediction:90th_quantile =
-    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[3h])
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_1h =
+    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[1h])
+
+# 90th percentiles @ 2h.
+candidate_site:uplink:90th_quantile_2h =
+    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
+
+candidate_machine:inotify_extension_create_rpm:90th_quantile_2h =
+    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[2h])
+
+candidate_machine:node_disk_io_time_ratio:90th_quantile_2h =
+    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[2h])
+
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_2h =
+    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[2h])
+
+# 90th percentiles @ 6h.
+candidate_site:uplink:90th_quantile_6h =
+    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
+
+candidate_machine:inotify_extension_create_rpm:90th_quantile_6h =
+    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[6h])
+
+candidate_machine:node_disk_io_time_ratio:90th_quantile_6h =
+    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[6h])
+
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_6h =
+    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[6h])
+
+##############################################################################
+# 98th percentiles @ 2h.
+candidate_site:uplink:98th_quantile_2h =
+    quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
+
+candidate_machine:inotify_extension_create_rpm:90th_quantile_2h =
+    quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[2h])
+
+candidate_machine:node_disk_io_time_ratio:90th_quantile_2h =
+    quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[2h])
+
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_2h =
+    quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[2h])
+
+# 98th percentiles @ 6h.
+candidate_site:uplink:98th_quantile_6h =
+    quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
+
+candidate_machine:inotify_extension_create_rpm:90th_quantile_6h =
+    quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[6h])
+
+candidate_machine:node_disk_io_time_ratio:90th_quantile_6h =
+    quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[6h])
+
+candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_6h =
+    quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[6h])
 
 
 ## NDT Early Warning 2x site capacity thresholds.
