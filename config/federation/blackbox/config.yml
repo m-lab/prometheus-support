@@ -31,14 +31,14 @@ modules:
     prober: tcp
     timeout: 9s
     tcp:
-      protocol: "tcp4"
+      preferred_ip_protocol: "ip4"
 
   # target=<hostname:port>
   ssh_v4_online:
     prober: tcp
     timeout: 5s
     tcp:
-      protocol: "tcp4"
+      preferred_ip_protocol: "ip4"
       query_response:
         - expect: "SSH-2.0-OpenSSH_.+"
 
@@ -47,7 +47,7 @@ modules:
     prober: tcp
     timeout: 9s
     tcp:
-      protocol: "tcp4"
+      preferred_ip_protocol: "ip"
       tls: true
 
   # target=<hostname>:9773/sapi/state
@@ -55,7 +55,7 @@ modules:
     prober: http
     timeout: 5s
     http:
-      protocol: "tcp4"
+      preferred_ip_protocol: "ip4"
       fail_if_not_matches_regexp:
         - "queue_len_cur"
 
@@ -64,7 +64,7 @@ modules:
     prober: tcp
     timeout: 5s
     tcp:
-      protocol: "tcp4"
+      preferred_ip_protocol: "ip4"
       query_response:
         # @RSYNCD: is followed by a version number, e.g. 30.0. Rather than
         # dropping the connection immediately, we simulate a module list
@@ -79,7 +79,6 @@ modules:
     prober: icmp
     timeout: 5s
     icmp:
-      protocol: "icmp"
       preferred_ip_protocol: "ip4"
 
   # target=<http[s]://host:port>
@@ -92,4 +91,4 @@ modules:
     prober: http
     timeout: 5s
     http:
-      method: GET
+      method: "GET"
