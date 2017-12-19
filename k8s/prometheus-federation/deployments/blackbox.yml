@@ -32,12 +32,12 @@ spec:
       containers:
       # Check https://hub.docker.com/r/prom/blackbox-exporter/tags/ for the current
       # stable version.
-      - image: prom/blackbox-exporter:v0.4.0
+      - image: prom/blackbox-exporter:v0.11.0
         # Note: the container name appears to be ignored and the actual pod name
         # is derived from the Deployment.metadata.name. However, removing this
         # value results in a configuration error.
         name: blackbox-server
-        args: ["-config.file=/etc/blackbox/config.yml"]
+        args: ["--config.file=/etc/blackbox/config.yml"]
         ports:
           - containerPort: 9115
         resources:
