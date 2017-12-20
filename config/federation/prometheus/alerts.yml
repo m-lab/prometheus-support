@@ -272,7 +272,7 @@ ALERT SnmpExporterMissingMetrics
   ANNOTATIONS {
     summary = "Expected SNMP metrics are missing from Prometheus!",
     hints = "If the snmp_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and and the target status in Prometheus.",
-    prometheus_targets = "http://status.mlab-oti.measurementlab.net:9090/targets"
+    prometheus_targets = "http://status.mlab-oti.measurementlab.net:9090/targets",
     gcsbucket = "https://console.cloud.corp.google.com/storage/browser/operator-mlab-oti/prometheus/snmp-targets",
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/switch-metrics"
   }
