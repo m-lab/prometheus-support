@@ -260,6 +260,22 @@ ALERT SnmpExporterDownOrMissing
     hints = "The snmp_exporter service runs in a Docker container on a GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys for m-lab/prometheus-snmp-exporter, or SSH to the VM and poke around."
   }
 
+# Some SNMP metrics are missing from Prometheus. These should always be present.
+# The wait period shouuld be longer than that for the SnmpExporterDownOrMissing
+# alert.
+ALERT SnmpExporterMissingMetrics
+  IF absent(ifHCOutOctets)
+  FOR 30m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Expected SNMP metrics are missing from Prometheus!",
+    hints = "If the snmp_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and and the target status in Prometheus.",
+    prometheus_targets = "http://status.mlab-oti.measurementlab.net:9090/targets"
+    gcsbucket = "https://console.cloud.corp.google.com/storage/browser/operator-mlab-oti/prometheus/snmp-targets",
+    dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/switch-metrics"
+  }
 
 # ParserDailyVolumeTooLow: today's test volume has dropped over 80% compared to
 # the 50th percentile test volume from the last week. The alert condition
