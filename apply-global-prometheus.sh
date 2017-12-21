@@ -81,9 +81,11 @@ kubectl create configmap grafana-env \
 SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
 GITHUB_RECEIVER_URL=
 SHORT_PROJECT=${PROJECT/mlab-/}
-if [[ ${PROJECT} == mlab-oti ]] ; then
-  GITHUB_RECEIVER_URL=http://status.${PROJECT}.measurementlab.net:9393/v1/receiver
-fi
+
+# Note: without a url, alertmanager will fail to start. But, for non-production
+# projects, there will be no github receiver running. This should be a no-op.
+GITHUB_RECEIVER_URL=http://status.${PROJECT}.measurementlab.net:9393/v1/receiver
+
 sed -e 's|{{SLACK_CHANNEL_URL}}|'${!SLACK_CHANNEL_URL_NAME}'|g' \
     -e 's|{{GITHUB_RECEIVER_URL}}|'$GITHUB_RECEIVER_URL'|g' \
     -e 's|{{SHORT_PROJECT}}|'$SHORT_PROJECT'|g' \
