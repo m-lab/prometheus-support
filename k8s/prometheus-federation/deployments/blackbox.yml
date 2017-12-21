@@ -41,12 +41,15 @@ spec:
         ports:
           - containerPort: 9115
         resources:
+          # TODO: reduce resource allocation once
+          # https://github.com/prometheus/blackbox_exporter/issues/270 is
+          # resolved. These values are much more than what should be needed.
           requests:
-            memory: "100Mi"
-            cpu: "1000m"
+            memory: "500Mi"
+            cpu: "2000m"
           limits:
-            memory: "100Mi"
-            cpu: "1000m"
+            memory: "500Mi"
+            cpu: "2000m"
         volumeMounts:
         # /etc/blackbox/config.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/blackbox
