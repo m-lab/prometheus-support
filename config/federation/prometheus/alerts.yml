@@ -73,8 +73,9 @@ ALERT SidestreamIsNotRunning
 # ParserDailyVolumeTooLow will trigger first.
 #
 # Note: the delay threshold is set to 2h to prevent false positives. For
-# example, a machine is remains running but becomes is not network accessible.
-# After the machine is network accessible, scraper needs time to catch up.
+# example, if a machine remains running while it is not network accessible,
+# then the machine will need time for scraper to catch up once it is network
+# accessible again.
 #
 # TODO(soltesz): remove the != 0 check when legacy records are removed.
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
