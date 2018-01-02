@@ -285,6 +285,14 @@ scrape_configs:
       - targets: ['nagios.measurementlab.net:9267']
 
 
+  # Scrape config for the nagios-oam exporter.
+  #
+  # The nagios exporter generates its own labels.
+  - job_name: 'nagios-oam-exporter'
+    static_configs:
+      - targets: ['nagios-oam.measurementlab.net:9267']
+
+
   # Scrape config for the snmp_exporter. There is one snmp_exporter service
   # running in a Docker container on a GCE VM in each GCP project.
   #
