@@ -304,3 +304,17 @@ ALERT ParserDailyVolumeTooLow
     hints = "Are machines online? Is data being collected? Is the parser working?",
     url = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/parserdailyvolumetoolow"
   }
+
+# Nagios is not running (or otherwise broken) on nagios-oam.measurementlab.net,
+# or the Prometheus job for scraping the nagios_exporter on this instance is
+# missing.
+ALERT NagiosOamDownOrMissing
+  IF nagios_livestatus_available{job="nagios-oam-exporter"} == 0 OR absent(up{job="nagios-oam-exporter"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The Nagios OA&M instance is down on {{ $labels.instance }}.",
+    hints = "The Nagios OA&M instance runs in a Linode VM."
+  }
