@@ -72,6 +72,11 @@ ALERT SidestreamIsNotRunning
 # affected by this at once, or b) many machines are affected and the
 # ParserDailyVolumeTooLow will trigger first.
 #
+# Note: the delay threshold is set to 2h to prevent false positives. For
+# example, if a machine remains running while it is not network accessible,
+# then the machine will need time for scraper to catch up once it is network
+# accessible again.
+#
 # TODO(soltesz): remove the != 0 check when legacy records are removed.
 ALERT ScraperMostRecentArchivedFileTimeIsTooOld
   IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (56 * 60 * 60)
@@ -79,7 +84,7 @@ ALERT ScraperMostRecentArchivedFileTimeIsTooOld
      (time() - process_start_time_seconds{service="sidestream"}) > (30 * 60 * 60)
         UNLESS ON(machine)
      lame_duck_node == 1
-  FOR 10m
+  FOR 2h
   LABELS {
     severity = "page"
   }
