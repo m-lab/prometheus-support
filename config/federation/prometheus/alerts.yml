@@ -286,15 +286,15 @@ ALERT SnmpExporterMissingMetrics
 # the 50th percentile test volume from the last week. The alert condition
 # ignores batch processing and ignores 20% thresholds less than 1.
 ALERT ParserDailyVolumeTooLow
-  IF sum by(service) (rate(etl_test_count{service!~".*batch.*"}[12h]))
-     < (0.20 * quantile by(service) (0.50,
-         sum by(service) (rate(etl_test_count[12h] offset 1d))
+  IF sum by(service) (rate(etl_test_count{service!~".*batch.*"}[18h]))
+     < (0.50 * average by(service) (0.50,
+         sum by(service) (rate(etl_test_count[6h] offset 30h))
             OR
-         sum by(service) (rate(etl_test_count[12h] offset 3d))
+         sum by(service) (rate(etl_test_count[6h] offset 78h))
             OR
-         sum by(service) (rate(etl_test_count[12h] offset 5d))
+         sum by(service) (rate(etl_test_count[6h] offset 126h))
             OR
-         sum by(service) (rate(etl_test_count[12h] offset 7d))) > 1)
+         sum by(service) (rate(etl_test_count[6h] offset 174h))) > 1)
   FOR 1h
   LABELS {
     severity = "page"
