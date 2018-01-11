@@ -443,6 +443,48 @@ scrape_configs:
         target_label: ifAlias
         replacement: ${1}
 
+
+  # script_exporter configurations. The scrape_timeout is set very high because
+  # one of the script_exporter scripts is the NDT end-to-end test, which will
+  # take around 35 seconds.
+  - job_name: 'script-targets'
+    metrics_path: /probe
+    scrape_timeout: 45s
+
+    file_sd_configs:
+      - files:
+          - /script-targets/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    # This relabel config is necessary. The relabel config redefines the address
+    # to scrape and sets the correct parameters to pass to the scrape target.
+    relabel_configs:
+      # The value of the source label named "service" must match the name of a
+      # configured script in the script_exporter configuration. See this file:
+      # https://github.com/m-lab/prometheus-script-exporter/blob/master/script_exporter.yml
+      - source_labels: [service]
+        regex: (.*)
+        target_label: __param_name
+        replacement: ${1}
+
+      # The default __address__ value is a target host from the config file.
+      # Here, we set (i.e. "replace") a request parameter "target" equal to the
+      # host value.
+      - source_labels: [__address__]
+        regex: (.*)
+        target_label: __param_target
+        replacement: ${1}
+
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the script_exporter
+      # address.
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: script-exporter.${PROJECT}.measurementlab.net:9172
+
+
   # Scrape config for pushgateway.
   #
   # Push gateways allow services to publish metrics for later collection by
