@@ -291,10 +291,10 @@ ALERT SnmpExporterMissingMetrics
 ALERT ParserDailyVolumeTooLow
   IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h]))
      < (0.7 * quantile by(service)(0.66,
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 1d)),"foo","1","","(.*)" ) OR
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 3d)),"foo","3","","(.*)" ) OR
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 5d)),"foo","5","","(.*)" ) OR
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 7d)),"foo","7","","(.*)" ) OR
+         label_replace(sum by(service) (increase(etl_test_count[22h] offset 1d)),"foo","1","","(.*)" ) OR
+         label_replace(sum by(service) (increase(etl_test_count[22h] offset 3d)),"foo","3","","(.*)" ) OR
+         label_replace(sum by(service) (increase(etl_test_count[22h] offset 5d)),"foo","5","","(.*)" ) OR
+         label_replace(sum by(service) (increase(etl_test_count[22h] offset 7d)),"foo","7","","(.*)" ) OR
          label_replace(label_replace(vector(0),"foo","a","","(.*)" ), "service", "etl-ndt-parser", "", "(.*)") OR
          label_replace(label_replace(vector(0),"foo","a","","(.*)" ), "service", "etl-sidestream-parser", "", "(.*)") OR
          label_replace(label_replace(vector(0),"foo","a","","(.*)" ), "service", "etl-traceroute-parser", "", "(.*)") OR
