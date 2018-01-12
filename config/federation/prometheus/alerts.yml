@@ -286,23 +286,37 @@ ALERT SnmpExporterMissingMetrics
 # the average of the 2 smallest test volumes of 4 days out of the last week.  Two vectors
 # of conservative constant value avoid false alarms when there is little valid history.
 # The left side uses 26 hours, allowing the pipeline to get up to 2 hours behind previous
-# daily progress.
+# daily progress.  This means the left side will typically be about 8% more than the 24 hour
+# average (for smooth processing like NDT) or will have up to twice the daily average during
+# the period when the 26 hour window includes both today's burst and yesterday's burst.
 #
-# In normal operation, the 50th quantile should split mid-way between the two smallest
-# volume days of the 4 sample days.  At least one of these should be a weekend day.
-# For example, for a Tuesday, the prior data might be ordered: M, F, W, Sa, C1, C2,
-# and the 50th quantile will split between previous Sat and previous W.
+# In normal operation, we expect the 50th quantile to split mid-way between the two smallest
+# volume days of the 4 sample days.  The 4 sample always include one weekend day, so one of
+# the two smallest days will generally be a weekend day.
+# For example, for a Tuesday, the prior data might be ordered (decreasing):
+# M, F, W, Sa, C1, C2,
+# and the 50th quantile will be midway between previous Sat and previous Wed.
 #
 # The alert condition ignores batch processing.
+#
+# Implementation notes:
+# This alert uses label_replace to merge multiple vectors.  We tried simpler queries using
+# AND, OR or +, but these do not do what we need.  We use label_replace to add a new "delay"
+# label, which then allows us to compute quantile across multiple vectors.  (Or we could compute
+# sums, averages, topk, min, etc.)
+# The constant vectors require adding two labels, "service" which associates with a pipeline, and
+# "delay" which differentiates from the actual delayed metrics for 1d, 3d, etc.
+# For each pipeline service, the quantile computation then aggregates across the 6 vectors in
+# the delay dimension.
 ALERT ParserDailyVolumeTooLow
   IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[26h]))
       < (0.7 * quantile by(service)(0.50,
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 1d)),"delay","1d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 3d)),"delay","3d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 5d)),"delay","5d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count[24h] offset 7d)),"delay","7d","",".*" ) OR
-         label_replace(label_replace(vector(500000),"delay","c1","","
-         label_replace(label_replace(vector(500000),"delay","c2","",".*" ), "service", "etl-ndt-parser", "", "(.*)") OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 1d)),"delay","1d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 3d)),"delay","3d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 5d)),"delay","5d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 7d)),"delay","7d","",".*" ) OR
+         label_replace(label_replace(vector( 500000),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
+         label_replace(label_replace(vector( 500000),"delay","c2","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
          label_replace(label_replace(vector(2000000),"delay","c1","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
          label_replace(label_replace(vector(2000000),"delay","c2","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
          label_replace(label_replace(vector(2000000),"delay","c1","",".*" ), "service", "etl-traceroute-parser", "", ".*") OR
