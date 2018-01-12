@@ -282,19 +282,26 @@ ALERT SnmpExporterMissingMetrics
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/switch-metrics"
   }
 
-# ParserDailyVolumeTooLow: today's test volume has dropped over 80% compared to
-# the 50th percentile test volume from the last week. The alert condition
-# ignores batch processing and ignores 20% thresholds less than 1.
+# ParserDailyVolumeTooLow: 24 hour test volume has dropped over 30% compared to
+# the 50th quantile 22 hour test volume from 4 days out of the last week.  Two vectors
+# of zeros avoid false alarms when there is little valid history.  The alert condition
+# ignores batch processing and ignores 40% thresholds less than 1.
+# This should typically trigger if the pipeline (or scraper) falls behind by more
+# than 2 hours, or more than 30% of the normal processing volume.
 ALERT ParserDailyVolumeTooLow
-  IF sum by(service) (rate(etl_test_count{service!~".*batch.*"}[18h]))
-     < (0.50 * average by(service) (0.50,
-         sum by(service) (rate(etl_test_count[6h] offset 30h))
-            OR
-         sum by(service) (rate(etl_test_count[6h] offset 78h))
-            OR
-         sum by(service) (rate(etl_test_count[6h] offset 126h))
-            OR
-         sum by(service) (rate(etl_test_count[6h] offset 174h))) > 1)
+  IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h]))
+     < (0.7 * quantile by(service)(0.66,
+         label_replace(sum by(service) (increase(etl_test_count[24h] offset 1d)),"foo","1","","(.*)" ) OR
+         label_replace(sum by(service) (increase(etl_test_count[24h] offset 3d)),"foo","3","","(.*)" ) OR
+         label_replace(sum by(service) (increase(etl_test_count[24h] offset 5d)),"foo","5","","(.*)" ) OR
+         label_replace(sum by(service) (increase(etl_test_count[24h] offset 7d)),"foo","7","","(.*)" ) OR
+         label_replace(label_replace(vector(0),"foo","a","","(.*)" ), "service", "etl-ndt-parser", "", "(.*)") OR
+         label_replace(label_replace(vector(0),"foo","a","","(.*)" ), "service", "etl-sidestream-parser", "", "(.*)") OR
+         label_replace(label_replace(vector(0),"foo","a","","(.*)" ), "service", "etl-traceroute-parser", "", "(.*)") OR
+         label_replace(label_replace(vector(0),"foo","b","","(.*)" ), "service", "etl-ndt-parser", "", "(.*)") OR
+         label_replace(label_replace(vector(0),"foo","b","","(.*)" ), "service", "etl-sidestream-parser", "", "(.*)") OR
+         label_replace(label_replace(vector(0),"foo","b","","(.*)" ), "service", "etl-traceroute-parser", "", "(.*)")
+         ))
   FOR 1h
   LABELS {
     severity = "page"
