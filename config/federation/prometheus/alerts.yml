@@ -282,25 +282,57 @@ ALERT SnmpExporterMissingMetrics
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/switch-metrics"
   }
 
-# ParserDailyVolumeTooLow: today's test volume has dropped over 80% compared to
-# the 50th percentile test volume from the last week. The alert condition
-# ignores batch processing and ignores 20% thresholds less than 1.
+# TODO:
+#   Replace this with two other alerts:
+#    1.  Alert if hourly test volume on servers drops relative to same hour on recent days.
+#    2.  E2E alert that compares rows in tables to test volume on servers.
+#
+# ParserDailyVolumeTooLow: 24 hour test volume has dropped over 30% compared to
+# the average of the 2 smallest test volumes of 4 days out of the last week.  Two vectors
+# of conservative constant value avoid false alarms when there is little valid history.
+# On occasion, processing may fall behind a bit.  The "FOR 2h" waits 2h before triggering
+# an actual alert, so the pipeline may fall behind for up to 2 hours without alerting.
+# However, if the pipeline falls several hours behind, and stays behind for more than 
+# 2 hours, the alert will fire.
+#
+# In normal operation, we expect the 50th quantile to split mid-way between the two smallest
+# volume days of the 4 sample days.  The 4 sample always include one weekend day, so one of
+# the two smallest days will generally be a weekend day.
+# For example, for a Tuesday, the prior data might be ordered (decreasing):
+# M, F, W, Sa, C1, C2,
+# and the 50th quantile will be midway between previous Sat and previous Wed.
+#
+# The alert condition ignores batch processing.
+#
+# Implementation notes:
+# This alert uses label_replace to merge multiple vectors.  We tried simpler queries using
+# AND, OR or +, but these do not do what we need.  We use label_replace to add a new "delay"
+# label, which then allows us to compute quantile across multiple vectors.  (Or we could compute
+# sums, averages, topk, min, etc.)
+# The constant vectors require adding two labels, "service" which associates with a pipeline, and
+# "delay" which differentiates from the actual delayed metrics for 1d, 3d, etc.
+# For each pipeline service, the quantile computation then aggregates across the 6 vectors in
+# the delay dimension.
 ALERT ParserDailyVolumeTooLow
-  IF sum by(service) (rate(etl_test_count{service!~".*batch.*"}[12h]))
-     < (0.20 * quantile by(service) (0.50,
-         sum by(service) (rate(etl_test_count[12h] offset 1d))
-            OR
-         sum by(service) (rate(etl_test_count[12h] offset 3d))
-            OR
-         sum by(service) (rate(etl_test_count[12h] offset 5d))
-            OR
-         sum by(service) (rate(etl_test_count[12h] offset 7d))) > 1)
-  FOR 1h
+  IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h]))
+      < (0.7 * quantile by(service)(0.50,
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 1d)),"delay","1d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 3d)),"delay","3d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 5d)),"delay","5d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 7d)),"delay","7d","",".*" ) OR
+         label_replace(label_replace(vector( 500000),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
+         label_replace(label_replace(vector( 500000),"delay","c2","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
+         label_replace(label_replace(vector(2000000),"delay","c1","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
+         label_replace(label_replace(vector(2000000),"delay","c2","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
+         label_replace(label_replace(vector(2000000),"delay","c1","",".*" ), "service", "etl-traceroute-parser", "", ".*") OR
+         label_replace(label_replace(vector(2000000),"delay","c2","",".*" ), "service", "etl-traceroute-parser", "", ".*")
+         ))
+  FOR 2h
   LABELS {
     severity = "page"
   }
   ANNOTATIONS {
-    summary = "Today's test volume is less than 20% of yesterday's volume.",
+    summary = "Today's test volume is less than 70% of nominal daily volume.",
     hints = "Are machines online? Is data being collected? Is the parser working?",
     url = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/parserdailyvolumetoolow"
   }
