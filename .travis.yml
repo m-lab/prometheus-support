@@ -13,15 +13,10 @@ install:
 - PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
   PROMTOOL_VERSION=1.8.0;
   go get -d $PROMTOOL_URI;
-  git -C $GOPATH/src/$PROMTOOL_URI
-  checkout -b $PROMTOOL_VERSION tags/v$PROMTOOL_VERSION;
+  git -C $GOPATH/src/$PROMTOOL_URI checkout -b $PROMTOOL_VERSION tags/v$PROMTOOL_VERSION;
   go install $PROMTOOL_URI
   # Install kexpand templating tool. Only works from HEAD.
-- KEXPAND_URI=github.com/kopeio/kexpand;
-  KEXPAND_VERSION=master;
-  go get -d $KEXPAND_URI;
-  git -C $GOPATH/src/$KEXPAND_URI checkout -b $KEXPAND_VERSION $KEXPAND_VERSION;
-  make -C $GOPATH/src/$KEXPAND_URI;
+- go get github.com/kopeio/kexpand
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
 
 script:
