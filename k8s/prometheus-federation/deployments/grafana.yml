@@ -65,6 +65,9 @@ spec:
         # /etc/grafana/* should contain the M-Lab Grafana configs.
         - mountPath: /etc/grafana
           name: grafana-config
+        # /etc/dashboards/* should contain the Grafana dashboard JSON configs.
+        - mountPath: /etc/dashboards
+          name: grafana-dashboards
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
@@ -74,3 +77,6 @@ spec:
       - name: grafana-config
         configMap:
           name: grafana-config
+      - name: grafana-dashboards
+        configMap:
+          name: grafana-dashboards
