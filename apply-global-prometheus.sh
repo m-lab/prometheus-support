@@ -51,6 +51,11 @@ kubectl create configmap grafana-config \
     --from-file=config/federation/grafana \
     --dry-run -o json | kubectl apply -f -
 
+## Grafana dashboards
+kubectl create configmap grafana-dashboards \
+    --from-file=config/federation/grafana/dashboards \
+    --dry-run -o json | kubectl apply -f -
+
 # Keep the password a secret.
 set +x
 # It does not really matter what the admin password is.
