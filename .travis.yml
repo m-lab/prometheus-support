@@ -86,13 +86,15 @@ deploy:
 
 #########################################
 ## Production
-# TODO: enforce a format on the $TRAVIS_TAG name.
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti prometheus-federation ./apply-global-prometheus.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    tags: true
+    all_branches: true
+    # Note: Condition allows pushes to a hotfix branch or tags that match a prefix "production"
+    # Warning: *** Only use hotfix-* branches in an emergency ***
+    condition: ( $TRAVIS_EVENT_TYPE == push && $TRAVIS_BRANCH == hotfix-* ) || $TRAVIS_TAG == production*
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti scraper-cluster ./apply-cluster.sh
