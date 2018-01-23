@@ -282,7 +282,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -302,6 +302,7 @@
           "targets": [
             {
               "expr": "prometheus_local_storage_checkpoint_last_size_bytes / prometheus_local_storage_checkpoint_last_duration_seconds",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{cluster}}",
@@ -358,7 +359,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -378,6 +379,7 @@
           "targets": [
             {
               "expr": "avg_over_time(prometheus_local_storage_checkpointing[20m])",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{cluster}}",
@@ -434,7 +436,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -454,6 +456,7 @@
           "targets": [
             {
               "expr": "prometheus_local_storage_checkpoint_last_duration_seconds",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{cluster}}",
@@ -510,7 +513,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -530,6 +533,7 @@
           "targets": [
             {
               "expr": "prometheus_local_storage_checkpoint_last_size_bytes",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{cluster}}",
@@ -614,6 +618,10 @@
             {
               "alias": "Persistence Urgency Score",
               "yaxis": 2
+            },
+            {
+              "alias": "Rushed mode",
+              "yaxis": 2
             }
           ],
           "spaceLength": 10,
@@ -623,6 +631,7 @@
           "targets": [
             {
               "expr": "prometheus_local_storage_chunks_to_persist",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "Chunks to persist",
@@ -631,6 +640,7 @@
             },
             {
               "expr": "prometheus_local_storage_memory_chunks",
+              "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Chunks in memory",
               "refId": "B",
@@ -638,11 +648,20 @@
             },
             {
               "expr": "prometheus_local_storage_persistence_urgency_score",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "Persistence Urgency Score",
               "refId": "C",
               "step": 120
+            },
+            {
+              "expr": "prometheus_local_storage_rushed_mode",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Rushed mode",
+              "refId": "D"
             }
           ],
           "thresholds": [],
@@ -786,7 +805,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -806,6 +825,7 @@
           "targets": [
             {
               "expr": "label_replace(sum by(pod_name) (irate(container_cpu_usage_seconds_total{pod_name=~\"prom.*\"}[2m])), \"pod_name\", \"$1\", \"pod_name\", \"(.*)(-[^-]+){2}\")",
+              "format": "time_series",
               "hide": true,
               "intervalFactor": 1,
               "legendFormat": "{{pod_name}}",
@@ -815,6 +835,7 @@
             },
             {
               "expr": "rate(process_cpu_seconds_total{container=\"prometheus\"}[5m])",
+              "format": "time_series",
               "hide": false,
               "interval": "",
               "intervalFactor": 1,
@@ -875,7 +896,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -895,6 +916,7 @@
           "targets": [
             {
               "expr": "process_resident_memory_bytes{container=\"prometheus\"}",
+              "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Process RSS",
               "refId": "C",
@@ -902,6 +924,7 @@
             },
             {
               "expr": "go_memstats_heap_alloc_bytes{container=\"prometheus\"}",
+              "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Bytes in Go Heap",
               "refId": "E",
@@ -909,6 +932,7 @@
             },
             {
               "expr": "max_over_time(go_memstats_heap_alloc_bytes{container=\"prometheus\"}[10m])",
+              "format": "time_series",
               "hide": true,
               "intervalFactor": 2,
               "legendFormat": "Max over 10 min",
@@ -917,6 +941,7 @@
             },
             {
               "expr": "min_over_time(go_memstats_heap_alloc_bytes{container=\"prometheus\"}[10m])",
+              "format": "time_series",
               "hide": true,
               "intervalFactor": 2,
               "legendFormat": "Min over 10 min",
@@ -943,7 +968,7 @@
           },
           "yaxes": [
             {
-              "format": "bytes",
+              "format": "decbytes",
               "label": null,
               "logBase": 1,
               "max": null,
@@ -973,7 +998,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -993,6 +1018,7 @@
           "targets": [
             {
               "expr": "node_filesystem_avail{mountpoint=\"/prometheus\"}",
+              "format": "time_series",
               "hide": true,
               "interval": "",
               "intervalFactor": 2,
@@ -1002,6 +1028,7 @@
             },
             {
               "expr": "predict_linear(node_filesystem_avail{mountpoint=\"/prometheus\"}[30m], 600)",
+              "format": "time_series",
               "interval": "60s",
               "intervalFactor": 2,
               "legendFormat": "{{deployment}}",
@@ -1078,6 +1105,7 @@
           "targets": [
             {
               "expr": "-sum by(pod_name) (rate(container_network_receive_bytes_total{pod_name=~\"prom.*\"}[2m])) * 8",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "RX",
@@ -1086,6 +1114,7 @@
             },
             {
               "expr": "sum by(pod_name) (rate(container_network_transmit_bytes_total{pod_name=~\"prom.*\"}[2m])) * 8",
+              "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "TX",
               "refId": "B",
@@ -1277,6 +1306,7 @@
           "targets": [
             {
               "expr": "count(up)",
+              "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "All Targets",
               "refId": "A",
@@ -1284,6 +1314,7 @@
             },
             {
               "expr": "count(up == 1)",
+              "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "All Up Targets",
               "refId": "B",
@@ -1429,7 +1460,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -1449,6 +1480,7 @@
           "targets": [
             {
               "expr": "prometheus_local_storage_memory_series",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{cluster}}",
@@ -1527,21 +1559,17 @@
           "targets": [
             {
               "expr": "prometheus_local_storage_memory_series",
-              "hide": true,
+              "format": "time_series",
+              "hide": false,
               "intervalFactor": 2,
               "legendFormat": "Series in Memory",
               "refId": "B",
               "step": 600
             },
             {
-              "expr": "sum(scrape_samples_scraped)",
-              "intervalFactor": 2,
-              "legendFormat": "Count of Scraped Samples",
-              "refId": "D",
-              "step": 240
-            },
-            {
               "expr": "rate(prometheus_local_storage_ingested_samples_total[5m]) * 60",
+              "format": "time_series",
+              "hide": false,
               "intervalFactor": 2,
               "legendFormat": "Rate of Ingested Samples",
               "refId": "E",
@@ -1696,7 +1724,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -1822,5 +1850,5 @@
   },
   "timezone": "utc",
   "title": "Prometheus: Self-monitoring",
-  "version": 26
+  "version": 35
 }
