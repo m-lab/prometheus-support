@@ -92,7 +92,8 @@ deploy:
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    tags: true
+    all_branches: true
+    condition: $TRAVIS_BRANCH == hotfix-* && $TRAVIS_EVENT_TYPE == push
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti scraper-cluster ./apply-cluster.sh
