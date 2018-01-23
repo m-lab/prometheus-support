@@ -313,29 +313,29 @@ ALERT SnmpExporterMissingMetrics
 # "delay" which differentiates from the actual delayed metrics for 1d, 3d, etc.
 # For each pipeline service, the quantile computation then aggregates across the 6 vectors in
 # the delay dimension.
-#ALERT ParserDailyVolumeTooLow
-#  IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h]))
-#      < (0.7 * quantile by(service)(0.50,
-#         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 1d)),"delay","1d","",".*" ) OR
-#         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 3d)),"delay","3d","",".*" ) OR
-#         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 5d)),"delay","5d","",".*" ) OR
-#         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 7d)),"delay","7d","",".*" ) OR
-#         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
-#         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
-#         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
-#         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
-#         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-traceroute-parser", "", ".*") OR
-#         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-traceroute-parser", "", ".*")
-#         ))
-#  FOR 2h
-#  LABELS {
-#    severity = "page"
-#  }
-#  ANNOTATIONS {
-#    summary = "Today's test volume is less than 70% of nominal daily volume.",
-#    hints = "Are machines online? Is data being collected? Is the parser working?",
-#    url = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/parserdailyvolumetoolow"
-#  }
+ALERT ParserDailyVolumeTooLow
+  IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h]))
+      < (0.7 * quantile by(service)(0.50,
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 1d)),"delay","1d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 3d)),"delay","3d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 5d)),"delay","5d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 7d)),"delay","7d","",".*" ) OR
+         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
+         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
+         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
+         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
+         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-traceroute-parser", "", ".*") OR
+         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-traceroute-parser", "", ".*")
+         ))
+  FOR 2h
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Today's test volume is less than 70% of nominal daily volume.",
+    hints = "Are machines online? Is data being collected? Is the parser working?",
+    url = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/parserdailyvolumetoolow"
+  }
 
 # Nagios is not running (or otherwise broken) on nagios-oam.measurementlab.net,
 # or the Prometheus job for scraping the nagios_exporter on this instance is
