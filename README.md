@@ -30,6 +30,7 @@ gcloud container \
   --machine-type=n1-standard-8 \
   --scopes "https://www.googleapis.com/auth/cloud-platform" \
   --num-nodes 3 \
+  --enable-autorepair --enable-autoupgrade \
   --node-labels=prometheus-node=true
 ```
 
@@ -45,6 +46,7 @@ gcloud --project=mlab-staging container node-pools create default-pool-N \
   --zone=us-east1-c \
   --scopes "https://www.googleapis.com/auth/cloud-platform" \
   --node-labels=prometheus-node=true \
+  --enable-autorepair --enable-autoupgrade \
   --machine-type=n1-standard-8
 ```
 
@@ -81,6 +83,7 @@ gcloud --project=mlab-oti container node-pools create prometheus-pool \
   --num-nodes=2 \
   --zone=us-central1-a \
   --node-labels=prometheus-node=true \
+  --enable-autorepair --enable-autoupgrade \
   --machine-type=n1-highmem-16
 ```
 
