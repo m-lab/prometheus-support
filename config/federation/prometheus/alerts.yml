@@ -28,7 +28,7 @@
 # All scraper metrics come from federated targets, so this is critical.
 ALERT ClusterDown
   IF up{job="federation-targets"} == 0
-  FOR 3m
+  FOR 10m
   LABELS {
     severity = "page"
   }
