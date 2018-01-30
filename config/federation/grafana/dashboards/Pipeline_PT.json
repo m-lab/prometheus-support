@@ -1,0 +1,2423 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "hideControls": false,
+  "id": 37,
+  "links": [],
+  "refresh": false,
+  "rows": [
+    {
+      "collapse": false,
+      "height": "250",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 15,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "instance count",
+              "color": "#64B0C8",
+              "fill": 0,
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(instance)(time()-process_start_time_seconds{service=\"etl-traceroute-parser\"})",
+              "intervalFactor": 2,
+              "legendFormat": "{{instance}}",
+              "refId": "A",
+              "step": 240
+            },
+            {
+              "expr": "count(process_start_time_seconds{service=\"etl-traceroute-parser\"})",
+              "intervalFactor": 2,
+              "legendFormat": "instance count",
+              "refId": "B",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Per Instance Uptime",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "dtdurations",
+              "logBase": 10,
+              "min": 60,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": 20,
+              "min": 0,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 17,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "minSpan": 4,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(phase, status, retries)(increase(etl_gcs_retry_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "intervalFactor": 2,
+              "legendFormat": "{{phase}} : {{status}} : {{retries}}",
+              "refId": "A",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Storage Errors [$interval]",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 26,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(filetype, kind)(increase(etl_error_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "intervalFactor": 1,
+              "legendFormat": "Error {{filetype}} : {{kind}}",
+              "refId": "A",
+              "step": 120
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Test Error Count by Type/Status [$interval]",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "293",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 14,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "etl_worker_count{service=\"etl-traceroute-parser\"}",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{instance}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Worker Count By Instance",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 1,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(state)(etl_worker_state{service=\"etl-traceroute-parser\"})",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{state}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Worker States",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "276",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 12,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(status, version)(increase(etl_task_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "intervalFactor": 1,
+              "legendFormat": "{{version}} : {{status}}",
+              "refId": "A",
+              "step": 120
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Task Totals by Version / Status [$interval]",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 10,
+              "min": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 3,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(status)(60*rate(etl_task_count{service=\"etl-traceroute-parser\"}[2m]))",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{status}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Tasks/Min by Status",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 13,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(instance)(60*rate(etl_task_count{service=\"etl-traceroute-parser\", status=\"OK\"}[5m]))",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{instance}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Successful Tasks/Min by Instance",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "250",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 6,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(filetype, status)(rate(etl_test_count{service=\"etl-traceroute-parser\", filetype!=\"meta\"}[2m]))",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{filetype}} : {{status}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Tests/Sec by Type",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 16,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(version, filetype, status)(increase(etl_test_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "format": "time_series",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{version}} : {{filetype}} : {{status}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Test Count by Type [$interval]",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 25,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(filetype, kind)(increase(etl_warning_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "intervalFactor": 2,
+              "legendFormat": "Warning {{filetype}} : {{kind}}",
+              "refId": "B",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Test Warning Count by Table/Type/Status [$interval]",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "250",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 9,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 1,
+              "legendFormat": "0.99 {{status}}",
+              "refId": "A",
+              "step": 120
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 1,
+              "legendFormat": "0.95 {{status}}",
+              "refId": "B",
+              "step": 120
+            },
+            {
+              "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-traceroute-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 1,
+              "legendFormat": "average",
+              "refId": "F",
+              "step": 120
+            },
+            {
+              "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 1,
+              "legendFormat": "0.5 {{status}}",
+              "refId": "C",
+              "step": 120
+            },
+            {
+              "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 1,
+              "legendFormat": "0.25 {{status}}",
+              "refId": "D",
+              "step": 120
+            },
+            {
+              "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 1,
+              "legendFormat": "0.05 {{status}}",
+              "refId": "E",
+              "step": 120
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Approximate Insertion Time Percentiles",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "logBase": 2,
+              "min": 0,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 11,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(.9999, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 2,
+              "legendFormat": ".9999",
+              "refId": "A",
+              "step": 240
+            },
+            {
+              "expr": "histogram_quantile(.99, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 2,
+              "legendFormat": ".99",
+              "refId": "F",
+              "step": 240
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 2,
+              "legendFormat": "0.95",
+              "refId": "B",
+              "step": 240
+            },
+            {
+              "expr": "histogram_quantile(0.5, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 2,
+              "legendFormat": "0.5",
+              "refId": "C",
+              "step": 240
+            },
+            {
+              "expr": "histogram_quantile(0.05, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 2,
+              "legendFormat": "0.05",
+              "refId": "D",
+              "step": 240
+            },
+            {
+              "expr": "histogram_quantile(0.01, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-traceroute-parser\"}[5m])))",
+              "intervalFactor": 2,
+              "legendFormat": "0.01",
+              "refId": "E",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Approximate Snaplog Size Percentiles",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "logBase": 10,
+              "max": 10000000,
+              "min": 10000,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "283",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 2,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(instance) (process_resident_memory_bytes{service=\"etl-traceroute-parser\"})",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{instance}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Process Resident Memory",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "decbytes",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 4,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "rate(process_cpu_seconds_total{service=\"etl-traceroute-parser\"}[2m])/2",
+              "format": "time_series",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{instance}}",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Per instance cpu utilization",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "logBase": 1,
+              "max": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "269",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 10,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(version)(increase(etl_insertion_time_seconds_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "intervalFactor": 2,
+              "legendFormat": "{{version}}",
+              "refId": "A",
+              "step": 240
+            },
+            {
+              "expr": "sum by(version)(etl_insertion_time_seconds_count{service=\"etl-ndt-parser\"})",
+              "intervalFactor": 2,
+              "legendFormat": "{{version}}",
+              "refId": "B",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total Insertion Calls [$interval]",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 8,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "etl_insertion_time_seconds_count{service=\"etl-traceroute-parser\", status=\"succeed\"}",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "ok: {{instance}}",
+              "refId": "A",
+              "step": 60
+            },
+            {
+              "expr": "etl_insertion_time_seconds_count{service=\"etl-traceroute-parser\", status=\"fail\"}",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "fail: {{instance}}",
+              "refId": "B",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Insertions per Instance",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 31,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(metro)(increase(etl_pt_polluted_total{service=\"etl-traceroute-parser\"}[$interval]))",
+              "format": "time_series",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{metro}} ",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Polluted Tests Count Per Site",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 32,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(metro)(increase(etl_pt_polluted_total{service=\"etl-traceroute-parser\"}[$interval]))/ sum by(metro)(increase(etl_pt_test_count_per_metro{service=\"etl-traceroute-parser\"}[$interval]))",
+              "format": "time_series",
+              "interval": "60s",
+              "intervalFactor": 1,
+              "legendFormat": "{{metro}} ",
+              "refId": "A",
+              "step": 60
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Polluted Tests Percentage Per Site",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "250",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 22,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(filetype, kind)(increase(etl_error_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "intervalFactor": 1,
+              "legendFormat": "PTHop {{filetype}} : {{kind}}",
+              "refId": "A",
+              "step": 120
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "PT Hop Error Count",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 10,
+              "min": 1000,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 24,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(metro)(increase(etl_pt_not_reach_dest_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "{{metro}} ",
+              "refId": "A",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "PT not reach dest count",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 10,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 27,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(metro)(increase(etl_pt_not_reach_dest_count{service=\"etl-traceroute-parser\"}[$interval])) / sum by(metro)(increase(etl_pt_test_count_per_metro{service=\"etl-traceroute-parser\"}[$interval]))",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "{{metro}} ",
+              "refId": "A",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "PT not reach dest ratio per metro",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "logBase": 1,
+              "max": "1",
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 28,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(metro)(increase(etl_pt_more_hops_after_dest_count{service=\"etl-traceroute-parser\"}[$interval]))",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "{{metro}} ",
+              "refId": "A",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "PT Reach Dest in the Middle Count per metro",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 29,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"32\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"31\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "Bucket 32",
+              "refId": "A",
+              "step": 240
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"0\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Bucket 0",
+              "refId": "B"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"31\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"30\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 31",
+              "refId": "C"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"30\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"29\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 30",
+              "refId": "D"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"1\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"0\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 1",
+              "refId": "E"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"16\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"15\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 16",
+              "refId": "F"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"24\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v4_bucket{le=\"23\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 24",
+              "refId": "G"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "PT not reach Distance Between last hop and dest V4",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "editable": false,
+          "error": false,
+          "fill": 1,
+          "id": 30,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 3,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"32\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"31\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "Bucket 32",
+              "refId": "A",
+              "step": 240
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"0\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Bucket 0",
+              "refId": "B"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"31\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"30\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 31",
+              "refId": "C"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"30\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"29\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 30",
+              "refId": "D"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"1\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"0\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 1",
+              "refId": "E"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"16\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"15\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 16",
+              "refId": "F"
+            },
+            {
+              "expr": "sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"24\", service=\"etl-traceroute-parser\"}[10m])) - ignoring (le) sum by(le)(rate(etl_pt_bits_away_from_dest_v6_bucket{le=\"23\", service=\"etl-traceroute-parser\"}[10m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "bucket 24",
+              "refId": "G"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "PT not reach Distance Between last hop and dest V6",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    }
+  ],
+  "schemaVersion": 14,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allFormat": "",
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "10m",
+          "value": "10m"
+        },
+        "datasource": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "multiFormat": "",
+        "name": "interval",
+        "options": [
+          {
+            "selected": true,
+            "text": "10m",
+            "value": "10m"
+          },
+          {
+            "selected": false,
+            "text": "1h",
+            "value": "1h"
+          },
+          {
+            "selected": false,
+            "text": "3h",
+            "value": "3h"
+          },
+          {
+            "selected": false,
+            "text": "6h",
+            "value": "6h"
+          },
+          {
+            "selected": false,
+            "text": "12h",
+            "value": "12h"
+          },
+          {
+            "selected": false,
+            "text": "18h",
+            "value": "18h"
+          },
+          {
+            "selected": false,
+            "text": "1d",
+            "value": "1d"
+          },
+          {
+            "selected": false,
+            "text": "2d",
+            "value": "2d"
+          },
+          {
+            "selected": false,
+            "text": "1w",
+            "value": "1w"
+          },
+          {
+            "selected": false,
+            "text": "4w",
+            "value": "4w"
+          },
+          {
+            "selected": false,
+            "text": "13w",
+            "value": "13w"
+          },
+          {
+            "selected": false,
+            "text": "1y",
+            "value": "1y"
+          }
+        ],
+        "query": "10m,1h,3h,6h,12h,18h,1d,2d,1w,4w,13w,1y",
+        "refresh": false,
+        "regex": "",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Pipeline: PT",
+  "version": 35
+}
