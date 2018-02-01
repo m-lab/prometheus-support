@@ -187,3 +187,20 @@ candidate_machine:node_disk_io_time_ratio:gt_50_pct =
 
 candidate_ndt:vdlimit_used_12h_prediction:gt_50gb =
     ndt:vdlimit_used:predict_linear3h_12h > bool 50000000
+
+
+## Switch SNMP metrics
+#
+# Discarded packets for Junipers
+switch:jnxCosQstatTotalDropPkts:irate4m_gt_0 =
+    irate(jnxCosQstatTotalDropPkts{ifAlias="uplink", qNumber="0"}[4m]) > 0
+
+switch:jnxCosQstatTotalDropPkts:irate4m =
+    irate(jnxCosQstatTotalDropPkts{ifAlias="uplink", qNumber="0"}[4m])
+
+# Discarded packets for HPs and Ciscos
+switch:ifOutDiscards:irate4m_gt_0 =
+    irate(ifOutDiscards{ifAlias="uplink"}[4m]) > 0
+
+switch:ifOutDiscards:irate4m =
+    irate(ifOutDiscards{ifAlias="uplink"}[4m])
