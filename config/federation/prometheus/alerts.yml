@@ -276,10 +276,40 @@ ALERT SnmpExporterMissingMetrics
   }
   ANNOTATIONS {
     summary = "Expected SNMP metrics are missing from Prometheus!",
-    hints = "If the snmp_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and and the target status in Prometheus.",
+    hints = "If the snmp_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
     prometheus_targets = "http://status.mlab-oti.measurementlab.net:9090/targets",
     gcsbucket = "https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/snmp-targets",
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/switch-metrics"
+  }
+
+# Prometheus is unable to get data from the script_exporter service.
+ALERT ScriptExporterDownOrMissing
+  IF up{job="script-exporter"} == 0 OR absent(up{job="script-exporter"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The script_exporter service is down on {{ $labels.instance }}.",
+    hints = "The script_exporter service runs in a Docker container on a GCE VM named 'script-exporter' in each M-Lab GCP project. For deployment details and troubleshooting, you can usually figure out the issue by looking through the Travis-CI build logs: https://travis-ci.org/m-lab/prometheus-script-exporter. You can also look for hints in the dashboard for the GCE instance, or by SSHing to the instance itself."
+  }
+
+# Some script_exporter metrics are missing from Prometheus. These should always
+# be present. The wait period should be longer than that for the
+# ScriptExporterDownOrMissing alert.
+ALERT ScriptExporterMissingMetrics
+  IF absent(script_success{service="ndt_e2e"})
+        OR absent(script_success{service="ndt_queue"})
+  FOR 30m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Expected script_exporter metrics are missing from Prometheus!",
+    hints = "If the script_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
+    prometheus_targets = "http://status.mlab-oti.measurementlab.net:9090/targets",
+    gcsbucket = "https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets",
+    dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/ops-dashboard"
   }
 
 # TODO:
