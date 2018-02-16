@@ -284,7 +284,7 @@ ALERT SnmpExporterMissingMetrics
 
 # Prometheus is unable to scrape SNMP data from a switch.
 # Note: ignores testing pod switches.
-ALERT SnmpScrapingFailing
+ALERT SnmpScrapeFailing
   IF sum_over_time(up{job="snmp-targets", site!~".*t"}[15m]) == 0
   FOR 15m
   LABELS {
@@ -292,7 +292,7 @@ ALERT SnmpScrapingFailing
   }
   ANNOTATIONS {
     summary = "Scraping SNMP data from a switch is failing.",
-    hints = "Did the SNMP community string change on the switch? The snmp_exporter may be running with an old config. Check that the switch-config submodule is up-to-date in the m-lab/prometheus-snmp-exporter repo",
+    hints = "Did the SNMP community string change on the switch? The snmp_exporter may be running with an old config. If so, it may be necessary to trigger a new deployment of https://github.com/m-lab/prometheus-snmp-exporter."
   }
 
 # Prometheus is unable to get data from the script_exporter service.
