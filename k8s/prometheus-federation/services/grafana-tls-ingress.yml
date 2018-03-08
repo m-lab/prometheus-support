@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-tls
+  namespace: default
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "gce"
+spec:
+  tls:
+  - hosts:
+    - grafana.sandbox.mlab.fun
+    secretName: grafana-tls
+  rules:
+  - host: grafana.sandbox.mlab.fun
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: grafana-tls-service
+          servicePort: 3000
