@@ -36,7 +36,7 @@ modules:
   # target=<hostname:port>
   ssh_v4_online:
     prober: tcp
-    timeout: 5s
+    timeout: 9s
     tcp:
       preferred_ip_protocol: "ip4"
       query_response:
@@ -53,7 +53,7 @@ modules:
   # target=<hostname>:9773/sapi/state
   neubot_online:
     prober: http
-    timeout: 5s
+    timeout: 9s
     http:
       preferred_ip_protocol: "ip4"
       fail_if_not_matches_regexp:
@@ -62,7 +62,7 @@ modules:
   # target=<hostname:port>
   rsyncd_online:
     prober: tcp
-    timeout: 5s
+    timeout: 9s
     tcp:
       preferred_ip_protocol: "ip4"
       query_response:
@@ -77,7 +77,7 @@ modules:
   # target=<hostname>
   icmp:
     prober: icmp
-    timeout: 5s
+    timeout: 9s
     icmp:
       preferred_ip_protocol: "ip4"
 
@@ -89,6 +89,6 @@ modules:
   # NOTE: NDT ports do not return valid HTTP responses and appear to fail.
   http_2xx:
     prober: http
-    timeout: 5s
+    timeout: 9s
     http:
       method: "GET"
