@@ -26,12 +26,19 @@
 # See https://github.com/prometheus/blackbox_exporter for additional examples.
 
 modules:
-  # target=<hostname:port>
+  # IPv4: target=<hostname:port>
   tcp_v4_online:
     prober: tcp
     timeout: 9s
     tcp:
       preferred_ip_protocol: "ip4"
+
+  # IPv6: target=<hostname:port>
+  tcp_v6_online:
+    prober: tcp
+    timeout: 9s
+    tcp:
+      preferred_ip_protocol: "ip6"
 
   # target=<hostname:port>
   ssh_v4_online:
@@ -42,7 +49,7 @@ modules:
       query_response:
         - expect: "SSH-2.0-OpenSSH_.+"
 
-  # target=<hostname:port>
+  # IPv4: target=<hostname:port>
   tcp_v4_tls_online:
     prober: tcp
     timeout: 9s
@@ -50,12 +57,29 @@ modules:
       preferred_ip_protocol: "ip4"
       tls: true
 
-  # target=<hostname>:9773/sapi/state
-  neubot_online:
+  # IPv6: target=<hostname:port>
+  tcp_v6_tls_online:
+    prober: tcp
+    timeout: 9s
+    tcp:
+      preferred_ip_protocol: "ip6"
+      tls: true
+
+  # IPv4: target=<hostname>:9773/sapi/state
+  neubot_online_v4:
     prober: http
     timeout: 9s
     http:
       preferred_ip_protocol: "ip4"
+      fail_if_not_matches_regexp:
+        - "queue_len_cur"
+
+  # IPv6: target=<hostname>:9773/sapi/state
+  neubot_online_v6:
+    prober: http
+    timeout: 9s
+    http:
+      preferred_ip_protocol: "ip6"
       fail_if_not_matches_regexp:
         - "queue_len_cur"
 
