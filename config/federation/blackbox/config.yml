@@ -40,12 +40,21 @@ modules:
     tcp:
       preferred_ip_protocol: "ip6"
 
-  # target=<hostname:port>
+  # IPv4 target=<hostname:port>
   ssh_v4_online:
     prober: tcp
     timeout: 9s
     tcp:
       preferred_ip_protocol: "ip4"
+      query_response:
+        - expect: "SSH-2.0-OpenSSH_.+"
+
+  # IPv6 target=<hostname:port>
+  ssh_v6_online:
+    prober: tcp
+    timeout: 9s
+    tcp:
+      preferred_ip_protocol: "ip6"
       query_response:
         - expect: "SSH-2.0-OpenSSH_.+"
 
