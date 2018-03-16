@@ -58,6 +58,14 @@ deploy:
     all_branches: true
     condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
 
+- provider: script
+  script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-sandbox LINODE_PRIVATE_KEY_ipv6_monitoring"
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
+
 #########################################
 ## Staging
 - provider: script
@@ -84,6 +92,14 @@ deploy:
     all_branches: true
     condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
 
+- provider: script
+  script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-staging LINODE_PRIVATE_KEY_ipv6_monitoring"
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    branch: master
+    condition: "$TRAVIS_EVENT_TYPE == push"
+
 #########################################
 ## Production
 - provider: script
@@ -105,6 +121,13 @@ deploy:
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti downloader ./apply-cluster.sh
+  skip_cleanup: true
+  on:
+    repo: m-lab/prometheus-support
+    tags: true
+
+- provider: script
+  script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-oti LINODE_PRIVATE_KEY_ipv6_monitoring"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
