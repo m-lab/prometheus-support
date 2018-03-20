@@ -545,46 +545,86 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\"}[$range]) > 500000000",
+              "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 500e6",
               "format": "time_series",
               "hide": false,
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "warning - {{site}}",
+              "legendFormat": "warning - {{site}} - 1g",
               "refId": "E"
             },
             {
-              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\"}[$range]) > 600000000",
+              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 600e6",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "error - {{site}}",
+              "legendFormat": "error - {{site}} - 1g",
               "refId": "F"
             },
             {
-              "expr": "switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\"}",
+              "expr": "switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}",
               "format": "time_series",
               "hide": false,
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "raw - {{site}}",
+              "legendFormat": "raw - {{site}} - 1g",
               "refId": "C"
             },
             {
-              "expr": "quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\"}[$range])",
+              "expr": "quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range])",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "q90 - {{site}}",
+              "legendFormat": "q90 - {{site}} - 1g",
               "refId": "D"
             },
             {
-              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\"}[$range])",
+              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range])",
               "format": "time_series",
               "hide": false,
               "interval": "1m",
               "intervalFactor": 1,
-              "legendFormat": "q98 - {{site}}",
+              "legendFormat": "q98 - {{site}} - 1g",
               "refId": "A"
+            },
+            {
+              "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 5e9",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "warning - {{site}} - 10g",
+              "refId": "B"
+            },
+            {
+              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 6e9",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "error - {{site}} - 10g",
+              "refId": "G"
+            },
+            {
+              "expr": "switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "raw - {{site}} - 10g",
+              "refId": "H"
+            },
+            {
+              "expr": "quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range])",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "q90 - {{site}} - 10g",
+              "refId": "I"
+            },
+            {
+              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range])",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "q98 - {{site}} - 10g",
+              "refId": "J"
             }
           ],
           "thresholds": [],
@@ -989,6 +1029,7 @@
       {
         "allValue": null,
         "current": {
+          "tags": [],
           "text": "ord02",
           "value": "ord02"
         },
