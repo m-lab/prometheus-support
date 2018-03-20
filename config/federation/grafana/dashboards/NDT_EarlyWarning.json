@@ -545,7 +545,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 500000000",
+              "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 500e6",
               "format": "time_series",
               "hide": false,
               "interval": "1m",
@@ -554,7 +554,7 @@
               "refId": "E"
             },
             {
-              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 600000000",
+              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 600e6",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "error - {{site}} - 1g",
@@ -587,7 +587,7 @@
               "refId": "A"
             },
             {
-              "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 5000000000",
+              "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 5e9",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
@@ -595,7 +595,7 @@
               "refId": "B"
             },
             {
-              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 6000000000",
+              "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 6e9",
               "format": "time_series",
               "interval": "1m",
               "intervalFactor": 1,
