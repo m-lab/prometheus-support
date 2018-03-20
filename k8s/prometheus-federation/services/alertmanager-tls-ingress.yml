@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: grafana-tls
+  name: alertmanager-tls
   namespace: default
   annotations:
     kubernetes.io/tls-acme: "true"
@@ -9,13 +9,13 @@ metadata:
 spec:
   tls:
   - hosts:
-    - grafana.{{GCLOUD_PROJECT}}.measurementlab.net
-    secretName: grafana-tls
+    - alertmanager.{{GCLOUD_PROJECT}}.measurementlab.net
+    secretName: alertmanager-tls
   rules:
-  - host: grafana.{{GCLOUD_PROJECT}}.measurementlab.net
+  - host: alertmanager.{{GCLOUD_PROJECT}}.measurementlab.net
     http:
       paths:
       - path: /*
         backend:
-          serviceName: grafana-tls-service
-          servicePort: 3000
+          serviceName: alertmanager-tls-service
+          servicePort: 9093
