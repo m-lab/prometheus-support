@@ -63,6 +63,11 @@ export GRAFANA_PASSWORD=$( echo $RANDOM | md5sum | awk '{print $1}' )
 kubectl create secret generic grafana-secrets \
     "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
     --dry-run -o json | kubectl apply -f -
+
+PROMETHEUS_BASIC_AUTH=PROMETHEUS_BASIC_AUTH_${PROJECT/-/_}
+kubectl create secret generic prometheus-auth \
+    "--from-literal=auth=${PROMETHEUS_BASIC_AUTH}" \
+    --dry-run -o json | kubectl apply -f -
 set -x
 
 
