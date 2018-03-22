@@ -23,8 +23,8 @@ USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
-export GRAFANA_DOMAIN=status.${PROJECT}.measurementlab.net
-export ALERTMANAGER_URL=http://status.${PROJECT}.measurementlab.net:9093
+export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
+export ALERTMANAGER_URL=https://alertmanager.${PROJECT}.measurementlab.net
 
 # Config maps and Secrets
 
@@ -66,7 +66,7 @@ kubectl create secret generic grafana-secrets \
 
 PROMETHEUS_BASIC_AUTH=PROMETHEUS_BASIC_AUTH_${PROJECT/-/_}
 kubectl create secret generic prometheus-auth \
-    "--from-literal=auth=${PROMETHEUS_BASIC_AUTH}" \
+    "--from-literal=auth=${!PROMETHEUS_BASIC_AUTH}" \
     --dry-run -o json | kubectl apply -f -
 set -x
 
@@ -139,4 +139,4 @@ kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
 # TODO: there is an indeterminate delay between the time that a configmap is
 # updated and it becomes available to the container. So, this reload may fail
 # since the configmap is not yet up to date.
-curl -X POST http://status.${PROJECT}.measurementlab.net:9090/-/reload || :
+# curl -X POST https://prometheus.${PROJECT}.measurementlab.net/-/reload || :
