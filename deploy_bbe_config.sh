@@ -1,13 +1,20 @@
 #!/bin/bash
+#
+# Deploys the blackbox_exporter config to an external (e.g., Linode) VM which
+# will perform IPv6 probes, since GCP doesn't currently support IPv6.
+#
+#  Example usage:
+#    ./deploy_bbe_config.sh mlab-sandbox LINODE_PRIVATE_KEY_ipv6_monitoring
 
 set -e
 set -u
 set -x
 
+BASE_DIR=$( dirname ${BASH_SOURCE[0]} )
 USAGE="Usage: $0 <project> <keyname>"
 PROJECT=${1:?Please provide project name: $USAGE}
 KEYNAME=${2:?Please provide an authentication key name: $USAGE}
-BBE_CONFIG="config/federation/blackbox/config.yml"
+BBE_CONFIG="${BASE_DIR}/config/federation/blackbox/config.yml"
 LINODE_DOMAIN="blackbox-exporter-ipv6.${PROJECT}.measurementlab.net"
 LINODE_USER="mlab"
 LOCAL_KEY_FILE="id_rsa_linode"
