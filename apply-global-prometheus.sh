@@ -78,6 +78,7 @@ GF_CLIENT_ID_NAME=GF_AUTH_GOOGLE_CLIENT_ID_${PROJECT/-/_}
 # TODO: kubectl v1.7  supports --from-env-file=
 kubectl create configmap grafana-env \
     "--from-literal=domain=${GRAFANA_DOMAIN}" \
+    "--from-literal=root_url=https://${GRAFANA_DOMAIN}" \
     "--from-literal=gf_auth_google_client_secret=${!GF_CLIENT_SECRET_NAME}" \
     "--from-literal=gf_auth_google_client_id=${!GF_CLIENT_ID_NAME}" \
     --dry-run -o json | kubectl apply -f -
