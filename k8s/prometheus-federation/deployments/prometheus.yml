@@ -92,6 +92,10 @@ spec:
         - mountPath: /blackbox-targets
           name: prometheus-storage
           subPath: blackbox-targets
+        # /blackbox-targets-ipv6 should contain blackbox IPv6 target files.
+        - mountPath: /blackbox-targets-ipv6
+          name: prometheus-storage
+          subPath: blackbox-targets-ipv6
         # /aeflex-targets should contain AppEngine target config files.
         - mountPath: /aeflex-targets
           name: prometheus-storage
@@ -143,6 +147,8 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/legacy-targets/nodeexporter.json",
                 "--http-target=/targets/blackbox-targets/ssh806.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/ssh806.json",
+                "--http-target=/targets/blackbox-targets-ipv6/ssh806_ipv6.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/ssh806_ipv6.json",
                 "--http-target=/targets/blackbox-targets/rsyncd.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/rsyncd.json",
                 "--http-target=/targets/snmp-targets/snmpexporter.json",
@@ -159,8 +165,12 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/legacy-targets/ndt_inotify.json",
                 "--http-target=/targets/blackbox-targets/mobiperf.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/mobiperf.json",
+                "--http-target=/targets/blackbox-targets-ipv6/mobiperf_ipv6.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/mobiperf_ipv6.json",
                 "--http-target=/targets/blackbox-targets/neubot.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/neubot.json",
+                "--http-target=/targets/blackbox-targets-ipv6/neubot_ipv6.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/neubot_ipv6.json",
                 "--project={{GCLOUD_PROJECT}}"]
         resources:
           requests:
