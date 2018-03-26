@@ -1,17 +1,16 @@
 # IPv6 Monitoring
 
 Google Cloud Platform does not currently support IPv6 for most applications.
-Since Prometheus and the Prometheus
-
-blackbox\_exporter both run in GCP, we need another solution for IPv6
-monitoring. The solution we decided to use is to run the blackbox\_exporter on a
-separate VM through a provider that does support IPv6. Since we are already
-using Linode.com for a few other things, we deployed the VM on Linode.
+Since Prometheus and the Prometheus blackbox\_exporter both run in GCP, we need
+another solution for IPv6 monitoring. The solution we decided to use is to run
+the blackbox\_exporter on a separate VM through a provider that does support
+IPv6. Since we are already using Linode.com for a few other things, we deployed
+the VM on Linode.
 
 Any base Linux distribution would probably be just fine, but this deployment is
 using Debian 9.
 
-There are some requirements:
+Below are first-time setup instructions and requirements for the VM:
 
 * Request a `/116` IPv6 pool from Linode by opening a support ticket. In our
   case, we were given this prefix `2600:3c02::17:d000/116`.
@@ -33,7 +32,9 @@ There are some requirements:
 * [Enable NDP
   proxying](https://docs.docker.com/v17.09/engine/userguide/networking/default_network/ipv6/#using-ndp-proxying)
   for the `eth0` interface: `# sysctl net.ipv6.conf.eth0.proxy_ndp=1`. Add this
-  to _/etc/sysctl.conf_ to persist the change across reboots.
+  to _/etc/sysctl.conf_ to persist the change across reboots. **NOTE**: Having
+  to enable NDP proxying is a consequence of using a `/116` IPv6 prefix. If we
+  were using a fully routable `/64` prefix, this wouldn't be necessary.
 
 * Configure IPv6 for the `eth0` interface in _/etc/network/interfaces_ using the
   prefix we got. We are going to subnet our prefix into two subnets, one for the
@@ -74,7 +75,10 @@ blackbox-exporter-config-mlab-sandbox.yml
 blackbox-exporter-config-mlab-staging.yml
 blackbox-exporter-config-mlab-oti.yml
 ```
-* Instantiate the Docker containers (as the user mlab).
+* Instantiate the Docker containers (as the user mlab). **NOTE**: it is very
+  important to include the `--restart always` flag and argument. Without it, if
+  the machine is rebooted or the container crashes, then it won't start again
+  automatically.
 ```
 $ docker run --detach --publish 7115:9115 --volume `pwd`:/config \
     --restart always --name mlab-sandbox prom/blackbox-exporter \
