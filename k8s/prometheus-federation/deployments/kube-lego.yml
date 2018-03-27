@@ -1,14 +1,3 @@
-apiVersion: v1
-metadata:
-  name: kube-lego
-  namespace: kube-lego
-data:
-  # modify this to specify your address
-  lego.email: "{{TLS_EMAIL}}"
-  # configure letsencrypt's production api
-  lego.url: "https://acme-v01.api.letsencrypt.org/directory"
-kind: ConfigMap
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -19,7 +8,8 @@ spec:
   template:
     metadata:
       labels:
-        # Required for the auto-create kube-lego-nginx service to work.
+        # Required for the auto-created kube-lego-nginx service to work. 
+        # kube-lego-nginx is the service which performs the ACME handshake.
         app: kube-lego
     spec:
       serviceAccountName: kube-lego
@@ -32,16 +22,13 @@ spec:
         env:
         - name: LEGO_LOG_LEVEL
           value: debug
+        # Let's Encrypt requires a valid email address.
         - name: LEGO_EMAIL
-          valueFrom:
-            configMapKeyRef:
-              name: kube-lego
-              key: lego.email
+          value: "{{TLS_EMAIL}}"
+        # Use Let's Encrypt's production API as specified here: 
+        # https://letsencrypt.org/docs/acme-protocol-updates/
         - name: LEGO_URL
-          valueFrom:
-            configMapKeyRef:
-              name: kube-lego
-              key: lego.url
+          value: "https://acme-v01.api.letsencrypt.org/directory"
         - name: LEGO_NAMESPACE
           valueFrom:
             fieldRef:

@@ -1,57 +1,62 @@
+# Create a namespace for kube-lego and its attendant services.
 apiVersion: v1
 kind: Namespace
 metadata:
   name: kube-lego
 ---
+# ClusterRole for kube-lego, which watches for properly annotated services and 
+# automatically generates TLS certificates for them via LetsEncrypt, then 
+# configures an ingress for them with those certificates.
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: kube-lego
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - ""
-  resources:
-  - services
-  - endpoints
-  verbs:
-  - create
-  - get
-  - delete
-  - update
-- apiGroups:
-  - extensions
-  resources:
-  - ingresses
-  verbs:
-  - get
-  - update
-  - create
-  - list
-  - patch
-  - delete
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - endpoints
-  - secrets
-  verbs:
-  - get
-  - create
-  - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+    verbs:
+      - create
+      - get
+      - delete
+      - update
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - update
+      - create
+      - list
+      - patch
+      - delete
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create
+      - update
 ---
+# A ServiceAccount under which kube-lego runs.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kube-lego
 ---
+# Bind the kube-lego ServiceAccount to the ClusterRole above.
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
