@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kube-lego
+  namespace: kube-lego
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        # Required for the auto-created kube-lego-nginx service to work. 
+        # kube-lego-nginx is the service which performs the ACME handshake.
+        app: kube-lego
+    spec:
+      serviceAccountName: kube-lego
+      containers:
+      - name: kube-lego
+        image: jetstack/kube-lego:0.1.5
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: LEGO_LOG_LEVEL
+          value: debug
+        # Let's Encrypt requires a valid email address.
+        - name: LEGO_EMAIL
+          value: "{{TLS_EMAIL}}"
+        # Use Let's Encrypt's production API as specified here: 
+        # https://letsencrypt.org/docs/acme-protocol-updates/
+        - name: LEGO_URL
+          value: "https://acme-v01.api.letsencrypt.org/directory"
+        - name: LEGO_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: LEGO_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 1

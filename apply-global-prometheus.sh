@@ -23,8 +23,9 @@ USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
-export GRAFANA_DOMAIN=status.${PROJECT}.measurementlab.net
-export ALERTMANAGER_URL=http://status.${PROJECT}.measurementlab.net:9093
+export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
+# TODO: Add inline basic-auth credentials.
+export ALERTMANAGER_URL=https://alertmanager.${PROJECT}.measurementlab.net
 
 # Config maps and Secrets
 
@@ -63,6 +64,11 @@ export GRAFANA_PASSWORD=$( echo $RANDOM | md5sum | awk '{print $1}' )
 kubectl create secret generic grafana-secrets \
     "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
     --dry-run -o json | kubectl apply -f -
+
+PROMETHEUS_BASIC_AUTH=PROMETHEUS_BASIC_AUTH_${PROJECT/-/_}
+kubectl create secret generic prometheus-auth \
+    "--from-literal=auth=${!PROMETHEUS_BASIC_AUTH}" \
+    --dry-run -o json | kubectl apply -f -
 set -x
 
 
@@ -72,7 +78,7 @@ GF_CLIENT_SECRET_NAME=GF_AUTH_GOOGLE_CLIENT_SECRET_${PROJECT/-/_}
 GF_CLIENT_ID_NAME=GF_AUTH_GOOGLE_CLIENT_ID_${PROJECT/-/_}
 # TODO: kubectl v1.7  supports --from-env-file=
 kubectl create configmap grafana-env \
-    "--from-literal=domain=${GRAFANA_DOMAIN}" \
+    "--from-literal=root_url=https://${GRAFANA_DOMAIN}" \
     "--from-literal=gf_auth_google_client_secret=${!GF_CLIENT_SECRET_NAME}" \
     "--from-literal=gf_auth_google_client_id=${!GF_CLIENT_ID_NAME}" \
     --dry-run -o json | kubectl apply -f -
@@ -134,4 +140,4 @@ kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
 # TODO: there is an indeterminate delay between the time that a configmap is
 # updated and it becomes available to the container. So, this reload may fail
 # since the configmap is not yet up to date.
-curl -X POST http://status.${PROJECT}.measurementlab.net:9090/-/reload || :
+# curl -X POST https://prometheus.${PROJECT}.measurementlab.net/-/reload || :
