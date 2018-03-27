@@ -54,6 +54,10 @@ spec:
 
         ports:
           - containerPort: 3000
+        # Many ingresses expect an HTTP code 200 on port 80 at path '/', for 
+        # their backends, and otherwise will not serve them. Grafana does not 
+        # return 200 at '/', and so it requires a custom readinessProbe to be 
+        # served.
         readinessProbe:
           failureThreshold: 3
           httpGet:

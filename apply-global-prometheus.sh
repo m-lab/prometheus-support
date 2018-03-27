@@ -24,6 +24,7 @@ PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
 export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
+# TODO: Add inline basic-auth credentials.
 export ALERTMANAGER_URL=https://alertmanager.${PROJECT}.measurementlab.net
 
 # Config maps and Secrets

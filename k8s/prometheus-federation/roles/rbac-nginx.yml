@@ -19,52 +19,52 @@ kind: ClusterRole
 metadata:
   name: nginx-ingress-clusterrole
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-      - endpoints
-      - nodes
-      - pods
-      - secrets
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - nodes
-    verbs:
-      - get
-  - apiGroups:
-      - ""
-    resources:
-      - services
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "extensions"
-    resources:
-      - ingresses
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-        - events
-    verbs:
-        - create
-        - patch
-  - apiGroups:
-      - "extensions"
-    resources:
-      - ingresses/status
-    verbs:
-      - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - nodes
+  - pods
+  - secrets
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "extensions"
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - "extensions"
+  resources:
+  - ingresses/status
+  verbs:
+  - update
 ---
 # Role for nginx-ingress, which creates an instance of nginx which acts 
 # as an Ingress that forwards different vhosts and paths to different Service 
@@ -75,40 +75,40 @@ metadata:
   name: nginx-ingress-role
   namespace: nginx-ingress
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-      - pods
-      - secrets
-      - namespaces
-    verbs:
-      - get
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    resourceNames:
-      # Defaults to "<election-id>-<ingress-class>"
-      # Here: "<ingress-controller-leader>-<nginx>"
-      # This has to be adapted if you change either parameter
-      # when launching the nginx-ingress-controller.
-      - "ingress-controller-leader-nginx"
-    verbs:
-      - get
-      - update
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - create
-  - apiGroups:
-      - ""
-    resources:
-      - endpoints
-    verbs:
-      - get
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - pods
+  - secrets
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  # Defaults to "<election-id>-<ingress-class>"
+  # Here: "<ingress-controller-leader>-<nginx>"
+  # This has to be adapted if you change either parameter
+  # when launching the nginx-ingress-controller.
+  - "ingress-controller-leader-nginx"
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - get
 ---
 # Bind the nginx-ingress ServiceAccount to the Role above.
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -121,9 +121,9 @@ roleRef:
   kind: Role
   name: nginx-ingress-role
 subjects:
-  - kind: ServiceAccount
-    name: nginx-ingress
-    namespace: nginx-ingress
+- kind: ServiceAccount
+  name: nginx-ingress
+  namespace: nginx-ingress
 ---
 # Bind the nginx-ingress ServiceAccount to the ClusterRole above.
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -135,6 +135,6 @@ roleRef:
   kind: ClusterRole
   name: nginx-ingress-clusterrole
 subjects:
-  - kind: ServiceAccount
-    name: nginx-ingress
-    namespace: nginx-ingress
+- kind: ServiceAccount
+  name: nginx-ingress
+  namespace: nginx-ingress

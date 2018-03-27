@@ -17,3 +17,25 @@ spec:
     run: grafana-server
   sessionAffinity: None
   type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: grafana-tls
+  namespace: default
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - grafana.{{GCLOUD_PROJECT}}.measurementlab.net
+    secretName: grafana-tls
+  rules:
+  - host: grafana.{{GCLOUD_PROJECT}}.measurementlab.net
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-tls-service
+          servicePort: 3000

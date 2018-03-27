@@ -12,43 +12,43 @@ kind: ClusterRole
 metadata:
   name: kube-lego
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-    verbs:
-      - get
-      - list
-  - apiGroups:
-      - ""
-    resources:
-      - services
-      - endpoints
-    verbs:
-      - create
-      - get
-      - delete
-      - update
-  - apiGroups:
-      - extensions
-    resources:
-      - ingresses
-    verbs:
-      - get
-      - update
-      - create
-      - list
-      - patch
-      - delete
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - get
-      - create
-      - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  verbs:
+  - create
+  - get
+  - delete
+  - update
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - update
+  - create
+  - list
+  - patch
+  - delete
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - create
+  - update
 ---
 # A ServiceAccount under which kube-lego runs.
 apiVersion: v1
