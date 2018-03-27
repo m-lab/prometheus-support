@@ -52,13 +52,13 @@ gcloud --project=mlab-staging container node-pools create default-pool-N \
 
 Adjust the project, cluster name, and zone as appropriate. If the cluster is
 using static public IPs, use the same zone as the current cluster; static IPs
-are associated with a single zone. It is necessary to configure a static IP 
+are associated with a single zone. It is necessary to configure a static IP
 by going to:
-    
+
     GCP -> VPC Networking -> External IP Addresses
 
-and then configure Cloud DNS for your 
-`{grafana, prometheus, alertmanager}.<cluster>.measurementlab.net` subdomains 
+and then configure Cloud DNS for your
+`{grafana, prometheus, alertmanager}.<cluster>.measurementlab.net` subdomains
 to point at that IP address:
 
     GCP -> Network Services -> Cloud DNS
@@ -66,7 +66,7 @@ to point at that IP address:
 in order for automatic TLS certificates to be generated.
 
 Then update the resource "request" and "limit" in the appropriate deployment
-configuration, as well as the IP address: 
+configuration, as well as the IP address:
 
     `k8s/<project>/<cluster>/deployment/<deployment.yml>`
 
