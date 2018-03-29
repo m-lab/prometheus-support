@@ -380,3 +380,15 @@ ALERT NagiosOamDownOrMissing
     summary = "The Nagios OA&M instance is down on {{ $labels.instance }}.",
     hints = "The Nagios OA&M instance runs in a Linode VM."
   }
+
+# GardenerDownOrMissing fires when the etl-gardener is down or absent.
+ALERT GardenerDownOrMissing
+  IF up{container="etl-gardener"} == 0 OR absent(up{container="etl-gardener"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The ETL Gardener instance is down on {{ $labels.instance }}",
+    hints = "The Gardener runs in the data-processing-cluster"
+  }
