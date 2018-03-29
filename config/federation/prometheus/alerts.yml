@@ -383,7 +383,9 @@ ALERT NagiosOamDownOrMissing
 
 # GardenerDownOrMissing fires when the etl-gardener is down or absent.
 ALERT GardenerDownOrMissing
-  IF up{container="etl-gardener"} == 0 OR absent(up{container="etl-gardener"})
+  # TODO: enable annotations to ignore some container ports, and simplify this query.
+  # https://github.com/m-lab/prometheus-support/issues/48
+  IF up{container="etl-gardener", instance=~".*:9090"} == 0 OR absent(up{container="etl-gardener", instance=~".*:9090"})
   FOR 10m
   LABELS {
     severity = "ticket"
