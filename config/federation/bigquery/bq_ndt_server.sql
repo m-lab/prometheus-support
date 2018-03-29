@@ -53,7 +53,7 @@ FROM (
         web100_log_entry.snap.SumRTT/web100_log_entry.snap.CountRTT/1000 AS rtt
 
     FROM
-       `measurement-lab.public.ndt`
+       `measurement-lab.base_tables.ndt`
 
     WHERE
         -- For faster queries we use _PARTITIONTIME boundaries. And, to

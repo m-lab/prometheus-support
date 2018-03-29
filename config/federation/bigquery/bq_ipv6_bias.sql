@@ -22,7 +22,7 @@ SELECT
    COUNT(*) AS value
 
 FROM
-    `measurement-lab.public.ndt`
+    `measurement-lab.base_tables.ndt`
 
 WHERE
     -- For faster queries we use _PARTITIONTIME boundaries. And, to guarantee
