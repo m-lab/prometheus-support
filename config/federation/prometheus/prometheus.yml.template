@@ -314,6 +314,7 @@ scrape_configs:
         # Note: For now collect only the metrics necessary for alerts. There
         # must be at least one match parameter.Prometheus selects the union of
         # all match parameters.
+        - 'up{container="etl-gardener"}'
         - 'up{container="downloader"}'
         - 'up{application="scraper"}'
         - 'up{application="scraper-sync"}'
