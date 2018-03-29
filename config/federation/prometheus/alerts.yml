@@ -367,18 +367,28 @@ ALERT ParserDailyVolumeTooLow
     url = "http://status.mlab-oti.measurementlab.net:3000/dashboard/file/Alert_ParserDailyVolumeTooLow.json"
   }
 
-# Nagios is not running (or otherwise broken) on nagios-oam.measurementlab.net,
-# or the Prometheus job for scraping the nagios_exporter on this instance is
-# missing.
-ALERT NagiosOamDownOrMissing
-  IF nagios_livestatus_available{job="nagios-oam-exporter"} == 0 OR absent(up{job="nagios-oam-exporter"})
+# Nagios is not running on nagios[-oam].measurementlab.net.
+ALERT NagiosExporterDown
+  IF nagios_livestatus_available{job="nagios-oam-exporter"} == 0 OR nagios_livestatus_available{job="nagios-exporter"} == 0
   FOR 10m
   LABELS {
     severity = "ticket"
   }
   ANNOTATIONS {
-    summary = "The Nagios OA&M instance is down on {{ $labels.instance }}.",
-    hints = "The Nagios OA&M instance runs in a Linode VM."
+    summary = "The Nagios exporter instance is down on {{ $labels.instance }}.",
+    hints = "The Nagios exporter instance runs in a Linode VM."
+  }
+
+# Prometheus is not scraping metrics from the nagios exporter.
+ALERT NagiosExporterMissing
+  IF absent(up{job="nagios-oam-exporter"}) OR absent(up{job="nagios-exporter"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The Nagios exporter instance is not being monitored.",
+    hints = "The Nagios exporter instance should run in a Linode VM."
   }
 
 # GardenerDownOrMissing fires when the etl-gardener is down or absent.
