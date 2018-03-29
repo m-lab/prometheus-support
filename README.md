@@ -112,25 +112,20 @@ Before you can run either of the `apply-cluster.sh` or
 `cluster-admin` role.
 
 To assign this role:
-* You may add the "Container Engine Cluster Admin" role to your account through
-the GCP IAM interface. (UNCONFIRMED: TODO: remove if this does not work.)
 * You may assign yourself the 'cluster-admin' role directly for the cluster.
-(TODO: There may be a simpler way).
 
 ```
-cat <<EOF | kubectl apply -f -
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: additional-cluster-admins
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: User
-  name: <username@email.com>
-EOF
+kubectl create clusterrolebinding additional-cluster-admins \
+    --clusterrole=cluster-admin \
+    --user=<your-email>
+```
+
+* You should assign the travis service account deployer as the cluster-admin.
+
+```
+kubectl create clusterrolebinding additional-cluster-admins \
+    --clusterrole=cluster-admin \
+    --user=<service-account-address>
 ```
 
 [rbac]: https://kubernetes.io/docs/admin/authorization/rbac/
