@@ -43,7 +43,7 @@ FROM (
       connection_spec.server_hostname AS machine,
       ROW_NUMBER() OVER (PARTITION BY test_id) row_number
     FROM
-      `measurement-lab.public.ndt`
+      `measurement-lab.base_tables.ndt`
     WHERE
       -- Restrict queries to tests in the range 2d <= log_time < today()
           _PARTITIONTIME >= TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY))
