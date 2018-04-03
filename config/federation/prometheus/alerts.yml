@@ -344,12 +344,14 @@ ALERT ScriptExporterMissingMetrics
 # For each pipeline service, the quantile computation then aggregates across the 6 vectors in
 # the delay dimension.
 ALERT ParserDailyVolumeTooLow
-  IF sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h]))
+  IF sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h]))
       < (0.7 * quantile by(service)(0.50,
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 1d)),"delay","1d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 3d)),"delay","3d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 5d)),"delay","5d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*"}[24h] offset 7d)),"delay","7d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 1d)),"delay","1d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 3d)),"delay","3d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 5d)),"delay","5d","",".*" ) OR
+         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 7d)),"delay","7d","",".*" ) OR
+         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
+         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
          label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
          label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
          label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
