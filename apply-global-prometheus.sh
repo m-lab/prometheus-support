@@ -65,9 +65,12 @@ kubectl create secret generic grafana-secrets \
     "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
     --dry-run -o json | kubectl apply -f -
 
-PROMETHEUS_BASIC_AUTH=PROMETHEUS_BASIC_AUTH_${PROJECT/-/_}
+# Generate the basic auth string for Prometheus.
+export PROMETHEUS_BASIC_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
+export PROMETHEUS_BASIC_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
 kubectl create secret generic prometheus-auth \
-    "--from-literal=auth=${!PROMETHEUS_BASIC_AUTH}" \
+    "--from-literal=auth=$(htpasswd -nb ${!PROMETHEUS_BASIC_AUTH_USER}\ 
+    ${!PROMETHEUS_BASIC_AUTH_PASS})" \
     --dry-run -o json | kubectl apply -f -
 set -x
 
