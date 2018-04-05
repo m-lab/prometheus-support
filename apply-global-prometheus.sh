@@ -67,7 +67,7 @@ kubectl create secret generic grafana-secrets \
 export PROM_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
 export PROM_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
 kubectl create secret generic prometheus-auth \
-    "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_USER_PASS})"\
+    "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_AUTH_PASS})"\
     --dry-run -o json | kubectl apply -f -
 AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
 export ALERTMANAGER_URL=https://$AUTH@alertmanager.${PROJECT}.measurementlab.net
