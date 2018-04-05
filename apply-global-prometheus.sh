@@ -24,8 +24,6 @@ PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
 export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
-# TODO: Add inline basic-auth credentials.
-export ALERTMANAGER_URL=https://alertmanager.${PROJECT}.measurementlab.net
 
 # Config maps and Secrets
 
@@ -66,12 +64,13 @@ kubectl create secret generic grafana-secrets \
     --dry-run -o json | kubectl apply -f -
 
 # Generate the basic auth string for Prometheus.
-export PROMETHEUS_BASIC_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
-export PROMETHEUS_BASIC_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
+export PROM_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
+export PROM_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
 kubectl create secret generic prometheus-auth \
-    "--from-literal=auth=$(htpasswd -nb ${!PROMETHEUS_BASIC_AUTH_USER}\ 
-    ${!PROMETHEUS_BASIC_AUTH_PASS})" \
+    "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_USER_PASS})"\
     --dry-run -o json | kubectl apply -f -
+AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
+export ALERTMANAGER_URL=https://$AUTH@alertmanager.${PROJECT}.measurementlab.net
 set -x
 
 
