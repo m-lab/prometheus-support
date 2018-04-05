@@ -369,9 +369,9 @@ ALERT ParserDailyVolumeTooLow
     url = "http://status.mlab-oti.measurementlab.net:3000/dashboard/file/Alert_ParserDailyVolumeTooLow.json"
   }
 
-# Nagios is not running on nagios[-oam].measurementlab.net.
+# Nagios exporter cannot be scrapped (i.e. is down according to prometheus).
 ALERT NagiosExporterDown
-  IF nagios_livestatus_available{job="nagios-oam-exporter"} == 0 OR nagios_livestatus_available{job="nagios-exporter"} == 0
+  IF up{job="nagios-oam-exporter"} == 0 OR up{job="nagios-exporter"} == 0
   FOR 10m
   LABELS {
     severity = "ticket"
@@ -381,7 +381,19 @@ ALERT NagiosExporterDown
     hints = "The Nagios exporter instance runs in a Linode VM."
   }
 
-# Prometheus is not scraping metrics from the nagios exporter.
+# Nagios exporter is running but not fully functional.
+ALERT NagiosExporterUnavailable
+  IF nagios_livestatus_available{job="nagios-oam-exporter"} == 0 OR nagios_livestatus_available{job="nagios-exporter"} == 0
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The Nagios exporter instance is unavailable on {{ $labels.instance }}.",
+    hints = "The Nagios exporter instance runs in a Linode VM."
+  }
+
+# Nagios exporter is not scraped at all.
 ALERT NagiosExporterMissing
   IF absent(up{job="nagios-oam-exporter"}) OR absent(up{job="nagios-exporter"})
   FOR 10m
