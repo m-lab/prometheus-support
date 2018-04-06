@@ -53,7 +53,7 @@ kubectl create configmap grafana-config \
     --dry-run -o json | kubectl apply -f -
 
 ## Grafana dashboards
-kubectl create configmap grafana-dashboards \
+kubectl replace configmap grafana-dashboards \
     --from-file=config/federation/grafana/dashboards \
     --dry-run -o json | kubectl apply -f -
 
