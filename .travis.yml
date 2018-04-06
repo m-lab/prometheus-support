@@ -160,3 +160,5 @@ deploy:
 before_install:
 - travis/decrypt.sh "$encrypted_1c8dd3704323_key" "$encrypted_1c8dd3704323_iv"
   keys/service-accounts.tar.enc /tmp/service-accounts.tar /tmp
+- sudo apt-get -qq update
+- sudo apt-get install -y apache2-utils
