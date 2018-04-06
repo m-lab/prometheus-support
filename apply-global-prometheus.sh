@@ -53,9 +53,9 @@ kubectl create configmap grafana-config \
     --dry-run -o json | kubectl apply -f -
 
 ## Grafana dashboards
-kubectl replace configmap grafana-dashboards \
+kubectl create configmap grafana-dashboards \
     --from-file=config/federation/grafana/dashboards \
-    --dry-run -o json | kubectl apply -f -
+    --dry-run -o json | kubectl replace -f -
 
 # Keep the password a secret.
 set +x
