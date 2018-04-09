@@ -379,7 +379,7 @@ scrape_configs:
       - source_labels: []
         regex: .*
         target_label: __address__
-        replacement: blackbox-public-service.default.svc.cluster.local:9115
+        replacement: blackbox-service.default.svc.cluster.local:9115
 
 
   # Blackbox configurations for IPv6 probes.
@@ -568,7 +568,7 @@ scrape_configs:
 
     static_configs:
       - targets:
-        - pushgateway-public-service.default.svc.cluster.local:9091
+        - pushgateway-service.default.svc.cluster.local:9091
 
   # Scrape config for App Engine Flex VMs.
   #
