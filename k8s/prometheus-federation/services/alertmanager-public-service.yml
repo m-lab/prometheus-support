@@ -16,8 +16,4 @@ spec:
     # accessible through the service IP and port.
     run: alertmanager-server
   sessionAffinity: None
-  # Use the same static IP as used for Prometheus.
-  externalIPs:
-    # Use the same IP as above, since we're on a different port.
-    - {{EXTERNAL_IP}}
   type: ClusterIP
