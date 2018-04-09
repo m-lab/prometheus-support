@@ -553,14 +553,14 @@ Create the secrets for the github receiver:
 
 Create the service and deployment:
 
-    kubectl create -f k8s/mlab-oti/<cluster-name>/services/github-receiver-public-service.yml
+    kubectl create -f k8s/mlab-oti/<cluster-name>/services/github-receiver-service.yml
     kubectl create -f k8s/mlab-oti/<cluster-name>/deployments/github-receiver.yml
 
 ## Delete
 
 Delete the service and deployment.
 
-    kubectl delete -f k8s/mlab-oti/<cluster-name>/services/github-receiver-public-service.yml
+    kubectl delete -f k8s/mlab-oti/<cluster-name>/services/github-receiver-service.yml
     kubectl delete -f k8s/mlab-oti/<cluster-name>/deployments/github-receiver.yml
 
 Delete the secrets:
