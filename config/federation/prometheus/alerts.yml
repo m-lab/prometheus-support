@@ -312,6 +312,106 @@ ALERT ScriptExporterMissingMetrics
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/file/Ops_SwitchOverview.json"
   }
 
+# More than a certain percentage of NDT servers meet the criteria for being
+# down.
+ALERT TooManyNdtServersDown
+  IF count_scalar(
+    probe_success{service="ndt_raw"} AND ON(machine)
+      up{service="nodeexporter"} == 1 UNLESS ON(machine)
+      lame_duck_node{} == 1
+    UNLESS ON(machine) (
+      probe_success{service="ndt_raw"} == 1 AND ON(machine)
+      probe_success{service="ndt_ssl"} == 1 AND ON(machine)
+      script_success{service="ndt_e2e"} == 1 AND ON(machine)
+      vdlimit_used{experiment="ndt.iupui"} /
+        vdlimit_total{experiment="ndt.iupui"} < 0.95
+    )
+  )
+  /
+  count(
+    probe_success{service="ndt_raw"} AND ON(machine)
+    up{service="nodeexporter"} == 1 UNLESS ON(machine)
+    lame_duck_node{} == 1
+  ) > 0.25
+  FOR 30m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "Too large a percentage of NDT servers are down.",
+    hints = "Make sure that the blackbox_exporter, script_exporter and node_exporters are all working as expected. Was any update to the platform just released?",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/dashboard/file/Ops_PlatformOverview.json"
+  }
+
+# One or more NDT-specific metrics is missing. These are the NDT metrics that
+# mlab-ns relies on to determine whether NDT is up and running, so we need to
+# make sure that the metrics are always present. NOTE: mlab-ns additionally
+# relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
+# alerting for that metric is already handled by the
+# ScriptExporterMissingMetrics alert.
+ALERT NdtMetricsMissing
+  IF absent(probe_success{service="ndt_raw"})
+        OR absent(probe_success{service="ndt_raw_ipv6"})
+        OR absent(probe_success{service="ndt_ssl"})
+        OR absent(probe_success{service="ndt_ssl_ipv6"})
+        OR absent(vdlimit_used{experiment="ndt.iupui"})
+        OR absent(vdlimit_total{experiment="ndt.iupui"})
+  FOR 30m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "A metric for an NDT service is missing.",
+    hints = "If the blackbox_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus. vdlimit_* metrics are provided by node_exporter on each node.",
+    prometheus_targets = "https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets"
+  }
+
+# One or more Neubot-specific metrics is missing. These are the Neubot metrics that
+# mlab-ns relies on to determine whether Neubot is up and running, so we need to
+# make sure that the metrics are always present.
+ALERT NeubotMetricsMissing
+  IF absent(probe_success{service="neubot"})
+        OR absent(probe_success{service="neubot_ipv6"})
+  FOR 30m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "A metric for a Neubot service is missing.",
+    hints = "If the blackbox_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
+    prometheus_targets = "https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets"
+  }
+
+# One or more Mobiperf-specific metrics is missing. These are the Mobiperf
+# metrics that mlab-ns relies on to determine whether Mobiperf is up and
+# running, so we need to make sure that the metrics are always present.
+ALERT MobiperfMetricsMissing
+  IF absent(probe_success{service="mobiperf"})
+        OR absent(probe_success{service="mobiperf_ipv6"})
+  FOR 30m
+  LABELS {
+    severity = "page"
+  }
+  ANNOTATIONS {
+    summary = "A metric for a Mobiperf service is missing.",
+    hints = "If the blackbox_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
+    prometheus_targets = "https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets"
+  }
+
+# Some number of nodes don't have a lame-duck status.
+ALERT LameDuckMetricMissingForNode
+  IF count(
+    up{service="nodeexporter"} == 1 UNLESS ON(machine) lame_duck_node{}
+  ) > 0
+  FOR 30m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "Some number of nodes are missing lame-duck status metrics.",
+    hints = "Check /var/spool/node_exporter/ on the node to see if the file lame_duck.prom is missing. If it is, use the mlabops Ansible lame-duck.yaml playbook to restore it."
+  }
+
 # TODO:
 #   Replace this with two other alerts:
 #    1.  Alert if hourly test volume on servers drops relative to same hour on recent days.
