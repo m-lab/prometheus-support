@@ -293,6 +293,12 @@ scrape_configs:
       - targets: ['nagios-oam.measurementlab.net:9267']
 
 
+  # Scrape config for the node_exporter on eb.measurementlab.net.
+  - job_name: 'eb-node-exporter'
+    static_configs:
+      - targets: ['eb.measurementlab.net:9100']
+
+
   # Scrape config for federation.
   #
   # The '/federate' target allows retrieving a set of timeseries from other
