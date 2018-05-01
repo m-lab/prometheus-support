@@ -312,6 +312,33 @@ ALERT ScriptExporterMissingMetrics
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/file/Ops_SwitchOverview.json"
   }
 
+# Prometheus is unable to get data from the blackbox_exporter service for IPv4
+# probes.
+ALERT BlackboxExporterIpv4DownOrMissing
+  IF up{job="blackbox-targets"} == 0 OR absent(up{job="blackbox-targets"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The blackbox_exporter service is down for IPv4 probes.",
+    hints = "Check the status of the blackbox-server pod in the prometheus-federation cluster on each M-Lab GCP project."
+  }
+
+# Prometheus is unable to get data from the blackbox_exporter service for IPv6
+# probes.
+ALERT BlackboxExporterIpv6DownOrMissing
+  IF up{job="blackbox-targets-ipv6"} == 0
+        OR absent(up{job="blackbox-targets-ipv6"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The blackbox_exporter service is down for IPv6 probes.",
+    hints = "The blackbox_exporter for IPv6 checks runs in a Linode VM. Make sure the VM is up and running. If it is, check the status of the BBE container running on it. Domains for VM are like blackbox-exporter-ipv6.<project>.measurementlab.net."
+  }
+
 # More than a certain percentage of NDT servers meet the criteria for being
 # down.
 ALERT TooManyNdtServersDown
@@ -374,7 +401,7 @@ ALERT NeubotMetricsMissing
         OR absent(probe_success{service="neubot_ipv6"})
   FOR 30m
   LABELS {
-    severity = "page"
+    severity = "ticket"
   }
   ANNOTATIONS {
     summary = "A metric for a Neubot service is missing.",
@@ -390,7 +417,7 @@ ALERT MobiperfMetricsMissing
         OR absent(probe_success{service="mobiperf_ipv6"})
   FOR 30m
   LABELS {
-    severity = "page"
+    severity = "ticket"
   }
   ANNOTATIONS {
     summary = "A metric for a Mobiperf service is missing.",
@@ -504,6 +531,19 @@ ALERT NagiosExporterMissing
     summary = "The Nagios exporter instance is not being monitored.",
     hints = "The Nagios exporter instance should run in a Linode VM."
   }
+
+# The node_exporter running on eb.measurementlab.net is down.
+ALERT NodeExporterOnEbDownorMissing
+  IF up{job="eb-node-exporter"} == 0 OR absent(up{job="eb-node-exporter"})
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "The node_exporter instance running on eb.measurementlab.net is down."
+    hints = "Login to EB to see if it is in fact crashed. If so, look through the logs."
+  }
+
 
 # GardenerDownOrMissing fires when the etl-gardener is down or absent.
 ALERT GardenerDownOrMissing
