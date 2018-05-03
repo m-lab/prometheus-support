@@ -337,8 +337,17 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
+
   # Blackbox configurations.
   #
+  # Scrape the blackbox_exporter instance running in the cluster for service
+  # metrics.
+  - job_name: 'blackbox-exporter-ipv4'
+    static_configs:
+      - targets:
+        - blackbox-service.default.svc.cluster.local:9115
+
+
   # Each blackbox configuration uses a different probe (tcp, icmp, http, etc).
   - job_name: 'blackbox-targets'
     metrics_path: /probe
