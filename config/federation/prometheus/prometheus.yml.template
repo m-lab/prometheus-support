@@ -390,6 +390,14 @@ scrape_configs:
 
   # Blackbox configurations for IPv6 probes.
   #
+  # There are three blackbox_exporter instances running on a Linode VM, one for
+  # each M-Lab GCP project. They each run on different ports.
+  - job_name: 'blackbox-exporter-ipv6'
+    static_configs:
+      - targets:
+        - blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:{{BBE_IPV6_PORT}}
+
+
   # Each blackbox configuration uses a different probe (tcp, icmp, http, etc).
   - job_name: 'blackbox-targets-ipv6'
     metrics_path: /probe
