@@ -313,9 +313,10 @@ ALERT ScriptExporterMissingMetrics
   }
 
 # Prometheus is unable to get data from the blackbox_exporter service for IPv4
-# probes.
+# probes. The service is down, or the metric is missing.
 ALERT BlackboxExporterIpv4DownOrMissing
-  IF up{job="blackbox-targets"} == 0 OR absent(up{job="blackbox-targets"})
+  IF up{job="blackbox-exporter-ipv4"} == 0
+        OR absent(up{job="blackbox-exporter-ipv4"})
   FOR 10m
   LABELS {
     severity = "ticket"
@@ -326,17 +327,17 @@ ALERT BlackboxExporterIpv4DownOrMissing
   }
 
 # Prometheus is unable to get data from the blackbox_exporter service for IPv6
-# probes.
+# probes. The service is down, or the metric is missing.
 ALERT BlackboxExporterIpv6DownOrMissing
-  IF up{job="blackbox-targets-ipv6"} == 0
-        OR absent(up{job="blackbox-targets-ipv6"})
+  IF up{job="blackbox-exporter-ipv6"} == 0
+        OR absent(up{job="blackbox-exporter-ipv6"})
   FOR 10m
   LABELS {
     severity = "ticket"
   }
   ANNOTATIONS {
-    summary = "The blackbox_exporter service is down for IPv6 probes.",
-    hints = "The blackbox_exporter for IPv6 checks runs in a Linode VM. Make sure the VM is up and running. If it is, check the status of the BBE container running on it. Domains for VM are like blackbox-exporter-ipv6.<project>.measurementlab.net."
+    summary = "The blackbox_exporter service is down or missing for IPv6 probes.",
+    hints = "The blackbox_exporter for IPv6 checks runs in a Linode VM. Make sure the VM is up and running. If it is, check the status of the BBE container running in the VM. Domains for VMs are like blackbox-exporter-ipv6.<project>.measurementlab.net."
   }
 
 # More than a certain percentage of NDT servers meet the criteria for being
@@ -533,7 +534,7 @@ ALERT NagiosExporterMissing
   }
 
 # The node_exporter running on eb.measurementlab.net is down.
-ALERT NodeExporterOnEbDownorMissing
+ALERT NodeExporterOnEbDownOrMissing
   IF up{job="eb-node-exporter"} == 0 OR absent(up{job="eb-node-exporter"})
   FOR 10m
   LABELS {

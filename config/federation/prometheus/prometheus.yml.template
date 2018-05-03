@@ -337,8 +337,17 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
+
   # Blackbox configurations.
   #
+  # Scrape the blackbox_exporter instance running in the cluster for service
+  # metrics.
+  - job_name: 'blackbox-exporter-ipv4'
+    static_configs:
+      - targets:
+        - blackbox-service.default.svc.cluster.local:9115
+
+
   # Each blackbox configuration uses a different probe (tcp, icmp, http, etc).
   - job_name: 'blackbox-targets'
     metrics_path: /probe
@@ -390,6 +399,14 @@ scrape_configs:
 
   # Blackbox configurations for IPv6 probes.
   #
+  # There are three blackbox_exporter instances running on a Linode VM, one for
+  # each M-Lab GCP project. They each run on different ports.
+  - job_name: 'blackbox-exporter-ipv6'
+    static_configs:
+      - targets:
+        - blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:{{BBE_IPV6_PORT}}
+
+
   # Each blackbox configuration uses a different probe (tcp, icmp, http, etc).
   - job_name: 'blackbox-targets-ipv6'
     metrics_path: /probe

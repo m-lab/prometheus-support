@@ -25,6 +25,18 @@ CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
 export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
 
+# GCP doesn't support IPv6, so we have a Linode VM running three instances of
+# the blackbox_exporter, on three separate ports... one port/instance for each
+# project. These variables map projects to ports.
+BBE_IPV6_PORT_mlab_oti="9115"
+BBE_IPV6_PORT_mlab_staging="8115"
+BBE_IPV6_PORT_mlab_sandbox="7115"
+
+# Construct the per-project blackbox_exporter port using the passed $PROJECT
+# argument.
+bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
+
+
 # Config maps and Secrets
 
 ## Blackbox exporter.
@@ -36,6 +48,7 @@ kubectl create configmap blackbox-config \
 
 # Evaluate the configuration template.
 sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
+    -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
     config/federation/prometheus/prometheus.yml.template > \
     config/federation/prometheus/prometheus.yml
 
