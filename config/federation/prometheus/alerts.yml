@@ -441,17 +441,28 @@ ALERT LameDuckMetricMissingForNode
     hints = "Check /var/spool/node_exporter/ on the node to see if the file lame_duck.prom is missing. If it is, use the mlabops Ansible lame-duck.yaml playbook to restore it."
   }
 
-# The collectd-mlab service has a problem.
-ALERT Coreservices_CollectdMlabDownOrMissing
+# A collectd-mlab service has a problem and is down.
+ALERT Coreservices_CollectdMlabDown
   IF collectd_mlab_success{} == 0
-        OR up{service="nodeexporter"} == 1
-            UNLESS ON(machine) collectd_mlab_success{}
   FOR 10m
   LABELS {
     severity = "ticket"
   }
   ANNOTATIONS {
-    summary = "The collectd-mlab service is either down or the metric missing.",
+    summary = "A collectd-mlab service is down.",
+    hints = "The collectd-mlab service runs in the mlab_utility slice. Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops repository to configure collectd-mlab. Login to the node and run the check script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py)."
+  }
+
+# A collectd-mlab service metric is missing on some node.
+ALERT Coreservices_CollectdMlabMissing
+  up{service="nodeexporter"} == 1
+        UNLESS ON(machine) collectd_mlab_success{}
+  FOR 10m
+  LABELS {
+    severity = "ticket"
+  }
+  ANNOTATIONS {
+    summary = "A collectd-mlab service metric is missing.",
     hints = "The collectd-mlab service runs in the mlab_utility slice. Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops repository to configure collectd-mlab. Login to the node and run the check script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py)."
   }
 
