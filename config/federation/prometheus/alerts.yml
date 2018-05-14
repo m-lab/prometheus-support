@@ -43,9 +43,10 @@ ALERT ClusterDown
 
 # MachineSLO
 #
-# SidestreamIsNotRunning: an M-Lab server is online, but the sidestream exporter
-# is not. Since sidestream is a core service, this must be fixed.
-ALERT SidestreamIsNotRunning
+# CoreServices_SidestreamIsNotRunning: an M-Lab server is online, but the
+# sidestream exporter is not. Since sidestream is a core service, this must be
+# fixed.
+ALERT CoreServices_SidestreamIsNotRunning
   IF sum_over_time(up{service="sidestream"}[10m]) == 0
         AND ON(machine)
      sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
@@ -441,9 +442,10 @@ ALERT LameDuckMetricMissingForNode
   }
 
 # The collectd-mlab service has a problem.
-ALERT CollectdMlabDownOrMissing
+ALERT Coreservices_CollectdMlabDownOrMissing
   IF collectd_mlab_success{} == 0
-        OR absent(collectd_mlab_success{})
+        OR up{service="nodeexporter"} == 1
+            UNLESS ON(machine) collectd_mlab_success{}
   FOR 10m
   LABELS {
     severity = "ticket"
