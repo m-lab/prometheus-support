@@ -442,7 +442,7 @@ ALERT LameDuckMetricMissingForNode
   }
 
 # A collectd-mlab service has a problem and is down.
-ALERT Coreservices_CollectdMlabDown
+ALERT CoreServices_CollectdMlabDown
   IF collectd_mlab_success{} == 0
   FOR 10m
   LABELS {
@@ -454,7 +454,7 @@ ALERT Coreservices_CollectdMlabDown
   }
 
 # A collectd-mlab service metric is missing on some node.
-ALERT Coreservices_CollectdMlabMissing
+ALERT CoreServices_CollectdMlabMissing
   IF up{service="nodeexporter"} == 1
         UNLESS ON(machine) collectd_mlab_success{}
   FOR 10m
