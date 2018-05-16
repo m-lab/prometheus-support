@@ -50,3 +50,8 @@ spec:
             memory: "400Mi"
             cpu: "200m"
         args: ["-webhook-url", "$(PROM_RELOAD_URL)", "-volume-dir", "/prometheus-config"]
+      # Create a volume from the configmap
+      volumes:
+      - name: prometheus-config
+        configMap:
+          name: prometheus-federation-config
