@@ -429,9 +429,8 @@ ALERT MobiperfMetricsMissing
 
 # Some number of nodes don't have a lame-duck status.
 ALERT LameDuckMetricMissingForNode
-  IF count(
-    up{service="nodeexporter"} == 1 UNLESS ON(machine) lame_duck_node{}
-  ) > 0
+  IF up{service="nodeexporter"} == 1
+        UNLESS ON(machine) lame_duck_node{}
   FOR 30m
   LABELS {
     severity = "ticket"
