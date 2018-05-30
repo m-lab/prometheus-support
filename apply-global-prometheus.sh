@@ -114,6 +114,13 @@ SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
 GITHUB_RECEIVER_URL=
 SHORT_PROJECT=${PROJECT/mlab-/}
 
+if [[ ${PROJECT} = "mlab-oti" ]] ; then
+  # Only create one instance of the github-receiver across all projects.
+  kubectl create secret generic github-secrets \
+      "--from-literal=auth-token=${GITHUB_RECEIVER_AUTH_TOKEN}" \
+      --dry-run -o json | kubectl apply -f -
+fi
+
 # Note: without a url, alertmanager will fail to start. But, for non-production
 # projects, there will be no github receiver running. This should be a no-op.
 GITHUB_RECEIVER_URL=http://github-receiver-service.default.svc.cluster.local:9393/v1/receiver
