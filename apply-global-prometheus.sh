@@ -124,8 +124,6 @@ if [[ ${PROJECT} = "mlab-oti" ]] ; then
   # For production, annotate slack messages with a link to view open alert issues.
   GITHUB_ISSUE_QUERY="https://github.com/issues?q=is%3Aissue+user%3Am-lab+author%3Ameasurementlab+is%3Aopen"
 fi
-# TODO: remote after testing sandbox.
-GITHUB_ISSUE_QUERY="https://github.com/issues?q=is%3Aissue+user%3Am-lab+author%3Ameasurementlab+is%3Aopen"
 
 # Note: without a url, alertmanager will fail to start. But, for non-production
 # projects, there will be no github receiver running. This should be a no-op.
