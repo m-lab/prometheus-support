@@ -112,6 +112,7 @@ kubectl create configmap grafana-env \
 # Note: Only enable the github reciever for the production project: mlab-oti.
 SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
 GITHUB_RECEIVER_URL=
+GITHUB_ISSUE_QUERY=
 SHORT_PROJECT=${PROJECT/mlab-/}
 
 if [[ ${PROJECT} = "mlab-oti" ]] ; then
@@ -119,6 +120,9 @@ if [[ ${PROJECT} = "mlab-oti" ]] ; then
   kubectl create secret generic github-secrets \
       "--from-literal=auth-token=${GITHUB_RECEIVER_AUTH_TOKEN}" \
       --dry-run -o json | kubectl apply -f -
+
+  # For production, annotate slack messages with a link to view open alert issues.
+  GITHUB_ISSUE_QUERY="https://github.com/issues?q=is%3Aissue+user%3Am-lab+author%3Ameasurementlab+is%3Aopen"
 fi
 
 # Note: without a url, alertmanager will fail to start. But, for non-production
@@ -128,6 +132,7 @@ GITHUB_RECEIVER_URL=http://github-receiver-service.default.svc.cluster.local:939
 sed -e 's|{{SLACK_CHANNEL_URL}}|'${!SLACK_CHANNEL_URL_NAME}'|g' \
     -e 's|{{GITHUB_RECEIVER_URL}}|'$GITHUB_RECEIVER_URL'|g' \
     -e 's|{{SHORT_PROJECT}}|'$SHORT_PROJECT'|g' \
+    -e 's|{{GITHUB_ISSUE_QUERY}}|'$GITHUB_ISSUE_QUERY'|g' \
     config/federation/alertmanager/config.yml.template > \
     config/federation/alertmanager/config.yml
 
