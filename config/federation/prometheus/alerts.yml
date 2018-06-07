@@ -300,6 +300,20 @@ ALERT SnmpExporterMissingMetrics
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/switch-metrics"
   }
 
+# Scraping SNMP metrics from a switch is failing.
+ALERT SnmpScrapingDownAtSite
+  IF up{job="snmp-targets", site!~".*t$"} == 0
+  FOR 30m
+  LABELS {
+    severity = "page",
+    repo = "ops-tracker"
+  }
+  ANNOTATIONS {
+    summary = "Prometheus is unable to scrape SNMP metrics from a switch.",
+    hints = "Maybe the switch is down? Is the snmp_exporter using the right community string? Look in switch-details.json in the m-lab/switch-config repo. Is the IP of the snmp_exporter VM in GCE whitelisted on the switch?",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/dashboard/file/Ops_SwitchOverview.json?orgId=1&var-site_name={{ $labels.site }}"
+  }
+
 # Prometheus is unable to get data from the script_exporter service.
 ALERT ScriptExporterDownOrMissing
   IF up{job="script-exporter"} == 0 OR absent(up{job="script-exporter"})
@@ -464,6 +478,23 @@ ALERT LameDuckMetricMissingForNode
   ANNOTATIONS {
     summary = "Some number of nodes are missing lame-duck status metrics.",
     hints = "Check /var/spool/node_exporter/ on the node to see if the file lame_duck.prom is missing. If it is, use the mlabops Ansible lame-duck.yaml playbook to restore it."
+  }
+
+# vdlimit_used and/or vdlimit_free metrics are completely missing for a node.
+# There are other vdlimit_* metrics, but we care especially about these because
+# mlab-ns uses them to query Prometheus for node status.
+ALERT VdlimitMetricsMissingForNode
+  IF up{service="nodeexporter"} == 1
+        UNLESS ON(machine) (vdlimit_used AND vdlimit_total)
+  FOR 30m
+  LABELS {
+    severity = "ticket",
+    repo = "ops-tracker"
+  }
+  ANNOTATIONS {
+    summary = "Some vdlimit_* metrics are missing.",
+    hints = "Check /var/spool/node_exporter/ on the node to see if the file vdlimit.prom is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron.",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/dashboard/file/Ops_PlatformOverview.json?orgId=1"
   }
 
 # A collectd-mlab service has a problem and is down.
