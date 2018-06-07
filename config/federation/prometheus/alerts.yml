@@ -310,7 +310,8 @@ ALERT SnmpScrapingDownAtSite
   }
   ANNOTATIONS {
     summary = "Prometheus is unable to scrape SNMP metrics from a switch.",
-    hints = "Maybe the switch is down? Is the snmp_exporter using the right community string? Look in switch-details.json in the m-lab/switch-config repo. Is the IP of the snmp_exporter VM in GCE whitelisted on the switch?"
+    hints = "Maybe the switch is down? Is the snmp_exporter using the right community string? Look in switch-details.json in the m-lab/switch-config repo. Is the IP of the snmp_exporter VM in GCE whitelisted on the switch?",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/dashboard/file/Ops_SwitchOverview.json?orgId=1&var-site_name={{ $labels.site }}"
   }
 
 # Prometheus is unable to get data from the script_exporter service.
@@ -492,7 +493,8 @@ ALERT VdlimitMetricsMissingForNode
   }
   ANNOTATIONS {
     summary = "Some vdlimit_* metrics are missing.",
-    hints = "Check /var/spool/node_exporter/ on the node to see if the file vdlimit.prom is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron."
+    hints = "Check /var/spool/node_exporter/ on the node to see if the file vdlimit.prom is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron.",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/dashboard/file/Ops_PlatformOverview.json?orgId=1"
   }
 
 # A collectd-mlab service has a problem and is down.
