@@ -4,7 +4,7 @@
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": true,
+        "enable": false,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
@@ -25,7 +25,7 @@
       "height": 99,
       "panels": [
         {
-          "content": "# Scraper, Embargo, ETL parser pipeline\n\nThe scraper fetched the tar files from M-Lab servers. Those tar files are the input of the  embargo app engine, which split one tar file into two:  public file and private file. The public file will be parsed through ETP parser, and published on BigQuery eventually. \n\n",
+          "content": "# Scraper, Embargo, ETL parser pipeline\n\nThe scraper fetched the tar files from M-Lab servers. Those tar files are the input of the embargo service, which splits one tar file into two: public file and private file. The public file will be parsed through ETL parser, and published to BigQuery tables eventually.\n\n",
           "description": "",
           "id": 17,
           "links": [],
@@ -458,6 +458,6 @@
     ]
   },
   "timezone": "browser",
-  "title": "Embargo",
+  "title": "Pipeline: Embargo",
   "version": 8
 }
