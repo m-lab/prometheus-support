@@ -1408,7 +1408,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max(node_load15{machine!=\".*mlab4.*\"})",
+              "expr": "max(node_load15{machine!=\".*mlab4.*\", service=\"nodeexporter\"})",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 1,
@@ -1418,7 +1418,7 @@
               "step": 300
             },
             {
-              "expr": "quantile(0.99, node_load15{machine!=\".*mlab4.*\"})",
+              "expr": "quantile(0.99, node_load15{machine!=\".*mlab4.*\", service=\"nodeexporter\"})",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 1,
@@ -1428,7 +1428,7 @@
               "step": 300
             },
             {
-              "expr": "quantile(0.90, node_load15{machine!=\".*mlab4.*\"})",
+              "expr": "quantile(0.90, node_load15{machine!=\".*mlab4.*\", service=\"nodeexporter\"})",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 1,
@@ -1438,7 +1438,7 @@
               "step": 300
             },
             {
-              "expr": "quantile(0.50, node_load15{machine!=\".*mlab4.*\"})",
+              "expr": "quantile(0.50, node_load15{machine!=\".*mlab4.*\", service=\"nodeexporter\"})",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 1,
@@ -1520,7 +1520,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(2, node_load15{machine!=\".*mlab4.*\"})",
+              "expr": "topk(2, node_load15{machine!=\".*mlab4.*\", service=\"nodeexporter\"})",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 1,
@@ -1602,7 +1602,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "node_load15{instance=~\".*$site.*\"}",
+              "expr": "node_load15{instance=~\".*$site.*\", service=\"nodeexporter\"}",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 1,
@@ -1961,9 +1961,8 @@
       {
         "current": {
           "selected": false,
-          "tags": [],
-          "text": "Prometheus",
-          "value": "Prometheus"
+          "text": "default",
+          "value": "default"
         },
         "hide": 0,
         "label": "Data source",
