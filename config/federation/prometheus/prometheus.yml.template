@@ -178,6 +178,15 @@ scrape_configs:
         action: replace
         target_label: node
 
+      # TODO: find a better source of this information or remove it. The value
+	  # returned is incomplete. Used only by Prometheus_SelfMonitoring.json.
+      # Extract the "<cluster>-<node-pool>" name from the GKE node name.
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        action: replace
+        regex: gke-(.*)(-[^-]+){2}
+        replacement: $1
+        target_label: cluster
+
       # Identify the deployment name of a pod or daemon set. This requires two
       # steps. Two steps are necessary to handle both daemon set pod names and
       # deployment pod names correctly. And, because, evidently, a combined
