@@ -4,7 +4,7 @@ metadata:
   name: blackbox-server
   namespace: default
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       # Used to match pre-existing pods that may be affected during updates.
@@ -23,8 +23,21 @@ spec:
         run: blackbox-server
       annotations:
         # Tell prometheus service discovery to scrape the blackbox container.
-        prometheus.io/scrape: 'false'
+        prometheus.io/scrape: 'true'
     spec:
+      # Schedule blackbox pods on separate nodes. Precisely, we declare an
+      # anti-affinity spec keyed on the node hostnames, and selecting pods using
+      # the run=blackbox-server label.
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: run
+                  operator: In
+                  values:
+                    - blackbox-server
+              topologyKey: kubernetes.io/hostname
       # Place the pod into the Guaranteed QoS by setting equal resource
       # requests and limits for *all* containers in the pod.
       # For more background, see:
