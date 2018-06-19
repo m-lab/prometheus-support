@@ -128,6 +128,14 @@ scrape_configs:
         replacement: /api/v1/nodes/${1}/proxy/metrics
 
 
+  # Kube state metrics is special. We do not want to rely on pod-auto discovery
+  # because of the kubernetes-pods relabel rules create labels that conflict
+  # with the labels that kube-state-metrics adds to many of its metrics.
+  - job_name: 'kube-state-metrics'
+    static_configs:
+      - targets:
+        - kube-state-metrics-service.default.svc.cluster.local:8080
+
   # Scrape config for kubernetes pods.
   #
   # Kubernetes pods are scraped when they have an annotation:
