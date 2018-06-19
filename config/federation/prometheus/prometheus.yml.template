@@ -128,9 +128,10 @@ scrape_configs:
         replacement: /api/v1/nodes/${1}/proxy/metrics
 
 
-  # Kube state metrics is special. We do not want to rely on pod-auto discovery
-  # because of the kubernetes-pods relabel rules create labels that conflict
-  # with the labels that kube-state-metrics adds to many of its metrics.
+  # kube-state-metrics reports status about k8s objects (pods, nodes,
+  # deployments, etc). We cannot rely on service-discovery because the metric
+  # labels used by kube-state-metrics conflict with the labels added by
+  # service-discovery. Instead, we define a static target using the ksm service.
   - job_name: 'kube-state-metrics'
     static_configs:
       - targets:
