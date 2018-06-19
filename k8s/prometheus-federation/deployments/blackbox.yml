@@ -25,6 +25,19 @@ spec:
         # Tell prometheus service discovery to scrape the blackbox container.
         prometheus.io/scrape: 'true'
     spec:
+      # Schedule blackbox pods on separate nodes. Precisely, we declare an
+      # anti-affinity spec keyed on the node hostnames, and selecting pods using
+      # the run=blackbox-server label.
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: run
+                  operator: In
+                  values:
+                    - blackbox-server
+              topologyKey: kubernetes.io/hostname
       # Place the pod into the Guaranteed QoS by setting equal resource
       # requests and limits for *all* containers in the pod.
       # For more background, see:
