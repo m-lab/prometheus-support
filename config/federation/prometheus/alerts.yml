@@ -30,7 +30,8 @@ ALERT ClusterDown
   IF up{job="federation-targets"} == 0
   FOR 10m
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Instance {{ $labels.instance }} down",
@@ -54,7 +55,8 @@ ALERT CoreServices_SidestreamIsNotRunning
      lame_duck_node == 1
   FOR 10m
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -87,7 +89,8 @@ ALERT ScraperMostRecentArchivedFileTimeIsTooOld
      lame_duck_node == 1
   FOR 2h
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Scraper max file mtime is too old {{ $labels.rsync_url }}",
@@ -109,7 +112,8 @@ ALERT ScraperSyncPresentWithoutScraperCollector
            up{container="scraper"})
   FOR 3h
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -122,7 +126,8 @@ ALERT ScraperCollectorMissingFromScraperSync
            scraper_lastcollectionattempt{container="scraper-sync"})
   FOR 3h
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -137,7 +142,8 @@ ALERT InventoryConfigurationIsMissing
   IF absent(up{service="ssh806"}) OR absent(up{service="rsyncd"})
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Inventory configuration {{ $labels.service }} is missing.",
@@ -149,7 +155,8 @@ ALERT InventoryMachinesWithoutRsyncd
   IF up{service="ssh806"} UNLESS ON(machine) up{service="rsyncd"}
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Rsyncd configuration is missing from some machines.",
@@ -160,7 +167,8 @@ ALERT InventoryRsyncdWithoutMachines
   IF up{service="rsyncd"} UNLESS ON(machine) up{service="ssh806"}
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Machine configuration is missing for some rsyncd services.",
@@ -176,7 +184,8 @@ ALERT SidestreamServicesAreMissing
   IF absent(up{service="sidestream"})
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -187,7 +196,8 @@ ALERT SidestreamRunningWithoutMachine
   IF up{service="sidestream"} UNLESS ON(machine) up{service="ssh806"}
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -198,7 +208,8 @@ ALERT MachineWithoutSidestreamRunning
   IF up{service="ssh806"} UNLESS ON(machine) up{service="sidestream"}
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -210,7 +221,8 @@ ALERT ScraperRunningWithoutRsyncd
   IF up{container="scraper"} UNLESS ON(machine, experiment) up{service="rsyncd"}
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -222,7 +234,8 @@ ALERT RsyncRunningWithoutScraper
   IF up{service="rsyncd"} UNLESS ON(machine, experiment) up{container="scraper"}
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "",
@@ -235,7 +248,8 @@ ALERT DownloaderIsFailingToUpdate
   IF time()-downloader_last_success_time_seconds > (21 * 60 * 60)
   FOR 5m
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Neither of the last two attempts to download the maxmind/routeviews feeds were successful.",
@@ -247,7 +261,8 @@ ALERT DownloaderDownOrMissing
   IF up{container="downloader"} == 0 OR absent(up{container="downloader"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The downloader for maxmind/routeviews feeds is down on {{ $labels.instance }}.",
@@ -259,7 +274,8 @@ ALERT SnmpExporterDownOrMissing
   IF up{job="snmp-exporter"} == 0 OR absent(up{job="snmp-exporter"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The snmp_exporter service is down on {{ $labels.instance }}.",
@@ -273,7 +289,8 @@ ALERT SnmpExporterMissingMetrics
   IF absent(ifHCOutOctets)
   FOR 30m
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Expected SNMP metrics are missing from Prometheus!",
@@ -283,12 +300,27 @@ ALERT SnmpExporterMissingMetrics
     dashboard = "http://status.mlab-oti.measurementlab.net:3000/dashboard/db/switch-metrics"
   }
 
+# Scraping SNMP metrics from a switch is failing.
+ALERT SnmpScrapingDownAtSite
+  IF up{job="snmp-targets", site!~".*t$"} == 0
+  FOR 30m
+  LABELS {
+    severity = "page",
+    repo = "ops-tracker"
+  }
+  ANNOTATIONS {
+    summary = "Prometheus is unable to scrape SNMP metrics from a switch.",
+    hints = "Maybe the switch is down? Is the snmp_exporter using the right community string? Look in switch-details.json in the m-lab/switch-config repo. Is the IP of the snmp_exporter VM in GCE whitelisted on the switch?",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/dashboard/file/Ops_SwitchOverview.json?orgId=1&var-site_name={{ $labels.site }}"
+  }
+
 # Prometheus is unable to get data from the script_exporter service.
 ALERT ScriptExporterDownOrMissing
   IF up{job="script-exporter"} == 0 OR absent(up{job="script-exporter"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The script_exporter service is down on {{ $labels.instance }}.",
@@ -303,7 +335,8 @@ ALERT ScriptExporterMissingMetrics
         OR absent(script_success{service="ndt_queue"})
   FOR 30m
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Expected script_exporter metrics are missing from Prometheus!",
@@ -320,7 +353,8 @@ ALERT BlackboxExporterIpv4DownOrMissing
         OR absent(up{job="blackbox-exporter-ipv4"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The blackbox_exporter service is down for IPv4 probes.",
@@ -334,7 +368,8 @@ ALERT BlackboxExporterIpv6DownOrMissing
         OR absent(up{job="blackbox-exporter-ipv6"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The blackbox_exporter service is down or missing for IPv6 probes.",
@@ -364,7 +399,8 @@ ALERT TooManyNdtServersDown
   ) > 0.25
   FOR 30m
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Too large a percentage of NDT servers are down.",
@@ -387,7 +423,8 @@ ALERT NdtMetricsMissing
         OR absent(vdlimit_total{experiment="ndt.iupui"})
   FOR 30m
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "A metric for an NDT service is missing.",
@@ -403,7 +440,8 @@ ALERT NeubotMetricsMissing
         OR absent(probe_success{service="neubot_ipv6"})
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "A metric for a Neubot service is missing.",
@@ -419,7 +457,8 @@ ALERT MobiperfMetricsMissing
         OR absent(probe_success{service="mobiperf_ipv6"})
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "A metric for a Mobiperf service is missing.",
@@ -429,16 +468,33 @@ ALERT MobiperfMetricsMissing
 
 # Some number of nodes don't have a lame-duck status.
 ALERT LameDuckMetricMissingForNode
-  IF count(
-    up{service="nodeexporter"} == 1 UNLESS ON(machine) lame_duck_node{}
-  ) > 0
+  IF up{service="nodeexporter"} == 1
+        UNLESS ON(machine) lame_duck_node{}
   FOR 30m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Some number of nodes are missing lame-duck status metrics.",
     hints = "Check /var/spool/node_exporter/ on the node to see if the file lame_duck.prom is missing. If it is, use the mlabops Ansible lame-duck.yaml playbook to restore it."
+  }
+
+# vdlimit_used and/or vdlimit_free metrics are completely missing for a node.
+# There are other vdlimit_* metrics, but we care especially about these because
+# mlab-ns uses them to query Prometheus for node status.
+ALERT VdlimitMetricsMissingForNode
+  IF up{service="nodeexporter"} == 1
+        UNLESS ON(machine) (vdlimit_used AND vdlimit_total)
+  FOR 30m
+  LABELS {
+    severity = "ticket",
+    repo = "ops-tracker"
+  }
+  ANNOTATIONS {
+    summary = "Some vdlimit_* metrics are missing.",
+    hints = "Check /var/spool/node_exporter/ on the node to see if the file vdlimit.prom is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron.",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/dashboard/file/Ops_PlatformOverview.json?orgId=1"
   }
 
 # A collectd-mlab service has a problem and is down.
@@ -446,7 +502,8 @@ ALERT CoreServices_CollectdMlabDown
   IF collectd_mlab_success{} == 0
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "A collectd-mlab service is down.",
@@ -459,7 +516,8 @@ ALERT CoreServices_CollectdMlabMissing
         UNLESS ON(machine) collectd_mlab_success{}
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "A collectd-mlab service metric is missing.",
@@ -515,7 +573,8 @@ ALERT ParserDailyVolumeTooLow
          ))
   FOR 2h
   LABELS {
-    severity = "page"
+    severity = "page",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "Today's test volume is less than 70% of nominal daily volume.",
@@ -528,7 +587,8 @@ ALERT NagiosExporterDown
   IF up{job="nagios-oam-exporter"} == 0 OR up{job="nagios-exporter"} == 0
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The Nagios exporter instance is down on {{ $labels.instance }}.",
@@ -540,7 +600,8 @@ ALERT NagiosExporterUnavailable
   IF nagios_livestatus_available{job="nagios-oam-exporter"} == 0 OR nagios_livestatus_available{job="nagios-exporter"} == 0
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The Nagios exporter instance is unavailable on {{ $labels.instance }}.",
@@ -552,7 +613,8 @@ ALERT NagiosExporterMissing
   IF absent(up{job="nagios-oam-exporter"}) OR absent(up{job="nagios-exporter"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The Nagios exporter instance is not being monitored.",
@@ -564,7 +626,8 @@ ALERT NodeExporterOnEbDownOrMissing
   IF up{job="eb-node-exporter"} == 0 OR absent(up{job="eb-node-exporter"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The node_exporter instance running on eb.measurementlab.net is down.",
@@ -579,7 +642,8 @@ ALERT GardenerDownOrMissing
   IF up{container="etl-gardener", instance=~".*:9090"} == 0 OR absent(up{container="etl-gardener", instance=~".*:9090"})
   FOR 10m
   LABELS {
-    severity = "ticket"
+    severity = "ticket",
+    repo = "dev-tracker"
   }
   ANNOTATIONS {
     summary = "The ETL Gardener instance is down on {{ $labels.instance }}",

@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "hideControls": false,
-  "id": 30,
+  "id": 42,
   "links": [],
   "refresh": false,
   "rows": [
@@ -43,7 +43,7 @@
     },
     {
       "collapse": false,
-      "height": 659,
+      "height": 405,
       "panels": [
         {
           "aliasColors": {},
@@ -53,7 +53,7 @@
           "datasource": "Prometheus",
           "decimals": 1,
           "fill": 1,
-          "id": 20,
+          "id": 22,
           "legend": {
             "avg": false,
             "current": false,
@@ -147,6 +147,122 @@
       "showTitle": false,
       "title": "Dashboard Row",
       "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 479,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "decimals": 1,
+          "fill": 1,
+          "id": 20,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m]))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Current",
+              "refId": "C",
+              "step": 240
+            },
+            {
+              "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 7d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 7d))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "One Week",
+              "refId": "A",
+              "step": 240
+            },
+            {
+              "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 14d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 14d))",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Two Week",
+              "refId": "B",
+              "step": 240
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Week-over-week - NDT Global Total Test Rate",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Tests / Min",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
     }
   ],
   "schemaVersion": 14,
@@ -186,5 +302,5 @@
   },
   "timezone": "utc",
   "title": "NDT: Global Test Rate",
-  "version": 6
+  "version": 2
 }

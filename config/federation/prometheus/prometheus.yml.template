@@ -128,6 +128,15 @@ scrape_configs:
         replacement: /api/v1/nodes/${1}/proxy/metrics
 
 
+  # kube-state-metrics reports status about k8s objects (pods, nodes,
+  # deployments, etc). We cannot rely on service-discovery because the metric
+  # labels used by kube-state-metrics conflict with the labels added by
+  # service-discovery. Instead, we define a static target using the ksm service.
+  - job_name: 'kube-state-metrics'
+    static_configs:
+      - targets:
+        - kube-state-metrics-service.default.svc.cluster.local:8080
+
   # Scrape config for kubernetes pods.
   #
   # Kubernetes pods are scraped when they have an annotation:
@@ -173,6 +182,13 @@ scrape_configs:
         action: replace
         target_label: namespace
 
+      # Add the GKE node name.
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        action: replace
+        target_label: node
+
+      # TODO: find a better source of this information or remove it. The value
+      # returned is incomplete. Used only by Prometheus_SelfMonitoring.json.
       # Extract the "<cluster>-<node-pool>" name from the GKE node name.
       - source_labels: [__meta_kubernetes_pod_node_name]
         action: replace
@@ -197,10 +213,10 @@ scrape_configs:
       # Step 2: Remove the trailing pod_template_hash if present.
       # In the case of a daemon set that does not have the trailing hash, the
       # regex will not match and deployment remains unchanged.
-      #   e.g. prometheus-server-3165440997
+      #   e.g. prometheus-server-3165fc0997
       - source_labels: [deployment]
         action: replace
-        regex: (.*)(-[0-9]+)
+        regex: (.*)(-[0-9a-f]+)
         replacement: $1
         target_label: deployment
 
@@ -340,12 +356,23 @@ scrape_configs:
 
   # Blackbox configurations.
   #
-  # Scrape the blackbox_exporter instance running in the cluster for service
-  # metrics.
+  # Check the blackbox-service for availability.
+  #
+  # NOTE: The blackbox-service load balances across multiple instances. Metrics
+  # read from this target will randomly be from either one. Since that is not
+  # helpful, we drop them all. Instead we rely on pod service discovery to
+  # monitor the individual blackbox instances. And, we keep this target for
+  # alerting on the availabliity of at least one.
   - job_name: 'blackbox-exporter-ipv4'
     static_configs:
       - targets:
         - blackbox-service.default.svc.cluster.local:9115
+    metric_relabel_configs:
+      # Drop all metrics. Automatic metrics like `up` are unaffected.
+      - source_labels: [__name__]
+        regex: .*
+        action: drop
+
 
 
   # Each blackbox configuration uses a different probe (tcp, icmp, http, etc).

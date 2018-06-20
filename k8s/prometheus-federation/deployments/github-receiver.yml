@@ -12,12 +12,11 @@ spec:
       labels:
         run: github-receiver
       annotations:
-        # TODO(soltesz): add prometheus metrics to this daemon.
-        prometheus.io/scrape: 'false'
+        prometheus.io/scrape: 'true'
     spec:
       containers:
       - name: github-receiver
-        image: measurementlab/alertmanager-github-receiver:v0.2
+        image: measurementlab/alertmanager-github-receiver:v0.4
         env:
         - name: GITHUB_AUTH_TOKEN
           valueFrom:
@@ -25,7 +24,7 @@ spec:
               name: github-secrets
               key: auth-token
         args: [ "-authtoken=$(GITHUB_AUTH_TOKEN)",
-                "-owner=m-lab",
-                "-repo=scraper" ]
+                "-org=m-lab",
+                "-repo=dev-tracker" ]
         ports:
         - containerPort: 9393
