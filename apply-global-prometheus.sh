@@ -44,6 +44,11 @@ kubectl create configmap blackbox-config \
     --from-file=config/federation/blackbox \
     --dry-run -o json | kubectl apply -f -
 
+## Credentials for accessing Stackdriver monitoring for mlab-ns.
+kubectl create secret generic mlabns-credentials \
+    "--from-literal=mlabns.json=${SERVICE_ACCOUNT_mlab_ns}" \
+    --dry-run -o json | kubectl apply -f -
+
 ## Prometheus
 
 # Evaluate the configuration template.
