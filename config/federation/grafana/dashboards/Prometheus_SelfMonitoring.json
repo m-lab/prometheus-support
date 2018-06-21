@@ -4,7 +4,7 @@
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": true,
+        "enable": false,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "hideControls": false,
-  "id": 9,
+  "id": null,
   "links": [],
   "refresh": false,
   "rows": [
@@ -625,7 +625,7 @@
             }
           ],
           "spaceLength": 10,
-          "span": 6,
+          "span": 4,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -731,17 +731,25 @@
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
-          "span": 6,
+          "span": 4,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
               "expr": "increase(prometheus_local_storage_series_ops_total[2m])",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{type}}",
               "refId": "A",
               "step": 120
+            },
+            {
+              "expr": "process_open_fds{container=\"prometheus\"}",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "open_fds",
+              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -768,6 +776,92 @@
               "logBase": 1,
               "max": null,
               "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$datasource",
+          "fill": 1,
+          "id": 27,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 4,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "increase(http_requests_total{container=\"prometheus\", handler=\"query\",method=\"get\"}[2m])",
+              "format": "time_series",
+              "hide": false,
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "automatic - {{code}}",
+              "refId": "G"
+            },
+            {
+              "expr": "increase(http_requests_total{container=\"prometheus\", handler=\"query_range\",method=\"get\"}[2m])",
+              "format": "time_series",
+              "hide": false,
+              "interval": "1m",
+              "intervalFactor": 1,
+              "legendFormat": "interactive - {{code}}",
+              "refId": "H"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Query Rates",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
               "show": true
             },
             {
@@ -819,7 +913,7 @@
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
-          "span": 3,
+          "span": 4,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -910,7 +1004,7 @@
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
-          "span": 3,
+          "span": 4,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -992,13 +1086,13 @@
           "dashes": false,
           "datasource": "$datasource",
           "fill": 1,
-          "id": 25,
+          "id": 28,
           "legend": {
             "avg": false,
             "current": false,
             "max": false,
             "min": false,
-            "show": false,
+            "show": true,
             "total": false,
             "values": false
           },
@@ -1012,113 +1106,28 @@
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
-          "span": 3,
+          "span": 4,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "node_filesystem_avail{mountpoint=\"/prometheus\"}",
+              "expr": "-sum by(pod) (rate(node_network_receive_bytes_total{deployment=\"node-exporter\", device=\"eth0\"}[2m])) * 8",
               "format": "time_series",
-              "hide": true,
-              "interval": "",
+              "hide": false,
+              "interval": "60s",
               "intervalFactor": 2,
-              "legendFormat": "{{cluster}}",
+              "legendFormat": "RX {{pod}}",
               "refId": "A",
               "step": 120
             },
             {
-              "expr": "predict_linear(node_filesystem_avail{mountpoint=\"/prometheus\"}[30m], 600)",
+              "expr": "sum by(pod) (rate(node_network_transmit_bytes_total{deployment=\"node-exporter\", device=\"eth0\"}[2m])) * 8",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 2,
-              "legendFormat": "{{deployment}}",
+              "legendFormat": "TX {{pod}}",
               "refId": "B",
               "step": 120
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Filesystem Available Estimate",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "bytes",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$datasource",
-          "fill": 1,
-          "id": 21,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "span": 3,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "-sum by(pod_name) (rate(container_network_receive_bytes_total{pod_name=~\"prom.*\"}[2m])) * 8",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "RX",
-              "refId": "A",
-              "step": 240
-            },
-            {
-              "expr": "sum by(pod_name) (rate(container_network_transmit_bytes_total{pod_name=~\"prom.*\"}[2m])) * 8",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "TX",
-              "refId": "B",
-              "step": 240
             }
           ],
           "thresholds": [],
@@ -1141,7 +1150,7 @@
           "yaxes": [
             {
               "format": "bps",
-              "label": null,
+              "label": "",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -1280,12 +1289,12 @@
           "fill": 1,
           "id": 14,
           "legend": {
-            "alignAsTable": false,
+            "alignAsTable": true,
             "avg": false,
             "current": false,
             "max": true,
             "min": false,
-            "rightSide": false,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": true
@@ -1319,6 +1328,20 @@
               "legendFormat": "All Up Targets",
               "refId": "B",
               "step": 240
+            },
+            {
+              "expr": "count(up == 1) - count(up{job=\"blackbox-targets\"} == 1) ",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "All - Up",
+              "refId": "C"
+            },
+            {
+              "expr": "count(up{job=\"blackbox-targets\"} == 1) ",
+              "format": "time_series",
+              "intervalFactor": 2,
+              "legendFormat": "Blackbox Up",
+              "refId": "D"
             }
           ],
           "thresholds": [],
@@ -1392,6 +1415,7 @@
           "targets": [
             {
               "expr": "prometheus_evaluator_duration_seconds{quantile!=\"0.01\", quantile!=\"0.05\"}",
+              "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{quantile}}",
@@ -1648,16 +1672,19 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(0.99, increase(prometheus_local_storage_series_chunks_persisted_bucket[5m]))",
-              "interval": "",
-              "intervalFactor": 2,
+              "expr": "histogram_quantile(0.99, increase(prometheus_local_storage_series_chunks_persisted_bucket[3m]))",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
               "legendFormat": "99th",
               "refId": "A",
               "step": 240
             },
             {
-              "expr": "histogram_quantile(0.95, increase(prometheus_local_storage_series_chunks_persisted_bucket[5m]))",
-              "intervalFactor": 2,
+              "expr": "histogram_quantile(0.95, increase(prometheus_local_storage_series_chunks_persisted_bucket[3m]))",
+              "format": "time_series",
+              "interval": "1m",
+              "intervalFactor": 1,
               "legendFormat": "95th",
               "refId": "B",
               "step": 240
@@ -1724,7 +1751,7 @@
             "current": false,
             "max": false,
             "min": false,
-            "show": false,
+            "show": true,
             "total": false,
             "values": false
           },
@@ -1743,7 +1770,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "deriv(node_filesystem_avail{mountpoint=\"/prometheus\", pod!~\".*srglv.*\"}[6h]) * 86400",
+              "expr": "deriv(node_filesystem_avail{mountpoint=\"/prometheus\", pod!~\".*srglv.*\"}[1h]) * 86400",
               "format": "time_series",
               "interval": "60s",
               "intervalFactor": 4,
@@ -1776,7 +1803,94 @@
               "label": "",
               "logBase": 1,
               "max": null,
-              "min": "-40000000000",
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$datasource",
+          "fill": 1,
+          "id": 25,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "node_filesystem_avail{mountpoint=\"/prometheus\"}",
+              "format": "time_series",
+              "hide": true,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "{{cluster}}",
+              "refId": "A",
+              "step": 120
+            },
+            {
+              "expr": "predict_linear(node_filesystem_avail{mountpoint=\"/prometheus\"}[30m], 600)",
+              "format": "time_series",
+              "interval": "60s",
+              "intervalFactor": 2,
+              "legendFormat": "{{deployment}}",
+              "refId": "B",
+              "step": 120
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Filesystem Available Estimate",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
               "show": true
             },
             {
@@ -1805,8 +1919,8 @@
     "list": [
       {
         "current": {
-          "text": "scraper-cluster",
-          "value": "scraper-cluster"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
         "hide": 0,
         "label": "Data source",
@@ -1850,5 +1964,5 @@
   },
   "timezone": "utc",
   "title": "Prometheus: Self-monitoring",
-  "version": 35
+  "version": 5
 }
