@@ -490,8 +490,8 @@ scrape_configs:
   - job_name: 'snmp-exporter'
     static_configs:
       - targets:
-        - snmp-exporter.{{PROJECT}}.measurementlab.net:9116
-        - snmp-exporter.{{PROJECT}}.measurementlab.net:9100
+        - snmp-exporter.c.{{PROJECT}}.internal:9116
+        - snmp-exporter.c.{{PROJECT}}.internal:9100
 
 
   # SNMP configurations.
@@ -524,13 +524,13 @@ scrape_configs:
         target_label: __param_module
         replacement: ${1}
 
-      # The "__exporter_project" label will contain a shortened GCP project
-      # name. We use this to construct the domain name of the GCE instance
-      # running the snmp_exporer in that project.
-      - source_labels: [__exporter_project]
-        regex: (.*)
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the script_exporter
+      # address.
+      - source_labels: []
+        regex: .*
         target_label: __address__
-        replacement: snmp-exporter.${1}.measurementlab.net:9116
+        replacement: snmp-exporter.c.{{PROJECT}}.internal:9116
 
     # This relabel config is the last relabel processed before ingesting data
     # into the datastore.
