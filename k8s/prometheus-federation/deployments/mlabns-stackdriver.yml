@@ -17,13 +17,13 @@ spec:
       - name: stackdriver
         image: frodenas/stackdriver-exporter:v0.5.1
         args: [
-          # Metrics are available with some delay, so look 2 minutes in the past.
-          "--monitoring.metrics-offset=2m",
+          # Metrics are available with some delay, so look 5 minutes in the past.
+          "--monitoring.metrics-offset=5m",
           # Prometheus scrapes every minute, so look at a 1 minute window.
           "--monitoring.metrics-interval=1m",
           "--google.project-id=mlab-ns",
           # Metrics are gauges, representing counts over the sampled interval.
-          "--monitoring.metrics-type-prefixes=logging.googleapis.com/log_entry_count,appengine.googleapis.com/system/network/sent_bytes_count,appengine.googleapis.com/system/instance_count,appengine.googleapis.com/system/cpu/usage,appengine.googleapis.com/memcache/operation_count,appengine.googleapis.com/http/server/response_count,appengine.googleapis.com/http/server/response_latencies",
+          "--monitoring.metrics-type-prefixes=logging.googleapis.com/log_entry_count,appengine.googleapis.com/system/network/sent_bytes_count,appengine.googleapis.com/system/instance_count,appengine.googleapis.com/system/cpu/usage,appengine.googleapis.com/memcache/operation_count,appengine.googleapis.com/http/server/response_count,appengine.googleapis.com/http/server/response_latencies,appengine.googleapis.com/system/memory/usage,datastore.googleapis.com/api/request_count,datastore.googleapis.com/entity/read_sizes,datastore.googleapis.com/entity/write_sizes",
         ]
         ports:
         - containerPort: 9255
