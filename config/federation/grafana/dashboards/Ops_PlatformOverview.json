@@ -515,6 +515,93 @@
     },
     {
       "collapse": false,
+      "height": 224,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$datasource",
+          "fill": 1,
+          "id": 37,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m]))",
+              "format": "time_series",
+              "intervalFactor": 10,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "NDT global test rate (up + down)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
       "height": 326,
       "panels": [
         {
@@ -880,10 +967,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "topk(10, nagios_check_disk_boot_perf_data_used / nagios_check_disk_boot_perf_data_total)",
+              "expr": "topk(10, (node_filesystem_size{device=\"/dev/mapper/planetlab-root\"} - node_filesystem_free{device=\"/dev/mapper/planetlab-root\"}) / node_filesystem_size{device=\"/dev/mapper/planetlab-root\"})",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{hostname}}",
+              "legendFormat": "{{machine}}",
               "refId": "A",
               "step": 600
             }
@@ -1960,7 +2047,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "default",
           "value": "default"
         },
@@ -2286,7 +2373,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
