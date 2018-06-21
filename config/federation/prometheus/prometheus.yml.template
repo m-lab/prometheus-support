@@ -524,11 +524,11 @@ scrape_configs:
         target_label: __param_module
         replacement: ${1}
 
-      # The "__exporter_project" label will contain a shortened GCP project
-      # name. We use this to construct the domain name of the GCE instance
-      # running the snmp_exporer in that project.
-      - source_labels: [__exporter_project]
-        regex: (.*)
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the script_exporter
+      # address.
+      - source_labels: []
+        regex: .*
         target_label: __address__
         replacement: snmp-exporter.c.{{PROJECT}}.internal:9116
 
