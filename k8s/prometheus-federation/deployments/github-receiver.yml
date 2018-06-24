@@ -16,15 +16,17 @@ spec:
     spec:
       containers:
       - name: github-receiver
-        image: measurementlab/alertmanager-github-receiver:v0.4
+        image: measurementlab/alertmanager-github-receiver:v0.6
         env:
         - name: GITHUB_AUTH_TOKEN
           valueFrom:
             secretKeyRef:
               name: github-secrets
               key: auth-token
-        args: [ "-authtoken=$(GITHUB_AUTH_TOKEN)",
-                "-org=m-lab",
-                "-repo=dev-tracker" ]
+        args: [ "--authtoken=$(GITHUB_AUTH_TOKEN)",
+                "--org=m-lab",
+                "--repo=dev-tracker",
+                "--label=in progress",
+                "--enable-inmemory={{GITHUB_RECEIVER_INMEMORY}}" ]
         ports:
         - containerPort: 9393
