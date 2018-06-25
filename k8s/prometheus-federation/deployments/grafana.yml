@@ -83,6 +83,8 @@ spec:
         # /etc/dashboards/* should contain the Grafana dashboard JSON configs.
         - mountPath: /etc/dashboards
           name: grafana-dashboards
+        - mountPath: /etc/provisioning/dashboards
+          name: grafana-provisioning
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
@@ -95,3 +97,6 @@ spec:
       - name: grafana-dashboards
         configMap:
           name: grafana-dashboards
+      - name: grafana-provisioning
+        configMap:
+          name: grafana-provisioning
