@@ -45,8 +45,10 @@ kubectl create configmap blackbox-config \
     --dry-run -o json | kubectl apply -f -
 
 ## Credentials for accessing Stackdriver monitoring for mlab-ns.
+### Write key to a file to prevent printing key in travis logs.
+( set +x; echo "${SERVICE_ACCOUNT_mlab_ns}" > /tmp/mlabns.json )
 kubectl create secret generic mlabns-credentials \
-    "--from-literal=mlabns.json=${SERVICE_ACCOUNT_mlab_ns}" \
+    "--from-file=/tmp/mlabns.json" \
     --dry-run -o json | kubectl apply -f -
 
 ## Prometheus
