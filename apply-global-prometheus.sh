@@ -70,6 +70,11 @@ kubectl create configmap grafana-config \
     --from-file=config/federation/grafana \
     --dry-run -o json | kubectl apply -f -
 
+## Grafana "provisioning" configs
+kubectl create configmap grafana-provisioning \
+    --from-file=config/federation/grafana/provisioning \
+    --dry-run -o json | kubectl apply -f -
+
 ## Grafana dashboards
 # We are piping the configmap data to `kubectl replace` here (instead of
 # `kubectl create`) due to a limitation of the size of metadata.annotations in
