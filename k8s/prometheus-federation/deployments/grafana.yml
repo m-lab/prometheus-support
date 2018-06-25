@@ -25,7 +25,7 @@ spec:
       containers:
       # Check https://hub.docker.com/r/grafana/grafana/tags/ for the current
       # stable version.
-      - image: grafana/grafana:4.6.3
+      - image: grafana/grafana:5.0.4
         name: grafana-server
         env:
         - name: GF_SECURITY_ADMIN_PASSWORD
@@ -83,6 +83,8 @@ spec:
         # /etc/dashboards/* should contain the Grafana dashboard JSON configs.
         - mountPath: /etc/dashboards
           name: grafana-dashboards
+        - mountPath: /etc/provisioning/dashboards
+          name: grafana-provisioning
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
@@ -95,3 +97,6 @@ spec:
       - name: grafana-dashboards
         configMap:
           name: grafana-dashboards
+      - name: grafana-provisioning
+        configMap:
+          name: grafana-provisioning
