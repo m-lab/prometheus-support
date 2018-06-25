@@ -45,8 +45,10 @@ kubectl create configmap blackbox-config \
     --dry-run -o json | kubectl apply -f -
 
 ## Credentials for accessing Stackdriver monitoring for mlab-ns.
+### Write key to a file to prevent printing key in travis logs.
+( set +x; echo "${SERVICE_ACCOUNT_mlab_ns}" > /tmp/mlabns.json )
 kubectl create secret generic mlabns-credentials \
-    "--from-literal=mlabns.json=${SERVICE_ACCOUNT_mlab_ns}" \
+    "--from-file=/tmp/mlabns.json" \
     --dry-run -o json | kubectl apply -f -
 
 ## Prometheus
@@ -122,13 +124,17 @@ SHORT_PROJECT=${PROJECT/mlab-/}
 
 if [[ ${PROJECT} = "mlab-oti" ]] ; then
   # Only create one instance of the github-receiver across all projects.
-  kubectl create secret generic github-secrets \
-      "--from-literal=auth-token=${GITHUB_RECEIVER_AUTH_TOKEN}" \
-      --dry-run -o json | kubectl apply -f -
+  AUTH_TOKEN=${GITHUB_RECEIVER_AUTH_TOKEN}
 
   # For production, annotate slack messages with a link to view open alert issues.
   GITHUB_ISSUE_QUERY="https://github.com/issues?q=is%3Aissue+user%3Am-lab+author%3Ameasurementlab+is%3Aopen"
+else
+  # For other projects, use a fake auth token string.
+  AUTH_TOKEN=fake-auth-token
 fi
+kubectl create secret generic github-secrets \
+    "--from-literal=auth-token=${AUTH_TOKEN}" \
+    --dry-run -o json | kubectl apply -f -
 
 # Note: without a url, alertmanager will fail to start. But, for non-production
 # projects, there will be no github receiver running. This should be a no-op.
