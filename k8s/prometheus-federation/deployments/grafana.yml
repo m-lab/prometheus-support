@@ -29,7 +29,7 @@ spec:
       initContainers:
       - name: reset-perms
         image: busybox
-        command: ['chown', '-R', '472', '/work-dir']
+        command: ['chown', '-R', '472:472', '/work-dir']
         volumeMounts:
         - mountPath: /work-dir
           name: grafana-storage
