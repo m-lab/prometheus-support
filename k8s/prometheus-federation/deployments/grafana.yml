@@ -22,9 +22,17 @@ spec:
         # public IP and port so that it is publically accessible.
         run: grafana-server
     spec:
-      securityContext:
-        # http://docs.grafana.org/installation/docker/#user-id-changes
-        runAsUser: 104
+      # http://docs.grafana.org/installation/docker/#user-id-changes
+      # TODO (kinkade): Remove this initContainers section once it has been
+      # deployed once and permissions have been changed. It won't be needed
+      # again once the perms are changed once.
+      initContainers:
+      - name: reset-perms
+        image: busybox
+        command: ['chown', '-R', '472', '/work-dir']
+        volumeMounts:
+        - mountPath: /work-dir
+          name: grafana-storage
       containers:
       # Check https://hub.docker.com/r/grafana/grafana/tags/ for the current
       # stable version.
