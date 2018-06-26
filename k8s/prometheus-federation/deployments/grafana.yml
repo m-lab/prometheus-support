@@ -22,6 +22,8 @@ spec:
         # public IP and port so that it is publically accessible.
         run: grafana-server
     spec:
+      securityContext:
+        runAsUser: 104
       containers:
       # Check https://hub.docker.com/r/grafana/grafana/tags/ for the current
       # stable version.
