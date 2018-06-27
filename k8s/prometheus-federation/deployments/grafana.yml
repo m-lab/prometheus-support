@@ -38,6 +38,12 @@ spec:
       # stable version.
       - image: grafana/grafana:5.1.4
         name: grafana-server
+        # NOTE: the official Grafana Docker images may set various environment
+        # variables which will override configurations in grafana.ini (which is
+        # also in the this repository). Be aware that configurations you make in
+        # that file may get overridden, and may necessitate overridding the
+        # variables in the Docker image with environment variables here.
+        # https://github.com/grafana/grafana-docker/blob/master/Dockerfile
         env:
         - name: GF_PATHS_PROVISIONING
           value: "/etc/provisioning"
