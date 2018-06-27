@@ -39,6 +39,8 @@ spec:
       - image: grafana/grafana:5.1.4
         name: grafana-server
         env:
+        - name: PROVISIONING_CFG_DIR
+          value: "/etc/provisioning"
         - name: GF_SECURITY_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
