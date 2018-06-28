@@ -102,6 +102,11 @@ kubectl create secret generic prometheus-auth \
     --dry-run -o json | kubectl apply -f -
 AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
 export ALERTMANAGER_URL=https://$AUTH@alertmanager.${PROJECT}.measurementlab.net
+# Pass appropriate URL to configmap-reload
+export PROM_RELOAD_URL=https://$AUTH@prometheus.${PROJECT}.measurementlab.net/-/reload
+kubectl create configmap configmap-reload-urls \
+    "--from-literal=prometheus_reload_url=${PROM_RELOAD_URL}" \
+    --dry-run -o json | kubectl apply -f -
 set -x
 
 

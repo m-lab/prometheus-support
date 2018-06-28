@@ -191,6 +191,29 @@ spec:
         - mountPath: /targets
           name: prometheus-storage
 
+      # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
+      # stable version.
+      - image: jimmidyson/configmap-reload:v0.2.2
+        name: configmap-reload
+        args: ["-webhook-url", "$(PROM_RELOAD_URL)", "-volume-dir", "/prometheus-config"]
+        env:
+        - name: PROM_RELOAD_URL
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-reload-urls
+              key: prometheus_reload_url
+        resources:
+          requests:
+            memory: "400Mi"
+            cpu: "200m"
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
+        volumeMounts:
+        # Mount the prometheus config volume so we can watch it for changes.
+        - mountPath: /prometheus-config
+          name: prometheus-config
+
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
