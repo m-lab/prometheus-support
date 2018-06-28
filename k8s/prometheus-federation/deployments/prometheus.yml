@@ -195,13 +195,13 @@ spec:
       # stable version.
       - image: jimmidyson/configmap-reload:v0.2.2
         name: configmap-reload
-        args: ["-webhook-url", "$(CONFIGMAP_RELOAD_URL)", "-volume-dir", "/prometheus-config"]
+        args: ["-webhook-url", "$(PROM_RELOAD_URL)", "-volume-dir", "/prometheus-config"]
         env:
-        - name: CONFIGMAP_RELOAD_URL
+        - name: PROM_RELOAD_URL
           valueFrom:
             configMapKeyRef:
-              name: configmap-reload
-              key: configmap_reload_url
+              name: configmap-reload-urls
+              key: prometheus_reload_url
         resources:
           requests:
             memory: "400Mi"
