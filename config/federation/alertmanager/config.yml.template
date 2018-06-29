@@ -69,6 +69,14 @@ inhibit_rules:
   # Apply inhibition if the group is the same.
   equal: ['instance', 'service']
 
+# NDT health checks depend on the script-exporter. If the script-exporter is
+# down, then all NDT health checks will report as down too. Don't alert on NDT
+# when the script-exporter is down.
+- source_match:
+    alertname: 'ScriptExporterDownOrMissing'
+  target_match:
+    alertname: 'TooManyNdtServersDown'
+  equal: []
 
 receivers:
 # For M-Lab Slack, visit:
