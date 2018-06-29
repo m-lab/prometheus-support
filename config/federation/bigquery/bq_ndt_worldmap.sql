@@ -29,9 +29,9 @@ FROM (
               web100_log_entry.snap.Duration) AS upload,
 
         -- Client latitude, rounded to 5 degrees.
-        CAST(connection_spec.client_geolocation.latitude / 10.0 as INT64) * 10 as latitude,
+        CAST(connection_spec.client_geolocation.latitude / 3.0 as INT64) * 3 as latitude,
         -- Client longitude, rounded to 5 degrees.
-        CAST(connection_spec.client_geolocation.longitude / 10.0 as INT64) * 10 as longitude
+        CAST(connection_spec.client_geolocation.longitude / 3.0 as INT64) * 3 as longitude
 
     FROM
        `measurement-lab.base_tables.ndt`
