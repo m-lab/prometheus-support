@@ -69,13 +69,22 @@ inhibit_rules:
   # Apply inhibition if the group is the same.
   equal: ['instance', 'service']
 
-# NDT health checks depend on the script-exporter. If the script-exporter is
-# down, then all NDT health checks will report as down too. Don't alert on NDT
-# when the script-exporter is down.
+# Various other checks rely on the script-exporter being up. If the
+# script-exporter is not up, then don't alert on those dependencies.
 - source_match:
     alertname: 'ScriptExporterDownOrMissing'
   target_match:
-    alertname: 'TooManyNdtServersDown'
+    - alertname: 'ScriptExporterMissingMetrics'
+    - alertname: 'TooManyNdtServersDown'
+  equal: []
+
+# Don't alert on missing SNMP metrics or SNMP scraping being broken if the
+# snmp-exporter is down.
+- source_match:
+    alertname: 'SnmpExporterDownOrMissing'
+  target_match:
+    - alertname: 'SnmpExporterMissingMetrics'
+    - alertname: 'SnmpScrapingDownAtSite'
   equal: []
 
 receivers:
