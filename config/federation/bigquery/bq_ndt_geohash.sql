@@ -83,7 +83,7 @@ SELECT
       IF(direction = "s2c", download, NULL), 10)[OFFSET(5)] AS value_download_median_rate,
   APPROX_QUANTILES(
       IF(direction = "c2s", upload, NULL), 10)[OFFSET(5)] AS value_upload_median_rate,
-  EncodeGeoHASH(latitude, longitude, 5) AS geohash,
+  EncodeGeoHASH(latitude, longitude, 4) AS geohash,
   country_code,
   continent_code,
   COUNT(*) AS value_tests
@@ -123,7 +123,7 @@ FROM (
 GROUP BY
   geohash, country_code, continent_code
 HAVING
-  value_tests > 100
+  value_tests > 10
   AND value_download_median_rate IS NOT NULL
   AND value_upload_median_rate IS NOT NULL
   AND geohash IS NOT NULL
