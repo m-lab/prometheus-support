@@ -79,11 +79,13 @@ function encodeGeohash(latitude, longitude) {
 return encodeGeohash(latitude, longitude);
 """;
 SELECT
+  metro,
   site,
   MAX(EncodeGeoHASH(latitude, longitude, 5)) AS geohash,
   COUNT(*) AS value_tests
 FROM (
   SELECT
+    REGEXP_EXTRACT(connection_spec.server_hostname, r"mlab[1-4].([a-z]{3})[0-9]{2}.*") as metro,
     REGEXP_EXTRACT(connection_spec.server_hostname, r"mlab[1-4].([a-z]{3}[0-9]{2}).*") as site,
     connection_spec.server_geolocation.latitude AS latitude,
     connection_spec.server_geolocation.longitude AS longitude
@@ -103,12 +105,13 @@ FROM (
     AND web100_log_entry.snap.HCThruOctetsAcked > 0
 )
 GROUP BY
-  site
+  metro, site
 HAVING
   value_tests > 10
   AND site IS NOT NULL
   AND geohash IS NOT NULL
 ORDER BY
+  metro,
   site,
   geohash,
   value_tests
