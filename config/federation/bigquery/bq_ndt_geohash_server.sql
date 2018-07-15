@@ -79,16 +79,38 @@ function encodeGeohash(latitude, longitude) {
 return encodeGeohash(latitude, longitude);
 """;
 SELECT
-  metro,
-  site,
-  MAX(EncodeGeoHASH(latitude, longitude, 5)) AS geohash,
-  COUNT(*) AS value_tests
-FROM (
+  metro, site, geohash, value_tests
+FROM
+(
+  SELECT
+    MAX(REGEXP_EXTRACT(connection_spec.server_hostname, r"mlab[1-4].([a-z]{3})[0-9]{2}.*")) as metro,
+    REGEXP_EXTRACT(connection_spec.server_hostname, r"mlab[1-4].([a-z]{3}[0-9]{2}).*") as site,
+    COUNT(*) AS value_tests
+  FROM
+    `measurement-lab.base_tables.ndt`
+  WHERE
+        -- For faster queries we use _PARTITIONTIME boundaries. And, to
+        -- guarantee the _PARTITIONTIME data is "complete" (all data collected
+        -- and parsed) we should wait 36 hours after start of a given day.
+        -- The following is equivalent to the pseudo code: date(now() - 12h) - 1d
+    _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
+    -- Basic test quality filters for safe division.
+    AND web100_log_entry.snap.Duration > 0
+    AND (web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) > 0
+    AND web100_log_entry.snap.CountRTT > 0
+    AND web100_log_entry.snap.HCThruOctetsReceived > 0
+    AND web100_log_entry.snap.HCThruOctetsAcked > 0
+  GROUP BY
+    site
+  HAVING
+    value_tests > 10
+    AND site IS NOT NULL
+
+) JOIN (
+  -- metro to geohash.
   SELECT
     REGEXP_EXTRACT(connection_spec.server_hostname, r"mlab[1-4].([a-z]{3})[0-9]{2}.*") as metro,
-    REGEXP_EXTRACT(connection_spec.server_hostname, r"mlab[1-4].([a-z]{3}[0-9]{2}).*") as site,
-    connection_spec.server_geolocation.latitude AS latitude,
-    connection_spec.server_geolocation.longitude AS longitude
+    MIN(EncodeGeoHASH(connection_spec.server_geolocation.latitude, connection_spec.server_geolocation.longitude, 5)) AS geohash
   FROM
     `measurement-lab.base_tables.ndt`
   WHERE
@@ -97,21 +119,9 @@ FROM (
     -- and parsed) we should wait 36 hours after start of a given day.
     -- The following is equivalent to the pseudo code: date(now() - 12h) - 1d
     _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
-    -- Basic test quality filters for safe division.
-    AND web100_log_entry.snap.Duration > 0
-    AND (web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) > 0
-    AND web100_log_entry.snap.CountRTT > 0
-    AND web100_log_entry.snap.HCThruOctetsReceived > 0
-    AND web100_log_entry.snap.HCThruOctetsAcked > 0
-)
-GROUP BY
-  metro, site
-HAVING
-  value_tests > 10
-  AND site IS NOT NULL
-  AND geohash IS NOT NULL
-ORDER BY
-  metro,
-  site,
-  geohash,
-  value_tests
+  GROUP BY
+    metro
+  HAVING
+    geohash IS NOT NULL
+
+) USING (metro)
