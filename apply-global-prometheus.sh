@@ -174,6 +174,24 @@ kubectl create configmap bigquery-exporter-config \
     --from-file=config/federation/bigquery \
     --dry-run -o json | kubectl apply -f -
 
+# TODO: remove this in favor of a unified object model for sites & services.
+# Copy manual prometheus configuration to prometheus-cluster.
+# Note: we do this before applying k8s configs to guarantee that the
+# prometheus-pod is running. There is some risk that the configs later may fail.
+pod=$( kubectl get pods | grep prometheus-server | awk '{print $1}' )
+if [[ -z "${pod}" ]] ; then
+  echo "ERROR: failed to identify prometheus-server pod from cluster" >&2
+  exit 1
+fi
+# Copy each json config file to the prometheus cluster using the same name.
+pushd config/federation/vms
+  ls */*.json | grep vms 2> /dev/null \
+    | while read file ; do
+	    echo $file
+	    kubectl cp $file ${pod}:/${file}
+      done
+popd
+
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
@@ -187,7 +205,6 @@ CFG=/tmp/${CLUSTER}-${PROJECT}.yml
 kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
     -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
 kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
-
 
 # Reload configurations. If the deployment configuration has changed then this
 # request may fail becuase the container has already shutdown.
