@@ -188,6 +188,8 @@ pushd config/federation/vms
   # Update in place with the correct BBE port based on the project.
   sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
     blackbox-targets-ipv6/vms_ndt_raw_ipv6.json
+  sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
+    blackbox-targets-ipv6/vms_ndt_ssl_ipv6.json
 
   # Copy the configs directly to the prometheus pod.
   ls */*.json | grep vms 2> /dev/null \
