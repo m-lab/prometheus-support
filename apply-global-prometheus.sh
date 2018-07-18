@@ -188,6 +188,7 @@ pushd config/federation/vms
   ls */*.json | grep vms 2> /dev/null \
     | while read file ; do
 	    echo $file
+		cat $file | python -m json.tool || exit 1
 	    kubectl cp $file ${pod}:/${file}
       done
 popd
