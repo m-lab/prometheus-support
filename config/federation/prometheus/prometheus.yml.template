@@ -293,26 +293,22 @@ scrape_configs:
         refresh_interval: 5m
 
 
-  # Scrape config for the nagios exporter.
-  #
-  # The nagios exporter generates its own labels.
-  - job_name: 'nagios-exporter'
-    static_configs:
-      - targets: ['nagios.measurementlab.net:9267']
-
-
-  # Scrape config for the nagios-oam exporter.
-  #
-  # The nagios exporter generates its own labels.
-  - job_name: 'nagios-oam-exporter'
-    static_configs:
-      - targets: ['nagios-oam.measurementlab.net:9267']
-
-
   # Scrape config for the node_exporter on eb.measurementlab.net.
   - job_name: 'eb-node-exporter'
     static_configs:
       - targets: ['eb.measurementlab.net:9100']
+
+
+  # Scrape config for the node_exporter on mirror.measurementlab.net.
+  - job_name: 'mirror-node-exporter'
+    static_configs:
+      - targets: ['mirror.measurementlab.net:9100']
+
+
+  # Scrape config for the node_exporter on dns.measurementlab.net.
+  - job_name: 'dns-node-exporter'
+    static_configs:
+      - targets: ['dns.measurementlab.net:9100']
 
 
   # Scrape config for federation.
