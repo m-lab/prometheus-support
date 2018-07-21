@@ -2516,3 +2516,8 @@ scrape_configs:
         regex: 11
         target_label: experiment
         replacement: utility.mlab
+      - source_labels: [index]
+        action: replace
+        regex: (.*)
+        target_label: experiment
+        replacement: $1
