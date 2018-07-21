@@ -273,312 +273,6 @@ scrape_configs:
         target_label: kubernetes_name
 
 
-  # Scrape config for legacy targets.
-  #
-  # Using an out-of-band process, generated configs can be copied into the
-  # Prometheus container. Prometheus will periodically re-read these files to
-  # load any new targets or remove missing ones.
-  #
-  # The file format is described here:
-  #   https://prometheus.io/docs/operating/configuration/#file_sd_config
-  - job_name: 'legacy-targets'
-    file_sd_configs:
-      - files:
-          # NOTE: The path /legacy-targets does not exist in the default
-          # image. Mount this path as a volume with the docker or kubernetes
-          # configuration.
-          - /legacy-targets/*.json
-          - /legacy-targets/*.yaml
-        # Attempt to re-read files every five minutes.
-        refresh_interval: 5m
-
-    metric_relabel_configs:
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab1.lax01.measurement-lab.org;10
-    #    target_label: index
-    #    replacement: ndt
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab2.lax01.measurement-lab.org;10
-    #    target_label: index
-    #    replacement: ndt
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab3.lax01.measurement-lab.org;9
-    #    target_label: index
-    #    replacement: ndt
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab1.lax01.measurement-lab.org;11
-    #    target_label: index
-    #    replacement: samknows
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab2.lax01.measurement-lab.org;11
-    #    target_label: index
-    #    replacement: samknows
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab3.lax01.measurement-lab.org;10
-    #    target_label: index
-    #    replacement: samknows
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab1.lax01.measurement-lab.org;9
-    #    target_label: index
-    #    replacement: neubot
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab2.lax01.measurement-lab.org;9
-    #    target_label: index
-    #    replacement: neubot
-    #  - source_labels: [machine, index]
-    #    action: replace
-    #    regex: mlab3.lax01.measurement-lab.org;8
-    #    target_label: index
-    #    replacement: neubot
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;7
-        target_label: index
-        replacement: unknown-0
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;10
-        target_label: index
-        replacement: ndt
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;0
-        target_label: index
-        replacement: npad
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;8
-        target_label: index
-        replacement: unknown-3
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;6
-        target_label: index
-        replacement: diff
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;3
-        target_label: index
-        replacement: geoloc
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;5
-        target_label: index
-        replacement: ooni
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;11
-        target_label: index
-        replacement: samknows
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;2
-        target_label: index
-        replacement: bismark
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;9
-        target_label: index
-        replacement: neubot
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;1
-        target_label: index
-        replacement: michigan
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab1.lax01.measurement-lab.org;4
-        target_label: index
-        replacement: utility
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;2
-        target_label: index
-        replacement: unknown-0
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;10
-        target_label: index
-        replacement: ndt
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;0
-        target_label: index
-        replacement: npad
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;8
-        target_label: index
-        replacement: unknown-3
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;7
-        target_label: index
-        replacement: diff
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;4
-        target_label: index
-        replacement: geoloc
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;6
-        target_label: index
-        replacement: ooni
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;11
-        target_label: index
-        replacement: samknows
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;3
-        target_label: index
-        replacement: bismark
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;9
-        target_label: index
-        replacement: neubot
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;1
-        target_label: index
-        replacement: michigan
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;5
-        target_label: index
-        replacement: utility
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;11
-        target_label: index
-        replacement: unknown-0
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;9
-        target_label: index
-        replacement: ndt
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;0
-        target_label: index
-        replacement: npad
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;7
-        target_label: index
-        replacement: unknown-3
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;6
-        target_label: index
-        replacement: diff
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;3
-        target_label: index
-        replacement: geoloc
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;5
-        target_label: index
-        replacement: ooni
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;10
-        target_label: index
-        replacement: samknows
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;2
-        target_label: index
-        replacement: bismark
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;8
-        target_label: index
-        replacement: neubot
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;1
-        target_label: index
-        replacement: michigan
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;4
-        target_label: index
-        replacement: utility
-      - source_labels: [index]
-        action: replace
-        regex: 0
-        target_label: index
-        replacement: unknown-0
-      - source_labels: [index]
-        action: replace
-        regex: 1
-        target_label: index
-        replacement: ndt
-      - source_labels: [index]
-        action: replace
-        regex: 2
-        target_label: index
-        replacement: npad
-      - source_labels: [index]
-        action: replace
-        regex: 3
-        target_label: index
-        replacement: unknown-3
-      - source_labels: [index]
-        action: replace
-        regex: 4
-        target_label: index
-        replacement: diff
-      - source_labels: [index]
-        action: replace
-        regex: 5
-        target_label: index
-        replacement: geoloc
-      - source_labels: [index]
-        action: replace
-        regex: 6
-        target_label: index
-        replacement: ooni
-      - source_labels: [index]
-        action: replace
-        regex: 7
-        target_label: index
-        replacement: samknows
-      - source_labels: [index]
-        action: replace
-        regex: 8
-        target_label: index
-        replacement: bismark
-      - source_labels: [index]
-        action: replace
-        regex: 9
-        target_label: index
-        replacement: neubot
-      - source_labels: [index]
-        action: replace
-        regex: 10
-        target_label: index
-        replacement: michigan
-      - source_labels: [index]
-        action: replace
-        regex: 11
-        target_label: index
-        replacement: utility
-
   # Scrape config for the node_exporter on eb.measurementlab.net.
   - job_name: 'eb-node-exporter'
     static_configs:
@@ -942,3 +636,1883 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
+  # Scrape config for legacy targets.
+  #
+  # Using an out-of-band process, generated configs can be copied into the
+  # Prometheus container. Prometheus will periodically re-read these files to
+  # load any new targets or remove missing ones.
+  #
+  # The file format is described here:
+  #   https://prometheus.io/docs/operating/configuration/#file_sd_config
+  - job_name: 'legacy-targets'
+    file_sd_configs:
+      - files:
+          # NOTE: The path /legacy-targets does not exist in the default
+          # image. Mount this path as a volume with the docker or kubernetes
+          # configuration.
+          - /legacy-targets/*.json
+          - /legacy-targets/*.yaml
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    metric_relabel_configs:
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;1
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;2
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;8
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;3
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;0
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;10
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;7
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;9
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;4
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.syd01.measurement-lab.org;6
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;2
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;0
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;3
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;5
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;11
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;1
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;8
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;9
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;7
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.syd01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;2
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;4
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;6
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;7
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;1
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;3
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;9
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;10
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;8
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.syd01.measurement-lab.org;5
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;1
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;2
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;3
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;9
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;7
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;8
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;5
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;10
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;4
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ham01.measurement-lab.org;6
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;1
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;2
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;3
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;9
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;7
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;8
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;5
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;10
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;4
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ham01.measurement-lab.org;6
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;6
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;5
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;1
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;9
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;7
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;8
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;3
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;10
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;2
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ham01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;8
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;4
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;1
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;2
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;5
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;6
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;0
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lga02.measurement-lab.org;3
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lga02.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;8
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;5
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;2
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;3
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;1
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;6
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;0
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lga02.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;1
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;2
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;3
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;9
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;7
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;8
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;5
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;10
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;4
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ams01.measurement-lab.org;6
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;1
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;2
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;3
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;9
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;7
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;8
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;5
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;10
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;4
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ams01.measurement-lab.org;6
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;4
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;0
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;1
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;2
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;10
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;8
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;9
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;5
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;7
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;3
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ams01.measurement-lab.org;6
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;9
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;7
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;6
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;5
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;2
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;8
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;0
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;4
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;10
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;3
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.dfw01.measurement-lab.org;1
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.dfw01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;2
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;6
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;8
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;3
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;5
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.dfw01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.mia01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.mia01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.mia01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.ord01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.ord01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.ord01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.sea01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;10
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;1
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;8
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;7
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;4
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;6
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;3
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;9
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;2
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.sea01.measurement-lab.org;5
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.sea01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;10
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;8
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;9
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;2
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;10
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;8
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;7
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;4
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;6
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;11
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;3
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;9
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;5
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.atl01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.atl01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;0
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;6
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;10
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;8
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;1
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.atl01.measurement-lab.org;4
+        target_label: index
+        replacement: utility.mlab
+      - source_labels: [index]
+        action: replace
+        regex: 0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [index]
+        action: replace
+        regex: 1
+        target_label: index
+        replacement: ndt.iupui
+      - source_labels: [index]
+        action: replace
+        regex: 2
+        target_label: index
+        replacement: npad.iupui
+      - source_labels: [index]
+        action: replace
+        regex: 3
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [index]
+        action: replace
+        regex: 4
+        target_label: index
+        replacement: diff.mlab
+      - source_labels: [index]
+        action: replace
+        regex: 5
+        target_label: index
+        replacement: geoloc4.uw
+      - source_labels: [index]
+        action: replace
+        regex: 6
+        target_label: index
+        replacement: ooni.mlab
+      - source_labels: [index]
+        action: replace
+        regex: 7
+        target_label: index
+        replacement: ispmon.samknows
+      - source_labels: [index]
+        action: replace
+        regex: 8
+        target_label: index
+        replacement: bismark.gt
+      - source_labels: [index]
+        action: replace
+        regex: 9
+        target_label: index
+        replacement: neubot.mlab
+      - source_labels: [index]
+        action: replace
+        regex: 10
+        target_label: index
+        replacement: 1.michigan
+      - source_labels: [index]
+        action: replace
+        regex: 11
+        target_label: index
+        replacement: utility.mlab
