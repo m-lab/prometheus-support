@@ -292,25 +292,87 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
-    #'lax01': {1: '7,10,0,8,6,3,5,11,2,9,1,4',
-    #          2: '2,10,0,8,7,4,6,11,3,9,1,5',
-    #          3: '11,9,0,7,6,3,5,10,2,8,1,4'},
     metric_relabel_configs:
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab1.lax01.measurement-lab.org;10
+    #    target_label: index
+    #    replacement: ndt
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab2.lax01.measurement-lab.org;10
+    #    target_label: index
+    #    replacement: ndt
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab3.lax01.measurement-lab.org;9
+    #    target_label: index
+    #    replacement: ndt
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab1.lax01.measurement-lab.org;11
+    #    target_label: index
+    #    replacement: samknows
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab2.lax01.measurement-lab.org;11
+    #    target_label: index
+    #    replacement: samknows
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab3.lax01.measurement-lab.org;10
+    #    target_label: index
+    #    replacement: samknows
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab1.lax01.measurement-lab.org;9
+    #    target_label: index
+    #    replacement: neubot
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab2.lax01.measurement-lab.org;9
+    #    target_label: index
+    #    replacement: neubot
+    #  - source_labels: [machine, index]
+    #    action: replace
+    #    regex: mlab3.lax01.measurement-lab.org;8
+    #    target_label: index
+    #    replacement: neubot
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-0
       - source_labels: [machine, index]
         action: replace
         regex: mlab1.lax01.measurement-lab.org;10
         target_label: index
-        replacement: ndt 
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab2.lax01.measurement-lab.org;10
-        target_label: index
         replacement: ndt
       - source_labels: [machine, index]
         action: replace
-        regex: mlab3.lax01.measurement-lab.org;9
+        regex: mlab1.lax01.measurement-lab.org;0
         target_label: index
-        replacement: ndt
+        replacement: npad
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;8
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;6
+        target_label: index
+        replacement: diff
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni
       - source_labels: [machine, index]
         action: replace
         regex: mlab1.lax01.measurement-lab.org;11
@@ -318,14 +380,9 @@ scrape_configs:
         replacement: samknows
       - source_labels: [machine, index]
         action: replace
-        regex: mlab2.lax01.measurement-lab.org;11
+        regex: mlab1.lax01.measurement-lab.org;2
         target_label: index
-        replacement: samknows
-      - source_labels: [machine, index]
-        action: replace
-        regex: mlab3.lax01.measurement-lab.org;10
-        target_label: index
-        replacement: samknows
+        replacement: bismark
       - source_labels: [machine, index]
         action: replace
         regex: mlab1.lax01.measurement-lab.org;9
@@ -333,15 +390,194 @@ scrape_configs:
         replacement: neubot
       - source_labels: [machine, index]
         action: replace
+        regex: mlab1.lax01.measurement-lab.org;1
+        target_label: index
+        replacement: michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;4
+        target_label: index
+        replacement: utility
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;2
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;10
+        target_label: index
+        replacement: ndt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;0
+        target_label: index
+        replacement: npad
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;8
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;7
+        target_label: index
+        replacement: diff
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;4
+        target_label: index
+        replacement: geoloc
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;6
+        target_label: index
+        replacement: ooni
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;11
+        target_label: index
+        replacement: samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;3
+        target_label: index
+        replacement: bismark
+      - source_labels: [machine, index]
+        action: replace
         regex: mlab2.lax01.measurement-lab.org;9
         target_label: index
         replacement: neubot
       - source_labels: [machine, index]
         action: replace
+        regex: mlab2.lax01.measurement-lab.org;1
+        target_label: index
+        replacement: michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;5
+        target_label: index
+        replacement: utility
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;11
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;9
+        target_label: index
+        replacement: ndt
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;0
+        target_label: index
+        replacement: npad
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;7
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;6
+        target_label: index
+        replacement: diff
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;3
+        target_label: index
+        replacement: geoloc
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;5
+        target_label: index
+        replacement: ooni
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;10
+        target_label: index
+        replacement: samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;2
+        target_label: index
+        replacement: bismark
+      - source_labels: [machine, index]
+        action: replace
         regex: mlab3.lax01.measurement-lab.org;8
         target_label: index
         replacement: neubot
-
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;1
+        target_label: index
+        replacement: michigan
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab3.lax01.measurement-lab.org;4
+        target_label: index
+        replacement: utility
+      - source_labels: [index]
+        action: replace
+        regex: 0
+        target_label: index
+        replacement: unknown-0
+      - source_labels: [index]
+        action: replace
+        regex: 1
+        target_label: index
+        replacement: ndt
+      - source_labels: [index]
+        action: replace
+        regex: 2
+        target_label: index
+        replacement: npad
+      - source_labels: [index]
+        action: replace
+        regex: 3
+        target_label: index
+        replacement: unknown-3
+      - source_labels: [index]
+        action: replace
+        regex: 4
+        target_label: index
+        replacement: diff
+      - source_labels: [index]
+        action: replace
+        regex: 5
+        target_label: index
+        replacement: geoloc
+      - source_labels: [index]
+        action: replace
+        regex: 6
+        target_label: index
+        replacement: ooni
+      - source_labels: [index]
+        action: replace
+        regex: 7
+        target_label: index
+        replacement: samknows
+      - source_labels: [index]
+        action: replace
+        regex: 8
+        target_label: index
+        replacement: bismark
+      - source_labels: [index]
+        action: replace
+        regex: 9
+        target_label: index
+        replacement: neubot
+      - source_labels: [index]
+        action: replace
+        regex: 10
+        target_label: index
+        replacement: michigan
+      - source_labels: [index]
+        action: replace
+        regex: 11
+        target_label: index
+        replacement: utility
 
   # Scrape config for the node_exporter on eb.measurementlab.net.
   - job_name: 'eb-node-exporter'
