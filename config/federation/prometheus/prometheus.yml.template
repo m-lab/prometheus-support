@@ -300,37 +300,47 @@ scrape_configs:
         action: replace
         regex: mlab1.lax01.measurement-lab.org;10
         target_label: index
-        replacement: 1
+        replacement: ndt 
       - source_labels: [machine, index]
         action: replace
         regex: mlab2.lax01.measurement-lab.org;10
         target_label: index
-        replacement: 1
+        replacement: ndt
       - source_labels: [machine, index]
         action: replace
         regex: mlab3.lax01.measurement-lab.org;9
         target_label: index
-        replacement: 1
+        replacement: ndt
       - source_labels: [machine, index]
         action: replace
         regex: mlab1.lax01.measurement-lab.org;11
         target_label: index
-        replacement: 7
+        replacement: samknows
       - source_labels: [machine, index]
         action: replace
         regex: mlab2.lax01.measurement-lab.org;11
         target_label: index
-        replacement: 7
+        replacement: samknows
       - source_labels: [machine, index]
         action: replace
         regex: mlab3.lax01.measurement-lab.org;10
         target_label: index
-        replacement: 7
+        replacement: samknows
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab1.lax01.measurement-lab.org;9
+        target_label: index
+        replacement: neubot
+      - source_labels: [machine, index]
+        action: replace
+        regex: mlab2.lax01.measurement-lab.org;9
+        target_label: index
+        replacement: neubot
       - source_labels: [machine, index]
         action: replace
         regex: mlab3.lax01.measurement-lab.org;8
         target_label: index
-        replacement: 9
+        replacement: neubot
 
 
   # Scrape config for the node_exporter on eb.measurementlab.net.
