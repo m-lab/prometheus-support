@@ -63,7 +63,7 @@ sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
 kubectl create configmap prometheus-federation-config \
     --from-literal=gcloud-project=${PROJECT} \
     --from-file=config/federation/prometheus \
-    --dry-run -o json | kubectl apply -f -
+    --dry-run -o json | kubectl replace -f -
 
 ## Grafana
 kubectl create configmap grafana-config \
