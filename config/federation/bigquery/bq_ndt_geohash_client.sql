@@ -96,9 +96,13 @@ FROM (
       ELSE "error"
     END AS direction,
     -- Download as bits-per-second
-    8 * 1000000 * (web100_log_entry.snap.HCThruOctetsAcked / (web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd)) AS download,
+    8 * 1000000 * (web100_log_entry.snap.HCThruOctetsAcked / (
+		web100_log_entry.snap.SndLimTimeRwin +
+		web100_log_entry.snap.SndLimTimeCwnd +
+		web100_log_entry.snap.SndLimTimeSnd)) AS download,
     -- Upload as bits-per-second
-    8 * 1000000 * (web100_log_entry.snap.HCThruOctetsReceived / web100_log_entry.snap.Duration) AS upload,
+    8 * 1000000 * (web100_log_entry.snap.HCThruOctetsReceived /
+		web100_log_entry.snap.Duration) AS upload,
     -- Client Lat/Lon.
     connection_spec.client_geolocation.latitude AS latitude,
     connection_spec.client_geolocation.longitude AS longitude,
@@ -114,7 +118,9 @@ FROM (
     _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
     -- Basic test quality filters for safe division.
     AND web100_log_entry.snap.Duration > 0
-    AND (web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) > 0
+    AND (web100_log_entry.snap.SndLimTimeRwin +
+		 web100_log_entry.snap.SndLimTimeCwnd +
+		 web100_log_entry.snap.SndLimTimeSnd) > 0
     AND web100_log_entry.snap.CountRTT > 0
     AND web100_log_entry.snap.HCThruOctetsReceived > 0
     AND web100_log_entry.snap.HCThruOctetsAcked > 0
