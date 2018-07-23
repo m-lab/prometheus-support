@@ -15,7 +15,7 @@ FROM (
           WHEN 0 THEN "c2s"
           WHEN 1 THEN "s2c"
           ELSE "error"
-          END AS direction,
+          END AS direction
 
     FROM
        `measurement-lab.base_tables.ndt`
