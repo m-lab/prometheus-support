@@ -655,6 +655,15 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
+    # Note: these relabel configs translate the sidestream exporter `index`
+    # label from a number to a human readable experiment name. e.g. "1" to
+    # "ndt.iupui". Since some sites have non-standard index order, the majority
+    # of the rules exist to convert legacy network remaped indexes to their
+    # correct name. To make this work the regex matches both the hostname and
+    # the actual index.
+    #
+    # The final set of 12 relabel configs exist to assign experiment names to
+    # all other hostnames that do use standard index order.
     metric_relabel_configs:
       - source_labels: [machine, index]
         action: replace
