@@ -2,9 +2,8 @@
 
 SELECT
     machine,
-    APPROX_QUANTILES(IF(direction = "s2c", download, NULL), 4)[OFFSET(2)] AS value_download_median_rate,
-    APPROX_QUANTILES(IF(direction = "c2s", upload, NULL), 4)[OFFSET(2)] AS value_upload_median_rate,
-    FORMAT("s%03dx%03d", latitude + 180, longitude + 180) as position,
+    REGEXP_EXTRACT(machine, "mlab[1-4].([a-z]{3}[0-9]{2}).*") as site,
+    REGEXP_EXTRACT(machine, "mlab[1-4].([a-z]{3})[0-9]{2}.*") as metro,
     COUNT(*) AS value_tests
 FROM (
     SELECT
@@ -17,21 +16,6 @@ FROM (
           WHEN 1 THEN "s2c"
           ELSE "error"
           END AS direction,
-
-        -- Download as bits-per-second
-        8 * 1000000 * (web100_log_entry.snap.HCThruOctetsAcked /
-              (web100_log_entry.snap.SndLimTimeRwin +
-                    web100_log_entry.snap.SndLimTimeCwnd +
-                        web100_log_entry.snap.SndLimTimeSnd)) AS download,
-
-        -- Upload as bits-per-second
-        8 * 1000000 * (web100_log_entry.snap.HCThruOctetsReceived /
-              web100_log_entry.snap.Duration) AS upload,
-
-        -- Client latitude, rounded to 5 degrees.
-        CAST(connection_spec.client_geolocation.latitude / 3.0 as INT64) * 3 as latitude,
-        -- Client longitude, rounded to 5 degrees.
-        CAST(connection_spec.client_geolocation.longitude / 3.0 as INT64) * 3 as longitude
 
     FROM
        `measurement-lab.base_tables.ndt`
@@ -51,11 +35,6 @@ FROM (
         AND web100_log_entry.snap.HCThruOctetsAcked > 0
 )
 GROUP BY
-    machine, latitude, longitude, position
-HAVING
-    value_tests > 10
-    AND value_download_median_rate is not NULL
-    AND value_upload_median_rate is not NULL
-    AND position is not NULL
+    machine
 ORDER BY
     machine
