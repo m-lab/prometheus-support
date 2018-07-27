@@ -76,7 +76,7 @@ kubectl create configmap grafana-config \
     --dry-run -o json | kubectl apply -f -
 
 # Evaluate the Grafana datasource provisioning templates.
-for ds_tmpl in $(ls config/federation/grafana/provisioning/datasources/); do
+for ds_tmpl in $(find config/federation/grafana/provisioning/datasources/); do
   ds_file=${ds_tmpl%%.template}
   sed -e 's|{{PROM_AUTH_USER}}|'${PROM_AUTH_USER}'|g' \
       -e 's|{{PROM_AUTH_PASS}}|'${PROM_AUTH_PASS}'|g' \
