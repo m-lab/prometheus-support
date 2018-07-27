@@ -80,13 +80,13 @@ for ds_tmpl in $(ls config/federation/grafana/provisioning/datasources/); do
   ds_file=${ds_tmpl%%.template}
   sed -e 's|{{PROM_AUTH_USER}}|'${PROM_AUTH_USER}'|g' \
       -e 's|{{PROM_AUTH_PASS}}|'${PROM_AUTH_PASS}'|g' \
-      ds_tmpl > ds_file
+      $ds_tmpl > $ds_file
   if echo $ds_tmpl | grep ${PROJECT}; then
-    sed -ie 's|{{IS_DEFAULT}}|'true'|g' ds_file
+    sed -ie 's|{{IS_DEFAULT}}|'true'|g' $ds_file
   else
-    sed -ie 's|{{IS_DEFAULT}}|'false'|g' ds_file
+    sed -ie 's|{{IS_DEFAULT}}|'false'|g' $ds_file
   fi
-  rm ds_tmpl
+  rm $ds_tmpl
 done
 
 ## Grafana "provisioning" configs
