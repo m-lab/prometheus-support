@@ -79,10 +79,10 @@ kubectl create configmap grafana-config \
 ds_tmpls=$(find config/federation/grafana/provisioning/datasources -type f)
 for ds_tmpl in $ds_tmpls; do
   ds_file=${ds_tmpl%%.template}
-  sed -e 's|{{PROM_AUTH_USER}}|'${PROM_AUTH_USER}'|g' \
-      -e 's|{{PROM_AUTH_PASS}}|'${PROM_AUTH_PASS}'|g' \
+  sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+      -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
       $ds_tmpl > $ds_file
-  if echo $ds_tmpl | grep ${PROJECT}; then
+  if [[ $ds_tmpl == prometheus-federation_${PROJECT}* ]]; then
     sed -ie 's|{{IS_DEFAULT}}|true|g' $ds_file
   else
     sed -ie 's|{{IS_DEFAULT}}|false|g' $ds_file
