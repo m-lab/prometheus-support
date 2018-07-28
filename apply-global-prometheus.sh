@@ -82,10 +82,10 @@ for ds_tmpl in $ds_tmpls; do
   sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
       -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
       $ds_tmpl > $ds_file
-  if [[ $ds_tmpl == prometheus-federation_${PROJECT}* ]]; then
-    sed -ie 's|{{IS_DEFAULT}}|true|g' $ds_file
+  if [[ $(basename $ds_file) == prometheus-federation_${PROJECT}* ]]; then
+    sed -i 's|{{IS_DEFAULT}}|true|g' $ds_file
   else
-    sed -ie 's|{{IS_DEFAULT}}|false|g' $ds_file
+    sed -i 's|{{IS_DEFAULT}}|false|g' $ds_file
   fi
   rm $ds_tmpl
 done
