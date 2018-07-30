@@ -53,7 +53,12 @@ kubectl create secret generic mlabns-credentials \
 
 ## Prometheus
 
-# Evaluate the configuration template.
+# Generate the basic auth string for Prometheus.
+export PROM_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
+export PROM_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
+export AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
+
+# Evaluate the Prometheus configuration template.
 sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
     config/federation/prometheus/prometheus.yml.template > \
@@ -70,9 +75,27 @@ kubectl create configmap grafana-config \
     --from-file=config/federation/grafana \
     --dry-run -o json | kubectl apply -f -
 
+# Evaluate the Grafana datasource provisioning templates.
+ds_tmpls=$(find config/federation/grafana/provisioning/datasources -type f)
+for ds_tmpl in $ds_tmpls; do
+  ds_file=${ds_tmpl%%.template}
+  sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+      -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
+      $ds_tmpl > $ds_file
+  if [[ $(basename $ds_file) == prometheus-federation_${PROJECT}* ]]; then
+    sed -i 's|{{IS_DEFAULT}}|true|g' $ds_file
+  else
+    sed -i 's|{{IS_DEFAULT}}|false|g' $ds_file
+  fi
+  rm $ds_tmpl
+done
+
 ## Grafana "provisioning" configs
-kubectl create configmap grafana-provisioning \
-    --from-file=config/federation/grafana/provisioning \
+kubectl create configmap grafana-dashboard-provisioning \
+    --from-file=config/federation/grafana/provisioning/dashboards \
+    --dry-run -o json | kubectl apply -f -
+kubectl create configmap grafana-datasource-provisioning \
+    --from-file=config/federation/grafana/provisioning/datasources \
     --dry-run -o json | kubectl apply -f -
 
 ## Grafana dashboards
@@ -94,16 +117,15 @@ kubectl create secret generic grafana-secrets \
     "--from-literal=admin-password=${GRAFANA_PASSWORD}" \
     --dry-run -o json | kubectl apply -f -
 
-# Generate the basic auth string for Prometheus.
-export PROM_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
-export PROM_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
 kubectl create secret generic prometheus-auth \
     "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_AUTH_PASS})"\
     --dry-run -o json | kubectl apply -f -
-AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
+
 export ALERTMANAGER_URL=https://$AUTH@alertmanager.${PROJECT}.measurementlab.net
+
 # Pass appropriate URL to configmap-reload
 export PROM_RELOAD_URL=https://$AUTH@prometheus.${PROJECT}.measurementlab.net/-/reload
+
 kubectl create configmap configmap-reload-urls \
     "--from-literal=prometheus_reload_url=${PROM_RELOAD_URL}" \
     --dry-run -o json | kubectl apply -f -

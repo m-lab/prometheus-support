@@ -103,7 +103,9 @@ spec:
         - mountPath: /etc/dashboards
           name: grafana-dashboards
         - mountPath: /etc/provisioning/dashboards
-          name: grafana-provisioning
+          name: grafana-dashboard-provisioning
+        - mountPath: /etc/provisioning/datasources
+          name: grafana-datasource-provisioning
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
@@ -116,6 +118,9 @@ spec:
       - name: grafana-dashboards
         configMap:
           name: grafana-dashboards
-      - name: grafana-provisioning
+      - name: grafana-dashboard-provisioning
         configMap:
-          name: grafana-provisioning
+          name: grafana-dashboard-provisioning
+      - name: grafana-datasource-provisioning
+        configMap:
+          name: grafana-datasource-provisioning
