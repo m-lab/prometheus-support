@@ -63,7 +63,7 @@ sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
 kubectl create configmap prometheus-federation-config \
     --from-literal=gcloud-project=${PROJECT} \
     --from-file=config/federation/prometheus \
-    --dry-run -o json | kubectl apply -f -
+    --dry-run -o json | kubectl replace -f -
 
 ## Grafana
 kubectl create configmap grafana-config \
@@ -174,6 +174,33 @@ kubectl create configmap bigquery-exporter-config \
     --from-file=config/federation/bigquery \
     --dry-run -o json | kubectl apply -f -
 
+# TODO: remove this in favor of a unified object model for sites & services.
+# Copy manual prometheus configuration to prometheus-cluster.
+# Note: we do this before applying k8s configs to guarantee that the
+# prometheus-pod is running. There is some risk that the configs later may fail.
+pod=$( kubectl get pods | grep prometheus-server | awk '{print $1}' )
+if [[ -z "${pod}" ]] ; then
+  echo "ERROR: failed to identify prometheus-server pod from cluster" >&2
+  exit 1
+fi
+# Copy each json config file to the prometheus cluster using the same name.
+pushd config/federation/vms
+  # Update in place with the correct BBE port based on the project.
+  sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
+    blackbox-targets-ipv6/vms_ndt_raw_ipv6.json
+  sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
+    blackbox-targets-ipv6/vms_ndt_ssl_ipv6.json
+
+  # Copy the configs directly to the prometheus pod.
+  ls */*.json | grep vms 2> /dev/null \
+    | while read file ; do
+        echo $file
+        # Exit if the JSON is malformed.
+        python -m json.tool ${file} > /dev/null || exit 1
+        kubectl cp $file ${pod}:/${file}
+      done
+popd
+
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
@@ -187,7 +214,6 @@ CFG=/tmp/${CLUSTER}-${PROJECT}.yml
 kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
     -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
 kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
-
 
 # Reload configurations. If the deployment configuration has changed then this
 # request may fail becuase the container has already shutdown.

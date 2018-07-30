@@ -582,44 +582,6 @@ ALERT ParserDailyVolumeTooLow
     dashboard = "https://grafana.mlab-oti.measurementlab.net/d/PKqnWeNmz/"
   }
 
-# Nagios exporter cannot be scrapped (i.e. is down according to prometheus).
-ALERT NagiosExporterDown
-  IF up{job="nagios-oam-exporter"} == 0 OR up{job="nagios-exporter"} == 0
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The Nagios exporter instance is down on {{ $labels.instance }}.",
-    hints = "The Nagios exporter instance runs in a Linode VM."
-  }
-
-# Nagios exporter is running but not fully functional.
-ALERT NagiosExporterUnavailable
-  IF nagios_livestatus_available{job="nagios-oam-exporter"} == 0 OR nagios_livestatus_available{job="nagios-exporter"} == 0
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The Nagios exporter instance is unavailable on {{ $labels.instance }}.",
-    hints = "The Nagios exporter instance runs in a Linode VM."
-  }
-
-# Nagios exporter is not scraped at all.
-ALERT NagiosExporterMissing
-  IF absent(up{job="nagios-oam-exporter"}) OR absent(up{job="nagios-exporter"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The Nagios exporter instance is not being monitored.",
-    hints = "The Nagios exporter instance should run in a Linode VM."
-  }
 
 # The node_exporter running on eb.measurementlab.net is down.
 ALERT NodeExporterOnEbDownOrMissing
@@ -627,11 +589,39 @@ ALERT NodeExporterOnEbDownOrMissing
   FOR 10m
   LABELS {
     severity = "ticket",
-    repo = "dev-tracker"
+    repo = "ops-tracker"
   }
   ANNOTATIONS {
     summary = "The node_exporter instance running on eb.measurementlab.net is down.",
     hints = "Login to EB to see if it is in fact crashed. If so, look through the logs."
+  }
+
+
+# The node_exporter running on mirror.measurementlab.net is down.
+ALERT NodeExporterOnMirrorDownOrMissing
+  IF up{job="mirror-node-exporter"} == 0 OR absent(up{job="mirror-node-exporter"})
+  FOR 10m
+  LABELS {
+    severity = "ticket",
+    repo = "ops-tracker"
+  }
+  ANNOTATIONS {
+    summary = "The node_exporter instance running on mirror.measurementlab.net is down.",
+    hints = "Login to to see if it is in fact crashed. If so, look through the logs."
+  }
+
+
+# The node_exporter running on dns.measurementlab.net is down.
+ALERT NodeExporterOnDnsDownOrMissing
+  IF up{job="dns-node-exporter"} == 0 OR absent(up{job="dns-node-exporter"})
+  FOR 10m
+  LABELS {
+    severity = "ticket",
+    repo = "ops-tracker"
+  }
+  ANNOTATIONS {
+    summary = "The node_exporter instance running on dns.measurementlab.net is down.",
+    hints = "Login to to see if it is in fact crashed. If so, look through the logs."
   }
 
 
