@@ -78,6 +78,22 @@ kubectl create configmap grafana-config \
 # Evaluate the Grafana datasource provisioning templates.
 ds_tmpls=$(find config/federation/grafana/provisioning/datasources -type f)
 for ds_tmpl in $ds_tmpls; do
+  case "$PROJECT" in
+    # Don't include sandbox or staging data sources in the production instance.
+    mlab-oti)
+      if [[ $(basename $ds_tmpl) != *mlab-oti* ]]; then
+        rm $ds_tmpl
+        continue
+      fi
+      ;;
+    # Don't include sandbox data sources in the staging instance.
+    mlab-staging)
+      if [[ $(basename $ds_tmpl) == *mlab-sandbox* ]]; then
+        rm $ds_tmpl
+        continue
+      fi
+      ;;
+  esac
   ds_file=${ds_tmpl%%.template}
   sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
       -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
