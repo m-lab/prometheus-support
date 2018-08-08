@@ -1,0 +1,30 @@
+# A deployment of external-dns, which watches for new services that have a
+# hostname that falls within the domain-filter zone below, and automatically
+# adds a DNS entry to that zone which points to that service's Ingress IP.
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: external-dns
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: external-dns
+    spec:
+      serviceAccountName: external-dns
+      containers:
+      - name: external-dns
+        image: registry.opensource.zalan.do/teapot/external-dns:v0.5.0
+        # domain-filter is the zone we want to manage. txt-owner-id is an
+        # arbitrary identifier used to track who created each entry (scoped
+        # here to the cluster, in case we end up using more than one
+        # instance of external-dns in mlab-sandbox).
+        args:
+        - --source=ingress
+        - --domain-filter={{GCLOUD_PROJECT}}.measurementlab.net
+        - --provider=google
+        - --google-project={{GCLOUD_PROJECT}}
+        - --registry=txt
+        - --txt-owner-id=prometheus-federation
