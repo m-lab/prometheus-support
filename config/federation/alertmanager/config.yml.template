@@ -74,8 +74,7 @@ inhibit_rules:
 - source_match:
     alertname: 'ScriptExporterDownOrMissing'
   target_match:
-    alertname: 'ScriptExporterMissingMetrics'
-    alertname: 'TooManyNdtServersDown'
+    [alertname: 'ScriptExporterMissingMetrics, alertname: 'TooManyNdtServersDown']
   equal: []
 
 # Don't alert on missing SNMP metrics or SNMP scraping being broken if the
