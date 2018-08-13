@@ -80,10 +80,9 @@ inhibit_rules:
 # Don't alert on missing SNMP metrics or SNMP scraping being broken if the
 # snmp-exporter is down.
 - source_match:
-  - alertname: 'SnmpExporterDownOrMissing'
-  target_match:
-  - alertname: 'SnmpExporterMissingMetrics'
-  - alertname: 'SnmpScrapingDownAtSite'
+    alertname: 'SnmpExporterDownOrMissing'
+  target_match_re:
+    alertname: 'SnmpExporterMissingMetrics|SnmpScrapingDownAtSite'
   equal: []
 
 receivers:
