@@ -72,10 +72,10 @@ inhibit_rules:
 # Various other checks rely on the script-exporter being up. If the
 # script-exporter is not up, then don't alert on those dependencies.
 - source_match:
-  - alertname: 'ScriptExporterDownOrMissing'
+    alertname: 'ScriptExporterDownOrMissing'
   target_match:
-  - alertname: 'ScriptExporterMissingMetrics'
-  - alertname: 'TooManyNdtServersDown'
+    alertname: 'ScriptExporterMissingMetrics'
+    alertname: 'TooManyNdtServersDown'
   equal: []
 
 # Don't alert on missing SNMP metrics or SNMP scraping being broken if the
