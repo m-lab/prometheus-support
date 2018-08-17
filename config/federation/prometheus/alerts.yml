@@ -558,10 +558,10 @@ ALERT CoreServices_CollectdMlabMissing
 ALERT ParserDailyVolumeTooLow
   IF candidate_service:etl_test_count:increase24h
       < (0.7 * quantile by(service)(0.50,
-         label_replace(candidate_service:etl_test_count:increase24h offset 1d)),"delay","1d","",".*" ) OR
-         label_replace(candidate_service:etl_test_count:increase24h offset 3d)),"delay","3d","",".*" ) OR
-         label_replace(candidate_service:etl_test_count:increase24h offset 5d)),"delay","5d","",".*" ) OR
-         label_replace(candidate_service:etl_test_count:increase24h offset 7d)),"delay","7d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 1d,"delay","1d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 3d,"delay","3d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 5d,"delay","5d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 7d,"delay","7d","",".*" ) OR
          label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
          label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
          label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
