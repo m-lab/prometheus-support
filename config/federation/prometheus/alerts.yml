@@ -534,7 +534,7 @@ ALERT CoreServices_CollectdMlabMissing
 # of conservative constant value avoid false alarms when there is little valid history.
 # On occasion, processing may fall behind a bit.  The "FOR 2h" waits 2h before triggering
 # an actual alert, so the pipeline may fall behind for up to 2 hours without alerting.
-# However, if the pipeline falls several hours behind, and stays behind for more than 
+# However, if the pipeline falls several hours behind, and stays behind for more than
 # 2 hours, the alert will fire.
 #
 # In normal operation, we expect the 50th quantile to split mid-way between the two smallest
@@ -556,12 +556,12 @@ ALERT CoreServices_CollectdMlabMissing
 # For each pipeline service, the quantile computation then aggregates across the 6 vectors in
 # the delay dimension.
 ALERT ParserDailyVolumeTooLow
-  IF sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h]))
+  IF candidate_service:etl_test_count:increase24h
       < (0.7 * quantile by(service)(0.50,
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 1d)),"delay","1d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 3d)),"delay","3d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 5d)),"delay","5d","",".*" ) OR
-         label_replace(sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h] offset 7d)),"delay","7d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 1d,"delay","1d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 3d,"delay","3d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 5d,"delay","5d","",".*" ) OR
+         label_replace(candidate_service:etl_test_count:increase24h offset 7d,"delay","7d","",".*" ) OR
          label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
          label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
          label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
