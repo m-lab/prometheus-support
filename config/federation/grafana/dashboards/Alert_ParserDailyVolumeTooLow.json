@@ -30,109 +30,6 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(service) (rate(etl_test_count{service!~\".*batch.*\"}[12h]))",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "{{service}}",
-          "refId": "A"
-        },
-        {
-          "expr": "0.20 * quantile by(service) (0.50,\n         sum by(service) (rate(etl_test_count[12h] offset 1d))\n            OR\n         sum by(service) (rate(etl_test_count[12h] offset 3d))\n            OR\n         sum by(service) (rate(etl_test_count[12h] offset 5d))\n            OR\n         sum by(service) (rate(etl_test_count[12h] offset 7d))    \n          )",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "20% of {{service}}",
-          "refId": "B"
-        },
-        {
-          "expr": "sum by(service) (rate(etl_test_count{service!~\".*batch.*\"}[12h])) < (0.20 * quantile by(service) (0.50,\n         sum by(service) (rate(etl_test_count[12h] offset 1d))\n            OR\n         sum by(service) (rate(etl_test_count[12h] offset 3d))\n            OR\n         sum by(service) (rate(etl_test_count[12h] offset 5d))\n            OR\n         sum by(service) (rate(etl_test_count[12h] offset 7d))\n         ) > 1)",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 2,
-          "legendFormat": "LT {{service}}",
-          "refId": "C"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "ParserDailyVolumeTooLow",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 2,
-          "format": "short",
-          "label": "Tests/sec parsed by different components",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "Compares the current volume of data to 20% of the historical numbers in the past few days.",
-      "fill": 1,
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
         "y": 8
       },
       "id": 2,
@@ -159,7 +56,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(service) (increase(etl_test_count{service!~\".*batch.*\"}[24h]))",
+          "expr": "candidate_service:etl_test_count:increase24h",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
@@ -167,7 +64,7 @@
           "refId": "A"
         },
         {
-          "expr": "0.7 * quantile by(service)(0.50,\n         label_replace(sum by(service) (increase(etl_test_count{service!~\".*batch.*\"}[24h] offset 1d)),\"delay\",\"1d\",\"\",\".*\" ) OR\n         label_replace(sum by(service) (increase(etl_test_count{service!~\".*batch.*\"}[24h] offset 3d)),\"delay\",\"3d\",\"\",\".*\" ) OR\n         label_replace(sum by(service) (increase(etl_test_count{service!~\".*batch.*\"}[24h] offset 5d)),\"delay\",\"5d\",\"\",\".*\" ) OR\n         label_replace(sum by(service) (increase(etl_test_count{service!~\".*batch.*\"}[24h] offset 7d)),\"delay\",\"7d\",\"\",\".*\" ) OR\n         label_replace(label_replace(vector(0),\"delay\",\"c1\",\"\",\".*\" ), \"service\", \"etl-ndt-parser\",        \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c2\",\"\",\".*\" ), \"service\", \"etl-ndt-parser\",        \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c1\",\"\",\".*\" ), \"service\", \"etl-sidestream-parser\", \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c2\",\"\",\".*\" ), \"service\", \"etl-sidestream-parser\", \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c1\",\"\",\".*\" ), \"service\", \"etl-traceroute-parser\", \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c2\",\"\",\".*\" ), \"service\", \"etl-traceroute-parser\", \"\", \".*\")\n         )",
+          "expr": "0.7 * quantile by(service)(0.50,\n         label_replace(candidate_service:etl_test_count:increase24h offset 1d)),\"delay\",\"1d\",\"\",\".*\" ) OR\n         label_replace(candidate_service:etl_test_count:increase24h offset 3d)),\"delay\",\"3d\",\"\",\".*\" ) OR\n         label_replace(candidate_service:etl_test_count:increase24h offset 5d)),\"delay\",\"5d\",\"\",\".*\" ) OR\n         label_replace(candidate_service:etl_test_count:increase24h offset 7d)),\"delay\",\"7d\",\"\",\".*\" ) OR\n         label_replace(label_replace(vector(0),\"delay\",\"c1\",\"\",\".*\" ), \"service\", \"etl-ndt-parser\",        \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c2\",\"\",\".*\" ), \"service\", \"etl-ndt-parser\",        \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c1\",\"\",\".*\" ), \"service\", \"etl-sidestream-parser\", \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c2\",\"\",\".*\" ), \"service\", \"etl-sidestream-parser\", \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c1\",\"\",\".*\" ), \"service\", \"etl-traceroute-parser\", \"\", \".*\") OR\n         label_replace(label_replace(vector(0),\"delay\",\"c2\",\"\",\".*\" ), \"service\", \"etl-traceroute-parser\", \"\", \".*\")\n         )",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
