@@ -303,7 +303,7 @@ ALERT SnmpExporterMissingMetrics
 # Scraping SNMP metrics from a switch is failing.
 ALERT SnmpScrapingDownAtSite
   IF up{job="snmp-targets", site!~".*t$"} == 0
-  FOR 30m
+  FOR 60m
   LABELS {
     severity = "page",
     repo = "ops-tracker"
