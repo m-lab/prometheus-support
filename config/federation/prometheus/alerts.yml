@@ -639,3 +639,19 @@ ALERT GardenerDownOrMissing
     summary = "The ETL Gardener instance is down on {{ $labels.instance }}",
     hints = "The Gardener runs in the data-processing-cluster"
   }
+
+# ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
+# should always be zero because a panic indicates a bug in the parser. The
+# alert will continue to fire until the parser is restarted or a new version is
+# deployed (ideally with a fix).
+ALERT ETL_ParserPanicNonZero
+  IF etl_panic_count > 0
+  FOR 10m
+  LABELS {
+    severity = "ticket",
+    repo = "dev-tracker"
+  }
+  ANNOTATIONS {
+    summary = "An ETL parser panicked {{ $labels.instance }}",
+    hints = "Bugs cause panics. This bug should be fixed. Parsers run in AppEngine. Check logs to see the panic stack trace. Identify the archive that led to the panic (logs or TaskQueue tasks with many retries). Fix the bug or create a new issue describing the failure and linking to the triggering archive."
+  }
