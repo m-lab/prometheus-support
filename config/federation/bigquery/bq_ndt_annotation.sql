@@ -1,5 +1,5 @@
 SELECT
-  SAFE_DIVIDE(COUNTIF(latitude IS NULL OR longitude IS NULL),  COUNT(*)) AS value_percent,
+  SAFE_DIVIDE(COUNTIF(latitude IS NULL OR longitude IS NULL),  COUNT(*)) AS value_ratio,
   COUNT(*) AS value_tests
 FROM (
 SELECT
@@ -28,4 +28,4 @@ HAVING
   -- When the test count is zero the safe_divide returns NULL.
   -- Excluding NULL values from the output will result in the
   -- metric disappearing from prometheus.
-  value_percent is not NULL
+  value_ratio is not NULL
