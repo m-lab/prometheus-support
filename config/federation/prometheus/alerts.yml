@@ -672,10 +672,10 @@ ALERT ETL_AnnotationDownOrMissing
   }
 
 # NDT_AnnotationRatioTooLow fires when the client annotations on NDT
-# tests appears to have too many failures or the bq_ndt_annotation_ratio metric
-# disappears.
+# tests appears to have too many failures or the bq_ndt_annotation_* metrics
+# disappear.
 ALERT NDT_AnnotationRatioTooLow
-  IF bq_ndt_annotation_ratio < 0.99 OR absent(bq_ndt_annotation_ratio)
+  IF bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99 OR absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
   FOR 30m
   LABELS {
     severity = "ticket",

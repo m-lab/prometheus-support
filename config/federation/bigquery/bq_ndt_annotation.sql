@@ -1,19 +1,14 @@
 #standardSQL
--- bq_ndt_annotation calculates the ratio of successfully annotated NDT tests
+-- bq_ndt_annotation calculates the number of successfully annotated NDT tests
 -- per day.
 --
 -- This query exports two values:
---   bq_ndt_annotation_ratio -- ratio of successfully annotated NDT tests.
---   bq_ndt_annotation_tests -- number of tests used to calculate ratio.
+--   bq_ndt_annotation_success -- number of successfully annotated NDT tests.
+--   bq_ndt_annotation_total -- total number of tests checked for annotations.
 
 SELECT
-  CASE COUNT(*)
-    -- When the test count is zero the safe_divide returns NULL.
-    -- Since bq_ndt_annotation_ratio is a success metric, zero is appropriate.
-    WHEN = 0 THEN 0
-    ELSE SAFE_DIVIDE(COUNTIF(latitude IS NOT NULL AND longitude IS NOT NULL), COUNT(*))
-  END as value_ratio,
-  COUNT(*) AS value_tests
+  COUNTIF(latitude IS NOT NULL AND longitude IS NOT NULL) AS value_success,
+  COUNT(*) AS value_total
 
 FROM (
   SELECT
