@@ -655,3 +655,18 @@ ALERT ETL_ParserPanicNonZero
     summary = "An ETL parser panicked {{ $labels.instance }}",
     hints = "Bugs cause panics. This bug should be fixed. Parsers run in AppEngine. Check logs to see the panic stack trace. Identify the archive that led to the panic (logs or TaskQueue tasks with many retries). Fix the bug or create a new issue describing the failure and linking to the triggering archive."
   }
+
+# ETL_AnnotationDownOrMissing fires when the annotator AppEngine service is down
+# (prometheus scrape attempts fail) or prometheus does not know about the
+# annotator service at all.
+ALERT ETL_AnnotationDownOrMissing
+  IF up{service="annotator"} == 0 OR absent(up{service="annotator"})
+  FOR 30m
+  LABELS {
+    severity = "ticket",
+    repo = "dev-tracker"
+  }
+  ANNOTATIONS {
+    summary = "An ETL Annotation Server is offline or missing!",
+    hints = "The annotator runs in AppEngine. Check logs and recent deployments. The daily and batch parsers may also be affected."
+  }
