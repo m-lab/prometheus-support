@@ -670,3 +670,18 @@ ALERT ETL_AnnotationDownOrMissing
     summary = "An ETL Annotation Server is offline or missing!",
     hints = "The annotator runs in AppEngine. Check logs and recent deployments. The daily and batch parsers may also be affected."
   }
+
+# NDT_AnnotationRatioTooLow fires when the client annotations on NDT
+# tests appears to have too many failures or the bq_ndt_annotation_* metrics
+# disappear.
+ALERT NDT_AnnotationRatioTooLow
+  IF bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99 OR absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
+  FOR 30m
+  LABELS {
+    severity = "ticket",
+    repo = "dev-tracker"
+  }
+  ANNOTATIONS {
+    summary = "Too many NDT tests are missing annotations!",
+    hints = "The annotator runs in AppEngine. Check logs and recent deployments. The daily and batch parsers may also be affected."
+  }
