@@ -134,6 +134,28 @@ ALERT ScraperCollectorMissingFromScraperSync
     description = "",
   }
 
+
+# SwitchSLO
+#
+# A switch at a site has been down for too long and we need to contact the site
+# host or transit provider to investigate. If SNMP scraping *and* pings are both
+# failing for a certain period, then this is probaby a reasonable stand-in as an
+# "up"/"aliveness" check.
+ALERT SwitchDownAtSite
+  IF up{job="snmp-targets", site!~".*t$"} == 0
+        AND ON(site) probe_success{instance=~"s1.*", module="icmp"} == 0
+  FOR 24h
+  LABELS {
+    severity = "ticket",
+    repo = "ops-tracker"
+  }
+  ANNOTATIONS {
+    summary = "The switch at a site has been unreachable for too long.",
+    hints = "The issue could be with the switch itself, or with the transit provider.",
+    dashboard = "https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{ $labels.site }}"
+  }
+
+
 ##
 ## Inventory.
 ##
@@ -303,6 +325,7 @@ ALERT SnmpExporterMissingMetrics
 # Scraping SNMP metrics from a switch is failing.
 ALERT SnmpScrapingDownAtSite
   IF up{job="snmp-targets", site!~".*t$"} == 0
+        AND ON(site) probe_success{instance=~"s1.*", module="icmp"} == 1
   FOR 2h
   LABELS {
     severity = "page",
