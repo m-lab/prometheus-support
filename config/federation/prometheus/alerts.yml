@@ -326,7 +326,7 @@ ALERT SnmpExporterMissingMetrics
 ALERT SnmpScrapingDownAtSite
   IF up{job="snmp-targets", site!~".*t$"} == 0
         AND ON(site) probe_success{instance=~"s1.*", module="icmp"} == 1
-  FOR 6h
+  FOR 2h
   LABELS {
     severity = "page",
     repo = "ops-tracker"
