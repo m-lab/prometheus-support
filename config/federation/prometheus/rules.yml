@@ -1,215 +1,84 @@
-# M-Lab prometheus recording rules.
-#
-# Before adding a new recording rule, review the general documentation and best
-# practices.
-#
-#  * https://prometheus.io/docs/querying/rules/
-#  * https://prometheus.io/docs/practices/rules/
-#
-# NOTE: As of 2017-11, the Prometheus v1.x series evaluates all rules in
-# parallel. So, rule evaluation order is not guaranteed, and dependencies
-# between rules are not respected. Using recording rules on the right hand
-# side of an expression can have undefined behavior and may result in recording
-# old data or other errors. This is also true for Alerts. This limitation is
-# fixed in the Prometheus v2.x series.
-#
-# TODO: Prometheus v2.x rules are evaluated in order.
-#
-#    https://github.com/prometheus/prometheus/blob/v1.8.2/rules/manager.go#L254
-#
-# DO:
-#  * Do use raw prometheus expressions on the right hand side of a new rule.
-#  * "Recording rules should be of the general form level:metric:operations."
-#  * Do use irate with a range that is 4x scrape_interval.
-#
-# DO NOT:
-#  * Do not use recording rules on the right hand side of a new rule.
-#  * Do not overwrite a metric name with itself.
-#  * Do not use 'label_replace' to overwrite a metric name.
-#  * Do not use rate with a range less than 4x the scrape_interval.
-
-
-# Precalculate the increase of ipv4 and ipv6 sidestream connections.
-ipv4_and_ipv6:sidestream_connection_count:increase2m =
-    increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m])
-
-# Precalculate the sum of sidestream connections per machine.
-instance:sidestream_connection_count:increase2m =
-    sum by(instance) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
-
-# Precalculate the sum of sidestream connections per experiment "last six bits".
-lsb:sidestream_connection_count:increase2m =
-    sum by(lsb) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
-
-
-
-## NDT Early Warning aggregation rules.
-#
-# Rules are evaluated every global.evaluation_interval seconds. When
-# scrape_interval equals the evaluation_interval, there are potential races for
-# short range operators, e.g. 2m when the eval and scrape intervals are 1m. At
-# evaluation time, not every timeseries will contain 2 points in a 2m window.
-#
-# If we want to calculate the rate over 2m and increase the likelihood that we
-# see at least two points we must use irate with a larger window, e.g. 4x the
-# scrape interval. In our case this is 4m. irate only uses the last two samples
-# to calculate an instantaneous rate.
-
-# Per-machine inotify creation rates, using only c2s_snaplog + s2c_snaplog files.
-# Units: requests per minute.
-machine:inotify_extension_create:rpm2m =
-    # NOTE: using 'without' instead of 'by' preserves all other labels.
-    60.0 * sum without(ext) (irate(inotify_extension_create_total{ext=~".*_snaplog"}[4m]))
-
-# TODO: aggregate on per-machine interface aliases when available.
-# Per-switch "Out" (i.e. Download) bits per second. We use irate to calculate
-# rates over the last two samples only.
-# Units: bits per second.
-switch:ifHCOutOctets:bps2m =
-    8 * irate(ifHCOutOctets{ifAlias="uplink"}[4m])
-
-# Per-machine maximum ratio of time spent performing I/O on all devices.
-# Units: none
-machine:node_disk_io_time_ms:max_ratio2m =
-    max without(device) (irate(node_disk_io_time_ms{service="nodeexporter"}[4m])) / 1000
-
-# NDT vserver disk quota utilization, 12 hour estimate. Base 12h estimate on a
-# time range at least 25% of the time forward.
-# Units: KB
-ndt:vdlimit_used:predict_linear3h_12h =
-    predict_linear(vdlimit_used{experiment="ndt.iupui"}[3h], 12*60*60)
-
-
-## Switch SNMP metrics
-#
-# Discarded packets for Junipers
-switch:jnxCosQstatTotalDropPkts:irate4m_gt_0 =
-    irate(jnxCosQstatTotalDropPkts{ifAlias="uplink", qNumber="0"}[4m]) > 0
-
-switch:jnxCosQstatTotalDropPkts:irate4m =
-    irate(jnxCosQstatTotalDropPkts{ifAlias="uplink", qNumber="0"}[4m])
-
-# Discarded packets for HPs and Ciscos
-switch:ifOutDiscards:irate4m_gt_0 =
-    irate(ifOutDiscards{ifAlias="uplink"}[4m]) > 0
-
-switch:ifOutDiscards:irate4m =
-    irate(ifOutDiscards{ifAlias="uplink"}[4m])
-
-
-##############################################################################
-# Candidate recording rules.
-##############################################################################
-# TODO: remove rules that are not actively used.
-#
-# Do not build dependencies on these rules until they have been moved out of
-# this candidate rule area.
-
-## NDT Early Warning 2x site capacity thresholds.
-#
-# Shorter time ranges are chosen to favor higher sensitivity and longer time
-# ranges are chosen for lower sensitivity.
-#
-# 90th percentiles @ 30m
-candidate_site:uplink:90th_quantile_30m =
-    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[30m])
-
-candidate_machine:inotify_extension_create_rpm:90th_quantile_30m =
-    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[30m])
-
-candidate_machine:node_disk_io_time_ratio:90th_quantile_30m =
-    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[30m])
-
-candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_30m =
-    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[30m])
-
-# 90th percentiles @ 1h.
-candidate_site:uplink:90th_quantile_1h =
-    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[1h])
-
-candidate_machine:inotify_extension_create_rpm:90th_quantile_1h =
-    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[1h])
-
-candidate_machine:node_disk_io_time_ratio:90th_quantile_1h =
-    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[1h])
-
-candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_1h =
-    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[1h])
-
-# 90th percentiles @ 2h.
-candidate_site:uplink:90th_quantile_2h =
-    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
-
-candidate_machine:inotify_extension_create_rpm:90th_quantile_2h =
-    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[2h])
-
-candidate_machine:node_disk_io_time_ratio:90th_quantile_2h =
-    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[2h])
-
-candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_2h =
-    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[2h])
-
-# 90th percentiles @ 6h.
-candidate_site:uplink:90th_quantile_6h =
-    quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
-
-candidate_machine:inotify_extension_create_rpm:90th_quantile_6h =
-    quantile_over_time(0.90, machine:inotify_extension_create:rpm2m[6h])
-
-candidate_machine:node_disk_io_time_ratio:90th_quantile_6h =
-    quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m[6h])
-
-candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_6h =
-    quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h[6h])
-
-##############################################################################
-# 98th percentiles @ 2h.
-candidate_site:uplink:98th_quantile_2h =
-    quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
-
-candidate_machine:inotify_extension_create_rpm:98th_quantile_2h =
-    quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[2h])
-
-candidate_machine:node_disk_io_time_ratio:98th_quantile_2h =
-    quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[2h])
-
-candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_2h =
-    quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[2h])
-
-# 98th percentiles @ 6h.
-candidate_site:uplink:98th_quantile_6h =
-    quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
-
-candidate_machine:inotify_extension_create_rpm:98th_quantile_6h =
-    quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[6h])
-
-candidate_machine:node_disk_io_time_ratio:98th_quantile_6h =
-    quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[6h])
-
-candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_6h =
-    quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[6h])
-
-
-## NDT Early Warning 2x site capacity thresholds.
-#
-# Raw boolean threshold violations.
-candidate_site:uplink:gt_500mbps =
-    switch:ifHCOutOctets:bps2m{ifAlias="uplink"} > bool 500000000
-
-candidate_machine:inotify_extension_create_rpm:gt_60 =
-    machine:inotify_extension_create:rpm2m > bool 60
-
-candidate_machine:node_disk_io_time_ratio:gt_50_pct =
-    machine:node_disk_io_time_ms:max_ratio2m > bool 0.5
-
-candidate_ndt:vdlimit_used_12h_prediction:gt_50gb =
-    ndt:vdlimit_used:predict_linear3h_12h > bool 50000000
-
-
-## Parser volume checks.
-#
-# This rule optimizes the alert query used for ParserDailyVolumeTooLow. Rather
-# than calculate multi-day values continuously, this rule will maintain a history
-# of the precalculated value needed by the rule.
-candidate_service:etl_test_count:increase24h =
-    sum by(service) (increase(etl_test_count{service!~".*batch.*", status="ok"}[24h]))
+groups:
+- name: rules.yml
+  rules:
+  - record: ipv4_and_ipv6:sidestream_connection_count:increase2m
+    expr: increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m])
+  - record: instance:sidestream_connection_count:increase2m
+    expr: sum by(instance) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
+  - record: lsb:sidestream_connection_count:increase2m
+    expr: sum by(lsb) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
+  - record: machine:inotify_extension_create:rpm2m
+    expr: 60 * sum without(ext) (irate(inotify_extension_create_total{ext=~".*_snaplog"}[4m]))
+  - record: switch:ifHCOutOctets:bps2m
+    expr: 8 * irate(ifHCOutOctets{ifAlias="uplink"}[4m])
+  - record: machine:node_disk_io_time_ms:max_ratio2m
+    expr: max without(device) (irate(node_disk_io_time_ms{service="nodeexporter"}[4m]))
+      / 1000
+  - record: ndt:vdlimit_used:predict_linear3h_12h
+    expr: predict_linear(vdlimit_used{experiment="ndt.iupui"}[3h], 12 * 60 * 60)
+  - record: switch:jnxCosQstatTotalDropPkts:irate4m_gt_0
+    expr: irate(jnxCosQstatTotalDropPkts{ifAlias="uplink",qNumber="0"}[4m]) > 0
+  - record: switch:jnxCosQstatTotalDropPkts:irate4m
+    expr: irate(jnxCosQstatTotalDropPkts{ifAlias="uplink",qNumber="0"}[4m])
+  - record: switch:ifOutDiscards:irate4m_gt_0
+    expr: irate(ifOutDiscards{ifAlias="uplink"}[4m]) > 0
+  - record: switch:ifOutDiscards:irate4m
+    expr: irate(ifOutDiscards{ifAlias="uplink"}[4m])
+  - record: candidate_site:uplink:90th_quantile_30m
+    expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[30m])
+  - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_30m
+    expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[30m])
+  - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_30m
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[30m])
+  - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_30m
+    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[30m])
+  - record: candidate_site:uplink:90th_quantile_1h
+    expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[1h])
+  - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_1h
+    expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[1h])
+  - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_1h
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[1h])
+  - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_1h
+    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[1h])
+  - record: candidate_site:uplink:90th_quantile_2h
+    expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
+  - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_2h
+    expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[2h])
+  - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_2h
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[2h])
+  - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_2h
+    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[2h])
+  - record: candidate_site:uplink:90th_quantile_6h
+    expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
+  - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_6h
+    expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[6h])
+  - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_6h
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[6h])
+  - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_6h
+    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[6h])
+  - record: candidate_site:uplink:98th_quantile_2h
+    expr: quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
+  - record: candidate_machine:inotify_extension_create_rpm:98th_quantile_2h
+    expr: quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[2h])
+  - record: candidate_machine:node_disk_io_time_ratio:98th_quantile_2h
+    expr: quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[2h])
+  - record: candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_2h
+    expr: quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[2h])
+  - record: candidate_site:uplink:98th_quantile_6h
+    expr: quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
+  - record: candidate_machine:inotify_extension_create_rpm:98th_quantile_6h
+    expr: quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[6h])
+  - record: candidate_machine:node_disk_io_time_ratio:98th_quantile_6h
+    expr: quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[6h])
+  - record: candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_6h
+    expr: quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[6h])
+  - record: candidate_site:uplink:gt_500mbps
+    expr: switch:ifHCOutOctets:bps2m{ifAlias="uplink"} > bool 5e+08
+  - record: candidate_machine:inotify_extension_create_rpm:gt_60
+    expr: machine:inotify_extension_create:rpm2m > bool 60
+  - record: candidate_machine:node_disk_io_time_ratio:gt_50_pct
+    expr: machine:node_disk_io_time_ms:max_ratio2m > bool 0.5
+  - record: candidate_ndt:vdlimit_used_12h_prediction:gt_50gb
+    expr: ndt:vdlimit_used:predict_linear3h_12h > bool 5e+07
+  - record: candidate_service:etl_test_count:increase24h
+    expr: sum by(service) (increase(etl_test_count{service!~".*batch.*",status="ok"}[1d]))

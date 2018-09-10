@@ -1,710 +1,443 @@
-# M-Lab alert configuration.
-#
-# ALERT <alert name>
-#   IF <expression>
-#   [ FOR <duration> ]
-#   [ LABELS <label set> ]
-#   [ ANNOTATIONS <label set> ]
-#
-## Notes about delay.
-#
-# There are inherent delays in the monitoring and alert pipeline. When
-# designing alerts, remember that each step includes some delay:
-#
-#  * the time between reality changing and monitoring observing the change.
-#  * the time between the observed change and the delay defined by the alert.
-#  * the time between a firing alert and the "group_wait" time in alertmanager.
-#  * the time between sending a notification and the notification arriving.
-#
-# For example, for a 60s collection period, a 2m alert delay, a 30s group_wait,
-# and a 15s-3m SMS delivery delay, the time between reality changing and a
-# human knowing could be over six minutes.
-#
-# Your job is to balance false-positives with responsiveness when necessary.
-
-# ClusterDown: when any of the federated prometheus k8s clusters is down for
-# three sample periods, then raise an alert.
-#
-# All scraper metrics come from federated targets, so this is critical.
-ALERT ClusterDown
-  IF up{job="federation-targets"} == 0
-  FOR 10m
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Instance {{ $labels.instance }} down",
-    description = "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes.",
-  }
-
-##
-## SLOs
-##
-
-# MachineSLO
-#
-# CoreServices_SidestreamIsNotRunning: an M-Lab server is online, but the
-# sidestream exporter is not. Since sidestream is a core service, this must be
-# fixed.
-ALERT CoreServices_SidestreamIsNotRunning
-  IF sum_over_time(up{service="sidestream"}[10m]) == 0
-        AND ON(machine)
-     sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
-        UNLESS ON(machine)
-     lame_duck_node == 1
-  FOR 10m
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    description = "",
-  }
-
-
-# ScraperSLO
-#
-# ScraperMostRecentArchivedFileTimeIsTooOld: scraper uploads archives for a
-# machine once a day. If the machine is online (for at least 30 hours), but
-# scraper has not uploaded an archive for that machine for more than two days
-# plus 8 hours, there is a problem.
-#
-# Note: we can wait two days because we expect that either a) few machines are
-# affected by this at once, or b) many machines are affected and the
-# ParserDailyVolumeTooLow will trigger first.
-#
-# Note: the delay threshold is set to 2h to prevent false positives. For
-# example, if a machine remains running while it is not network accessible,
-# then the machine will need time for scraper to catch up once it is network
-# accessible again.
-#
-# TODO(soltesz): remove the != 0 check when legacy records are removed.
-ALERT ScraperMostRecentArchivedFileTimeIsTooOld
-  IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (56 * 60 * 60)
-        AND ON(machine)
-     (time() - process_start_time_seconds{service="sidestream"}) > (30 * 60 * 60)
-        UNLESS ON(machine)
-     lame_duck_node == 1
-  FOR 2h
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Scraper max file mtime is too old {{ $labels.rsync_url }}",
-    description = "Max file mtime for {{ $labels.rsync_url }} is older than 56 hours.",
-  }
-
-# Scraper internal consistency.
-#
-# Verify that for every running scraper there is a corresponding metric from
-# scraper-sync indicating that a collection was attempted. These should always
-# be in sync with one another.
-#
-# We use scraper_lastcollectionattempt because scraper_maxrawfiletimearchived
-# is not updated until the first successful upload. This is not possible before
-# a machine comes online.
-ALERT ScraperSyncPresentWithoutScraperCollector
-  IF (scraper_lastcollectionattempt{container="scraper-sync"}
-        UNLESS ON(machine, experiment, rsync_module)
-           up{container="scraper"})
-  FOR 3h
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    description = "",
-  }
-
-ALERT ScraperCollectorMissingFromScraperSync
-  IF (up{container="scraper"}
-        UNLESS ON(machine, experiment, rsync_module)
-           scraper_lastcollectionattempt{container="scraper-sync"})
-  FOR 3h
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    description = "",
-  }
-
-
-# SwitchSLO
-#
-# A switch at a site has been down for too long and we need to contact the site
-# host or transit provider to investigate. If SNMP scraping *and* pings are both
-# failing for a certain period, then this is probaby a reasonable stand-in as an
-# "up"/"aliveness" check.
-ALERT SwitchDownAtSite
-  IF up{job="snmp-targets", site!~".*t$"} == 0
-        AND ON(site) probe_success{instance=~"s1.*", module="icmp"} == 0
-  FOR 24h
-  LABELS {
-    severity = "ticket",
-    repo = "ops-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The switch at a site has been unreachable for too long.",
-    hints = "The issue could be with the switch itself, or with the transit provider.",
-    dashboard = "https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{ $labels.site }}"
-  }
-
-
-##
-## Inventory.
-##
-
-ALERT InventoryConfigurationIsMissing
-  IF absent(up{service="ssh806"}) OR absent(up{service="rsyncd"})
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Inventory configuration {{ $labels.service }} is missing.",
-    description = "Machine or rsyncd service configuration has been missing for too long.",
-    hints = "Check the behavior of the m-lab/operator/.travis.yml deployment, the GCS buckets, and the gcp-service-discovery component of prometheus-support.",
-  }
-
-ALERT InventoryMachinesWithoutRsyncd
-  IF up{service="ssh806"} UNLESS ON(machine) up{service="rsyncd"}
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Rsyncd configuration is missing from some machines.",
-    hints = "",
-  }
-
-ALERT InventoryRsyncdWithoutMachines
-  IF up{service="rsyncd"} UNLESS ON(machine) up{service="ssh806"}
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Machine configuration is missing for some rsyncd services.",
-    hints = "",
-  }
-
-
-##
-## Services.
-##
-
-ALERT SidestreamServicesAreMissing
-  IF absent(up{service="sidestream"})
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    hints = "",
-  }
-
-ALERT SidestreamRunningWithoutMachine
-  IF up{service="sidestream"} UNLESS ON(machine) up{service="ssh806"}
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    hints = "",
-  }
-
-ALERT MachineWithoutSidestreamRunning
-  IF up{service="ssh806"} UNLESS ON(machine) up{service="sidestream"}
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    hints = "",
-  }
-
-# Scrapers are configured on machine "c", but machine "c" is not in the rsyncd inventory.
-ALERT ScraperRunningWithoutRsyncd
-  IF up{container="scraper"} UNLESS ON(machine, experiment) up{service="rsyncd"}
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    hints = "",
-  }
-
-# Rsync inventory includes machine "b", but machine "b" does not have a configured scraper.
-ALERT RsyncRunningWithoutScraper
-  IF up{service="rsyncd"} UNLESS ON(machine, experiment) up{container="scraper"}
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "",
-    hints = "",
-  }
-
-
-# DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in at least 21 hours, meaning that at least the last two download attempts have failed.
-ALERT DownloaderIsFailingToUpdate
-  IF time()-downloader_last_success_time_seconds > (21 * 60 * 60)
-  FOR 5m
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Neither of the last two attempts to download the maxmind/routeviews feeds were successful.",
-    hints = "Check for errors with the downloader service on grafana with the downloader_Error_Count metric, or check the stackdriver logs for the downloader cluster."
-  }
-
-# DownloaderNotRunning: The downloader cluster crashed and not running at all.
-ALERT DownloaderDownOrMissing
-  IF up{container="downloader"} == 0 OR absent(up{container="downloader"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The downloader for maxmind/routeviews feeds is down on {{ $labels.instance }}.",
-    hints = "Check the status of Kubernetes clusters on each M-Lab GCP project. Look at the travis deployment history for m-lab/downloader."
-  }
-
-# Prometheus is unable to get data from the snmp_exporter service.
-ALERT SnmpExporterDownOrMissing
-  IF up{job="snmp-exporter"} == 0 OR absent(up{job="snmp-exporter"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The snmp_exporter service is down on {{ $labels.instance }}.",
-    hints = "The snmp_exporter service runs in a Docker container on a GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys for m-lab/snmp-exporter-support, or SSH to the VM and poke around."
-  }
-
-# Some SNMP metrics are missing from Prometheus. These should always be present.
-# The wait period shouuld be longer than that for the SnmpExporterDownOrMissing
-# alert.
-ALERT SnmpExporterMissingMetrics
-  IF absent(ifHCOutOctets)
-  FOR 30m
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Expected SNMP metrics are missing from Prometheus!",
-    hints = "If the snmp_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
-    prometheus_targets = "https://prometheus.mlab-oti.measurementlab.net/targets",
-    gcsbucket = "https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/snmp-targets",
-    dashboard = "https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/"
-  }
-
-# Scraping SNMP metrics from a switch is failing.
-ALERT SnmpScrapingDownAtSite
-  IF up{job="snmp-targets", site!~".*t$"} == 0
-        AND ON(site) probe_success{instance=~"s1.*", module="icmp"} == 1
-  FOR 2h
-  LABELS {
-    severity = "page",
-    repo = "ops-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Prometheus is unable to scrape SNMP metrics from a switch.",
-    hints = "Maybe the switch is down? Is the snmp_exporter using the right community string? Look in switch-details.json in the m-lab/switch-config repo. Is the IP of the snmp_exporter VM in GCE whitelisted on the switch?",
-    dashboard = "https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{ $labels.site }}"
-  }
-
-# Prometheus is unable to get data from the script_exporter service.
-ALERT ScriptExporterDownOrMissing
-  IF up{job="script-exporter"} == 0 OR absent(up{job="script-exporter"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The script_exporter service is down on {{ $labels.instance }}.",
-    hints = "The script_exporter service runs in a Docker container on a GCE VM named 'script-exporter' in each M-Lab GCP project. For deployment details and troubleshooting, you can usually figure out the issue by looking through the Travis-CI build logs: https://travis-ci.org/m-lab/script-exporter-support. You can also look for hints in the dashboard for the GCE instance, or by SSHing to the instance itself."
-  }
-
-# Some script_exporter metrics are missing from Prometheus. These should always
-# be present. The wait period should be longer than that for the
-# ScriptExporterDownOrMissing alert.
-ALERT ScriptExporterMissingMetrics
-  IF absent(script_success{service="ndt_e2e"})
-        OR absent(script_success{service="ndt_queue"})
-  FOR 30m
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Expected script_exporter metrics are missing from Prometheus!",
-    hints = "If the script_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
-    prometheus_targets = "http://status.mlab-oti.measurementlab.net:9090/targets",
-    gcsbucket = "https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets",
-    dashboard = "https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/"
-  }
-
-# Prometheus is unable to get data from the blackbox_exporter service for IPv4
-# probes. The service is down, or the metric is missing.
-ALERT BlackboxExporterIpv4DownOrMissing
-  IF up{job="blackbox-exporter-ipv4"} == 0
-        OR absent(up{job="blackbox-exporter-ipv4"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The blackbox_exporter service is down for IPv4 probes.",
-    hints = "Check the status of the blackbox-server pod in the prometheus-federation cluster on each M-Lab GCP project."
-  }
-
-# Prometheus is unable to get data from the blackbox_exporter service for IPv6
-# probes. The service is down, or the metric is missing.
-ALERT BlackboxExporterIpv6DownOrMissing
-  IF up{job="blackbox-exporter-ipv6"} == 0
-        OR absent(up{job="blackbox-exporter-ipv6"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The blackbox_exporter service is down or missing for IPv6 probes.",
-    hints = "The blackbox_exporter for IPv6 checks runs in a Linode VM. Make sure the VM is up and running. If it is, check the status of the BBE container running in the VM. Domains for VMs are like blackbox-exporter-ipv6.<project>.measurementlab.net."
-  }
-
-# More than a certain percentage of NDT servers meet the criteria for being
-# down.
-ALERT TooManyNdtServersDown
-  IF count_scalar(
-    probe_success{service="ndt_raw"} AND ON(machine)
-      up{service="nodeexporter"} == 1 UNLESS ON(machine)
-      lame_duck_node{} == 1
-    UNLESS ON(machine) (
-      probe_success{service="ndt_raw"} == 1 AND ON(machine)
-      probe_success{service="ndt_ssl"} == 1 AND ON(machine)
-      script_success{service="ndt_e2e"} == 1 AND ON(machine)
-      vdlimit_used{experiment="ndt.iupui"} /
-        vdlimit_total{experiment="ndt.iupui"} < 0.95
-    )
-  )
-  /
-  count(
-    probe_success{service="ndt_raw"} AND ON(machine)
-    up{service="nodeexporter"} == 1 UNLESS ON(machine)
-    lame_duck_node{} == 1
-  ) > 0.25
-  FOR 30m
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Too large a percentage of NDT servers are down.",
-    hints = "Make sure that the blackbox_exporter, script_exporter and node_exporters are all working as expected. Was any update to the platform just released?",
-    dashboard = "https://grafana.mlab-oti.measurementlab.net/d/JAq7W6Nmk/"
-  }
-
-# One or more NDT-specific metrics is missing. These are the NDT metrics that
-# mlab-ns relies on to determine whether NDT is up and running, so we need to
-# make sure that the metrics are always present. NOTE: mlab-ns additionally
-# relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
-# alerting for that metric is already handled by the
-# ScriptExporterMissingMetrics alert.
-ALERT NdtMetricsMissing
-  IF absent(probe_success{service="ndt_raw"})
-        OR absent(probe_success{service="ndt_raw_ipv6"})
-        OR absent(probe_success{service="ndt_ssl"})
-        OR absent(probe_success{service="ndt_ssl_ipv6"})
-        OR absent(vdlimit_used{experiment="ndt.iupui"})
-        OR absent(vdlimit_total{experiment="ndt.iupui"})
-  FOR 30m
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "A metric for an NDT service is missing.",
-    hints = "If the blackbox_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus. vdlimit_* metrics are provided by node_exporter on each node.",
-    prometheus_targets = "https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets"
-  }
-
-# One or more Neubot-specific metrics is missing. These are the Neubot metrics that
-# mlab-ns relies on to determine whether Neubot is up and running, so we need to
-# make sure that the metrics are always present.
-ALERT NeubotMetricsMissing
-  IF absent(probe_success{service="neubot"})
-        OR absent(probe_success{service="neubot_ipv6"})
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "A metric for a Neubot service is missing.",
-    hints = "If the blackbox_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
-    prometheus_targets = "https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets"
-  }
-
-# One or more Mobiperf-specific metrics is missing. These are the Mobiperf
-# metrics that mlab-ns relies on to determine whether Mobiperf is up and
-# running, so we need to make sure that the metrics are always present.
-ALERT MobiperfMetricsMissing
-  IF absent(probe_success{service="mobiperf"})
-        OR absent(probe_success{service="mobiperf_ipv6"})
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "A metric for a Mobiperf service is missing.",
-    hints = "If the blackbox_exporter service is running, then there may be a target configuration error. Check the target definitions in GCS and the target status in Prometheus.",
-    prometheus_targets = "https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets"
-  }
-
-# Some number of nodes don't have a lame-duck status.
-ALERT LameDuckMetricMissingForNode
-  IF up{service="nodeexporter"} == 1
-        UNLESS ON(machine) lame_duck_node{}
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Some number of nodes are missing lame-duck status metrics.",
-    hints = "Check /var/spool/node_exporter/ on the node to see if the file lame_duck.prom is missing. If it is, use the mlabops Ansible lame-duck.yaml playbook to restore it."
-  }
-
-# vdlimit_used and/or vdlimit_free metrics are completely missing for a node.
-# There are other vdlimit_* metrics, but we care especially about these because
-# mlab-ns uses them to query Prometheus for node status.
-ALERT VdlimitMetricsMissingForNode
-  IF up{service="nodeexporter"} == 1
-        UNLESS ON(machine) (vdlimit_used AND vdlimit_total)
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "ops-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Some vdlimit_* metrics are missing.",
-    hints = "Check /var/spool/node_exporter/ on the node to see if the file vdlimit.prom is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron.",
-    dashboard = "https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/"
-  }
-
-# A collectd-mlab service has a problem and is down.
-ALERT CoreServices_CollectdMlabDown
-  IF collectd_mlab_success{} == 0
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "A collectd-mlab service is down.",
-    hints = "The collectd-mlab service runs in the mlab_utility slice. Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops repository to configure collectd-mlab. Login to the node and run the check script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py)."
-  }
-
-# A collectd-mlab service metric is missing on some node.
-ALERT CoreServices_CollectdMlabMissing
-  IF up{service="nodeexporter"} == 1
-        UNLESS ON(machine) collectd_mlab_success{}
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "A collectd-mlab service metric is missing.",
-    hints = "The collectd-mlab service runs in the mlab_utility slice. Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops repository to configure collectd-mlab. Login to the node and run the check script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py)."
-  }
-
-# TODO:
-#   Replace this with two other alerts:
-#    1.  Alert if hourly test volume on servers drops relative to same hour on recent days.
-#    2.  E2E alert that compares rows in tables to test volume on servers.
-#
-# ParserDailyVolumeTooLow: 24 hour test volume has dropped over 30% compared to
-# the average of the 2 smallest test volumes of 4 days out of the last week.  Two vectors
-# of conservative constant value avoid false alarms when there is little valid history.
-# On occasion, processing may fall behind a bit.  The "FOR 2h" waits 2h before triggering
-# an actual alert, so the pipeline may fall behind for up to 2 hours without alerting.
-# However, if the pipeline falls several hours behind, and stays behind for more than
-# 2 hours, the alert will fire.
-#
-# In normal operation, we expect the 50th quantile to split mid-way between the two smallest
-# volume days of the 4 sample days.  The 4 sample always include one weekend day, so one of
-# the two smallest days will generally be a weekend day.
-# For example, for a Tuesday, the prior data might be ordered (decreasing):
-# M, F, W, Sa, C1, C2,
-# and the 50th quantile will be midway between previous Sat and previous Wed.
-#
-# The alert condition ignores batch processing.
-#
-# Implementation notes:
-# This alert uses label_replace to merge multiple vectors.  We tried simpler queries using
-# AND, OR or +, but these do not do what we need.  We use label_replace to add a new "delay"
-# label, which then allows us to compute quantile across multiple vectors.  (Or we could compute
-# sums, averages, topk, min, etc.)
-# The constant vectors require adding two labels, "service" which associates with a pipeline, and
-# "delay" which differentiates from the actual delayed metrics for 1d, 3d, etc.
-# For each pipeline service, the quantile computation then aggregates across the 6 vectors in
-# the delay dimension.
-ALERT ParserDailyVolumeTooLow
-  IF candidate_service:etl_test_count:increase24h
-      < (0.7 * quantile by(service)(0.50,
-         label_replace(candidate_service:etl_test_count:increase24h offset 1d,"delay","1d","",".*" ) OR
-         label_replace(candidate_service:etl_test_count:increase24h offset 3d,"delay","3d","",".*" ) OR
-         label_replace(candidate_service:etl_test_count:increase24h offset 5d,"delay","5d","",".*" ) OR
-         label_replace(candidate_service:etl_test_count:increase24h offset 7d,"delay","7d","",".*" ) OR
-         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
-         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-disco-parser",      "", ".*") OR
-         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
-         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-ndt-parser",        "", ".*") OR
-         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
-         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-sidestream-parser", "", ".*") OR
-         label_replace(label_replace(vector(0),"delay","c1","",".*" ), "service", "etl-traceroute-parser", "", ".*") OR
-         label_replace(label_replace(vector(0),"delay","c2","",".*" ), "service", "etl-traceroute-parser", "", ".*")
-         ))
-  FOR 2h
-  LABELS {
-    severity = "page",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Today's test volume is less than 70% of nominal daily volume.",
-    hints = "Are machines online? Is data being collected? Is the parser working?",
-    dashboard = "https://grafana.mlab-oti.measurementlab.net/d/PKqnWeNmz/"
-  }
-
-
-# The node_exporter running on eb.measurementlab.net is down.
-ALERT NodeExporterOnEbDownOrMissing
-  IF up{job="eb-node-exporter"} == 0 OR absent(up{job="eb-node-exporter"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "ops-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The node_exporter instance running on eb.measurementlab.net is down.",
-    hints = "Login to EB to see if it is in fact crashed. If so, look through the logs."
-  }
-
-
-# The node_exporter running on mirror.measurementlab.net is down.
-ALERT NodeExporterOnMirrorDownOrMissing
-  IF up{job="mirror-node-exporter"} == 0 OR absent(up{job="mirror-node-exporter"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "ops-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The node_exporter instance running on mirror.measurementlab.net is down.",
-    hints = "Login to to see if it is in fact crashed. If so, look through the logs."
-  }
-
-
-# The node_exporter running on dns.measurementlab.net is down.
-ALERT NodeExporterOnDnsDownOrMissing
-  IF up{job="dns-node-exporter"} == 0 OR absent(up{job="dns-node-exporter"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "ops-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The node_exporter instance running on dns.measurementlab.net is down.",
-    hints = "Login to to see if it is in fact crashed. If so, look through the logs."
-  }
-
-
-# GardenerDownOrMissing fires when the etl-gardener is down or absent.
-ALERT GardenerDownOrMissing
-  # TODO: enable annotations to ignore some container ports, and simplify this query.
-  # https://github.com/m-lab/prometheus-support/issues/48
-  IF up{container="etl-gardener", instance=~".*:9090"} == 0 OR absent(up{container="etl-gardener", instance=~".*:9090"})
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "The ETL Gardener instance is down on {{ $labels.instance }}",
-    hints = "The Gardener runs in the data-processing-cluster"
-  }
-
-# ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
-# should always be zero because a panic indicates a bug in the parser. The
-# alert will continue to fire until the parser is restarted or a new version is
-# deployed (ideally with a fix).
-ALERT ETL_ParserPanicNonZero
-  IF etl_panic_count > 0
-  FOR 10m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "An ETL parser panicked {{ $labels.instance }}",
-    hints = "Bugs cause panics. This bug should be fixed. Parsers run in AppEngine. Check logs to see the panic stack trace. Identify the archive that led to the panic (logs or TaskQueue tasks with many retries). Fix the bug or create a new issue describing the failure and linking to the triggering archive."
-  }
-
-# ETL_AnnotationDownOrMissing fires when the annotator AppEngine service is down
-# (prometheus scrape attempts fail) or prometheus does not know about the
-# annotator service at all.
-ALERT ETL_AnnotationDownOrMissing
-  IF up{service="annotator"} == 0 OR absent(up{service="annotator"})
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "An ETL Annotation Server is offline or missing!",
-    hints = "The annotator runs in AppEngine. Check logs and recent deployments. The daily and batch parsers may also be affected."
-  }
-
-# NDT_AnnotationRatioTooLow fires when the client annotations on NDT
-# tests appears to have too many failures or the bq_ndt_annotation_* metrics
-# disappear.
-ALERT NDT_AnnotationRatioTooLow
-  IF bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99 OR absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
-  FOR 30m
-  LABELS {
-    severity = "ticket",
-    repo = "dev-tracker"
-  }
-  ANNOTATIONS {
-    summary = "Too many NDT tests are missing annotations!",
-    hints = "The annotator runs in AppEngine. Check logs and recent deployments. The daily and batch parsers may also be affected."
-  }
+groups:
+- name: alerts.yml
+  rules:
+  - alert: ClusterDown
+    expr: up{job="federation-targets"} == 0
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
+        for more than 2 minutes.'
+      summary: Instance {{ $labels.instance }} down
+  - alert: CoreServices_SidestreamIsNotRunning
+    expr: sum_over_time(up{service="sidestream"}[10m]) == 0 and on(machine) sum_over_time(probe_success{service="ssh806"}[20m])
+      / 20 >= 0.9 unless on(machine) lame_duck_node == 1
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      description: ""
+      summary: ""
+  - alert: ScraperMostRecentArchivedFileTimeIsTooOld
+    expr: (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0))
+      > (56 * 60 * 60) and on(machine) (time() - process_start_time_seconds{service="sidestream"})
+      > (30 * 60 * 60) unless on(machine) lame_duck_node == 1
+    for: 2h
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      description: Max file mtime for {{ $labels.rsync_url }} is older than 56 hours.
+      summary: Scraper max file mtime is too old {{ $labels.rsync_url }}
+  - alert: ScraperSyncPresentWithoutScraperCollector
+    expr: (scraper_lastcollectionattempt{container="scraper-sync"} unless on(machine,
+      experiment, rsync_module) up{container="scraper"})
+    for: 3h
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      description: ""
+      summary: ""
+  - alert: ScraperCollectorMissingFromScraperSync
+    expr: (up{container="scraper"} unless on(machine, experiment, rsync_module) scraper_lastcollectionattempt{container="scraper-sync"})
+    for: 3h
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      description: ""
+      summary: ""
+  - alert: SwitchDownAtSite
+    expr: up{job="snmp-targets",site!~".*t$"} == 0 and on(site) probe_success{instance=~"s1.*",module="icmp"}
+      == 0
+    for: 1d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{
+        $labels.site }}
+      hints: The issue could be with the switch itself, or with the transit provider.
+      summary: The switch at a site has been unreachable for too long.
+  - alert: InventoryConfigurationIsMissing
+    expr: absent(up{service="ssh806"}) or absent(up{service="rsyncd"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      description: Machine or rsyncd service configuration has been missing for too
+        long.
+      hints: Check the behavior of the m-lab/operator/.travis.yml deployment, the
+        GCS buckets, and the gcp-service-discovery component of prometheus-support.
+      summary: Inventory configuration {{ $labels.service }} is missing.
+  - alert: InventoryMachinesWithoutRsyncd
+    expr: up{service="ssh806"} unless on(machine) up{service="rsyncd"}
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: ""
+      summary: Rsyncd configuration is missing from some machines.
+  - alert: InventoryRsyncdWithoutMachines
+    expr: up{service="rsyncd"} unless on(machine) up{service="ssh806"}
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: ""
+      summary: Machine configuration is missing for some rsyncd services.
+  - alert: SidestreamServicesAreMissing
+    expr: absent(up{service="sidestream"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: ""
+      summary: ""
+  - alert: SidestreamRunningWithoutMachine
+    expr: up{service="sidestream"} unless on(machine) up{service="ssh806"}
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: ""
+      summary: ""
+  - alert: MachineWithoutSidestreamRunning
+    expr: up{service="ssh806"} unless on(machine) up{service="sidestream"}
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: ""
+      summary: ""
+  - alert: ScraperRunningWithoutRsyncd
+    expr: up{container="scraper"} unless on(machine, experiment) up{service="rsyncd"}
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: ""
+      summary: ""
+  - alert: RsyncRunningWithoutScraper
+    expr: up{service="rsyncd"} unless on(machine, experiment) up{container="scraper"}
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: ""
+      summary: ""
+  - alert: DownloaderIsFailingToUpdate
+    expr: time() - downloader_last_success_time_seconds > (21 * 60 * 60)
+    for: 5m
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      hints: Check for errors with the downloader service on grafana with the downloader_Error_Count
+        metric, or check the stackdriver logs for the downloader cluster.
+      summary: Neither of the last two attempts to download the maxmind/routeviews
+        feeds were successful.
+  - alert: DownloaderDownOrMissing
+    expr: up{container="downloader"} == 0 or absent(up{container="downloader"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: Check the status of Kubernetes clusters on each M-Lab GCP project. Look
+        at the travis deployment history for m-lab/downloader.
+      summary: The downloader for maxmind/routeviews feeds is down on {{ $labels.instance
+        }}.
+  - alert: SnmpExporterDownOrMissing
+    expr: up{job="snmp-exporter"} == 0 or absent(up{job="snmp-exporter"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: The snmp_exporter service runs in a Docker container on a GCE VM named
+        'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys
+        for m-lab/snmp-exporter-support, or SSH to the VM and poke around.
+      summary: The snmp_exporter service is down on {{ $labels.instance }}.
+  - alert: SnmpExporterMissingMetrics
+    expr: absent(ifHCOutOctets)
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
+      gcsbucket: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/snmp-targets
+      hints: If the snmp_exporter service is running, then there may be a target configuration
+        error. Check the target definitions in GCS and the target status in Prometheus.
+      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets
+      summary: Expected SNMP metrics are missing from Prometheus!
+  - alert: SnmpScrapingDownAtSite
+    expr: up{job="snmp-targets",site!~".*t$"} == 0 and on(site) probe_success{instance=~"s1.*",module="icmp"}
+      == 1
+    for: 2h
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{
+        $labels.site }}
+      hints: Maybe the switch is down? Is the snmp_exporter using the right community
+        string? Look in switch-details.json in the m-lab/switch-config repo. Is the
+        IP of the snmp_exporter VM in GCE whitelisted on the switch?
+      summary: Prometheus is unable to scrape SNMP metrics from a switch.
+  - alert: ScriptExporterDownOrMissing
+    expr: up{job="script-exporter"} == 0 or absent(up{job="script-exporter"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: 'The script_exporter service runs in a Docker container on a GCE VM named
+        ''script-exporter'' in each M-Lab GCP project. For deployment details and
+        troubleshooting, you can usually figure out the issue by looking through the
+        Travis-CI build logs: https://travis-ci.org/m-lab/script-exporter-support.
+        You can also look for hints in the dashboard for the GCE instance, or by SSHing
+        to the instance itself.'
+      summary: The script_exporter service is down on {{ $labels.instance }}.
+  - alert: ScriptExporterMissingMetrics
+    expr: absent(script_success{service="ndt_e2e"}) or absent(script_success{service="ndt_queue"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
+      gcsbucket: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets
+      hints: If the script_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target status
+        in Prometheus.
+      prometheus_targets: http://status.mlab-oti.measurementlab.net:9090/targets
+      summary: Expected script_exporter metrics are missing from Prometheus!
+  - alert: BlackboxExporterIpv4DownOrMissing
+    expr: up{job="blackbox-exporter-ipv4"} == 0 or absent(up{job="blackbox-exporter-ipv4"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: Check the status of the blackbox-server pod in the prometheus-federation
+        cluster on each M-Lab GCP project.
+      summary: The blackbox_exporter service is down for IPv4 probes.
+  - alert: BlackboxExporterIpv6DownOrMissing
+    expr: up{job="blackbox-exporter-ipv6"} == 0 or absent(up{job="blackbox-exporter-ipv6"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: The blackbox_exporter for IPv6 checks runs in a Linode VM. Make sure
+        the VM is up and running. If it is, check the status of the BBE container
+        running in the VM. Domains for VMs are like blackbox-exporter-ipv6.<project>.measurementlab.net.
+      summary: The blackbox_exporter service is down or missing for IPv6 probes.
+  - alert: TooManyNdtServersDown
+    expr: scalar(count(probe_success{service="ndt_raw"} and on(machine) up{service="nodeexporter"}
+      == 1 unless on(machine) lame_duck_node == 1 unless on(machine) (probe_success{service="ndt_raw"}
+      == 1 and on(machine) probe_success{service="ndt_ssl"} == 1 and on(machine) script_success{service="ndt_e2e"}
+      == 1 and on(machine) vdlimit_used{experiment="ndt.iupui"} / vdlimit_total{experiment="ndt.iupui"}
+      < 0.95))) / count(probe_success{service="ndt_raw"} and on(machine) up{service="nodeexporter"}
+      == 1 unless on(machine) lame_duck_node == 1) > 0.25
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/JAq7W6Nmk/
+      hints: Make sure that the blackbox_exporter, script_exporter and node_exporters
+        are all working as expected. Was any update to the platform just released?
+      summary: Too large a percentage of NDT servers are down.
+  - alert: NdtMetricsMissing
+    expr: absent(probe_success{service="ndt_raw"}) or absent(probe_success{service="ndt_raw_ipv6"})
+      or absent(probe_success{service="ndt_ssl"}) or absent(probe_success{service="ndt_ssl_ipv6"})
+      or absent(vdlimit_used{experiment="ndt.iupui"}) or absent(vdlimit_total{experiment="ndt.iupui"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      hints: If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target status
+        in Prometheus. vdlimit_* metrics are provided by node_exporter on each node.
+      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+      summary: A metric for an NDT service is missing.
+  - alert: NeubotMetricsMissing
+    expr: absent(probe_success{service="neubot"}) or absent(probe_success{service="neubot_ipv6"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target status
+        in Prometheus.
+      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+      summary: A metric for a Neubot service is missing.
+  - alert: MobiperfMetricsMissing
+    expr: absent(probe_success{service="mobiperf"}) or absent(probe_success{service="mobiperf_ipv6"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target status
+        in Prometheus.
+      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+      summary: A metric for a Mobiperf service is missing.
+  - alert: LameDuckMetricMissingForNode
+    expr: up{service="nodeexporter"} == 1 unless on(machine) lame_duck_node
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: Check /var/spool/node_exporter/ on the node to see if the file lame_duck.prom
+        is missing. If it is, use the mlabops Ansible lame-duck.yaml playbook to restore
+        it.
+      summary: Some number of nodes are missing lame-duck status metrics.
+  - alert: VdlimitMetricsMissingForNode
+    expr: up{service="nodeexporter"} == 1 unless on(machine) (vdlimit_used and vdlimit_total)
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
+      hints: Check /var/spool/node_exporter/ on the node to see if the file vdlimit.prom
+        is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron.
+      summary: Some vdlimit_* metrics are missing.
+  - alert: CoreServices_CollectdMlabDown
+    expr: collectd_mlab_success == 0
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: The collectd-mlab service runs in the mlab_utility slice. Try running
+        the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops
+        repository to configure collectd-mlab. Login to the node and run the check
+        script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py).
+      summary: A collectd-mlab service is down.
+  - alert: CoreServices_CollectdMlabMissing
+    expr: up{service="nodeexporter"} == 1 unless on(machine) collectd_mlab_success
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: The collectd-mlab service runs in the mlab_utility slice. Try running
+        the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops
+        repository to configure collectd-mlab. Login to the node and run the check
+        script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py).
+      summary: A collectd-mlab service metric is missing.
+  - alert: ParserDailyVolumeTooLow
+    expr: candidate_service:etl_test_count:increase24h < (0.7 * quantile by(service)
+      (0.5, label_replace(candidate_service:etl_test_count:increase24h offset 1d,
+      "delay", "1d", "", ".*") or label_replace(candidate_service:etl_test_count:increase24h
+      offset 3d, "delay", "3d", "", ".*") or label_replace(candidate_service:etl_test_count:increase24h
+      offset 5d, "delay", "5d", "", ".*") or label_replace(candidate_service:etl_test_count:increase24h
+      offset 1w, "delay", "7d", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c1", "", ".*"), "service", "etl-disco-parser", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c2", "", ".*"), "service", "etl-disco-parser", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c1", "", ".*"), "service", "etl-ndt-parser", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c2", "", ".*"), "service", "etl-ndt-parser", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c1", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c2", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c1", "", ".*"), "service", "etl-traceroute-parser", "", ".*") or label_replace(label_replace(vector(0),
+      "delay", "c2", "", ".*"), "service", "etl-traceroute-parser", "", ".*")))
+    for: 2h
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/PKqnWeNmz/
+      hints: Are machines online? Is data being collected? Is the parser working?
+      summary: Today's test volume is less than 70% of nominal daily volume.
+  - alert: NodeExporterOnEbDownOrMissing
+    expr: up{job="eb-node-exporter"} == 0 or absent(up{job="eb-node-exporter"})
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      hints: Login to EB to see if it is in fact crashed. If so, look through the
+        logs.
+      summary: The node_exporter instance running on eb.measurementlab.net is down.
+  - alert: NodeExporterOnMirrorDownOrMissing
+    expr: up{job="mirror-node-exporter"} == 0 or absent(up{job="mirror-node-exporter"})
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      hints: Login to to see if it is in fact crashed. If so, look through the logs.
+      summary: The node_exporter instance running on mirror.measurementlab.net is
+        down.
+  - alert: NodeExporterOnDnsDownOrMissing
+    expr: up{job="dns-node-exporter"} == 0 or absent(up{job="dns-node-exporter"})
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      hints: Login to to see if it is in fact crashed. If so, look through the logs.
+      summary: The node_exporter instance running on dns.measurementlab.net is down.
+  - alert: GardenerDownOrMissing
+    expr: up{container="etl-gardener",instance=~".*:9090"} == 0 or absent(up{container="etl-gardener",instance=~".*:9090"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: The Gardener runs in the data-processing-cluster
+      summary: The ETL Gardener instance is down on {{ $labels.instance }}
+  - alert: ETL_ParserPanicNonZero
+    expr: etl_panic_count > 0
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: Bugs cause panics. This bug should be fixed. Parsers run in AppEngine.
+        Check logs to see the panic stack trace. Identify the archive that led to
+        the panic (logs or TaskQueue tasks with many retries). Fix the bug or create
+        a new issue describing the failure and linking to the triggering archive.
+      summary: An ETL parser panicked {{ $labels.instance }}
+  - alert: ETL_AnnotationDownOrMissing
+    expr: up{service="annotator"} == 0 or absent(up{service="annotator"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: The annotator runs in AppEngine. Check logs and recent deployments. The
+        daily and batch parsers may also be affected.
+      summary: An ETL Annotation Server is offline or missing!
+  - alert: NDT_AnnotationRatioTooLow
+    expr: bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99 or absent(bq_ndt_annotation_success
+      / bq_ndt_annotation_total)
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      hints: The annotator runs in AppEngine. Check logs and recent deployments. The
+        daily and batch parsers may also be affected.
+      summary: Too many NDT tests are missing annotations!
