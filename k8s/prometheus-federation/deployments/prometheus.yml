@@ -46,13 +46,76 @@ spec:
       containers:
       # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
       # stable version.
-      - image: prom/prometheus:v1.8.2
+      - image: prom/prometheus:v2.3.2
         # Note: the container name appears to be ignored and the actual pod name
         # is derived from the Deployment.metadata.name. However, removing this
         # value results in a configuration error.
         name: prometheus
         # Note: Set retention time to 120 days. (default retention is 30d).
         args: ["-config.file=/etc/prometheus/prometheus.yml",
+               "-web.enable-lifecycle",
+               "-web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
+               "-web.console.libraries=/usr/share/prometheus/console_libraries",
+               "-web.console.templates=/usr/share/prometheus/consoles"]
+        ports:
+          - containerPort: 9090
+        resources:
+          requests:
+            memory: "{{PROMETHEUS_RAM}}"
+            cpu: "{{PROMETHEUS_CPU}}"
+          limits:
+            memory: "{{PROMETHEUS_RAM}}"
+            cpu: "{{PROMETHEUS_CPU}}"
+        volumeMounts:
+        # /prometheus stores all metric data. Declared as VOLUME in base image.
+        - mountPath: /data
+          name: prometheus-storage
+          subPath: prometheus-data2
+        # /legacy-targets should contain legacy target configuration files.
+        - mountPath: /legacy-targets
+          name: prometheus-storage
+          subPath: legacy-targets
+        # /federation-targets should contain federation target config files.
+        - mountPath: /federation-targets
+          name: prometheus-storage
+          subPath: federation-targets
+        # /blackbox-targets should contain blackbox target config files.
+        - mountPath: /blackbox-targets
+          name: prometheus-storage
+          subPath: blackbox-targets
+        # /blackbox-targets-ipv6 should contain blackbox IPv6 target files.
+        - mountPath: /blackbox-targets-ipv6
+          name: prometheus-storage
+          subPath: blackbox-targets-ipv6
+        # /aeflex-targets should contain AppEngine target config files.
+        - mountPath: /aeflex-targets
+          name: prometheus-storage
+          subPath: aeflex-targets
+        # /snmp-targets should contain snmp_exporter target config files.
+        - mountPath: /snmp-targets
+          name: prometheus-storage
+          subPath: snmp-targets
+        # /script-targets should contain script_exporter target config files.
+        - mountPath: /script-targets
+          name: prometheus-storage
+          subPath: script-targets
+        # /slow-targets should contain slow target config files.
+        - mountPath: /slow-targets
+          name: prometheus-storage
+          subPath: slow-targets
+        # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
+        - mountPath: /etc/prometheus
+          name: prometheus-config
+
+      # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
+      # stable version.
+      - image: prom/prometheus:v1.8.2
+        # Note: the container name appears to be ignored and the actual pod name
+        # is derived from the Deployment.metadata.name. However, removing this
+        # value results in a configuration error.
+        name: prometheus18
+        # Note: Set retention time to 120 days. (default retention is 30d).
+        args: ["-config.file=/etc/prometheus/prometheus18.yml",
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
                "-storage.local.target-heap-size={{PROMETHEUS_HEAP_SIZE}}",
@@ -64,11 +127,12 @@ spec:
                "-storage.local.index-cache-size.label-pair-to-fingerprints=262144000",
                "-storage.local.num-fingerprint-mutexes=50000",
                "-alertmanager.url=http://alertmanager-service.default.svc.cluster.local:9093",
+               "-web.listen-address=:9094",
                "-web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
                "-web.console.libraries=/usr/share/prometheus/console_libraries",
                "-web.console.templates=/usr/share/prometheus/consoles"]
         ports:
-          - containerPort: 9090
+          - containerPort: 9094
         resources:
           requests:
             memory: "{{PROMETHEUS_RAM}}"

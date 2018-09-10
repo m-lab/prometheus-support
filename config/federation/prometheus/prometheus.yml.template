@@ -11,6 +11,9 @@ global:
   # external_labels:
   #   monitor: 'mlab1'
 
+# Read old v1.8 data from the legacy instance on this pod.
+remote_read:
+  - url: "http://localhost:9094/api/v1/read"
 
 # Load rules once and periodically evaluate them according to the global
 # 'evaluation_interval'.
