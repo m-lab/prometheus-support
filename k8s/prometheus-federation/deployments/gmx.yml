@@ -23,7 +23,7 @@ spec:
         run: gmx-server
     spec:
       containers:
-        - image: measurementlab/github-maintenance-exporter:v0.1
+      - image: measurementlab/github-maintenance-exporter:v0.1
         name: gmx-server
         env:
         - name: GITHUB_WEBHOOK_SECRET
@@ -32,7 +32,7 @@ spec:
               name: gmx-webhook-secret
               key: gmx-webhook-secret
         ports:
-          - containerPort: 9999
+        - containerPort: 9999
         resources:
           requests:
             memory: "500Mi"
