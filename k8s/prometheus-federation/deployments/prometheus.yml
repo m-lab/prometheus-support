@@ -52,11 +52,11 @@ spec:
         # value results in a configuration error.
         name: prometheus
         # Note: Set retention time to 120 days. (default retention is 30d).
-        args: ["-config.file=/etc/prometheus/prometheus.yml",
-               "-web.enable-lifecycle",
-               "-web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
-               "-web.console.libraries=/usr/share/prometheus/console_libraries",
-               "-web.console.templates=/usr/share/prometheus/consoles"]
+        args: ["--config.file=/etc/prometheus/prometheus.yml",
+               "--web.enable-lifecycle",
+               "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
+               "--web.console.libraries=/usr/share/prometheus/console_libraries",
+               "--web.console.templates=/usr/share/prometheus/consoles"]
         ports:
           - containerPort: 9090
         resources:
