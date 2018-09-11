@@ -135,11 +135,11 @@ spec:
           - containerPort: 9094
         resources:
           requests:
-            memory: "{{PROMETHEUS_RAM}}"
-            cpu: "{{PROMETHEUS_CPU}}"
+            memory: "400Mi"
+            cpu: "200m"
           limits:
-            memory: "{{PROMETHEUS_RAM}}"
-            cpu: "{{PROMETHEUS_CPU}}"
+            memory: "400Mi"
+            cpu: "200m"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
