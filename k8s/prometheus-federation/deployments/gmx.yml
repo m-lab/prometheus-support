@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gmx-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      # Used to match pre-existing pods that may be affected during updates.
+      run: gmx-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  # Pod template.
+  template:
+    metadata:
+      labels:
+        # Note: run=gmx-server should match a service config with a
+        # public IP and port so that it is publically accessible.
+        run: gmx-server
+    spec:
+      containers:
+      - image: measurementlab/github-maintenance-exporter:v0.1
+        name: gmx-server
+        args: ["--storage.state-file=/var/lib/gmx/gmx-state"]
+        env:
+        - name: GITHUB_WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: gmx-webhook-secret
+              key: gmx-webhook-secret
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9999
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "200m"
+        volumeMounts:
+        - mountPath: /var/lib/gmx
+          name: gmx-storage
+      # Disks created manually, can be named here explicitly using
+      # gcePersistentDisk instead of the persistentVolumeClaim.
+      volumes:
+      - name: gmx-storage
+        persistentVolumeClaim:
+          claimName: auto-gmx-disk0
