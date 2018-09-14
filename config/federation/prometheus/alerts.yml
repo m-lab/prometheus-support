@@ -143,7 +143,8 @@ ALERT ScraperCollectorMissingFromScraperSync
 # "up"/"aliveness" check.
 ALERT SwitchDownAtSite
   IF up{job="snmp-targets", site!~".*t$"} == 0
-        AND ON(site) probe_success{instance=~"s1.*", module="icmp"} == 0
+    AND ON(site) probe_success{instance=~"s1.*", module="icmp"} == 0
+      UNLESS ON(site) gmx_site_state{} == 1
   FOR 24h
   LABELS {
     severity = "ticket",
@@ -526,6 +527,7 @@ ALERT VdlimitMetricsMissingForNode
 # A collectd-mlab service has a problem and is down.
 ALERT CoreServices_CollectdMlabDown
   IF collectd_mlab_success{} == 0
+    UNLESS ON(machine) gmx_machine_state{} == 1
   FOR 10m
   LABELS {
     severity = "ticket",
