@@ -51,8 +51,8 @@ ALERT CoreServices_SidestreamIsNotRunning
   IF sum_over_time(up{service="sidestream"}[10m]) == 0
         AND ON(machine)
      sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.90
-        UNLESS ON(machine)
-     lame_duck_node == 1
+        UNLESS ON(machine) lame_duck_node == 1 OR
+               ON(machine) gmx_machine_state{} == 1
   FOR 10m
   LABELS {
     severity = "page",
@@ -85,8 +85,8 @@ ALERT ScraperMostRecentArchivedFileTimeIsTooOld
   IF (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (56 * 60 * 60)
         AND ON(machine)
      (time() - process_start_time_seconds{service="sidestream"}) > (30 * 60 * 60)
-        UNLESS ON(machine)
-     lame_duck_node == 1
+        UNLESS ON(machine) lame_duck_node == 1 OR
+               ON(machine) gmx_machine_state{} == 1
   FOR 2h
   LABELS {
     severity = "page",
@@ -404,8 +404,9 @@ ALERT BlackboxExporterIpv6DownOrMissing
 ALERT TooManyNdtServersDown
   IF count_scalar(
     probe_success{service="ndt_raw"} AND ON(machine)
-      up{service="nodeexporter"} == 1 UNLESS ON(machine)
-      lame_duck_node{} == 1
+      up{service="nodeexporter"} == 1
+        UNLESS ON(machine) lame_duck_node{} == 1 OR
+               ON(machine) gmx_machine_state{} == 1
     UNLESS ON(machine) (
       probe_success{service="ndt_raw"} == 1 AND ON(machine)
       probe_success{service="ndt_ssl"} == 1 AND ON(machine)
@@ -417,8 +418,9 @@ ALERT TooManyNdtServersDown
   /
   count(
     probe_success{service="ndt_raw"} AND ON(machine)
-    up{service="nodeexporter"} == 1 UNLESS ON(machine)
-    lame_duck_node{} == 1
+    up{service="nodeexporter"} == 1
+      UNLESS ON(machine) lame_duck_node{} == 1 OR
+             ON(machine) gmx_machine_state{} == 1
   ) > 0.25
   FOR 30m
   LABELS {
@@ -492,7 +494,8 @@ ALERT MobiperfMetricsMissing
 # Some number of nodes don't have a lame-duck status.
 ALERT LameDuckMetricMissingForNode
   IF up{service="nodeexporter"} == 1
-        UNLESS ON(machine) lame_duck_node{}
+        UNLESS ON(machine) lame_duck_node{} OR
+               ON(machine) gmx_machine_state{} == 1
   FOR 30m
   LABELS {
     severity = "ticket",
