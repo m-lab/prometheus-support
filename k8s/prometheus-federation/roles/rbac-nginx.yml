@@ -1,15 +1,9 @@
-# Create a namespace for nginx-ingress and its attendant services.
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: nginx-ingress
----
 # A ServiceAccount under which nginx-ingress runs.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nginx-ingress
-  namespace: nginx-ingress
+  namespace: default
 ---
 # ClusterRole for nginx-ingress, which creates an instance of nginx which acts 
 # as an Ingress that forwards different vhosts and paths to different Service 
@@ -73,7 +67,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: nginx-ingress-role
-  namespace: nginx-ingress
+  namespace: default
 rules:
 - apiGroups:
   - ""
@@ -115,7 +109,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: nginx-ingress-role-nisa-binding
-  namespace: nginx-ingress
+  namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -123,7 +117,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: nginx-ingress
-  namespace: nginx-ingress
+  namespace: default
 ---
 # Bind the nginx-ingress ServiceAccount to the ClusterRole above.
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -137,4 +131,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: nginx-ingress
-  namespace: nginx-ingress
+  namespace: default
