@@ -28,21 +28,17 @@ spec:
       serviceAccountName: nginx-ingress
       containers:
         - name: nginx
-          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.12.0
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.19.0
           args:
             - /nginx-ingress-controller
-            - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
-            - --configmap=$(POD_NAMESPACE)/nginx
-            - --publish-service=$(POD_NAMESPACE)/nginx-lb
+            - --default-backend-service=default-http-backend
+            - --configmap=nginx
+            - --publish-service=nginx-lb
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
           ports:
           - name: http
             containerPort: 80
