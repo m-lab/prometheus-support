@@ -10,14 +10,14 @@ data:
   server-name-hash-bucket-size: "256"
 kind: ConfigMap
 metadata:
-  namespace: nginx-ingress
+  namespace: default
   name: nginx
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: nginx
-  namespace: nginx-ingress
+  namespace: default
 spec:
   replicas: 1
   template:
@@ -67,7 +67,7 @@ metadata:
   name: default-http-backend
   labels:
     app: default-http-backend
-  namespace: nginx-ingress
+  namespace: default
 spec:
   replicas: 1
   template:
