@@ -13,7 +13,8 @@ groups:
       summary: Instance {{ $labels.instance }} down
   - alert: CoreServices_SidestreamIsNotRunning
     expr: sum_over_time(up{service="sidestream"}[10m]) == 0 and on(machine) sum_over_time(probe_success{service="ssh806"}[20m])
-      / 20 >= 0.9 unless on(machine) lame_duck_node == 1
+      / 20 >= 0.9 unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance
+      == 1)
     for: 10m
     labels:
       repo: dev-tracker
@@ -24,7 +25,8 @@ groups:
   - alert: ScraperMostRecentArchivedFileTimeIsTooOld
     expr: (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0))
       > (56 * 60 * 60) and on(machine) (time() - process_start_time_seconds{service="sidestream"})
-      > (30 * 60 * 60) unless on(machine) lame_duck_node == 1
+      > (30 * 60 * 60) unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance
+      == 1)
     for: 2h
     labels:
       repo: dev-tracker
@@ -53,7 +55,7 @@ groups:
       summary: ""
   - alert: SwitchDownAtSite
     expr: up{job="snmp-targets",site!~".*t$"} == 0 and on(site) probe_success{instance=~"s1.*",module="icmp"}
-      == 0
+      == 0 unless on(site) gmx_site_maintenance == 1
     for: 1d
     labels:
       repo: ops-tracker
@@ -186,7 +188,7 @@ groups:
       summary: Expected SNMP metrics are missing from Prometheus!
   - alert: SnmpScrapingDownAtSite
     expr: up{job="snmp-targets",site!~".*t$"} == 0 and on(site) probe_success{instance=~"s1.*",module="icmp"}
-      == 1
+      == 1 unless on(site) gmx_site_maintenance == 1
     for: 2h
     labels:
       repo: ops-tracker
@@ -249,11 +251,13 @@ groups:
       summary: The blackbox_exporter service is down or missing for IPv6 probes.
   - alert: TooManyNdtServersDown
     expr: scalar(count(probe_success{service="ndt_raw"} and on(machine) up{service="nodeexporter"}
-      == 1 unless on(machine) lame_duck_node == 1 unless on(machine) (probe_success{service="ndt_raw"}
-      == 1 and on(machine) probe_success{service="ndt_ssl"} == 1 and on(machine) script_success{service="ndt_e2e"}
-      == 1 and on(machine) vdlimit_used{experiment="ndt.iupui"} / vdlimit_total{experiment="ndt.iupui"}
+      == 1 unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
+      unless on(machine) (probe_success{service="ndt_raw"} == 1 and on(machine) probe_success{service="ndt_ssl"}
+      == 1 and on(machine) script_success{service="ndt_e2e"} == 1 and on(machine)
+      vdlimit_used{experiment="ndt.iupui"} / vdlimit_total{experiment="ndt.iupui"}
       < 0.95))) / count(probe_success{service="ndt_raw"} and on(machine) up{service="nodeexporter"}
-      == 1 unless on(machine) lame_duck_node == 1) > 0.25
+      == 1 unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1))
+      > 0.25
     for: 30m
     labels:
       repo: dev-tracker
@@ -324,7 +328,8 @@ groups:
         is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron.
       summary: Some vdlimit_* metrics are missing.
   - alert: CoreServices_CollectdMlabDown
-    expr: collectd_mlab_success == 0
+    expr: collectd_mlab_success == 0 unless on(machine) gmx_machine_maintenance ==
+      1
     for: 10m
     labels:
       repo: dev-tracker
