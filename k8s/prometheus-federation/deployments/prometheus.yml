@@ -116,6 +116,7 @@ spec:
         name: prometheus18
         # Note: Set retention time to 120 days. (default retention is 30d).
         args: ["-config.file=/etc/prometheus/prometheus18.yml",
+               "-web.listen-address=:9094",
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
                "-storage.local.target-heap-size={{PROMETHEUS_HEAP_SIZE}}",
