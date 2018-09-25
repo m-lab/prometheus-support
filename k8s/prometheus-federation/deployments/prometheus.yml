@@ -53,6 +53,7 @@ spec:
         name: prometheus
         # Note: Set retention time to 120 days. (default retention is 30d).
         args: ["--config.file=/etc/prometheus/prometheus.yml",
+               "--storage.tsdb.retention=2880h",
                "--web.enable-lifecycle",
                "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
                "--web.console.libraries=/usr/share/prometheus/console_libraries",
@@ -61,11 +62,11 @@ spec:
           - containerPort: 9090
         resources:
           requests:
-            memory: "6Gi"
-            cpu: "1000m"
+            memory: "{{PROMETHEUS_RAM}}"
+            cpu: "{{PROMETHEUS_CPU}}"
           limits:
-            memory: "6Gi"
-            cpu: "1000m"
+            memory: "{{PROMETHEUS_RAM}}"
+            cpu: "{{PROMETHEUS_CPU}}"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /data
@@ -119,7 +120,7 @@ spec:
                "-web.listen-address=:9094",
                "-storage.local.path=/prometheus",
                "-storage.local.retention=2880h",
-               "-storage.local.target-heap-size={{PROMETHEUS_HEAP_SIZE}}",
+               "-storage.local.target-heap-size=9000000000",
                "-storage.local.checkpoint-dirty-series-limit=1500000",
                "-storage.local.checkpoint-interval=10m0s",
                "-storage.local.index-cache-size.fingerprint-to-metric=262144000",
@@ -131,11 +132,11 @@ spec:
           - containerPort: 9094
         resources:
           requests:
-            memory: "{{PROMETHEUS_RAM}}"
-            cpu: "{{PROMETHEUS_CPU}}"
+            memory: "18Gi"
+            cpu: "6000m"
           limits:
-            memory: "{{PROMETHEUS_RAM}}"
-            cpu: "{{PROMETHEUS_CPU}}"
+            memory: "18Gi"
+            cpu: "6000m"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
