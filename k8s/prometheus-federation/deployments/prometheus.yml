@@ -53,6 +53,7 @@ spec:
         name: prometheus
         # Note: Set retention time to 120 days. (default retention is 30d).
         args: ["--config.file=/etc/prometheus/prometheus.yml",
+               "--storage.tsdb.path=/prometheus",
                "--storage.tsdb.retention=2880h",
                "--web.enable-lifecycle",
                "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
@@ -69,7 +70,7 @@ spec:
             cpu: "{{PROMETHEUS_CPU}}"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
-        - mountPath: /data
+        - mountPath: /prometheus
           name: prometheus-storage
           subPath: prometheus-data2
         # /legacy-targets should contain legacy target configuration files.
