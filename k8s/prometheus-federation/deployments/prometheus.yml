@@ -56,9 +56,7 @@ spec:
                "--storage.tsdb.path=/prometheus",
                "--storage.tsdb.retention=2880h",
                "--web.enable-lifecycle",
-               "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
-               "--web.console.libraries=/usr/share/prometheus/console_libraries",
-               "--web.console.templates=/usr/share/prometheus/consoles"]
+               "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net"]
         ports:
           - containerPort: 9090
         resources:
@@ -143,38 +141,6 @@ spec:
         - mountPath: /prometheus
           name: prometheus-storage
           subPath: prometheus-data
-        # /legacy-targets should contain legacy target configuration files.
-        - mountPath: /legacy-targets
-          name: prometheus-storage
-          subPath: legacy-targets
-        # /federation-targets should contain federation target config files.
-        - mountPath: /federation-targets
-          name: prometheus-storage
-          subPath: federation-targets
-        # /blackbox-targets should contain blackbox target config files.
-        - mountPath: /blackbox-targets
-          name: prometheus-storage
-          subPath: blackbox-targets
-        # /blackbox-targets-ipv6 should contain blackbox IPv6 target files.
-        - mountPath: /blackbox-targets-ipv6
-          name: prometheus-storage
-          subPath: blackbox-targets-ipv6
-        # /aeflex-targets should contain AppEngine target config files.
-        - mountPath: /aeflex-targets
-          name: prometheus-storage
-          subPath: aeflex-targets
-        # /snmp-targets should contain snmp_exporter target config files.
-        - mountPath: /snmp-targets
-          name: prometheus-storage
-          subPath: snmp-targets
-        # /script-targets should contain script_exporter target config files.
-        - mountPath: /script-targets
-          name: prometheus-storage
-          subPath: script-targets
-        # /slow-targets should contain slow target config files.
-        - mountPath: /slow-targets
-          name: prometheus-storage
-          subPath: slow-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
