@@ -195,27 +195,25 @@ scrape_configs:
         replacement: $1
         target_label: cluster
 
-      # Identify the deployment name of a pod or daemon set. This requires two
-      # steps. Two steps are necessary to handle both daemon set pod names and
-      # deployment pod names correctly. And, because, evidently, a combined
-      # regex doesn't work as expected.
+      # Identify the deployment name for replica set or daemon set.  Pods
+      # created by deployments or daemon sets are processed here. The
+      # following two rules recognize these two cases.
       #
-      # Step 1: unconditionally remove the last field of a pod or daemonset.
-      #   e.g. prometheus-server-3165440997-ppf9w
+      # 1: For DaemonSet, remove the last 5-digit pod name hash.
       #   e.g. node-exporter-ltxgz
-      - source_labels: [__meta_kubernetes_pod_name]
+      - source_labels: [__meta_kubernetes_pod_controller_kind, __meta_kubernetes_pod_name]
         action: replace
-        regex: (.*)(-[^-]{5})
+        regex: DaemonSet;(.*)(-[^-]{5})
         replacement: $1
         target_label: deployment
 
-      # Step 2: Remove the trailing pod_template_hash if present.
+      # 2: For ReplicaSet, remove the last 10-digit + 5-digit pod name hash.
       # In the case of a daemon set that does not have the trailing hash, the
       # regex will not match and deployment remains unchanged.
-      #   e.g. prometheus-server-3165fc0997
-      - source_labels: [deployment]
+      #   e.g. prometheus-server-3165440997-ppf9w
+      - source_labels: [__meta_kubernetes_pod_controller_kind, __meta_kubernetes_pod_name]
         action: replace
-        regex: (.*)(-[0-9a-f]+)
+        regex: ReplicaSet;(.*)(-[^-]+)(-[^-]{5})
         replacement: $1
         target_label: deployment
 
