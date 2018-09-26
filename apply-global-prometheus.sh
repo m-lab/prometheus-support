@@ -236,7 +236,7 @@ pushd config/federation/vms
         echo $file
         # Exit if the JSON is malformed.
         python -m json.tool ${file} > /dev/null || exit 1
-        kubectl cp $file ${pod}:/${file}
+        kubectl cp $file ${pod}:/${file} || true
       done
 popd
 
