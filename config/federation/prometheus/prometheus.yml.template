@@ -11,7 +11,6 @@ global:
   # external_labels:
   #   monitor: 'mlab1'
 
-
 # Load rules once and periodically evaluate them according to the global
 # 'evaluation_interval'.
 rule_files:
@@ -2525,3 +2524,6 @@ scrape_configs:
         regex: 11
         target_label: index
         replacement: utility.mlab
+
+remote_read:
+  - url: "http://localhost:9094/api/v1/read"

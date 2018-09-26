@@ -9,9 +9,9 @@ go:
 go_import_path: github.com/m-lab/prometheus-support
 
 install:
-  # Install promtool and pin it at the latest stable version, currently 1.8.0
+  # Install promtool and pin it at the latest stable version, currently 2.3.2
 - PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
-  PROMTOOL_VERSION=1.8.0;
+  PROMTOOL_VERSION=2.3.2;
   go get -d $PROMTOOL_URI;
   git -C $GOPATH/src/$PROMTOOL_URI checkout -b $PROMTOOL_VERSION tags/v$PROMTOOL_VERSION;
   go install $PROMTOOL_URI
@@ -21,11 +21,11 @@ install:
 
 script:
 # Run query "unit tests".
-- go test -v github.com/m-lab/prometheus-support/cmd/query_tester -args -log.level warn
+- go test -v github.com/m-lab/prometheus-support/cmd/query_tester -args
 
 # Use promtool to check current alerts and rules. This is only a syntax check.
-- promtool check-rules config/federation/prometheus/alerts.yml
-- promtool check-rules config/federation/prometheus/rules.yml
+- promtool check rules config/federation/prometheus/alerts.yml
+- promtool check rules config/federation/prometheus/rules.yml
 
 # TODO(soltesz): support check-config.
 # promtool check-config config/federation/prometheus/prometheus.yml
