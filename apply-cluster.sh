@@ -37,10 +37,10 @@ kubectl apply -f ${CFG}
 
 
 # Get the public IP for the prometheus service.
-PUBLIC_IP=$( kubectl get services \
-  -o jsonpath='{.items[?(@.metadata.name=="prometheus-public-service")].status.loadBalancer.ingress[0].ip}' )
-if [[ -n "${PUBLIC_IP}" ]] ; then
-  # Reload configurations. If the deployment configuration has changed then this
-  # request may fail because the container has already shutdown.
-  curl -X POST http://${PUBLIC_IP}:9090/-/reload || :
-fi
+#PUBLIC_IP=$( kubectl get services \
+#  -o jsonpath='{.items[?(@.metadata.name=="prometheus-public-service")].status.loadBalancer.ingress[0].ip}' )
+#if [[ -n "${PUBLIC_IP}" ]] ; then
+#  # Reload configurations. If the deployment configuration has changed then this
+#  # request may fail because the container has already shutdown.
+#  curl -X POST http://${PUBLIC_IP}:9090/-/reload || :
+#fi
