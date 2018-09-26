@@ -99,8 +99,10 @@ groups:
 # is not updated until the first successful upload. This is not possible before
 # a machine comes online.
   - alert: ScraperSyncPresentWithoutScraperCollector
-    expr: (scraper_lastcollectionattempt{container="scraper-sync"} unless on(machine,
-      experiment, rsync_module) up{container="scraper"})
+    expr: |
+      (scraper_lastcollectionattempt{container="scraper-sync"}
+        unless on(machine, experiment, rsync_module)
+          up{container="scraper"})
     for: 3h
     labels:
       repo: dev-tracker
@@ -109,7 +111,10 @@ groups:
       description: ""
       summary: ""
   - alert: ScraperCollectorMissingFromScraperSync
-    expr: (up{container="scraper"} unless on(machine, experiment, rsync_module) scraper_lastcollectionattempt{container="scraper-sync"})
+    expr: |
+      (up{container="scraper"}
+        unless on(machine, experiment, rsync_module)
+          scraper_lastcollectionattempt{container="scraper-sync"})
     for: 3h
     labels:
       repo: dev-tracker
@@ -124,8 +129,10 @@ groups:
 # failing for a certain period, then this is probaby a reasonable stand-in as an
 # "up"/"aliveness" check.
   - alert: SwitchDownAtSite
-    expr: up{job="snmp-targets",site!~".*t$"} == 0 and on(site) probe_success{instance=~"s1.*",module="icmp"}
-      == 0 unless on(site) gmx_site_maintenance == 1
+    expr: |
+      up{job="snmp-targets",site!~".*t$"} == 0
+        and on(site) probe_success{instance=~"s1.*",module="icmp"} == 0
+          unless on(site) gmx_site_maintenance == 1
     for: 1d
     labels:
       repo: ops-tracker
@@ -272,8 +279,10 @@ groups:
       summary: Expected SNMP metrics are missing from Prometheus!
 # Scraping SNMP metrics from a switch is failing.
   - alert: SnmpScrapingDownAtSite
-    expr: up{job="snmp-targets",site!~".*t$"} == 0 and on(site) probe_success{instance=~"s1.*",module="icmp"}
-      == 1 unless on(site) gmx_site_maintenance == 1
+    expr: |
+      up{job="snmp-targets",site!~".*t$"} == 0
+        and on(site) probe_success{instance=~"s1.*",module="icmp"} == 1
+        unless on(site) gmx_site_maintenance == 1
     for: 2h
     labels:
       repo: ops-tracker
@@ -345,14 +354,27 @@ groups:
 # More than a certain percentage of NDT servers meet the criteria for being
 # down.
   - alert: TooManyNdtServersDown
-    expr: scalar(count(probe_success{service="ndt_raw"} and on(machine) up{service="nodeexporter"}
-      == 1 unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
-      unless on(machine) (probe_success{service="ndt_raw"} == 1 and on(machine) probe_success{service="ndt_ssl"}
-      == 1 and on(machine) script_success{service="ndt_e2e"} == 1 and on(machine)
-      vdlimit_used{experiment="ndt.iupui"} / vdlimit_total{experiment="ndt.iupui"}
-      < 0.95))) / count(probe_success{service="ndt_raw"} and on(machine) up{service="nodeexporter"}
-      == 1 unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1))
-      > 0.25
+    expr: |
+      scalar(
+        count(
+          probe_success{service="ndt_raw"} and on(machine)
+            up{service="nodeexporter"} == 1
+              unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
+          unless on(machine) (
+            probe_success{service="ndt_raw"} == 1 and on(machine)
+            probe_success{service="ndt_ssl"} == 1 and on(machine)
+            script_success{service="ndt_e2e"} == 1 and on(machine)
+            vdlimit_used{experiment="ndt.iupui"} /
+              vdlimit_total{experiment="ndt.iupui"} < 0.95
+          )
+        )
+      )
+      /
+      count(
+        probe_success{service="ndt_raw"} and on(machine)
+        up{service="nodeexporter"} == 1
+          unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
+      ) > 0.25
     for: 30m
     labels:
       repo: dev-tracker
@@ -369,9 +391,13 @@ groups:
 # alerting for that metric is already handled by the
 # ScriptExporterMissingMetrics alert.
   - alert: NdtMetricsMissing
-    expr: absent(probe_success{service="ndt_raw"}) or absent(probe_success{service="ndt_raw_ipv6"})
-      or absent(probe_success{service="ndt_ssl"}) or absent(probe_success{service="ndt_ssl_ipv6"})
-      or absent(vdlimit_used{experiment="ndt.iupui"}) or absent(vdlimit_total{experiment="ndt.iupui"})
+    expr: |
+      absent(probe_success{service="ndt_raw"})
+        or absent(probe_success{service="ndt_raw_ipv6"})
+        or absent(probe_success{service="ndt_ssl"})
+        or absent(probe_success{service="ndt_ssl_ipv6"})
+        or absent(vdlimit_used{experiment="ndt.iupui"})
+        or absent(vdlimit_total{experiment="ndt.iupui"})
     for: 30m
     labels:
       repo: dev-tracker
@@ -386,7 +412,9 @@ groups:
 # mlab-ns relies on to determine whether Neubot is up and running, so we need to
 # make sure that the metrics are always present.
   - alert: NeubotMetricsMissing
-    expr: absent(probe_success{service="neubot"}) or absent(probe_success{service="neubot_ipv6"})
+    expr: |
+      absent(probe_success{service="neubot"})
+        or absent(probe_success{service="neubot_ipv6"})
     for: 30m
     labels:
       repo: dev-tracker
@@ -401,7 +429,9 @@ groups:
 # metrics that mlab-ns relies on to determine whether Mobiperf is up and
 # running, so we need to make sure that the metrics are always present.
   - alert: MobiperfMetricsMissing
-    expr: absent(probe_success{service="mobiperf"}) or absent(probe_success{service="mobiperf_ipv6"})
+    expr: |
+      absent(probe_success{service="mobiperf"})
+        or absent(probe_success{service="mobiperf_ipv6"})
     for: 30m
     labels:
       repo: dev-tracker
@@ -414,7 +444,9 @@ groups:
       summary: A metric for a Mobiperf service is missing.
 # Some number of nodes don't have a lame-duck status.
   - alert: LameDuckMetricMissingForNode
-    expr: up{service="nodeexporter"} == 1 unless on(machine) lame_duck_node
+    expr: |
+      up{service="nodeexporter"} == 1
+        unless on(machine) lame_duck_node
     for: 30m
     labels:
       repo: dev-tracker
@@ -428,7 +460,9 @@ groups:
 # There are other vdlimit_* metrics, but we care especially about these because
 # mlab-ns uses them to query Prometheus for node status.
   - alert: VdlimitMetricsMissingForNode
-    expr: up{service="nodeexporter"} == 1 unless on(machine) (vdlimit_used and vdlimit_total)
+    expr: |
+      up{service="nodeexporter"} == 1
+        unless on(machine) (vdlimit_used and vdlimit_total)
     for: 30m
     labels:
       repo: ops-tracker
@@ -440,8 +474,9 @@ groups:
       summary: Some vdlimit_* metrics are missing.
 # A collectd-mlab service has a problem and is down.
   - alert: CoreServices_CollectdMlabDown
-    expr: collectd_mlab_success == 0 unless on(machine) gmx_machine_maintenance ==
-      1
+    expr: |
+      collectd_mlab_success == 0
+        unless on(machine) gmx_machine_maintenance == 1
     for: 10m
     labels:
       repo: dev-tracker
@@ -454,7 +489,9 @@ groups:
       summary: A collectd-mlab service is down.
 # A collectd-mlab service metric is missing on some node.
   - alert: CoreServices_CollectdMlabMissing
-    expr: up{service="nodeexporter"} == 1 unless on(machine) collectd_mlab_success
+    expr: |
+      up{service="nodeexporter"} == 1
+        unless on(machine) collectd_mlab_success
     for: 10m
     labels:
       repo: dev-tracker
@@ -497,20 +534,22 @@ groups:
 # For each pipeline service, the quantile computation then aggregates across the 6 vectors in
 # the delay dimension.
   - alert: ParserDailyVolumeTooLow
-    expr: candidate_service:etl_test_count:increase24h < (0.7 * quantile by(service)
-      (0.5, label_replace(candidate_service:etl_test_count:increase24h offset 1d,
-      "delay", "1d", "", ".*") or label_replace(candidate_service:etl_test_count:increase24h
-      offset 3d, "delay", "3d", "", ".*") or label_replace(candidate_service:etl_test_count:increase24h
-      offset 5d, "delay", "5d", "", ".*") or label_replace(candidate_service:etl_test_count:increase24h
-      offset 1w, "delay", "7d", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c1", "", ".*"), "service", "etl-disco-parser", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c2", "", ".*"), "service", "etl-disco-parser", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c1", "", ".*"), "service", "etl-ndt-parser", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c2", "", ".*"), "service", "etl-ndt-parser", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c1", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c2", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c1", "", ".*"), "service", "etl-traceroute-parser", "", ".*") or label_replace(label_replace(vector(0),
-      "delay", "c2", "", ".*"), "service", "etl-traceroute-parser", "", ".*")))
+    expr: |
+      candidate_service:etl_test_count:increase24h
+        < (0.7 * quantile by(service)(0.5,
+          label_replace(candidate_service:etl_test_count:increase24h offset 1d, "delay", "1d", "", ".*") or
+          label_replace(candidate_service:etl_test_count:increase24h offset 3d, "delay", "3d", "", ".*") or
+          label_replace(candidate_service:etl_test_count:increase24h offset 5d, "delay", "5d", "", ".*") or
+            label_replace(candidate_service:etl_test_count:increase24h offset 1w, "delay", "7d", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-disco-parser", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-disco-parser", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-ndt-parser", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-ndt-parser", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-traceroute-parser", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-traceroute-parser", "", ".*")
+            ))
     for: 2h
     labels:
       repo: dev-tracker
@@ -596,8 +635,7 @@ groups:
 # tests appears to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
   - alert: NDT_AnnotationRatioTooLow
-    expr: bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99 or absent(bq_ndt_annotation_success
-      / bq_ndt_annotation_total)
+    expr: bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99 or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker

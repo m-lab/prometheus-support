@@ -64,8 +64,7 @@ groups:
 # Per-machine maximum ratio of time spent performing I/O on all devices.
 # Units: none
   - record: machine:node_disk_io_time_ms:max_ratio2m
-    expr: max without(device) (irate(node_disk_io_time_ms{service="nodeexporter"}[4m]))
-      / 1000
+    expr: max without(device) (irate(node_disk_io_time_ms{service="nodeexporter"}[4m])) / 1000
 # NDT vserver disk quota utilization, 12 hour estimate. Base 12h estimate on a
 # time range at least 25% of the time forward.
 # Units: KB
