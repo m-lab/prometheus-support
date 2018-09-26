@@ -55,27 +55,17 @@ spec:
       containers:
       # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
       # stable version.
-      - image: prom/prometheus:v1.8.2
+      - image: prom/prometheus:v2.4.2
         # Note: the container name appears to be ignored and the actual pod name
         # is derived from the Deployment.metadata.name. However, removing this
         # value results in a configuration error.
         name: prometheus
         # Note: Set retention time to 120 days. (default retention is 30d).
-        args: ["-config.file=/etc/prometheus/prometheus.yml",
-               "-storage.local.path=/prometheus",
-               "-storage.local.retention=2880h",
-               "-storage.local.target-heap-size={{PROMETHEUS_HEAP_SIZE}}",
-               "-storage.local.checkpoint-dirty-series-limit=1500000",
-               "-storage.local.checkpoint-interval=10m0s",
-               "-storage.local.index-cache-size.fingerprint-to-metric=262144000",
-               "-storage.local.index-cache-size.fingerprint-to-timerange=262144000",
-               "-storage.local.index-cache-size.label-name-to-label-values=262144000",
-               "-storage.local.index-cache-size.label-pair-to-fingerprints=262144000",
-               "-storage.local.num-fingerprint-mutexes=50000",
-               "-alertmanager.url=http://alertmanager-service.default.svc.cluster.local:9093",
-               "-web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
-               "-web.console.libraries=/usr/share/prometheus/console_libraries",
-               "-web.console.templates=/usr/share/prometheus/consoles"]
+        args: ["--config.file=/etc/prometheus/prometheus.yml",
+               "--storage.tsdb.path=/prometheus",
+               "--storage.tsdb.retention=2880h",
+               "--web.enable-lifecycle",
+               "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net"]
         ports:
           - containerPort: 9090
         resources:
@@ -89,7 +79,7 @@ spec:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
           name: prometheus-storage
-          subPath: prometheus-data
+          subPath: prometheus-data2
         # /legacy-targets should contain legacy target configuration files.
         - mountPath: /legacy-targets
           name: prometheus-storage
@@ -122,6 +112,44 @@ spec:
         - mountPath: /slow-targets
           name: prometheus-storage
           subPath: slow-targets
+        # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
+        - mountPath: /etc/prometheus
+          name: prometheus-config
+
+      # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
+      # stable version.
+      - image: prom/prometheus:v1.8.2
+        # Note: the container name appears to be ignored and the actual pod name
+        # is derived from the Deployment.metadata.name. However, removing this
+        # value results in a configuration error.
+        name: prometheus18
+        # Note: Set retention time to 120 days. (default retention is 30d).
+        args: ["-config.file=/etc/prometheus/prometheus18.yml",
+               "-web.listen-address=:9094",
+               "-storage.local.path=/prometheus",
+               "-storage.local.retention=2880h",
+               "-storage.local.target-heap-size=9000000000",
+               "-storage.local.checkpoint-dirty-series-limit=1500000",
+               "-storage.local.checkpoint-interval=10m0s",
+               "-storage.local.index-cache-size.fingerprint-to-metric=262144000",
+               "-storage.local.index-cache-size.fingerprint-to-timerange=262144000",
+               "-storage.local.index-cache-size.label-name-to-label-values=262144000",
+               "-storage.local.index-cache-size.label-pair-to-fingerprints=262144000",
+               "-storage.local.num-fingerprint-mutexes=50000"]
+        ports:
+          - containerPort: 9094
+        resources:
+          requests:
+            memory: "18Gi"
+            cpu: "6000m"
+          limits:
+            memory: "18Gi"
+            cpu: "6000m"
+        volumeMounts:
+        # /prometheus stores all metric data. Declared as VOLUME in base image.
+        - mountPath: /prometheus
+          name: prometheus-storage
+          subPath: prometheus-data
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
