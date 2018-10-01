@@ -459,10 +459,10 @@ scrape_configs:
   # Probes the services running behind the nginx load balancer. This makes sure
   # that the services are running, as well as the load balancer itself.
   - job_name: 'nginx-loadbalancer-services'
-    metrics-path: /probe
+    metrics_path: /probe
     params:
       module: [http_2xx]
-    static-configs:
+    static_configs:
       targets:
         - https://{{HTTP_AUTH}}@alertmanager.{{PROJECT}}.measurementlab.net
         - https://{{HTTP_AUTH}}@grafana.{{PROJECT}}.measurementlab.net
