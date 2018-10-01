@@ -483,7 +483,9 @@ scrape_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
+        regex: .+@(.+)
         target_label: instance
+        replacement: ${1}
       - source_labels: [__param_module]
         target_label: module
       # Since __address__ is the target that prometheus will contact,
