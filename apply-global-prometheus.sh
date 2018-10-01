@@ -61,6 +61,7 @@ export AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
 # Evaluate the Prometheus configuration template.
 sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
+    -e 's|{{HTTP_AUTH}}|'${AUTH}'|g' \
     config/federation/prometheus/prometheus.yml.template > \
     config/federation/prometheus/prometheus.yml
 
