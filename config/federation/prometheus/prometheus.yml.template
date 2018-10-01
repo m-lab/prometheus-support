@@ -468,22 +468,22 @@ scrape_configs:
         replacement: blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:${1}
 
 
-  # Probes the services running behind the nginx load balancer. This makes sure
-  # that the services are running, as well as the load balancer itself.
-  - job_name: 'nginx-loadbalancer-services'
+  # Probes the nginx load balancer to be sure that it's listening on port 443.
+  # There are a number of services running behind the load balancer, but below
+  # we've arbitrarily chosen one particular ones, since the names all point to
+  # the load balancer's IP.
+  - job_name: 'nginx-loadbalancer'
     metrics_path: /probe
     params:
-      module: [http_2xx]
+      module: [tcp_v4_online]
     static_configs:
       - targets:
-        - https://{{HTTP_AUTH}}@alertmanager.{{PROJECT}}.measurementlab.net
-        - https://{{HTTP_AUTH}}@grafana.{{PROJECT}}.measurementlab.net
-        - https://{{HTTP_AUTH}}@prometheus.{{PROJECT}}.measurementlab.net
+        - prometheus.{{PROJECT}}.measurementlab.net:443
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
-        regex: .+@(.+)
+        regex: (.+):443
         target_label: instance
         replacement: ${1}
       - source_labels: [__param_module]
