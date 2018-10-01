@@ -456,6 +456,31 @@ scrape_configs:
         replacement: blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:${1}
 
 
+  # Probes the services running behind the nginx load balancer. This makes sure
+  # that the services are running, as well as the load balancer itself.
+  - job_name: 'nginx-loadbalancer-services'
+    metrics-path: /probe
+    params:
+      module: [http_2xx]
+    static-configs:
+      targets:
+        - https://{{HTTP_AUTH}}@alertmanager.{{PROJECT}}.measurementlab.net
+        - https://{{HTTP_AUTH}}@grafana.{{PROJECT}}.measurementlab.net
+        - https://{{HTTP_AUTH}}@prometheus.{{PROJECT}}.measurementlab.net
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - source_labels: [__param_module]
+        target_label: module
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the blackbox exporter
+      # address.
+      - target_label: __address__
+        replacement: blackbox-service.default.svc.cluster.local:9115
+
+
   # Scrape config for the snmp_exporter. There is one snmp_exporter service
   # running in a Docker container on a GCE VM in each GCP project.
   #
