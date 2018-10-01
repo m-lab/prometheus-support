@@ -17,6 +17,18 @@ rule_files:
   - /etc/prometheus/rules.yml
   - /etc/prometheus/alerts.yml
 
+# Alerting configurations.
+#
+# Prometheus v2.0 and above support autodiscovery of alertmanager instances,
+# but we're statically configuring it here to be on the safe side. We could
+# add a more complex autodiscovery configuration here in the future if
+# needed.
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets:
+        - alertmanager-service.default.svc.cluster.local:9093
+
 # Scrape configurations.
 #
 # Each job name defines monitoring targets (or a method for discovering
