@@ -502,6 +502,16 @@ groups:
         repository to configure collectd-mlab. Login to the node and run the check
         script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py).
       summary: A collectd-mlab service metric is missing.
+# The nginx ingress load balancer is down.
+  - alert: NginxLoadBalancerDown
+    expr: up{service="nodeexporter"} == 0
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      hints: Did the nginx k8s deployment or nginx-lb k8s service fail?
+      summary: The nginx ingress load balancer is down.
 # TODO:
 #   Replace this with two other alerts:
 #    1.  Alert if hourly test volume on servers drops relative to same hour on recent days.
