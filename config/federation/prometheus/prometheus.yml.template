@@ -482,6 +482,8 @@ scrape_configs:
         - https://gmx.{{PROJECT}}.measurementlab.net
         - https://grafana.{{PROJECT}}.measurementlab.net
         - https://prometheus.{{PROJECT}}.measurementlab.net
+        labels:
+        - module: nginx_lb_svcs_online
     relabel_configs:
       - source_labels: [__address__]
         regex: (.*)
@@ -490,6 +492,10 @@ scrape_configs:
       - source_labels: [module]
         regex: (.*)
         target_label: __param_module
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: https://(.*)\..*
+        target_label: service
         replacement: ${1}
       - source_labels: [__param_target]
         regex: (.*)
