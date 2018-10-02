@@ -233,7 +233,8 @@ spec:
       # stable version.
       - image: jimmidyson/configmap-reload:v0.2.2
         name: configmap-reload
-        args: ["-webhook-url", "$(PROM_RELOAD_URL)", "-volume-dir", "/prometheus-config"]
+        args: ["-webhook-url", "http://prometheus-public-service.default.svc.cluster.local:9090/-/reload",
+               "-volume-dir", "/prometheus-config"]
         env:
         - name: PROM_RELOAD_URL
           valueFrom:
