@@ -65,8 +65,8 @@ sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     config/federation/prometheus/prometheus.yml
 
 # Evaluate the Prometheus blackbox_exporter configuration template.
-sed -e 's|{{PROM_AUTH_USER}}|'${PROM_AUTH_USER}'|g' \
-    -e 's|{{PROM_AUTH_PATH}}|'${PROM_AUTH_PASS}'|g' \
+sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+    -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
     config/federation/blackbox/config.yml.template > \
     config/federation/blackbox/config.yml
 
