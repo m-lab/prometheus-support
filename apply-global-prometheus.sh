@@ -74,7 +74,7 @@ sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
 ## Apply the above configmap for Blackbox exporter.
 kubectl create configmap blackbox-config \
     --from-file=config/federation/blackbox \
-    --dry-run -o json | kubectl apply -f -
+    --dry-run -o json | kubectl replace -f -
 
 ## Grafana
 kubectl create configmap grafana-config \
