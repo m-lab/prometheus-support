@@ -504,7 +504,7 @@ groups:
       summary: A collectd-mlab service metric is missing.
 # The nginx ingress load balancer is down.
   - alert: NginxLoadBalancerDown
-    expr: up{service="nodeexporter"} == 0
+    expr: up{job="nginx-loadbalancer-services"} == 0
     for: 30m
     labels:
       repo: ops-tracker
