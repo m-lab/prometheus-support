@@ -478,10 +478,10 @@ scrape_configs:
       module: [nginx_lb_svcs_online]
     static_configs:
       - targets:
-        - https://alertmanager.{{PROJECT}}.measurementlab.net:443
-        - https://gmx.{{PROJECT}}.measurementlab.net:443
-        - https://grafana.{{PROJECT}}.measurementlab.net:443
-        - https://prometheus.{{PROJECT}}.measurementlab.net:443
+        - https://alertmanager.{{PROJECT}}.measurementlab.net:443/#/alerts
+        - https://gmx.{{PROJECT}}.measurementlab.net:443/
+        - https://grafana.{{PROJECT}}.measurementlab.net:443/
+        - https://prometheus.{{PROJECT}}.measurementlab.net:443/graph
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
