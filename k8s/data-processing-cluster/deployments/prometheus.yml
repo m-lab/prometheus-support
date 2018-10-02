@@ -55,6 +55,7 @@ spec:
         # Note: Set retention time to 60 days. (default retention is 15d).
         args: ["--config.file=/etc/prometheus/prometheus.yml",
                "--storage.tsdb.retention=1440h",
+               "--storage.tsdb.path=/data",
                "--web.enable-lifecycle"]
         ports:
           - containerPort: 9090
