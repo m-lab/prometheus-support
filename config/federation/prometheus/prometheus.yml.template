@@ -472,13 +472,16 @@ scrape_configs:
   # There are a number of services running behind the load balancer, but below
   # we've arbitrarily chosen one particular ones, since the names all point to
   # the load balancer's IP.
-  - job_name: 'nginx-loadbalancer'
+  - job_name: 'nginx-loadbalancer-services'
     metrics_path: /probe
     params:
-      module: [tcp_v4_online]
+      module: [nginx_lb_svcs_online]
     static_configs:
       - targets:
-        - prometheus.{{PROJECT}}.measurementlab.net:443
+        - https://alertmanager.{{PROJECT}}.measurementlab.net:443
+        - https://gmx.{{PROJECT}}.measurementlab.net:443
+        - https://grafana.{{PROJECT}}.measurementlab.net:443
+        - https://prometheus.{{PROJECT}}.measurementlab.net:443
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

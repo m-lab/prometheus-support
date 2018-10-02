@@ -125,3 +125,15 @@ modules:
     timeout: 9s
     http:
       method: "GET"
+
+  # target=<http[s]://host:port>
+  #
+  # Works with http or https targets.
+  nginx_lb_svcs_online:
+    prober: http
+    timeout: 9s
+    http:
+      method: "GET"
+      basic_auth:
+        username: {{PROM_AUTH_USER}}
+        password: {{PROM_AUTH_PASS}}
