@@ -26,6 +26,14 @@ spec:
         # within the prometheus-server pod.
         prometheus.io/scrape: 'true'
     spec:
+      # TODO: remove this directive after deployment to prod.
+      initContainers:
+      - name: reset-perms
+        image: busybox
+        command: ['chown', '-R', '65534:65534', '/work-dir/prometheus-data2', '/work-dir/legacy-targets']
+        volumeMounts:
+        - mountPath: /work-dir
+          name: prometheus-storage
       # References a service account with RBAC permissions for accessing node
       # metrics. This is required for k8s version 1.6+.
       serviceAccountName: prometheus
