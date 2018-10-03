@@ -39,11 +39,6 @@ bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
 
 # Config maps and Secrets
 
-## Blackbox exporter.
-kubectl create configmap blackbox-config \
-    --from-file=config/federation/blackbox \
-    --dry-run -o json | kubectl apply -f -
-
 ## Credentials for accessing Stackdriver monitoring for mlab-ns.
 ### Write key to a file to prevent printing key in travis logs.
 ( set +x; echo "${SERVICE_ACCOUNT_mlab_ns}" > /tmp/mlabns.json )
@@ -64,13 +59,24 @@ sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     config/federation/prometheus/prometheus.yml.template > \
     config/federation/prometheus/prometheus.yml
 
-# Apply the above configmap.
+# Apply the above configmap for Prometheus.
 kubectl create configmap prometheus-federation-config \
     --from-literal=gcloud-project=${PROJECT} \
     --from-file=config/federation/prometheus \
     --dry-run -o json | kubectl replace -f -
 
-## Grafana
+# Evaluate the Prometheus blackbox_exporter configuration template.
+sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+    -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
+    config/federation/blackbox/config.yml.template > \
+    config/federation/blackbox/config.yml
+
+## Apply the above configmap for Blackbox exporter.
+kubectl create configmap blackbox-config \
+    --from-file=config/federation/blackbox \
+    --dry-run -o json | kubectl replace -f -
+
+## Grafana.
 kubectl create configmap grafana-config \
     --from-file=config/federation/grafana \
     --dry-run -o json | kubectl apply -f -

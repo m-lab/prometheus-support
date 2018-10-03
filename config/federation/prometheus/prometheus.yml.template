@@ -468,6 +468,52 @@ scrape_configs:
         replacement: blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:${1}
 
 
+  # Probes the backend services being proxied by nginx.
+  - job_name: 'nginx-proxied-services'
+    metrics_path: /probe
+    params:
+      module: [nginx_proxy_svcs_online]
+    static_configs:
+      - targets:
+        - https://alertmanager.{{PROJECT}}.measurementlab.net
+        - https://gmx.{{PROJECT}}.measurementlab.net
+        - https://grafana.{{PROJECT}}.measurementlab.net/login
+        - https://prometheus.{{PROJECT}}.measurementlab.net/graph
+        labels:
+          module: nginx_proxy_svcs_online
+    relabel_configs:
+      # The default __address__ value is a target host from the config file.
+      # Here, we set (i.e. "replace") a request parameter "target" equal to the
+      # host value.
+      - source_labels: [__address__]
+        regex: (.*)
+        target_label: __param_target
+        replacement: ${1}
+      # Use the "module" label defined in the input file as the module name for
+      # the blackbox exporter request.
+      - source_labels: [module]
+        regex: (.*)
+        target_label: __param_module
+        replacement: ${1}
+      # Isolate the hostname from the URL, which will give us a good
+      # representation of the service.
+      - source_labels: [__param_target]
+        regex: https://([a-z]+).*
+        target_label: service
+        replacement: ${1}
+      # Use the target parameter defined above and use it to define the
+      # "instance" label.
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the blackbox exporter
+      # address.
+      - target_label: __address__
+        replacement: blackbox-service.default.svc.cluster.local:9115
+
+
   # Scrape config for the snmp_exporter. There is one snmp_exporter service
   # running in a Docker container on a GCE VM in each GCP project.
   #
