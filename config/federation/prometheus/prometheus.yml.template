@@ -468,11 +468,11 @@ scrape_configs:
         replacement: blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:${1}
 
 
-  # Probes the backend services being loadbalanced by nginx.
-  - job_name: 'nginx-loadbalanced-services'
+  # Probes the backend services being proxied by nginx.
+  - job_name: 'nginx-proxied-services'
     metrics_path: /probe
     params:
-      module: [nginx_lb_svcs_online]
+      module: [nginx_proxy_svcs_online]
     static_configs:
       - targets:
         - https://alertmanager.{{PROJECT}}.measurementlab.net
@@ -480,20 +480,29 @@ scrape_configs:
         - https://grafana.{{PROJECT}}.measurementlab.net/login
         - https://prometheus.{{PROJECT}}.measurementlab.net/graph
         labels:
-          module: nginx_lb_svcs_online
+          module: nginx_proxy_svcs_online
     relabel_configs:
+      # The default __address__ value is a target host from the config file.
+      # Here, we set (i.e. "replace") a request parameter "target" equal to the
+      # host value.
       - source_labels: [__address__]
         regex: (.*)
         target_label: __param_target
         replacement: ${1}
+      # Use the "module" label defined in the input file as the module name for
+      # the blackbox exporter request.
       - source_labels: [module]
         regex: (.*)
         target_label: __param_module
         replacement: ${1}
+      # Isolate the hostname from the URL, which will give us an good
+      # representation of the service.
       - source_labels: [__param_target]
         regex: https://([a-z]+).*
         target_label: service
         replacement: ${1}
+      # Use the target parameter defined above and use it to define the
+      # "instance" label.
       - source_labels: [__param_target]
         regex: (.*)
         target_label: instance

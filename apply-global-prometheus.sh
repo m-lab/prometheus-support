@@ -59,7 +59,7 @@ sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     config/federation/prometheus/prometheus.yml.template > \
     config/federation/prometheus/prometheus.yml
 
-# Apply the above configmap for Prometheus
+# Apply the above configmap for Prometheus.
 kubectl create configmap prometheus-federation-config \
     --from-literal=gcloud-project=${PROJECT} \
     --from-file=config/federation/prometheus \
@@ -76,7 +76,7 @@ kubectl create configmap blackbox-config \
     --from-file=config/federation/blackbox \
     --dry-run -o json | kubectl replace -f -
 
-## Grafana
+## Grafana.
 kubectl create configmap grafana-config \
     --from-file=config/federation/grafana \
     --dry-run -o json | kubectl apply -f -
