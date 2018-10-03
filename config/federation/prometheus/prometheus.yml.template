@@ -468,11 +468,8 @@ scrape_configs:
         replacement: blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:${1}
 
 
-  # Probes the nginx load balancer to be sure that it's listening on port 443.
-  # There are a number of services running behind the load balancer, but below
-  # we've arbitrarily chosen one particular ones, since the names all point to
-  # the load balancer's IP.
-  - job_name: 'nginx-loadbalancer-services'
+  # Probes the backend services being loadbalanced by nginx.
+  - job_name: 'nginx-loadbalanced-services'
     metrics_path: /probe
     params:
       module: [nginx_lb_svcs_online]
@@ -480,8 +477,8 @@ scrape_configs:
       - targets:
         - https://alertmanager.{{PROJECT}}.measurementlab.net
         - https://gmx.{{PROJECT}}.measurementlab.net
-        - https://grafana.{{PROJECT}}.measurementlab.net
-        - https://prometheus.{{PROJECT}}.measurementlab.net
+        - https://grafana.{{PROJECT}}.measurementlab.net/login
+        - https://prometheus.{{PROJECT}}.measurementlab.net/graph
         labels:
           module: nginx_lb_svcs_online
     relabel_configs:
