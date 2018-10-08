@@ -30,7 +30,8 @@ spec:
       initContainers:
       - name: reset-perms
         image: busybox
-        command: ['chown', '-R', '65534:65534', '/work-dir']
+        command: ['/bin/sh']
+        args: ['-c', 'chown -R 65534:65534 /work-dir/*-targets*']
         volumeMounts:
         - mountPath: /work-dir
           name: prometheus-storage
@@ -233,7 +234,8 @@ spec:
       # stable version.
       - image: jimmidyson/configmap-reload:v0.2.2
         name: configmap-reload
-        args: ["-webhook-url", "$(PROM_RELOAD_URL)", "-volume-dir", "/prometheus-config"]
+        args: ["-webhook-url", "http://prometheus-service.default.svc.cluster.local:9090/-/reload",
+               "-volume-dir", "/prometheus-config"]
         env:
         - name: PROM_RELOAD_URL
           valueFrom:
