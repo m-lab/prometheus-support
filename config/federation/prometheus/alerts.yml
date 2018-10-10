@@ -225,7 +225,8 @@ groups:
     annotations:
       hints: ""
       summary: ""
-# DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in at least 21 hours, meaning that at least the last two download attempts have failed.
+# DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in
+# at least 21 hours, meaning that at least the last two download attempts have failed.
   - alert: DownloaderIsFailingToUpdate
     expr: time() - downloader_last_success_time_seconds > (21 * 60 * 60)
     for: 5m
@@ -233,7 +234,8 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      hints: Check for errors with the downloader service on grafana with the downloader_Error_Count
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/ZGuYht1mk/
+      hints: Check for errors with the downloader service on grafana with the downloader_error_count
         metric, or check the stackdriver logs for the downloader cluster.
       summary: Neither of the last two attempts to download the maxmind/routeviews
         feeds were successful.
