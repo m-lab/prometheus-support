@@ -2,7 +2,7 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:84",
+        "$$hashKey": "object:87",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -17,10 +17,9 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 21,
-  "iteration": 1539209671563,
+  "iteration": 1539211263063,
   "links": [
     {
-      "$$hashKey": "object:359",
       "icon": "external link",
       "tags": [],
       "targetBlank": true,
@@ -29,7 +28,6 @@
       "url": "https://etl-batch-parser-dot-mlab-oti.appspot.com/"
     },
     {
-      "$$hashKey": "object:360",
       "asDropdown": true,
       "icon": "external link",
       "tags": [],
@@ -39,16 +37,14 @@
       "url": "https://pantheon.corp.google.com/appengine?project=mlab-oti&organizationId=433637338589&serviceId=etl-batch-parser&duration=PT1H"
     },
     {
-      "$$hashKey": "object:361",
       "icon": "external link",
       "tags": [],
       "targetBlank": true,
       "title": "Pipeline Logs",
       "type": "link",
-      "url": "https://pantheon.corp.google.com/logs/viewer?project=mlab-oti&interval=PT6H&resource=gae_app%2Fmodule_id%2Fetl-ndt-batch-parser&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fnginx.request&advancedFilter=resource.type%3D%22gae_app%22%0Aresource.labels.module_id%3D%22etl-batch-parser%22%0A-%22task.go:128:%22%0A-%22etl_worker.go:153:%22%0A-%22etl_worker.go:124:%22%0A-%22ndt.go:330:%22%0AhttpRequest.status!%3D200"
+      "url": "https://pantheon.corp.google.com/logs/viewer?project=mlab-oti&interval=PT6H&resource=gae_app%2Fmodule_id%2Fetl-batch-parser&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fnginx.request&advancedFilter=resource.type%3D%22gae_app%22%0Aresource.labels.module_id%3D%22etl-batch-parser%22%0A-%22task.go:128:%22%0A-%22etl_worker.go:153:%22%0A-%22etl_worker.go:124:%22%0A-%22ndt.go:330:%22%0AhttpRequest.status!%3D200"
     },
     {
-      "$$hashKey": "object:362",
       "icon": "external link",
       "tags": [],
       "targetBlank": true,
@@ -103,9 +99,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(phase, status, retries)(increase(etl_gcs_retry_count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "$$hashKey": "object:382",
+          "expr": "sum by(phase, status, retries)(increase(etl_gcs_retry_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "{{phase}} : {{status}} : {{retries}}",
           "refId": "A",
           "step": 20
@@ -185,7 +183,7 @@
         {
           "title": "Parser Logs",
           "type": "absolute",
-          "url": "https://pantheon.corp.google.com/logs/viewer?project=mlab-oti&organizationId=433637338589&minLogLevel=0&expandAll=false&timestamp=2017-11-04T12:17:52.000000000Z&dateRangeStart=2017-11-04T11:18:43.921Z&dateRangeEnd=2017-11-04T12:18:43.921Z&interval=PT1H&resource=gae_app%2Fmodule_id%2Fetl-ndt-batch-parser&filters=text:%22:%20Processed%20%22&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fnginx.request"
+          "url": "https://pantheon.corp.google.com/logs/viewer?project=mlab-oti&organizationId=433637338589&minLogLevel=0&expandAll=false&timestamp=2017-11-04T12:17:52.000000000Z&dateRangeStart=2017-11-04T11:18:43.921Z&dateRangeEnd=2017-11-04T12:18:43.921Z&interval=PT1H&resource=gae_app%2Fmodule_id%2Fetl-batch-parser&filters=text:%22:%20Processed%20%22&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fnginx.request"
         }
       ],
       "nullPointMode": "null",
@@ -199,7 +197,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(filetype, kind)(increase(etl_error_count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "expr": "sum by(filetype, kind)(increase(etl_error_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Error {{filetype}} : {{kind}}",
@@ -289,7 +287,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(increase(etl_annotator_Annotation_Time_Summary_count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "expr": "sum(increase(etl_annotator_Annotation_Time_Summary_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -299,7 +297,7 @@
           "step": 10
         },
         {
-          "expr": "sum by(source)(increase(etl_annotator_Error_Count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "expr": "sum by(source)(increase(etl_annotator_Error_Count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -396,7 +394,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(instance)(time()-process_start_time_seconds{service=\"etl-ndt-batch-parser\"})",
+          "expr": "sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{instance}}",
@@ -404,7 +402,7 @@
           "step": 20
         },
         {
-          "expr": "count(process_start_time_seconds{service=\"etl-ndt-batch-parser\"})",
+          "expr": "count(process_start_time_seconds{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "instance count",
@@ -496,7 +494,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "etl_worker_count{service=\"etl-ndt-batch-parser\"}",
+          "expr": "etl_worker_count{service=\"etl-batch-parser\"}",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -585,7 +583,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(state)(etl_worker_state{service=\"etl-ndt-batch-parser\"})",
+          "expr": "sum by(state)(etl_worker_state{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -674,7 +672,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(status, version)(increase(etl_task_count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "expr": "sum by(status, version)(increase(etl_task_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{version}} : {{status}}",
@@ -763,7 +761,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(status)(60*rate(etl_task_count{service=\"etl-ndt-batch-parser\"}[2m]))",
+          "expr": "sum by(status)(60*rate(etl_task_count{service=\"etl-batch-parser\"}[2m]))",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -852,7 +850,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(instance)(60*rate(etl_task_count{service=\"etl-ndt-batch-parser\", status=\"OK\"}[5m]))",
+          "expr": "sum by(instance)(60*rate(etl_task_count{service=\"etl-batch-parser\", status=\"OK\"}[5m]))",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -942,7 +940,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(filetype, status)(rate(etl_test_count{service=\"etl-ndt-batch-parser\", filetype!=\"meta\"}[2m]))",
+          "expr": "sum by(filetype, status)(rate(etl_test_count{service=\"etl-batch-parser\", filetype!=\"meta\"}[2m]))",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1031,7 +1029,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(version, filetype, status)(increase(etl_test_count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "expr": "sum by(version, filetype, status)(increase(etl_test_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1121,7 +1119,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(filetype, kind)(increase(etl_warning_count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "expr": "sum by(filetype, kind)(increase(etl_warning_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Warning {{filetype}} : {{kind}}",
@@ -1209,7 +1207,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.99 {{status}}",
@@ -1217,7 +1215,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.95 {{status}}",
@@ -1225,7 +1223,7 @@
           "step": 10
         },
         {
-          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-ndt-batch-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-ndt-batch-parser\"}[5m])))",
+          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "average",
@@ -1233,7 +1231,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.5 {{status}}",
@@ -1241,7 +1239,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.25 {{status}}",
@@ -1249,7 +1247,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.05 {{status}}",
@@ -1563,7 +1561,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(instance) (process_resident_memory_bytes{service=\"etl-ndt-batch-parser\"})",
+          "expr": "sum by(instance) (process_resident_memory_bytes{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1652,7 +1650,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{service=\"etl-ndt-batch-parser\"}[2m])/2",
+          "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1742,7 +1740,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(version)(increase(etl_insertion_time_seconds_count{service=\"etl-ndt-batch-parser\"}[$interval]))",
+          "expr": "sum by(version)(increase(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{version}}",
@@ -1750,7 +1748,7 @@
           "step": 20
         },
         {
-          "expr": "sum by(version)(etl_insertion_time_seconds_count{service=\"etl-ndt-batch-parser\"})",
+          "expr": "sum by(version)(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{version}}",
@@ -1838,7 +1836,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "etl_insertion_time_seconds_count{service=\"etl-ndt-batch-parser\", status=\"succeed\"}",
+          "expr": "etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status=\"succeed\"}",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1847,7 +1845,7 @@
           "step": 60
         },
         {
-          "expr": "etl_insertion_time_seconds_count{service=\"etl-ndt-batch-parser\", status=\"fail\"}",
+          "expr": "etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status=\"fail\"}",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1936,7 +1934,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "0.99999",
@@ -1944,7 +1942,7 @@
           "step": 20
         },
         {
-          "expr": " histogram_quantile(0.999, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": " histogram_quantile(0.999, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".999",
@@ -1952,7 +1950,7 @@
           "step": 20
         },
         {
-          "expr": " histogram_quantile(0.99, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": " histogram_quantile(0.99, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".99",
@@ -1960,7 +1958,7 @@
           "step": 20
         },
         {
-          "expr": " histogram_quantile(0.95, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": " histogram_quantile(0.95, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".95",
@@ -1968,7 +1966,7 @@
           "step": 20
         },
         {
-          "expr": " histogram_quantile(0.90, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": " histogram_quantile(0.90, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".90",
@@ -1976,7 +1974,7 @@
           "step": 20
         },
         {
-          "expr": " histogram_quantile(0.50, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": " histogram_quantile(0.50, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".50",
@@ -1984,7 +1982,7 @@
           "step": 20
         },
         {
-          "expr": " histogram_quantile(0.10, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": " histogram_quantile(0.10, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".10",
@@ -2073,7 +2071,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "1.00",
@@ -2081,7 +2079,7 @@
           "step": 20
         },
         {
-          "expr": "histogram_quantile(0.99, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": "histogram_quantile(0.99, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".99",
@@ -2089,7 +2087,7 @@
           "step": 20
         },
         {
-          "expr": "histogram_quantile(.95, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": "histogram_quantile(.95, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".95",
@@ -2097,7 +2095,7 @@
           "step": 20
         },
         {
-          "expr": "histogram_quantile(.90, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": "histogram_quantile(.90, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".90",
@@ -2105,7 +2103,7 @@
           "step": 20
         },
         {
-          "expr": "histogram_quantile(0.50, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-batch-parser\"}[10m])))",
+          "expr": "histogram_quantile(0.50, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-batch-parser\"}[10m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": ".50",
@@ -2463,7 +2461,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(kind)(increase(etl_backend_failure_count{service='etl-ndt-batch-parser'}[$interval]))",
+          "expr": "sum by(kind)(increase(etl_backend_failure_count{service='etl-batch-parser'}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{kind}}",
@@ -2520,6 +2518,7 @@
     "list": [
       {
         "current": {
+          "tags": [],
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -2618,7 +2617,7 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -2649,5 +2648,5 @@
   "timezone": "browser",
   "title": "Pipeline: Batch (in progress)",
   "uid": "000000021",
-  "version": 19
+  "version": 22
 }
