@@ -1,0 +1,220 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "$$hashKey": "object:469",
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations & Alerts",
+        "showIn": 0,
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 206,
+  "iteration": 1539209731499,
+  "links": [],
+  "panels": [
+    {
+      "circleMaxSize": "1",
+      "circleMinSize": "1",
+      "colors": [
+        "#58140c",
+        "#bf1b00",
+        "#f29191",
+        "#e5ac0e",
+        "#f2c96d",
+        "#f4d598",
+        "#3f6833",
+        "#629e51",
+        "#9ac48a",
+        "#e0f9d7"
+      ],
+      "datasource": null,
+      "decimals": 2,
+      "esGeoPoint": "geohash",
+      "esLocationName": "country_code",
+      "esMetric": "Value",
+      "gridPos": {
+        "h": 15,
+        "w": 13,
+        "x": 0,
+        "y": 0
+      },
+      "hideEmpty": false,
+      "hideZero": false,
+      "id": 3,
+      "initialZoom": "1",
+      "jsonUrl": "https://storage.googleapis.com/prometheus-support-mlab-sandbox/wm2.json",
+      "links": [],
+      "locationData": "geohash",
+      "mapCenter": "(0°, 0°)",
+      "mapCenterLatitude": 0,
+      "mapCenterLongitude": 0,
+      "maxDataPoints": 1,
+      "mouseWheelZoom": false,
+      "showLegend": true,
+      "stickyLabels": false,
+      "tableQueryOptions": {
+        "geohashField": "geohash",
+        "latitudeField": "latitude",
+        "longitudeField": "longitude",
+        "metricField": "metric",
+        "queryType": "geohash"
+      },
+      "targets": [
+        {
+          "expr": "bq_ndt_geohash_client_download_median_rate{country_code=~\"$country\"}/ 1000000",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{geohash}}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": "1,2,4,5,10,15,20,25,30",
+      "title": "Client Median Download Rate (Mbps)",
+      "type": "grafana-worldmap-panel",
+      "unitPlural": "",
+      "unitSingle": "",
+      "valueName": "current"
+    },
+    {
+      "circleMaxSize": "3",
+      "circleMinSize": "1",
+      "colors": [
+        "#58140c",
+        "#f29191",
+        "#e5ac0e",
+        "#f2c96d",
+        "#f4d598",
+        "#3f6833",
+        "#629e51",
+        "#9ac48a",
+        "#e0f9d7",
+        "rgba(50, 172, 45, 0.97)"
+      ],
+      "datasource": null,
+      "decimals": 2,
+      "esGeoPoint": "geohash",
+      "esLocationName": "country_code",
+      "esMetric": "Value",
+      "gridPos": {
+        "h": 15,
+        "w": 13,
+        "x": 0,
+        "y": 15
+      },
+      "hideEmpty": false,
+      "hideZero": false,
+      "id": 6,
+      "initialZoom": "1",
+      "jsonUrl": "https://storage.googleapis.com/prometheus-support-mlab-sandbox/wm2.json",
+      "links": [],
+      "locationData": "geohash",
+      "mapCenter": "(0°, 0°)",
+      "mapCenterLatitude": 0,
+      "mapCenterLongitude": 0,
+      "maxDataPoints": 1,
+      "mouseWheelZoom": false,
+      "showLegend": true,
+      "stickyLabels": false,
+      "tableQueryOptions": {
+        "geohashField": "geohash",
+        "latitudeField": "latitude",
+        "longitudeField": "longitude",
+        "metricField": "metric",
+        "queryType": "geohash"
+      },
+      "targets": [
+        {
+          "expr": "bq_ndt_geohash_client_tests{country_code=~\"$country\"} / 100",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "C"
+        }
+      ],
+      "thresholds": "0.5,1, 1.5,2,2.5,3,6,10,14",
+      "title": "Client Download Test Count (Hundreds)",
+      "type": "grafana-worldmap-panel",
+      "unitPlural": "",
+      "unitSingle": "",
+      "valueName": "current"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 16,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Country",
+        "multi": true,
+        "name": "country",
+        "options": [],
+        "query": "label_values(country_code)",
+        "refresh": 1,
+        "regex": "/.*/",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "World Map",
+  "uid": "2BAR6Hvik",
+  "version": 43
+}
