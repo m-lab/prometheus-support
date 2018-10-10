@@ -1,37 +1,8 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_DOWNLOADER_(MLAB-OTI)",
-      "label": "Downloader (mlab-oti)",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "5.1.4"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": "5.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "5.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:2035",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -42,10 +13,10 @@
       }
     ]
   },
-  "editable": true,
+  "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
+  "id": 56,
   "links": [],
   "panels": [
     {
@@ -53,7 +24,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DOWNLOADER_(MLAB-OTI)}",
+      "datasource": "$datasource",
       "fill": 1,
       "gridPos": {
         "h": 9,
@@ -85,6 +56,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:2106",
           "expr": "time() - (downloader_last_success_time_seconds!=0) > (21 * 60 * 60)",
           "format": "time_series",
           "hide": true,
@@ -93,6 +65,7 @@
           "refId": "A"
         },
         {
+          "$$hashKey": "object:2107",
           "expr": "time() - (downloader_last_success_time_seconds!=0)",
           "format": "time_series",
           "intervalFactor": 1,
@@ -100,6 +73,7 @@
           "refId": "B"
         },
         {
+          "$$hashKey": "object:2108",
           "expr": "",
           "format": "time_series",
           "intervalFactor": 1,
@@ -160,7 +134,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_DOWNLOADER_(MLAB-OTI)}",
+      "datasource": "$datasource",
       "fill": 1,
       "gridPos": {
         "h": 9,
@@ -192,6 +166,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:2204",
           "expr": "downloader_downloader_routeviews_url_error_count  ",
           "format": "time_series",
           "hide": false,
@@ -200,6 +175,7 @@
           "refId": "A"
         },
         {
+          "$$hashKey": "object:2205",
           "expr": "downloader_download_failed_count",
           "format": "time_series",
           "intervalFactor": 1,
@@ -207,6 +183,7 @@
           "refId": "B"
         },
         {
+          "$$hashKey": "object:2206",
           "expr": "downloader_error_count",
           "format": "time_series",
           "intervalFactor": 1,
@@ -259,7 +236,22 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "Downloader (mlab-oti)",
+          "value": "Downloader (mlab-oti)"
+        },
+        "hide": 0,
+        "label": "Datasource",
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "Downloader.*",
+        "type": "datasource"
+      }
+    ]
   },
   "time": {
     "from": "now-7d",
@@ -293,5 +285,5 @@
   "timezone": "",
   "title": "Alert: DownloaderIsFailingToUpdate",
   "uid": "ZGuYht1mk",
-  "version": 2
+  "version": 4
 }
