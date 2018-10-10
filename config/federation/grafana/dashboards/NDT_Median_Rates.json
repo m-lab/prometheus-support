@@ -2,7 +2,7 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:386",
+        "$$hashKey": "object:732",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -16,8 +16,8 @@
   "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 216,
-  "iteration": 1539179238210,
+  "id": 38,
+  "iteration": 1539207725807,
   "links": [],
   "panels": [
     {
@@ -25,15 +25,15 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
+      "datasource": null,
+      "fill": 0,
       "gridPos": {
-        "h": 6,
-        "w": 6,
+        "h": 7,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 7,
+      "id": 10,
       "legend": {
         "avg": false,
         "current": false,
@@ -57,20 +57,22 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\"}",
+          "expr": "bq_ndt_server_tests{machine=~\"$machine.($sites).*\"}",
           "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
+          "interval": "24h",
+          "intervalFactor": 2,
+          "legendFormat": "{{machine}}",
+          "refId": "A",
+          "step": 172800
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Tasks In Flight",
+      "title": "Test Count",
       "tooltip": {
-        "shared": true,
-        "sort": 0,
+        "shared": false,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -84,7 +86,7 @@
       "yaxes": [
         {
           "format": "short",
-          "label": null,
+          "label": "Tests",
           "logBase": 1,
           "max": null,
           "min": "0",
@@ -109,275 +111,15 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
+      "datasource": null,
+      "fill": 0,
       "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 0
-      },
-      "id": 12,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "go_goroutines{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        },
-        {
-          "expr": "",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "GoRoutine Count",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 12,
-        "y": 0
-      },
-      "id": 4,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(process_cpu_seconds_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[5m])",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "CPU Utilization",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 0
-      },
-      "id": 5,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "process_virtual_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Virtual Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 0,
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 12,
+        "h": 10,
+        "w": 8,
         "x": 0,
-        "y": 6
+        "y": 7
       },
-      "id": 2,
+      "id": 3,
       "legend": {
         "avg": false,
         "current": false,
@@ -397,12 +139,8 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "/Warning:/",
-          "color": "#e5ac0e"
-        },
-        {
-          "alias": "/Failure:/",
-          "color": "#bf1b00"
+          "alias": "/rtt .*/",
+          "yaxis": 2
         }
       ],
       "spaceLength": 10,
@@ -410,129 +148,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(gardener_warning_total{container=\"etl-gardener\"}[12h])",
+          "expr": "bq_ndt_server_upload_median_rate{machine=~\"$machine.($sites).*\"}",
           "format": "time_series",
-          "hide": true,
+          "interval": "24h",
           "intervalFactor": 1,
-          "legendFormat": "{{status}}",
-          "refId": "A"
-        },
-        {
-          "expr": "irate(gardener_fail_total{container=\"etl-gardener\"}[12h])",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{status}}",
-          "refId": "B"
-        },
-        {
-          "expr": "gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Warning: {{status}}",
-          "refId": "C"
-        },
-        {
-          "expr": "gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Failure: {{status}}",
-          "refId": "D"
+          "legendFormat": "median - {{machine}}",
+          "refId": "A",
+          "step": 86400
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Warnings and Failures per Hour",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 1,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "description": "",
-      "fill": 0,
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 6
-      },
-      "id": 10,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "connected",
-      "percentage": false,
-      "pointradius": 0.5,
-      "points": true,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(deployment, quantile, state)(-gardener_state_time_summary{quantile=\"0.5\", deployment=~\"$deployment\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "q:{{quantile}} {{state}} {{deployment}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Time in State",
+      "title": "Upload median",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -548,16 +176,107 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "s",
+          "format": "bps",
           "label": null,
-          "logBase": 10,
-          "max": "100000",
-          "min": "0.1",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
           "show": true
         },
         {
-          "format": "short",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 8,
+        "y": 7
+      },
+      "id": 5,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rtt .*/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "bq_ndt_server_upload_avg_rate{machine=~\"$machine.($sites).*\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "24h",
+          "intervalFactor": 1,
+          "legendFormat": "avg - {{machine}}",
+          "refId": "B",
+          "step": 86400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Upload Avg",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -575,14 +294,196 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
-      "description": "Number of tasks started and completed, per hour.",
-      "fill": 1,
+      "datasource": null,
+      "fill": 0,
       "gridPos": {
-        "h": 6,
-        "w": 12,
+        "h": 10,
+        "w": 8,
+        "x": 16,
+        "y": 7
+      },
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rtt .*/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "bq_ndt_server_upload_median_rtt{machine=~\"$machine.($sites).*\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "24h",
+          "intervalFactor": 1,
+          "legendFormat": "RTT - {{machine}}",
+          "refId": "C",
+          "step": 86400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Upload Median RTT",
+      "tooltip": {
+        "shared": false,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
         "x": 0,
-        "y": 12
+        "y": 17
+      },
+      "id": 7,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rtt .*/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "bq_ndt_server_download_median_rate{machine=~\"$machine.($sites).*\"}",
+          "format": "time_series",
+          "interval": "24h",
+          "intervalFactor": 1,
+          "legendFormat": "median - {{machine}}",
+          "refId": "A",
+          "step": 86400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Download median",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 17
       },
       "id": 9,
       "legend": {
@@ -602,40 +503,31 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/rtt .*/",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "# NOTE: `deriv` is for gauges; `rate` is for counters.",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "Completed {{deployment}}",
-          "refId": "C"
-        },
-        {
-          "expr": "rate(gardener_started_total{deployment=~\"$deployment\"}[3h])*3600",
+          "expr": "bq_ndt_server_download_avg_rate{machine=~\"$machine.($sites).*\"}",
           "format": "time_series",
           "hide": false,
+          "interval": "24h",
           "intervalFactor": 1,
-          "legendFormat": "Started {{deployment}}",
-          "refId": "A"
-        },
-        {
-          "expr": "rate(gardener_completed_total{deployment=~\"$deployment\"}[3h])*3600",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Completed {{deployment}}",
-          "refId": "B"
+          "legendFormat": "avg - {{machine}}",
+          "refId": "B",
+          "step": 86400
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Start and Completion Rate",
+      "title": "Download Avg",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -651,16 +543,15 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "short",
-          "label": "Tasks / Hour",
+          "format": "bps",
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": "0",
           "show": true
         },
         {
-          "format": "short",
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -672,55 +563,172 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "fill": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 17
+      },
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rtt .*/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "bq_ndt_server_download_median_rtt{machine=~\"$machine.($sites).*\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "24h",
+          "intervalFactor": 1,
+          "legendFormat": "RTT - {{machine}}",
+          "refId": "C",
+          "step": 86400
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Download Median RTT",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
-  "refresh": false,
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
+        "allValue": null,
         "current": {
-          "text": "Data Proc (mlab-staging)",
-          "value": "Data Proc (mlab-staging)"
+          "tags": [],
+          "text": "mlab1",
+          "value": "mlab1"
         },
         "hide": 0,
-        "label": "Datasource",
-        "name": "datasource",
-        "options": [],
-        "query": "prometheus",
-        "refresh": 1,
-        "regex": "/Data Proc.*/",
-        "type": "datasource"
+        "includeAll": false,
+        "label": "Machine",
+        "multi": false,
+        "name": "machine",
+        "options": [
+          {
+            "selected": true,
+            "text": "mlab1",
+            "value": "mlab1"
+          },
+          {
+            "selected": false,
+            "text": "mlab2",
+            "value": "mlab2"
+          },
+          {
+            "selected": false,
+            "text": "mlab3",
+            "value": "mlab3"
+          },
+          {
+            "selected": false,
+            "text": "mlab4",
+            "value": "mlab4"
+          }
+        ],
+        "query": "mlab1,mlab2,mlab3,mlab4",
+        "type": "custom"
       },
       {
-        "allValue": ".*",
+        "allValue": null,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "text": "lga..",
+          "value": "lga.."
         },
-        "datasource": "Data Proc (mlab-sandbox)",
         "hide": 0,
-        "includeAll": true,
-        "label": "Gardener Deployment",
+        "includeAll": false,
+        "label": "Sites",
         "multi": false,
-        "name": "deployment",
-        "options": [],
-        "query": "label_values(up{deployment=~\"etl-gardener-.*\"}, deployment)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "name": "sites",
+        "options": [
+          {
+            "selected": true,
+            "text": ".*",
+            "value": ".*"
+          },
+          {
+            "selected": false,
+            "text": "bru01|fra01|lax01|lga03|lhr05|mia02|nuq05|ord04|sea06|wlg02",
+            "value": "bru01|fra01|lax01|lga03|lhr05|mia02|nuq05|ord04|sea06|wlg02"
+          }
+        ],
+        "query": ".*,bru01|fra01|lax01|lga03|lhr05|mia02|nuq05|ord04|sea06|wlg02",
+        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-8d",
     "to": "now"
   },
   "timepicker": {
@@ -748,8 +756,8 @@
       "30d"
     ]
   },
-  "timezone": "utc",
-  "title": "Pipeline: Gardener",
-  "uid": "eBbUW6oik",
-  "version": 31
+  "timezone": "",
+  "title": "NDT: Median Rates",
+  "uid": "000000038",
+  "version": 1
 }

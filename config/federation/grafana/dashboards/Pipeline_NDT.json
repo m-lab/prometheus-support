@@ -2,7 +2,7 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:405",
+        "$$hashKey": "object:87",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -16,24 +16,36 @@
   "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 37,
-  "iteration": 1539196193199,
-  "links": [],
-  "panels": [
+  "id": 19,
+  "iteration": 1539209670553,
+  "links": [
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 37,
-      "panels": [],
-      "repeat": null,
-      "title": "Errors - $service",
-      "type": "row"
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Request Throughput",
+      "type": "link",
+      "url": "https://pantheon.corp.google.com/appengine?project=mlab-oti&organizationId=433637338589&serviceId=etl-ndt-parser&duration=PT1H"
     },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Pipeline status page",
+      "type": "link",
+      "url": "https://etl-ndt-parser-dot-mlab-oti.appspot.com/"
+    },
+    {
+      "icon": "external link",
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Pipeline logs",
+      "type": "link",
+      "url": "https://pantheon.corp.google.com/logs/viewer?project=mlab-oti&organizationId=433637338589&resource=gae_app%2Fmodule_id%2Fetl-ndt-parser%2F&minLogLevel=0&expandAll=false&interval=PT1H&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fnginx.request&serviceId=etl-ndt-parser"
+    }
+  ],
+  "panels": [
     {
       "aliasColors": {},
       "bars": false,
@@ -44,10 +56,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "id": 17,
       "isNew": false,
@@ -66,7 +78,6 @@
       },
       "lines": true,
       "linewidth": 1,
-      "links": [],
       "minSpan": 8,
       "nullPointMode": "null",
       "percentage": false,
@@ -79,23 +90,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:567",
-          "expr": "sum by(phase, status, retries, service)(increase(etl_gcs_retry_count{service=~\"$service\", table=~\"$table\"}[$interval]))",
+          "expr": "sum by(phase, status, retries)(increase(etl_gcs_retry_count{service=\"etl-ndt-parser\"}[$interval]))",
           "format": "time_series",
-          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{phase}} : {{status}} : {{retries}} : {{service}}",
+          "legendFormat": "{{phase}} : {{status}} : {{retries}}",
           "refId": "A",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:568",
-          "expr": "sum by(kind, service) (rate(etl_backend_failure_count{service=~\"$service\", table=~\"$table\"}[5m]))",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "{{kind}} : {{service}}",
-          "refId": "B"
+          "step": 240
         }
       ],
       "thresholds": [],
@@ -146,10 +146,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 8,
-        "y": 1
+        "y": 0
       },
       "id": 26,
       "isNew": false,
@@ -168,7 +168,6 @@
       },
       "lines": true,
       "linewidth": 1,
-      "links": [],
       "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
@@ -180,13 +179,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:986",
-          "expr": "sum by(filetype, kind, service, table)(increase(etl_error_count{service=~\"$service\", table=~\"$table\"}[$interval]))",
+          "expr": "sum by(filetype, kind)(increase(etl_error_count{service=\"etl-ndt-parser\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Error {{filetype}} : {{kind}} : {{service}} : {{table}}",
+          "legendFormat": "Error {{filetype}} : {{kind}}",
           "refId": "A",
-          "step": 60
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -233,125 +231,16 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "",
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 1
-      },
-      "id": 36,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "$$hashKey": "object:1280",
-          "expr": "sum by(service) (increase(etl_annotator_Annotation_Time_Summary_count{service=~\"$service\"}[$interval]))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Requests : {{service}}",
-          "refId": "A"
-        },
-        {
-          "$$hashKey": "object:1281",
-          "expr": "sum by(source, service)(increase(etl_annotator_Error_Count{service=~\"$service\"}[$interval]))",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "Errors: {{source}}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Annotator Stats",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 10,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 8
-      },
-      "id": 38,
-      "panels": [],
-      "repeat": null,
-      "title": "Uptime, RAM, CPU - $service",
-      "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 8,
+        "h": 5,
         "w": 8,
-        "x": 0,
-        "y": 9
+        "x": 16,
+        "y": 0
       },
-      "id": 15,
+      "id": 29,
       "isNew": false,
       "legend": {
         "alignAsTable": false,
@@ -374,12 +263,111 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(increase(etl_annotator_Annotation_Time_Summary_count{service=\"etl-ndt-parser\"}[$interval]))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Requests",
+          "metric": "etl_annotator_Error_Count",
+          "refId": "A",
+          "step": 120
+        },
+        {
+          "expr": "sum by(source)(increase(etl_annotator_Error_Count{service=\"etl-ndt-parser\"}[$interval]))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Errors: {{source}}",
+          "refId": "B",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Annotator Error Count [$interval]",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": false,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 10,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 5
+      },
+      "id": 15,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Instances",
+          "alias": "instance count",
           "color": "#64B0C8",
           "fill": 0,
-          "linewidth": 4,
           "yaxis": 2
         }
       ],
@@ -388,31 +376,29 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:1444",
-          "expr": "sum by(instance)(time()-process_start_time_seconds{service=~\"$service\"})",
+          "expr": "sum by(instance)(time()-process_start_time_seconds{service=\"etl-ndt-parser\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{instance}}",
           "refId": "A",
-          "step": 120
+          "step": 240
         },
         {
-          "$$hashKey": "object:1445",
-          "expr": "$show_count(count by(service) (process_start_time_seconds{service=~\"$service\"}))",
+          "expr": "count(process_start_time_seconds{service=\"etl-ndt-parser\"})",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "Instances",
+          "legendFormat": "instance count",
           "refId": "B",
-          "step": 120
+          "step": 240
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Uptime - Per-instance",
+      "title": "Per Instance Uptime",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -434,10 +420,9 @@
           "show": true
         },
         {
-          "decimals": null,
           "format": "short",
           "logBase": 1,
-          "max": null,
+          "max": 20,
           "min": 0,
           "show": true
         }
@@ -457,291 +442,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 8,
         "x": 8,
-        "y": 9
-      },
-      "id": 2,
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": true,
-        "hideZero": true,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/Instances/",
-          "color": "#6ed0e0",
-          "fill": 0,
-          "linewidth": 4,
-          "yaxis": 2
-        },
-        {
-          "alias": "/Average/",
-          "color": "#7eb26d",
-          "fill": 0,
-          "linewidth": 2
-        },
-        {
-          "alias": "/inst .*/",
-          "color": "rgba(115, 115, 115, 0.55)",
-          "fill": 0
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "$$hashKey": "object:1576",
-          "expr": "sum by(instance) (process_resident_memory_bytes{service=~\"$service\"})",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "inst {{instance}}",
-          "refId": "A",
-          "step": 60
-        },
-        {
-          "$$hashKey": "object:1577",
-          "expr": "$show_count (count by(service) (process_start_time_seconds{service=~\"$service\"}))",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "Instances: {{service}}",
-          "refId": "B"
-        },
-        {
-          "$$hashKey": "object:1578",
-          "expr": "avg by(service) (process_resident_memory_bytes{service=~\"$service\"})",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Average: {{service}}",
-          "refId": "C"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "RAM - Process Resident Memory",
-      "tooltip": {
-        "shared": false,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transparent": false,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "decbytes",
-          "logBase": 1,
-          "show": true
-        },
-        {
-          "decimals": 0,
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "editable": false,
-      "error": false,
-      "fill": 1,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 9
-      },
-      "id": 4,
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Instances",
-          "color": "#6ed0e0",
-          "fill": 0,
-          "linewidth": 4,
-          "yaxis": 2
-        },
-        {
-          "alias": "/avg .*/",
-          "color": "#7eb26d",
-          "fill": 0,
-          "linewidth": 2
-        },
-        {
-          "alias": "/inst .*/",
-          "color": "rgba(115, 115, 115, 0.55)",
-          "fill": 0
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "$$hashKey": "object:1674",
-          "expr": "rate(process_cpu_seconds_total{service=~\"$service\"}[2m])/2",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "inst {{instance}}",
-          "refId": "A",
-          "step": 60
-        },
-        {
-          "$$hashKey": "object:1675",
-          "expr": "avg(rate(process_cpu_seconds_total{service=~\"$service\"}[5m])/2)",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "avg {{instance}}",
-          "refId": "C",
-          "step": 60
-        },
-        {
-          "$$hashKey": "object:1676",
-          "expr": "$show_count(count by(service) (process_start_time_seconds{service=~\"$service\"}))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "Instances",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "CPU - Per-instance & Avg",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transparent": false,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": null,
-          "format": "percentunit",
-          "label": "CPU %",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "decimals": 0,
-          "format": "short",
-          "label": "Instance Count",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 17
-      },
-      "id": 39,
-      "panels": [],
-      "repeat": null,
-      "title": "Worker Aggregates - $service",
-      "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "editable": false,
-      "error": false,
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 18
+        "y": 5
       },
       "id": 14,
       "isNew": false,
@@ -765,33 +469,19 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "sum"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:1780",
-          "expr": "etl_worker_count{service=~\"$service\", table=~\"$table\"}",
+          "expr": "etl_worker_count{service=\"etl-ndt-parser\"}",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}",
           "refId": "A",
-          "step": 60
-        },
-        {
-          "$$hashKey": "object:1781",
-          "expr": "sum by(service) (etl_worker_count{service=~\"$service\", table=~\"$table\"})",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "sum : {{service}}",
-          "refId": "B"
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -800,7 +490,7 @@
       "title": "Worker Count By Instance",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -841,10 +531,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
-        "x": 8,
-        "y": 18
+        "x": 16,
+        "y": 5
       },
       "id": 1,
       "isNew": false,
@@ -874,14 +564,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:1856",
-          "expr": "sum by(state, service)(etl_worker_state{service=~\"$service\", table=~\"$table\"})",
+          "expr": "sum by(state)(etl_worker_state{service=\"etl-ndt-parser\"})",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "{{state}}",
           "refId": "A",
-          "step": 60
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -890,7 +579,7 @@
       "title": "Worker States",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -927,115 +616,14 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 18
-      },
-      "id": 27,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "$$hashKey": "object:1910",
-          "expr": "sum by(version, status, service) (irate(etl_worker_duration_seconds_count{service=~\"$service\"}[4m]))",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{status}}",
-          "refId": "F"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Worker QPS",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 2,
-          "format": "none",
-          "label": "QPS",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 25
-      },
-      "id": 40,
-      "panels": [],
-      "repeat": null,
-      "title": "Task archive & Test files - $service",
-      "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
         "x": 0,
-        "y": 26
+        "y": 11
       },
       "id": 12,
       "isNew": false,
@@ -1059,35 +647,18 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Instances",
-          "color": "#65c5db",
-          "fill": 0,
-          "linewidth": 3,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2041",
-          "expr": "sum by(status, version, service)(rate(etl_task_count{service=~\"$service\", table=~\"$table|unknown\"}[$interval]))",
+          "expr": "sum by(status, version)(increase(etl_task_count{service=\"etl-ndt-parser\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{version}} : {{status}}",
           "refId": "A",
-          "step": 60
-        },
-        {
-          "$$hashKey": "object:2042",
-          "expr": "$show_count(count by(service) (process_start_time_seconds{service=~\"$service\"}))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Instances",
-          "refId": "B"
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -1096,7 +667,7 @@
       "title": "Task Totals by Version / Status [$interval]",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -1112,18 +683,14 @@
       },
       "yaxes": [
         {
-          "decimals": 2,
           "format": "short",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
+          "logBase": 10,
+          "min": 1,
           "show": true
         },
         {
-          "decimals": null,
           "format": "short",
           "logBase": 1,
-          "min": "0",
           "show": true
         }
       ],
@@ -1142,10 +709,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
         "x": 8,
-        "y": 26
+        "y": 11
       },
       "id": 3,
       "isNew": false,
@@ -1175,14 +742,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2117",
-          "expr": "sum by(status, service)(60*irate(etl_task_count{service=~\"$service\", table=~\"$table\"}[4m]))",
+          "expr": "sum by(status)(60*rate(etl_task_count{service=\"etl-ndt-parser\"}[2m]))",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "{{status}}",
           "refId": "A",
-          "step": 60
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -1191,7 +757,7 @@
       "title": "Tasks/Min by Status",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -1209,7 +775,6 @@
         {
           "format": "short",
           "logBase": 1,
-          "min": "0",
           "show": true
         },
         {
@@ -1233,10 +798,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 6,
         "w": 8,
         "x": 16,
-        "y": 26
+        "y": 11
       },
       "id": 13,
       "isNew": false,
@@ -1255,34 +820,24 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null as zero",
+      "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [],
       "spaceLength": 10,
-      "stack": true,
+      "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:4819",
-          "expr": "60*irate(etl_task_count{service=\"$service\", table=~\"$table\", status=\"OK\"}[5m])",
+          "expr": "sum by(instance)(60*rate(etl_task_count{service=\"etl-ndt-parser\", status=\"OK\"}[5m]))",
           "format": "time_series",
-          "hide": false,
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}}",
-          "refId": "B",
-          "step": 60
-        },
-        {
-          "$$hashKey": "object:4873",
-          "expr": "# NOTE: query above deliberately does not match the service as a regex. We do this to disable the display for All parsers.",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "refId": "A"
+          "refId": "A",
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -1291,7 +846,7 @@
       "title": "Successful Tasks/Min by Instance",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -1333,10 +888,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 0,
-        "y": 33
+        "y": 17
       },
       "id": 6,
       "isNew": false,
@@ -1366,14 +921,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2225",
-          "expr": "sum by(filetype, status, service)(irate(etl_test_count{service=~\"$service\", table=~\"$table\", filetype!=\"meta\"}[4m]))",
+          "expr": "sum by(filetype, status)(rate(etl_test_count{service=\"etl-ndt-parser\", filetype!=\"meta\"}[2m]))",
           "format": "time_series",
-          "interval": "",
+          "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{filetype}} : {{status}} : {{service}}",
+          "legendFormat": "{{filetype}} : {{status}}",
           "refId": "A",
-          "step": 60
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -1382,7 +936,7 @@
       "title": "Tests/Sec by Type",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -1423,10 +977,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 8,
-        "y": 33
+        "y": 17
       },
       "id": 16,
       "isNew": false,
@@ -1456,14 +1010,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2279",
-          "expr": "sum by(version, filetype, status, service)(increase(etl_test_count{service=~\"$service\", table=~\"$table\"}[$interval]))",
+          "expr": "sum by(version, filetype, status)(increase(etl_test_count{service=\"etl-ndt-parser\"}[$interval]))",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{version}} : {{filetype}} : {{status}} : {{service}}",
+          "legendFormat": "{{version}} : {{filetype}} : {{status}}",
           "refId": "A",
-          "step": 60
+          "step": 120
         }
       ],
       "thresholds": [],
@@ -1472,7 +1025,7 @@
       "title": "Test Count by Type [$interval]",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "transparent": false,
@@ -1513,10 +1066,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 8,
         "x": 16,
-        "y": 33
+        "y": 17
       },
       "id": 25,
       "isNew": false,
@@ -1535,6 +1088,7 @@
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
@@ -1546,13 +1100,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2333",
-          "expr": "sum by(filetype, kind, service)(increase(etl_warning_count{service=~\"$service\", table=~\"$table\"}[$interval]))",
+          "expr": "sum by(filetype, kind)(increase(etl_warning_count{service=\"etl-ndt-parser\"}[$interval]))",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "Warning {{filetype}} : {{kind}} : {{service}}",
+          "legendFormat": "Warning {{filetype}} : {{kind}}",
           "refId": "B",
-          "step": 120
+          "step": 240
         }
       ],
       "thresholds": [],
@@ -1593,20 +1146,6 @@
       }
     },
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 40
-      },
-      "id": 41,
-      "panels": [],
-      "repeat": null,
-      "title": "Performance - $service",
-      "type": "row"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -1616,10 +1155,10 @@
       "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
-        "w": 12,
+        "h": 5,
+        "w": 8,
         "x": 0,
-        "y": 41
+        "y": 22
       },
       "id": 9,
       "isNew": false,
@@ -1638,92 +1177,69 @@
       },
       "lines": true,
       "linewidth": 1,
-      "links": [],
       "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Instances",
-          "color": "#65c5db",
-          "fill": 0,
-          "linewidth": 4,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2396",
-          "expr": "histogram_quantile(0.99, sum by(le, status, service) (rate(etl_insertion_time_seconds_bucket{service=~\"$service\"}[5m])))",
+          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{status}} 0.99",
+          "legendFormat": "0.99 {{status}}",
           "refId": "A",
-          "step": 60
+          "step": 120
         },
         {
-          "$$hashKey": "object:2397",
-          "expr": "histogram_quantile(0.95, sum by(le, status, service) (rate(etl_insertion_time_seconds_bucket{service=~\"$service\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{status}} 0.95",
+          "legendFormat": "0.95 {{status}}",
           "refId": "B",
-          "step": 60
+          "step": 120
         },
         {
-          "$$hashKey": "object:2398",
-          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=~\"$service\"}[5m]))) / (sum by(le, status, service)(rate(etl_insertion_time_seconds_count{service=~\"$service\"}[5m])))",
+          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-ndt-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-ndt-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{status}} average",
+          "legendFormat": "average",
           "refId": "F",
-          "step": 60
+          "step": 120
         },
         {
-          "$$hashKey": "object:2399",
-          "expr": "histogram_quantile(0.5, sum by(le, status, service) (rate(etl_insertion_time_seconds_bucket{service=~\"$service\"}[5m])))",
+          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{status}} 0.5",
+          "legendFormat": "0.5 {{status}}",
           "refId": "C",
-          "step": 60
+          "step": 120
         },
         {
-          "$$hashKey": "object:2400",
-          "expr": "histogram_quantile(0.25, sum by(le, status, service) (rate(etl_insertion_time_seconds_bucket{service=~\"$service\"}[5m])))",
+          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{status}} 0.25",
+          "legendFormat": "0.25 {{status}}",
           "refId": "D",
-          "step": 60
+          "step": 120
         },
         {
-          "$$hashKey": "object:2401",
-          "expr": "histogram_quantile(0.05, sum by(le, status, service) (rate(etl_insertion_time_seconds_bucket{service=~\"$service\"}[5m])))",
+          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-ndt-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{status}} 0.05",
+          "legendFormat": "0.05 {{status}}",
           "refId": "E",
-          "step": 60
-        },
-        {
-          "$$hashKey": "object:2402",
-          "expr": "$show_count(count by(service) (process_start_time_seconds{service=~\"$service\"}))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Instances",
-          "refId": "G"
+          "step": 120
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "BQ Insertion Time Percentiles",
+      "title": "Approximate Insertion Time Percentiles",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1764,14 +1280,144 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "editable": false,
+      "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 41
+        "h": 5,
+        "w": 8,
+        "x": 8,
+        "y": 22
       },
-      "id": 34,
+      "id": 11,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(.9999, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-ndt-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".9999",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(.99, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-ndt-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".99",
+          "refId": "F",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-ndt-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "0.95",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.5, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-ndt-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "0.5",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.05, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-ndt-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "0.05",
+          "refId": "D",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.01, sum by(le) (rate(etl_web100_snaplog_file_size_bytes_bucket{service=\"etl-ndt-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "0.01",
+          "refId": "E",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Approximate Snaplog Size Percentiles",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": false,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 10,
+          "max": 10000000,
+          "min": 10000,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 22
+      },
+      "id": 28,
       "legend": {
         "avg": false,
         "current": false,
@@ -1789,71 +1435,43 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/QPS.*/",
-          "fill": 0,
-          "linewidth": 2,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2470",
-          "expr": "histogram_quantile(0.90, sum by(le, service) (rate(etl_worker_duration_seconds_bucket{service=~\"$service\", status=\"OK\"}[$interval])))",
+          "expr": "avg by(test_type)(etl_annotator_Annotation_Time_Summary{quantile=\"0.99\"})",
           "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "99th",
-          "refId": "B"
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": ".99 {{test_type}}",
+          "refId": "A",
+          "step": 240
         },
         {
-          "$$hashKey": "object:2471",
-          "expr": "histogram_quantile(0.75, sum by(le, service) (rate(etl_worker_duration_seconds_bucket{service=~\"$service\", status=\"OK\"}[$interval])))",
+          "expr": "avg by(test_type)(etl_annotator_Annotation_Time_Summary{quantile=\"0.9\"})",
           "format": "time_series",
-          "hide": false,
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "75th",
-          "refId": "A"
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": ".9 {{test_type}}",
+          "refId": "B",
+          "step": 240
         },
         {
-          "$$hashKey": "object:2472",
-          "expr": "histogram_quantile(0.5, sum by(le, service) (rate(etl_worker_duration_seconds_bucket{service=~\"$service\", status=\"OK\"}[$interval])))",
+          "expr": "avg by(test_type)(etl_annotator_Annotation_Time_Summary{quantile=\"0.5\"})",
           "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "50%",
-          "refId": "C"
-        },
-        {
-          "$$hashKey": "object:2473",
-          "expr": "histogram_quantile(0.25, sum by(le, service) (rate(etl_worker_duration_seconds_bucket{service=~\"$service\", status=\"OK\"}[$interval])))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "25%",
-          "refId": "D"
-        },
-        {
-          "$$hashKey": "object:2474",
-          "expr": "histogram_quantile(0.1, sum by(le, service) (rate(etl_worker_duration_seconds_bucket{service=~\"$service\", status=\"OK\"}[$interval])))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "10%",
-          "refId": "E"
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": ".5 {{test_type}}",
+          "refId": "C",
+          "step": 240
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Worker Duration Quantiles (Successful)",
+      "title": "Annotation time",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1869,12 +1487,11 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "s",
+          "format": "ns",
           "label": null,
-          "logBase": 1,
+          "logBase": 10,
           "max": null,
-          "min": "0",
+          "min": "1000000",
           "show": true
         },
         {
@@ -1904,7 +1521,186 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 48
+        "y": 27
+      },
+      "id": 2,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(instance) (process_resident_memory_bytes{service=\"etl-ndt-parser\"})",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "refId": "A",
+          "step": 60
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Process Resident Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": false,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 4,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{service=\"etl-ndt-parser\"}[2m])/2",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "refId": "A",
+          "step": 60
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Per instance cpu utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": false,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "logBase": 1,
+          "max": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 34
       },
       "id": 10,
       "isNew": false,
@@ -1923,41 +1719,31 @@
       },
       "lines": true,
       "linewidth": 1,
-      "links": [],
       "nullPointMode": "null",
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/increase.*/",
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2532",
-          "expr": "sum by(version, service)(increase(etl_insertion_time_seconds_count{service=~\"$service\"}[$interval]))",
+          "expr": "sum by(version)(increase(etl_insertion_time_seconds_count{service=\"etl-ndt-parser\"}[$interval]))",
           "format": "time_series",
-          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "increase - {{version}} {{service}}",
+          "legendFormat": "{{version}}",
           "refId": "A",
-          "step": 120
+          "step": 240
         },
         {
-          "$$hashKey": "object:2533",
-          "expr": "sum by(version, service)(etl_insertion_time_seconds_count{service=~\"$service\"})",
+          "expr": "sum by(version)(etl_insertion_time_seconds_count{service=\"etl-ndt-parser\"})",
           "format": "time_series",
-          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "total - {{version}} {{service}}",
+          "legendFormat": "{{version}}",
           "refId": "B",
-          "step": 120
+          "step": 240
         }
       ],
       "thresholds": [],
@@ -1983,13 +1769,11 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "Total",
           "logBase": 1,
           "show": true
         },
         {
           "format": "short",
-          "label": "Increases",
           "logBase": 1,
           "show": true
         }
@@ -2007,12 +1791,12 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 0,
+      "fill": 1,
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 48
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 34
       },
       "id": 8,
       "isNew": false,
@@ -2042,30 +1826,452 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2608",
-          "expr": "etl_insertion_time_seconds_count{service=~\"$service\", status=\"succeed\"}",
+          "expr": "etl_insertion_time_seconds_count{service=\"etl-ndt-parser\", status=\"succeed\"}",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "ok: {{instance}}",
           "refId": "A",
-          "step": 60
+          "step": 120
         },
         {
-          "$$hashKey": "object:2609",
-          "expr": "etl_insertion_time_seconds_count{service=~\"$service\", status=\"fail\"}",
+          "expr": "etl_insertion_time_seconds_count{service=\"etl-ndt-parser\", status=\"fail\"}",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "fail: {{instance}}",
           "refId": "B",
-          "step": 60
+          "step": 120
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
       "title": "Insertions per Instance",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": false,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 34
+      },
+      "id": 19,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "0.99999",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": " histogram_quantile(0.999, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".999",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": " histogram_quantile(0.99, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".99",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": " histogram_quantile(0.95, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".95",
+          "refId": "D",
+          "step": 240
+        },
+        {
+          "expr": " histogram_quantile(0.90, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".90",
+          "refId": "E",
+          "step": 240
+        },
+        {
+          "expr": " histogram_quantile(0.50, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".50",
+          "refId": "F",
+          "step": 240
+        },
+        {
+          "expr": " histogram_quantile(0.10, sum by(le)(rate(etl_row_json_size_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".10",
+          "refId": "G",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Json sizes of largest (5%) of snaplog records",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": false,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 10,
+          "min": 50000,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 40
+      },
+      "id": 22,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "1.00",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".99",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(.95, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".95",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(.90, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".90",
+          "refId": "D",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by(le)(rate(etl_entry_field_count_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".50",
+          "refId": "E",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Total Field Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": false,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 10,
+          "min": 1000,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 40
+      },
+      "id": 24,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(.999, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "0.999",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".95",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".90",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.80, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".80",
+          "refId": "D",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".50",
+          "refId": "E",
+          "step": 240
+        },
+        {
+          "expr": "(sum by(le) (rate(etl_delta_num_field_sum{service=\"etl-ndt-parser\"}[5m]))) / (sum by(le)(rate(etl_delta_num_field_count{service=\"etl-ndt-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "average",
+          "refId": "I",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.20, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".20",
+          "refId": "F",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.10, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".10",
+          "refId": "G",
+          "step": 240
+        },
+        {
+          "expr": "histogram_quantile(0.010, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": ".01",
+          "refId": "H",
+          "step": 240
+        },
+        {
+          "expr": "",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "refId": "J"
+        },
+        {
+          "expr": "histogram_quantile(.99, sum by(le)(rate(etl_delta_num_field_bucket{service=\"etl-ndt-parser\"}[10m])))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "0.99",
+          "refId": "K",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Snapshot Field Count",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2085,166 +2291,9 @@
       "yaxes": [
         {
           "format": "short",
-          "logBase": 1,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 55
-      },
-      "id": 42,
-      "panels": [],
-      "repeat": null,
-      "title": "Size Stats : $service",
-      "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "editable": false,
-      "error": false,
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 56
-      },
-      "id": 35,
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "$$hashKey": "object:2684",
-          "expr": "histogram_quantile(0.99999, sum by(le, service)(rate(etl_test_file_size_bytes_bucket{service=~\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "0.99999",
-          "refId": "A",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2685",
-          "expr": " histogram_quantile(0.999, sum by(le, service)(rate(etl_test_file_size_bytes_bucket{service=~\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".999",
-          "refId": "B",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2686",
-          "expr": " histogram_quantile(0.99, sum by(le, service)(rate(etl_test_file_size_bytes_bucket{service=~\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".99",
-          "refId": "C",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2687",
-          "expr": " histogram_quantile(0.95, sum by(le, service)(rate(etl_test_file_size_bytes_bucket{service=~\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".95",
-          "refId": "D",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2688",
-          "expr": " histogram_quantile(0.90, sum by(le, service)(rate(etl_test_file_size_bytes_bucket{service=~\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".90",
-          "refId": "E",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2689",
-          "expr": " histogram_quantile(0.50, sum by(le, service)(rate(etl_test_file_size_bytes_bucket{service=~\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".50",
-          "refId": "F",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2690",
-          "expr": " histogram_quantile(0.10, sum by(le, service)(rate(etl_test_file_size_bytes_bucket{service=~\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".10",
-          "refId": "G",
-          "step": 120
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "File sizes",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transparent": false,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
+          "logBase": 10,
+          "max": 120,
+          "min": 3,
           "show": true
         },
         {
@@ -2264,26 +2313,19 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "editable": false,
-      "error": false,
       "fill": 1,
       "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 56
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 40
       },
-      "id": 19,
-      "isNew": false,
+      "id": 27,
       "legend": {
-        "alignAsTable": false,
         "avg": false,
         "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
         "max": false,
         "min": false,
-        "rightSide": false,
         "show": false,
         "total": false,
         "values": false
@@ -2302,84 +2344,48 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2758",
-          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_row_json_size_bucket{service=\"$service\", table=\"$table\"}[10m])))",
+          "expr": "sum(etl_annotator_Annotation_Time_Summary{quantile=\"0.99\", test_type=\"NDT\"})",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "0.99999",
+          "legendFormat": "Q:0.99 {{test_type}}",
+          "metric": "etl_annotator_Error_Count",
           "refId": "A",
-          "step": 120
+          "step": 240
         },
         {
-          "$$hashKey": "object:2759",
-          "expr": " histogram_quantile(0.999, sum by(le)(rate(etl_row_json_size_bucket{service=\"$service\", table=\"$table\"}[10m])))",
+          "expr": "sum(etl_annotator_Annotation_Time_Summary{quantile=\"0.9\", test_type=\"NDT\"})",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": ".999",
+          "legendFormat": "Q:0.9 {{test_type}}",
+          "metric": "etl_annotator_Error_Count",
           "refId": "B",
-          "step": 120
+          "step": 240
         },
         {
-          "$$hashKey": "object:2760",
-          "expr": " histogram_quantile(0.99, sum by(le)(rate(etl_row_json_size_bucket{service=\"$service\", table=\"$table\"}[10m])))",
+          "expr": "sum(etl_annotator_Annotation_Time_Summary{quantile=\"0.5\", test_type=\"NDT\"})",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": ".99",
+          "legendFormat": "Q:0.5 {{test_type}}",
+          "metric": "etl_annotator_Error_Count",
           "refId": "C",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2761",
-          "expr": " histogram_quantile(0.95, sum by(le)(rate(etl_row_json_size_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".95",
-          "refId": "D",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2762",
-          "expr": " histogram_quantile(0.90, sum by(le)(rate(etl_row_json_size_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".90",
-          "refId": "E",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2763",
-          "expr": " histogram_quantile(0.50, sum by(le)(rate(etl_row_json_size_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".50",
-          "refId": "F",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2764",
-          "expr": " histogram_quantile(0.10, sum by(le)(rate(etl_row_json_size_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".10",
-          "refId": "G",
-          "step": 120
+          "step": 240
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Row sizes (json) : $service -> $table",
+      "title": "Annotator request latency",
       "tooltip": {
         "shared": true,
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
-        "format": "",
-        "logBase": 0,
         "mode": "time",
         "name": null,
         "show": true,
@@ -2387,296 +2393,19 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "editable": false,
-      "error": false,
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 63
-      },
-      "id": 22,
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "$$hashKey": "object:2832",
-          "expr": "histogram_quantile(0.99999, sum by(le)(rate(etl_entry_field_count_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "1.00",
-          "refId": "A",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2833",
-          "expr": "histogram_quantile(0.99, sum by(le)(rate(etl_entry_field_count_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".99",
-          "refId": "B",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2834",
-          "expr": "histogram_quantile(.95, sum by(le)(rate(etl_entry_field_count_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".95",
-          "refId": "C",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2835",
-          "expr": "histogram_quantile(.90, sum by(le)(rate(etl_entry_field_count_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".90",
-          "refId": "D",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2836",
-          "expr": "histogram_quantile(0.50, sum by(le)(rate(etl_entry_field_count_bucket{service=\"$service\", table=\"$table\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".50",
-          "refId": "E",
-          "step": 120
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Rows per File -- Total Field Count",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transparent": false,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "logBase": 1,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "editable": false,
-      "error": false,
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 63
-      },
-      "id": 24,
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "$$hashKey": "object:2894",
-          "expr": "histogram_quantile(.999, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "0.999",
-          "refId": "A",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2895",
-          "expr": "histogram_quantile(0.95, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".95",
-          "refId": "B",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2896",
-          "expr": "histogram_quantile(0.90, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".90",
-          "refId": "C",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2897",
-          "expr": "histogram_quantile(0.80, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".80",
-          "refId": "D",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2898",
-          "expr": "histogram_quantile(0.50, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".50",
-          "refId": "E",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2899",
-          "expr": "histogram_quantile(0.20, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".20",
-          "refId": "F",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2900",
-          "expr": "histogram_quantile(0.10, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".10",
-          "refId": "G",
-          "step": 120
-        },
-        {
-          "$$hashKey": "object:2901",
-          "expr": "histogram_quantile(0.010, sum by(le)(rate(etl_delta_num_field_bucket{service=\"$service\"}[10m])))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": ".01",
-          "refId": "H",
-          "step": 120
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Fields per Row -- Snapshot Field Count",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transparent": false,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "logBase": 1,
+          "format": "ns",
+          "label": null,
+          "logBase": 10,
           "max": null,
           "min": null,
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
@@ -2686,34 +2415,21 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "1m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
-        "current": {
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
-        },
-        "hide": 0,
-        "label": "Datasource",
-        "name": "datasource",
-        "options": [],
-        "query": "prometheus",
-        "refresh": 1,
-        "regex": "Prometheus.*",
-        "type": "datasource"
-      },
-      {
         "allFormat": "",
         "allValue": null,
         "current": {
-          "text": "2m",
-          "value": "2m"
+          "selected": true,
+          "text": "10m",
+          "value": "10m"
         },
-        "datasource": "$datasource",
+        "datasource": null,
         "hide": 0,
         "includeAll": false,
         "label": "",
@@ -2722,7 +2438,7 @@
         "name": "interval",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "10m",
             "value": "10m"
           },
@@ -2788,81 +2504,18 @@
         "type": "custom"
       },
       {
-        "allValue": null,
         "current": {
-          "tags": [],
-          "text": "ndt",
-          "value": "ndt"
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
         },
-        "datasource": "$datasource",
         "hide": 0,
-        "includeAll": true,
-        "label": "Table",
-        "multi": false,
-        "name": "table",
+        "label": null,
+        "name": "datasource",
         "options": [],
-        "query": "label_values(etl_worker_count, table)",
+        "query": "prometheus",
         "refresh": 1,
-        "regex": "/(.+)/",
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "tags": [],
-          "text": "etl-ndt-parser",
-          "value": "etl-ndt-parser"
-        },
-        "datasource": "$datasource",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Service",
-        "multi": false,
-        "name": "service",
-        "options": [],
-        "query": "label_values(etl_worker_count, service)",
-        "refresh": 1,
-        "regex": "/.*-parser/",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "tags": [],
-          "text": "sum by(service)",
-          "value": "sum by(service)"
-        },
-        "hide": 0,
-        "includeAll": false,
-        "label": "Show count",
-        "multi": false,
-        "name": "show_count",
-        "options": [
-          {
-            "$$hashKey": "object:4183",
-            "selected": false,
-            "text": "absent",
-            "value": "absent"
-          },
-          {
-            "$$hashKey": "object:4184",
-            "selected": true,
-            "text": "sum by(service)",
-            "value": "sum by(service)"
-          }
-        ],
-        "query": "absent,sum by(service)",
-        "type": "custom"
+        "regex": "",
+        "type": "datasource"
       }
     ]
   },
@@ -2895,8 +2548,8 @@
       "30d"
     ]
   },
-  "timezone": "utc",
-  "title": "Pipeline: Parser",
-  "uid": "000000037",
-  "version": 10
+  "timezone": "browser",
+  "title": "Pipeline: NDT",
+  "uid": "000000019",
+  "version": 14
 }

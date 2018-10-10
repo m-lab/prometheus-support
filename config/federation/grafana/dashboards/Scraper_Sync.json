@@ -2,7 +2,7 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:386",
+        "$$hashKey": "object:2905",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -16,10 +16,24 @@
   "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 216,
-  "iteration": 1539179238210,
+  "id": 23,
+  "iteration": 1539209488566,
   "links": [],
   "panels": [
+    {
+      "content": "# Scraper-Sync\n\nEnd-to-end scraper status.",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 27,
+      "links": [],
+      "mode": "markdown",
+      "title": "",
+      "type": "text"
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -28,10 +42,206 @@
       "datasource": "$datasource",
       "fill": 1,
       "gridPos": {
-        "h": 6,
-        "w": 6,
+        "h": 8,
+        "w": 12,
         "x": 0,
-        "y": 0
+        "y": 3
+      },
+      "id": 9,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg(time() - scraper_lastcollectionattempt{rsync_module=~\"$rsync_module\"})",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Avg",
+          "refId": "A",
+          "step": 20
+        },
+        {
+          "expr": "min(time() - scraper_lastcollectionattempt{rsync_module=~\"$rsync_module\"})",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Min",
+          "metric": "",
+          "refId": "B",
+          "step": 20
+        },
+        {
+          "expr": "max(time() - scraper_lastcollectionattempt{rsync_module=~\"$rsync_module\"})",
+          "intervalFactor": 2,
+          "legendFormat": "Max",
+          "metric": "",
+          "refId": "C",
+          "step": 20
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Min / Max / Avg last-collection-attempt",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 3
+      },
+      "id": 8,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "topk(10, time() - scraper_lastcollectionattempt{rsync_module=~\"$rsync_module\"})",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "{{machine}} {{rsync_module}}",
+          "refId": "A",
+          "step": 20
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top 10 last-collection-attempt",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 11
       },
       "id": 7,
       "legend": {
@@ -57,20 +267,39 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\"}",
-          "format": "time_series",
+          "expr": "avg(time() - scraper_maxrawfiletimearchived{rsync_module=~\"$rsync_module\"} < time() / 2)",
+          "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
+          "legendFormat": "Avg",
+          "metric": "",
+          "refId": "A",
+          "step": 60
+        },
+        {
+          "expr": "max(time() - scraper_maxrawfiletimearchived{rsync_module=~\"$rsync_module\"} < time() / 2)",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Max",
+          "refId": "B",
+          "step": 20
+        },
+        {
+          "expr": "min(time() - scraper_maxrawfiletimearchived{rsync_module=~\"$rsync_module\"} < time() / 2)",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Min",
+          "metric": "",
+          "refId": "C",
+          "step": 20
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Tasks In Flight",
+      "title": "Min / Max / Avg max-raw-file-time-archived",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -83,11 +312,11 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": null,
           "show": true
         },
         {
@@ -109,188 +338,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus (mlab-oti)",
       "fill": 1,
       "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 0
-      },
-      "id": 12,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "go_goroutines{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        },
-        {
-          "expr": "",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "GoRoutine Count",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 6,
+        "h": 7,
+        "w": 12,
         "x": 12,
-        "y": 0
-      },
-      "id": 4,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(process_cpu_seconds_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[5m])",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "CPU Utilization",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 0
+        "y": 11
       },
       "id": 5,
       "legend": {
@@ -316,223 +370,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "process_virtual_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
+          "expr": "topk(10, (time() - (scraper_maxrawfiletimearchived{container=\"scraper-sync\"} != 0)) and ON(machine) (time() - process_start_time_seconds{service=\"sidestream\"}) > (24 * 60 * 60))",
+          "interval": "60s",
+          "intervalFactor": 2,
+          "legendFormat": "{{machine}} {{rsync_module}}",
+          "metric": "",
+          "refId": "B",
+          "step": 120
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Virtual Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 0,
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 6
-      },
-      "id": 2,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/Warning:/",
-          "color": "#e5ac0e"
-        },
-        {
-          "alias": "/Failure:/",
-          "color": "#bf1b00"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "irate(gardener_warning_total{container=\"etl-gardener\"}[12h])",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{status}}",
-          "refId": "A"
-        },
-        {
-          "expr": "irate(gardener_fail_total{container=\"etl-gardener\"}[12h])",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{status}}",
-          "refId": "B"
-        },
-        {
-          "expr": "gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Warning: {{status}}",
-          "refId": "C"
-        },
-        {
-          "expr": "gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Failure: {{status}}",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Warnings and Failures per Hour",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 1,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "description": "",
-      "fill": 0,
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 6
-      },
-      "id": 10,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "connected",
-      "percentage": false,
-      "pointradius": 0.5,
-      "points": true,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(deployment, quantile, state)(-gardener_state_time_summary{quantile=\"0.5\", deployment=~\"$deployment\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "q:{{quantile}} {{state}} {{deployment}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Time in State",
+      "title": "Top 10 max-raw-file-time-archived",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -548,12 +398,115 @@
       },
       "yaxes": [
         {
-          "decimals": null,
           "format": "s",
           "label": null,
-          "logBase": 10,
-          "max": "100000",
-          "min": "0.1",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "content": "# Scraper-sync Details\n\nMore Scraper-sync information for drill-down.",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 28,
+      "links": [],
+      "mode": "markdown",
+      "title": "",
+      "type": "text"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 36,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "topk(5, kube_pod_container_status_restarts > 0)",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 3,
+          "legendFormat": "{{pod}}",
+          "refId": "A",
+          "step": 15
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Pod Restarts",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
@@ -576,21 +529,20 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "Number of tasks started and completed, per hour.",
       "fill": 1,
       "gridPos": {
-        "h": 6,
+        "h": 9,
         "w": 12,
-        "x": 0,
-        "y": 12
+        "x": 12,
+        "y": 21
       },
-      "id": 9,
+      "id": 40,
       "legend": {
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "show": false,
+        "show": true,
         "total": false,
         "values": false
       },
@@ -608,37 +560,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "# NOTE: `deriv` is for gauges; `rate` is for counters.",
+          "expr": "scrape_duration_seconds{container=\"scraper-sync\", instance=~\".*:9090\"}",
           "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "Completed {{deployment}}",
-          "refId": "C"
-        },
-        {
-          "expr": "rate(gardener_started_total{deployment=~\"$deployment\"}[3h])*3600",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Started {{deployment}}",
+          "intervalFactor": 2,
+          "legendFormat": "{{container}}",
           "refId": "A"
-        },
-        {
-          "expr": "rate(gardener_completed_total{deployment=~\"$deployment\"}[3h])*3600",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Completed {{deployment}}",
-          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Start and Completion Rate",
+      "title": "Time Prometheus took to collect /metrics from scraper-sync",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -651,12 +586,189 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "short",
-          "label": "Tasks / Hour",
+          "format": "s",
+          "label": null,
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 30
+      },
+      "id": 39,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{container_name=\"scraper-sync\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Virtual RAM",
+          "refId": "A",
+          "step": 20
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "RAM Usage (node exporter)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 30
+      },
+      "id": 38,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "process_virtual_memory_bytes{application=\"scraper-sync\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Virtual RAM",
+          "refId": "A",
+          "step": 20
+        },
+        {
+          "expr": "process_resident_memory_bytes{application=\"scraper-sync\"}",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Resident RAM",
+          "refId": "B",
+          "step": 20
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "RAM Usage (self-reported)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
@@ -682,8 +794,8 @@
     "list": [
       {
         "current": {
-          "text": "Data Proc (mlab-staging)",
-          "value": "Data Proc (mlab-staging)"
+          "text": "Scraper (mlab-oti)",
+          "value": "Scraper (mlab-oti)"
         },
         "hide": 0,
         "label": "Datasource",
@@ -691,36 +803,70 @@
         "options": [],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "/Data Proc.*/",
+        "regex": "Scraper.*",
         "type": "datasource"
       },
       {
-        "allValue": ".*",
+        "allValue": null,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": "ndt",
+          "value": "ndt"
         },
-        "datasource": "Data Proc (mlab-sandbox)",
         "hide": 0,
-        "includeAll": true,
-        "label": "Gardener Deployment",
+        "includeAll": false,
+        "label": "Rsync Module",
         "multi": false,
-        "name": "deployment",
-        "options": [],
-        "query": "label_values(up{deployment=~\"etl-gardener-.*\"}, deployment)",
-        "refresh": 2,
-        "regex": "",
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "name": "rsync_module",
+        "options": [
+          {
+            "selected": true,
+            "text": "ndt",
+            "value": "ndt"
+          },
+          {
+            "selected": false,
+            "text": "sidestream",
+            "value": "sidestream"
+          },
+          {
+            "selected": false,
+            "text": "paris-traceroute",
+            "value": "paris-traceroute"
+          },
+          {
+            "selected": false,
+            "text": "switch",
+            "value": "switch"
+          },
+          {
+            "selected": false,
+            "text": "utilization",
+            "value": "utilization"
+          },
+          {
+            "selected": false,
+            "text": "neubot",
+            "value": "neubot"
+          },
+          {
+            "selected": false,
+            "text": "glasnost",
+            "value": "glasnost"
+          },
+          {
+            "selected": false,
+            "text": "ooni",
+            "value": "ooni"
+          }
+        ],
+        "query": "ndt,sidestream,paris-traceroute,switch,utilization,neubot,glasnost,ooni",
+        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -749,7 +895,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "Pipeline: Gardener",
-  "uid": "eBbUW6oik",
-  "version": 31
+  "title": "Scraper: Sync",
+  "uid": "000000023",
+  "version": 16
 }
