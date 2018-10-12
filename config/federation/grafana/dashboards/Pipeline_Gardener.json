@@ -2,7 +2,6 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:386",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -13,7 +12,7 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": 55,
@@ -602,7 +601,32 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Completed etl-gardener-disco",
+          "color": "#508642"
+        },
+        {
+          "alias": "Completed etl-gardener-ndt",
+          "color": "#cca300"
+        },
+        {
+          "alias": "Completed etl-gardener-sidestream",
+          "color": "#e24d42"
+        },
+        {
+          "alias": "Started etl-gardener-disco",
+          "color": "#508642"
+        },
+        {
+          "alias": "Started etl-gardener-ndt",
+          "color": "#e5ac0e"
+        },
+        {
+          "alias": "Started etl-gardener-sidestream",
+          "color": "#e24d42"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -624,7 +648,7 @@
           "refId": "A"
         },
         {
-          "expr": "rate(gardener_completed_total{deployment=~\"$deployment\"}[3h])*3600",
+          "expr": "-rate(gardener_completed_total{deployment=~\"$deployment\"}[3h])*3600",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -656,7 +680,7 @@
           "label": "Tasks / Hour",
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": null,
           "show": true
         },
         {
@@ -752,5 +776,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 5
+  "version": 35
 }
