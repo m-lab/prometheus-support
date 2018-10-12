@@ -16,8 +16,8 @@
   "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 49,
-  "iteration": 1539201196329,
+  "id": 48,
+  "iteration": 1539288858555,
   "links": [],
   "panels": [
     {
@@ -52,7 +52,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 0,
       "gridPos": {
         "h": 9,
@@ -105,6 +105,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:261",
           "expr": "candidate_machine:inotify_extension_create_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -115,6 +116,7 @@
           "step": 300
         },
         {
+          "$$hashKey": "object:262",
           "expr": "candidate_site:uplink:98th_quantile_$interval{ifAlias=\"uplink\", speed=\"1g\"} / 1e9 > ($percent / 100) OR candidate_site:uplink:98th_quantile_$interval{ifAlias=\"uplink\", speed=\"10g\"} / 10e9 > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -125,6 +127,7 @@
           "step": 300
         },
         {
+          "$$hashKey": "object:263",
           "expr": "candidate_machine:node_disk_io_time_ratio:98th_quantile_$interval > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -135,6 +138,7 @@
           "step": 300
         },
         {
+          "$$hashKey": "object:264",
           "expr": "candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_$interval / 100e6 > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -205,7 +209,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 0,
       "gridPos": {
         "h": 9,
@@ -258,6 +262,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:518",
           "expr": "candidate_site:uplink:90th_quantile_6h{ifAlias=\"uplink\", speed=\"1g\"} / 1e9 > (40 / 100)",
           "format": "time_series",
           "hide": false,
@@ -328,7 +333,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 0,
       "gridPos": {
         "h": 10,
@@ -387,6 +392,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:333",
           "expr": "quantile_over_time(0.9, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60",
           "format": "time_series",
           "hide": false,
@@ -397,6 +403,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:334",
           "expr": "quantile_over_time(0.98, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96",
           "format": "time_series",
           "interval": "1m",
@@ -405,6 +412,7 @@
           "refId": "D"
         },
         {
+          "$$hashKey": "object:335",
           "expr": "machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "hide": false,
@@ -415,6 +423,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:336",
           "expr": "quantile_over_time(0.90, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "instant": false,
@@ -424,6 +433,7 @@
           "refId": "C"
         },
         {
+          "$$hashKey": "object:337",
           "expr": "quantile_over_time(0.98, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "instant": false,
@@ -492,7 +502,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 0,
       "gridPos": {
         "h": 10,
@@ -554,6 +564,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:592",
           "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 500e6",
           "format": "time_series",
           "hide": false,
@@ -563,6 +574,7 @@
           "refId": "E"
         },
         {
+          "$$hashKey": "object:593",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 600e6",
           "format": "time_series",
           "intervalFactor": 2,
@@ -570,6 +582,7 @@
           "refId": "F"
         },
         {
+          "$$hashKey": "object:594",
           "expr": "switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}",
           "format": "time_series",
           "hide": false,
@@ -579,6 +592,7 @@
           "refId": "C"
         },
         {
+          "$$hashKey": "object:595",
           "expr": "quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range])",
           "format": "time_series",
           "interval": "1m",
@@ -587,6 +601,7 @@
           "refId": "D"
         },
         {
+          "$$hashKey": "object:596",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range])",
           "format": "time_series",
           "hide": false,
@@ -596,6 +611,7 @@
           "refId": "A"
         },
         {
+          "$$hashKey": "object:597",
           "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 5e9",
           "format": "time_series",
           "interval": "1m",
@@ -604,6 +620,7 @@
           "refId": "B"
         },
         {
+          "$$hashKey": "object:598",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 6e9",
           "format": "time_series",
           "interval": "1m",
@@ -612,6 +629,7 @@
           "refId": "G"
         },
         {
+          "$$hashKey": "object:599",
           "expr": "switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}",
           "format": "time_series",
           "interval": "1m",
@@ -620,6 +638,7 @@
           "refId": "H"
         },
         {
+          "$$hashKey": "object:600",
           "expr": "quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range])",
           "format": "time_series",
           "interval": "1m",
@@ -628,6 +647,7 @@
           "refId": "I"
         },
         {
+          "$$hashKey": "object:601",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range])",
           "format": "time_series",
           "interval": "1m",
@@ -682,7 +702,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 0,
       "gridPos": {
         "h": 9,
@@ -741,6 +761,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:436",
           "expr": "quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range]) > 0.5",
           "format": "time_series",
           "hide": false,
@@ -751,6 +772,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:437",
           "expr": "quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range]) > 0.8",
           "format": "time_series",
           "hide": false,
@@ -761,6 +783,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:438",
           "expr": "machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "hide": false,
@@ -771,6 +794,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:439",
           "expr": "quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
@@ -781,6 +805,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:440",
           "expr": "quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
@@ -836,7 +861,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 0,
       "gridPos": {
         "h": 9,
@@ -895,6 +920,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:724",
           "expr": "quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > 50000000",
           "format": "time_series",
           "interval": "1m",
@@ -904,6 +930,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:725",
           "expr": "quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > 80000000",
           "format": "time_series",
           "interval": "1m",
@@ -913,6 +940,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:726",
           "expr": "ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "hide": false,
@@ -923,6 +951,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:727",
           "expr": "quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
           "format": "time_series",
           "hide": false,
@@ -933,6 +962,7 @@
           "step": 900
         },
         {
+          "$$hashKey": "object:728",
           "expr": "quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
           "format": "time_series",
           "hide": false,
@@ -992,6 +1022,7 @@
     "list": [
       {
         "current": {
+          "tags": [],
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -1240,5 +1271,5 @@
   "timezone": "utc",
   "title": "NDT: Early Warning",
   "uid": "UM67WeHmz",
-  "version": 15
+  "version": 52
 }
