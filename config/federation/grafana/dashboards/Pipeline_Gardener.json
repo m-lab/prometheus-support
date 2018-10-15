@@ -2,6 +2,7 @@
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:85",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -15,8 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 55,
-  "iteration": 1539288566988,
+  "id": 216,
+  "iteration": 1539623588087,
   "links": [],
   "panels": [
     {
@@ -632,15 +633,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "# NOTE: `deriv` is for gauges; `rate` is for counters.",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "Completed {{deployment}}",
-          "refId": "C"
-        },
-        {
-          "expr": "rate(gardener_started_total{deployment=~\"$deployment\"}[3h])*3600",
+          "$$hashKey": "object:156",
+          "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -648,7 +642,8 @@
           "refId": "A"
         },
         {
-          "expr": "-rate(gardener_completed_total{deployment=~\"$deployment\"}[3h])*3600",
+          "$$hashKey": "object:157",
+          "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -659,7 +654,7 @@
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Start and Completion Rate",
+      "title": "Start and Completion Rate (hourly)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -696,6 +691,131 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "id": 13,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "Completed etl-gardener-disco",
+          "color": "#508642"
+        },
+        {
+          "alias": "Completed etl-gardener-ndt",
+          "color": "#cca300"
+        },
+        {
+          "alias": "Completed etl-gardener-sidestream",
+          "color": "#e24d42"
+        },
+        {
+          "alias": "Started etl-gardener-disco",
+          "color": "#508642"
+        },
+        {
+          "alias": "Started etl-gardener-ndt",
+          "color": "#e5ac0e"
+        },
+        {
+          "alias": "Started etl-gardener-sidestream",
+          "color": "#e24d42"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:157",
+          "expr": "sum by(deployment) (increase(gardener_completed_total{deployment=~\"$deployment\"}[24h]))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "Completed {{deployment}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [
+        {
+          "$$hashKey": "object:697",
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 40,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SLO: Completion Rate (Tasks / day)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:608",
+          "decimals": null,
+          "format": "short",
+          "label": "Tasks / Day",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:609",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": false,
@@ -707,6 +827,7 @@
       {
         "current": {
           "selected": true,
+          "tags": [],
           "text": "Data Proc (mlab-oti)",
           "value": "Data Proc (mlab-oti)"
         },
@@ -745,7 +866,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
@@ -776,5 +897,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 35
+  "version": 38
 }
