@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 216,
-  "iteration": 1539623588073,
+  "iteration": 1539623588087,
   "links": [],
   "panels": [
     {
@@ -634,7 +634,7 @@
       "targets": [
         {
           "$$hashKey": "object:156",
-          "expr": "increase(gardener_started_total{deployment=~\"$deployment\"}[1h])",
+          "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -643,7 +643,7 @@
         },
         {
           "$$hashKey": "object:157",
-          "expr": "-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h])",
+          "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -756,7 +756,7 @@
       "targets": [
         {
           "$$hashKey": "object:157",
-          "expr": "increase(gardener_completed_total{deployment=~\"$deployment\"}[24h])",
+          "expr": "sum by(deployment) (increase(gardener_completed_total{deployment=~\"$deployment\"}[24h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -799,7 +799,7 @@
           "label": "Tasks / Day",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -866,7 +866,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
