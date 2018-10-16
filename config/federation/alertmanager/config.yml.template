@@ -30,7 +30,7 @@ route:
   repeat_interval: 3h
 
   # When no other routes match, use the default receiver.
-  receiver: slack-alerts-email
+  receiver: slack-alerts-ticket
 
   # The above attributes are inherited by all child routes. Children can
   # overwrite any value.
@@ -102,16 +102,25 @@ receivers:
     api_url: {{SLACK_CHANNEL_URL}}
     channel: alerts-{{SHORT_PROJECT}}
     username: alert-page
-    text: '{{GITHUB_ISSUE_QUERY}}'
+    text: |
+      Open Issues: {{GITHUB_ISSUE_QUERY}}
+      Summary    : {{ .CommonAnnotations.summary }}
+      Description: {{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}
+      Dashboard  : {{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}Please add an alert dashboard!{{end}}
+
   webhook_configs:
   - url: '{{GITHUB_RECEIVER_URL}}'
 
-- name: 'slack-alerts-email'
+- name: 'slack-alerts-ticket'
   slack_configs:
   - send_resolved: true
     api_url: {{SLACK_CHANNEL_URL}}
     channel: alerts-{{SHORT_PROJECT}}
-    username: alert-email
-    text: '{{GITHUB_ISSUE_QUERY}}'
+    username: alertmanager
+    text: |
+      Open Issues: {{GITHUB_ISSUE_QUERY}}
+      Summary    : {{ .CommonAnnotations.summary }}
+      Description: {{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}
+      Dashboard  : {{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}Please add an alert dashboard!{{end}}
   webhook_configs:
   - url: '{{GITHUB_RECEIVER_URL}}'
