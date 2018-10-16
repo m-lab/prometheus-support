@@ -4,11 +4,11 @@
 --
 -- This query exports one metric:
 --
---   bq_gardener_parse_time_difference -- (MAX(parse_time) - MIN(parse_time))
---       in seconds, labeled with the dataset name.
+--   bq_gardener_parse_time_difference_days -- (MAX(parse_time) - MIN(parse_time))
+--       in days, labeled with the dataset name.
 
 SELECT
-  TIMESTAMP_DIFF(max_parse_time, min_parse_time, SECOND) AS value_difference,
+  TIMESTAMP_DIFF(max_parse_time, min_parse_time, DAY) AS value_difference_days,
   dataset
 FROM (
     SELECT

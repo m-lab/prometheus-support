@@ -661,7 +661,7 @@ groups:
 # Gardener_ParseTimeDifferenceTooOld fires when the maximum and minimum
 # parse_time values for each data set are greater than 80 days.
   - alert: Gardener_ParseTimeDifferenceTooOld
-    expr: bq_gardener_parse_time_difference > 80*24*60*60
+    expr: bq_gardener_parse_time_difference_days > 80
     for: 10m
     labels:
       repo: dev-tracker
