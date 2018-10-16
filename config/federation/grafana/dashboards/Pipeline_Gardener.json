@@ -1,22 +1,8 @@
 {
-  "__inputs": [],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "5.1.4"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": "5.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:85",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -30,8 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1539711826519,
+  "id": 216,
+  "iteration": 1539714125140,
   "links": [],
   "panels": [
     {
@@ -863,7 +849,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "min_over_time(gardener_state_date{deployment=~"$deployment"}[1h])",
+          "$$hashKey": "object:185",
+          "expr": "1000*min_over_time(gardener_state_date{deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -890,6 +877,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:225",
           "decimals": null,
           "format": "dateTimeAsIso",
           "label": "State update for task date",
@@ -899,6 +887,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:226",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -921,7 +910,6 @@
     "list": [
       {
         "current": {
-          "selected": true,
           "tags": [],
           "text": "Data Proc (mlab-oti)",
           "value": "Data Proc (mlab-oti)"
@@ -937,7 +925,10 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": "$datasource",
         "hide": 0,
         "includeAll": true,
@@ -989,5 +980,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 40
+  "version": 41
 }
