@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 216,
-  "iteration": 1539711826521,
+  "iteration": 1539714125140,
   "links": [],
   "panels": [
     {
@@ -633,7 +633,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:156",
           "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -642,7 +641,6 @@
           "refId": "A"
         },
         {
-          "$$hashKey": "object:157",
           "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -755,7 +753,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:157",
           "expr": "sum by(deployment) (increase(gardener_completed_total{deployment=~\"$deployment\"}[24h]))",
           "format": "time_series",
           "hide": false,
@@ -766,7 +763,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:697",
           "colorMode": "critical",
           "fill": true,
           "line": true,
@@ -793,7 +789,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:608",
           "decimals": null,
           "format": "short",
           "label": "Tasks / Day",
@@ -803,7 +798,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:609",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -855,8 +849,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:307",
-          "expr": "min_over_time(gardener_state_date{deployment=~\"$deployment\"}[1h])",
+          "$$hashKey": "object:185",
+          "expr": "1000*min_over_time(gardener_state_date{deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -883,6 +877,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:225",
           "decimals": null,
           "format": "dateTimeAsIso",
           "label": "State update for task date",
@@ -892,6 +887,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:226",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -914,7 +910,6 @@
     "list": [
       {
         "current": {
-          "selected": true,
           "tags": [],
           "text": "Data Proc (mlab-oti)",
           "value": "Data Proc (mlab-oti)"
@@ -985,5 +980,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 40
+  "version": 41
 }
