@@ -1,8 +1,22 @@
 {
+  "__inputs": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "5.1.4"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": "5.0.0"
+    }
+  ],
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:85",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -16,8 +30,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 216,
-  "iteration": 1539623588087,
+  "id": null,
+  "iteration": 1539711826519,
   "links": [],
   "panels": [
     {
@@ -633,7 +647,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:156",
           "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -642,7 +655,6 @@
           "refId": "A"
         },
         {
-          "$$hashKey": "object:157",
           "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -755,7 +767,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:157",
           "expr": "sum by(deployment) (increase(gardener_completed_total{deployment=~\"$deployment\"}[24h]))",
           "format": "time_series",
           "hide": false,
@@ -766,7 +777,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:697",
           "colorMode": "critical",
           "fill": true,
           "line": true,
@@ -793,7 +803,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:608",
           "decimals": null,
           "format": "short",
           "label": "Tasks / Day",
@@ -803,7 +812,93 @@
           "show": true
         },
         {
-          "$$hashKey": "object:609",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "Task dates of the most recent updates to each task state.",
+      "fill": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "id": 15,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "gardener_state_date{deployment=~\"$deployment\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}} {{state}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Task Date of Recent State Updates",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "dateTimeAsIso",
+          "label": "State update for task date",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -842,10 +937,7 @@
       },
       {
         "allValue": ".*",
-        "current": {
-          "text": "All",
-          "value": "$__all"
-        },
+        "current": {},
         "datasource": "$datasource",
         "hide": 0,
         "includeAll": true,
@@ -897,5 +989,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 38
+  "version": 40
 }
