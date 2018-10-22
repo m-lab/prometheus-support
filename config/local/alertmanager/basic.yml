@@ -20,9 +20,7 @@ receivers:
       {{.GroupLabels.alertname}}: {{.CommonAnnotations.summary}}
     text: |
       *Description:* '{{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}'
-      *Details:*
-       {{ range $key, $value := .CommonLabels }} • *{{ $key }}:* `{{ $value }}`
-       {{ end }}
+      *Details:* {{ range $key, $value := .CommonLabels }} {{ $key }}=`{{ $value }}` {{ end }}
     actions:
     - type: button
       text: '{{if .CommonAnnotations.dashboard}}Dashboard{{else}}Create Dashboard{{end}}'
