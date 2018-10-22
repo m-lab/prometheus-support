@@ -1,0 +1,35 @@
+global:
+  resolve_timeout: 5m
+  
+route:
+  group_by: ['alertname', 'instance']
+  group_wait: 10s
+  group_interval: 10s 
+  repeat_interval: 1h
+  receiver: 'webhook'
+
+receivers:
+- name: 'webhook'
+  slack_configs:
+  - send_resolved: true
+    api_url: <SLACK-ADDURL>
+    channel: alerts-sandbox 
+    username: alert-page
+    title: >
+      [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
+      {{.GroupLabels.alertname}}: {{.CommonAnnotations.summary}}
+    text: |
+      *Description:* '{{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}'
+      *Details:*
+       {{ range $key, $value := .CommonLabels }} • *{{ $key }}:* `{{ $value }}`
+       {{ end }}
+    actions:
+    - type: button
+      text: '{{if .CommonAnnotations.dashboard}}Dashboard{{else}}Create Dashboard{{end}}'
+      url: '{{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}https://grafana.mlab-sandbox.measurementlab.net/dashboard/new?orgId=1{{end}}'
+    - type: button
+      text: Github
+      url: 'https://github.com/issues?q=is%3Aissue+user%3Am-lab+author%3Ameasurementlab+is%3Aopen'
+    - type: button
+      text: Add Silence
+      url: '{{.ExternalURL}}/#/silences/new?filter=%7B{{$values := .CommonLabels.Values }}{{range $index, $name := .CommonLabels.Names }}{{if $index}}%2C{{end}}{{$name}}%3D%22{{index $values $index}}%22{{end}}%7D'
