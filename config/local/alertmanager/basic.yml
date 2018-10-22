@@ -32,4 +32,4 @@ receivers:
       url: 'https://github.com/issues?q=is%3Aissue+user%3Am-lab+author%3Ameasurementlab+is%3Aopen'
     - type: button
       text: Add Silence
-      url: '{{.ExternalURL}}/#/silences/new?filter=%7B{{$values := .CommonLabels.Values }}{{range $index, $name := .CommonLabels.Names }}{{if $index}}%2C{{end}}{{$name}}%3D%22{{index $values $index}}%22{{end}}%7D'
+      url: '{{ if eq .Status "firing" }}{{.ExternalURL}}/#/silences/new?filter=%7B{{$values := .CommonLabels.Values }}{{range $index, $name := .CommonLabels.Names }}{{if $index}}%2C{{end}}{{$name}}%3D%22{{index $values $index}}%22{{end}}%7D{{end}}'
