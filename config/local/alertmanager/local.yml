@@ -1,0 +1,23 @@
+global:
+  # Manually published alerts will automatically 'RESOLVE' after this timeout.
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'instance']
+  # For testing, we want the AM to react to alerts very quickly.
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'slack'
+
+receivers:
+#- name: 'webhook'
+#  webhook_configs:
+#  - url: 'http://localhost:9393/v1/receiver'
+
+- name: 'slack'
+  slack_configs:
+  - send_resolved: true
+    api_url: <SLACK-ADDURL>
+    channel: alerts-sandbox
+    username: alert-page
