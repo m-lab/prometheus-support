@@ -97,15 +97,13 @@ receivers:
     - type: button
       text: '{{if .CommonAnnotations.dashboard}}Dashboard{{else}}Create Dashboard{{end}}'
       url: '{{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}https://grafana.mlab-sandbox.measurementlab.net/dashboard/new?orgId=1{{end}}'
-
-	# NOTE: buttons do not display if the URL is empty or invalid.
+    # NOTE: buttons do not display if the URL is empty or invalid.
     - type: button
       text: Github
-      url: '{{GITHUB_ISSUE_QUERY}}'
-
+      url: '{{GITHUB_ISSUE_QUERY}} '
     # NOTE: this goop constructs a query string for the alertmanager to create
-	# a silence. The format of the query is a url encoded label set: e.g.
-	# {foo="a",bar="b"}
+    # a silence. The format of the query is a url encoded label set: e.g.
+    # {foo="a",bar="b"}
     - type: button
       text: Add Silence
       url: '{{if eq .Status "firing"}}{{.ExternalURL}}/#/silences/new?filter=%7B{{$values := .CommonLabels.Values}}{{range $index, $name := .CommonLabels.Names}}{{if $index}}%2C{{end}}{{$name}}%3D%22{{index $values $index}}%22{{end}}%7D{{end}}'
