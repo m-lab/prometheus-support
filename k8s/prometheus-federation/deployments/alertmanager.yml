@@ -39,9 +39,9 @@ spec:
             configMapKeyRef:
               name: alertmanager-env
               key: external-url
-        args: ["-config.file=/etc/alertmanager/config.yml",
-               "-web.external-url=$(ALERTMANAGER_EXTERNAL_URL)",
-               "-storage.path=/alertmanager"]
+        args: ["--config.file=/etc/alertmanager/config.yml",
+               "--web.external-url=$(ALERTMANAGER_EXTERNAL_URL)",
+               "--storage.path=/alertmanager"]
         ports:
           - containerPort: 9093
         resources:
