@@ -32,24 +32,6 @@ route:
   # When no other routes match, use the default receiver.
   receiver: slack-alerts-ticket
 
-  # The above attributes are inherited by all child routes. Children can
-  # overwrite any value.
-
-  # The child route trees.
-  routes:
-  # This route performs matches on alert labels to catch alerts that are
-  # related to a specific service.
-  - match:
-      service: federation
-
-    # If the service matches, continue down the child routes. If the severity
-    # of the alert is 'page', then send the notification to an alternative
-    # receiver.
-    routes:
-    - match:
-        severity: page
-      receiver: slack-alerts-page
-
 
 # When two alerts are firing at the same time, we can "inhibit" one based on
 # the other. For example, a host is offline and a service on that host is not
@@ -96,31 +78,38 @@ receivers:
 # edit one of the existing configurations. Copy the "Webhook URL" from the
 # slack configuration to the `api_url` values below.
 
-- name: 'slack-alerts-page'
-  slack_configs:
-  - send_resolved: true
-    api_url: {{SLACK_CHANNEL_URL}}
-    channel: alerts-{{SHORT_PROJECT}}
-    username: alert-page
-    text: |
-      Open Issues: {{GITHUB_ISSUE_QUERY}}
-      Summary    : {{ .CommonAnnotations.summary }}
-      Description: {{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}
-      Dashboard  : {{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}Please add an alert dashboard!{{end}}
-
-  webhook_configs:
-  - url: '{{GITHUB_RECEIVER_URL}}'
-
 - name: 'slack-alerts-ticket'
   slack_configs:
   - send_resolved: true
     api_url: {{SLACK_CHANNEL_URL}}
     channel: alerts-{{SHORT_PROJECT}}
     username: alertmanager
+
+    title: >
+      [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
+      {{.GroupLabels.alertname}}: {{.CommonAnnotations.summary}}
+
     text: |
-      Open Issues: {{GITHUB_ISSUE_QUERY}}
-      Summary    : {{ .CommonAnnotations.summary }}
-      Description: {{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}
-      Dashboard  : {{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}Please add an alert dashboard!{{end}}
+      *Description:* '{{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}'
+      *Details:* {{range $key, $value := .CommonLabels }} {{ $key }}=`{{ $value }}` {{end}}
+
+    actions:
+    - type: button
+      text: '{{if .CommonAnnotations.dashboard}}Dashboard{{else}}Create Dashboard{{end}}'
+      url: '{{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}https://grafana.mlab-sandbox.measurementlab.net/dashboard/new?orgId=1{{end}}'
+
+	# NOTE: buttons do not display if the URL is empty or invalid.
+    - type: button
+      text: Github
+      url: '{{GITHUB_ISSUE_QUERY}}'
+
+    # NOTE: this goop constructs a query string for the alertmanager to create
+	# a silence. The format of the query is a url encoded label set: e.g.
+	# {foo="a",bar="b"}
+    - type: button
+      text: Add Silence
+      url: '{{if eq .Status "firing"}}{{.ExternalURL}}/#/silences/new?filter=%7B{{$values := .CommonLabels.Values}}{{range $index, $name := .CommonLabels.Names}}{{if $index}}%2C{{end}}{{$name}}%3D%22{{index $values $index}}%22{{end}}%7D{{end}}'
+
+  # All alerts sent to slack are also sent to the github webhook receiver.
   webhook_configs:
   - url: '{{GITHUB_RECEIVER_URL}}'

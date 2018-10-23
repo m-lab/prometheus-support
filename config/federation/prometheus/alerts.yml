@@ -33,9 +33,10 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
-        for more than 2 minutes.'
       summary: Instance {{ $labels.instance }} down
+      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
+        for more than 10 minutes.'
+
 ##
 ## SLOs
 ##
@@ -57,8 +58,9 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      description: ""
-      summary: ""
+      summary: "An M-Lab machine is online, but the sidestream exporter is not."
+      description: "Since sidestream is a core service, this must be fixed."
+
 # ScraperSLO
 #
 # ScraperMostRecentArchivedFileTimeIsTooOld: scraper uploads archives for a
@@ -87,8 +89,9 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      description: Max file mtime for {{ $labels.rsync_url }} is older than 56 hours.
       summary: Scraper max file mtime is too old {{ $labels.rsync_url }}
+      description: Max file mtime for {{ $labels.rsync_url }} is older than 56 hours.
+
 # Scraper internal consistency.
 #
 # Verify that for every running scraper there is a corresponding metric from
@@ -108,8 +111,9 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
+      summary: "Scraper deployent is out of sync with scraper-sync"
       description: ""
-      summary: ""
+
   - alert: ScraperCollectorMissingFromScraperSync
     expr: |
       (up{container="scraper"}
@@ -120,8 +124,11 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      description: ""
-      summary: ""
+      summary: "Scraper deployent is out of sync with scraper-sync"
+      description: >
+        Scraper-sync should only report on the last collection attempt of every
+        active Scraper deployment.
+
 # SwitchSLO
 #
 # A switch at a site has been down for too long and we need to contact the site
@@ -138,10 +145,12 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{
-        $labels.site }}
-      hints: The issue could be with the switch itself, or with the transit provider.
-      summary: The switch at a site has been unreachable for too long.
+      summary: The switch at {{ $labels.site }} has been unreachable for too long.
+      description: >
+        The SNMP exporter cannot scrape new metrics from the switch. The issue
+        could be with the switch itself, or with the transit provider.
+      dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
+
 ##
 ## Inventory.
 ##
@@ -152,11 +161,12 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      description: Machine or rsyncd service configuration has been missing for too
-        long.
-      hints: Check the behavior of the m-lab/operator/.travis.yml deployment, the
-        GCS buckets, and the gcp-service-discovery component of prometheus-support.
-      summary: Inventory configuration {{ $labels.service }} is missing.
+      summary: Inventory configuration is missing.
+      description: Machine or rsyncd service configuration has been missing for
+        too long. Check the behavior of the m-lab/operator/.travis.yml
+        deployment, the GCS buckets, and the gcp-service-discovery component of
+        prometheus-support.
+
   - alert: InventoryMachinesWithoutRsyncd
     expr: up{service="ssh806"} unless on(machine) up{service="rsyncd"}
     for: 30m
@@ -164,8 +174,9 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: ""
       summary: Rsyncd configuration is missing from some machines.
+      description: ""
+
   - alert: InventoryRsyncdWithoutMachines
     expr: up{service="rsyncd"} unless on(machine) up{service="ssh806"}
     for: 30m
@@ -173,8 +184,9 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: ""
       summary: Machine configuration is missing for some rsyncd services.
+      description: ""
+
 ##
 ## Services.
 ##
@@ -185,8 +197,9 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: ""
-      summary: ""
+      summary: "All sidestream targets are missing."
+      description: ""
+
   - alert: SidestreamRunningWithoutMachine
     expr: up{service="sidestream"} unless on(machine) up{service="ssh806"}
     for: 30m
@@ -194,8 +207,9 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: ""
-      summary: ""
+      summary: "Sidestream is monitored on an unknown machine."
+      description: ""
+
   - alert: MachineWithoutSidestreamRunning
     expr: up{service="ssh806"} unless on(machine) up{service="sidestream"}
     for: 30m
@@ -203,8 +217,9 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: ""
-      summary: ""
+      summary: "Machines are missing sidestream monitoring."
+      description: ""
+
 # Scrapers are configured on machine "c", but machine "c" is not in the rsyncd inventory.
   - alert: ScraperRunningWithoutRsyncd
     expr: up{container="scraper"} unless on(machine, experiment) up{service="rsyncd"}
@@ -213,8 +228,9 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: ""
-      summary: ""
+      summary: "Scraper deployments are running without rsyncd monitoring"
+      description: ""
+
 # Rsync inventory includes machine "b", but machine "b" does not have a configured scraper.
   - alert: RsyncRunningWithoutScraper
     expr: up{service="rsyncd"} unless on(machine, experiment) up{container="scraper"}
@@ -223,8 +239,9 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: ""
-      summary: ""
+      summary: "Rsync is monitored without a corresponding scraper deployment"
+      description: ""
+
 # DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in
 # at least 21 hours, meaning that at least the last two download attempts have failed.
   - alert: DownloaderIsFailingToUpdate
@@ -234,11 +251,13 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
+      summary: Neither of the last two attempts to download the maxmind or
+        routeviews feeds were successful.
+      description: Check for errors with the downloader service on grafana with
+        the downloader_error_count metric, or check the stackdriver logs for
+        the downloader cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/ZGuYht1mk/
-      hints: Check for errors with the downloader service on grafana with the downloader_error_count
-        metric, or check the stackdriver logs for the downloader cluster.
-      summary: Neither of the last two attempts to download the maxmind/routeviews
-        feeds were successful.
+
 # DownloaderNotRunning: The downloader cluster crashed and not running at all.
   - alert: DownloaderDownOrMissing
     expr: up{container="downloader"} == 0 or absent(up{container="downloader"})
@@ -247,10 +266,10 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: Check the status of Kubernetes clusters on each M-Lab GCP project. Look
-        at the travis deployment history for m-lab/downloader.
-      summary: The downloader for maxmind/routeviews feeds is down on {{ $labels.instance
-        }}.
+      summary: The downloader for maxmind/routeviews feeds is down or missing.
+      description: Check the status of Kubernetes clusters on each M-Lab GCP
+        project. Look at the travis deployment history for m-lab/downloader.
+
 # Prometheus is unable to get data from the snmp_exporter service.
   - alert: SnmpExporterDownOrMissing
     expr: up{job="snmp-exporter"} == 0 or absent(up{job="snmp-exporter"})
@@ -259,10 +278,12 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: The snmp_exporter service runs in a Docker container on a GCE VM named
-        'snmp-exporter' in each M-Lab GCP project. Look at the Travis-CI builds/deploys
-        for m-lab/snmp-exporter-support, or SSH to the VM and poke around.
-      summary: The snmp_exporter service is down on {{ $labels.instance }}.
+      summary: The snmp_exporter service is down or missing.
+      description: The snmp_exporter service runs in a Docker container on a
+        GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the
+        Travis-CI builds/deploys for m-lab/snmp-exporter-support, or SSH to the
+        VM and poke around.
+
 # Some SNMP metrics are missing from Prometheus. These should always be present.
 # The wait period shouuld be longer than that for the SnmpExporterDownOrMissing
 # alert.
@@ -273,12 +294,16 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
-      gcsbucket: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/snmp-targets
-      hints: If the snmp_exporter service is running, then there may be a target configuration
-        error. Check the target definitions in GCS and the target status in Prometheus.
-      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets
       summary: Expected SNMP metrics are missing from Prometheus!
+      description: |
+        If the snmp_exporter service is running, then there may be a
+        target configuration error. Check the target definitions in GCS[1] and
+        the target status in Prometheus[2].
+
+        [1]: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/snmp-targets
+        [2]: https://prometheus.mlab-oti.measurementlab.net/targets
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
+
 # Scraping SNMP metrics from a switch is failing.
   - alert: SnmpScrapingDownAtSite
     expr: |
@@ -290,12 +315,13 @@ groups:
       repo: ops-tracker
       severity: page
     annotations:
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{
-        $labels.site }}
-      hints: Maybe the switch is down? Is the snmp_exporter using the right community
-        string? Look in switch-details.json in the m-lab/switch-config repo. Is the
-        IP of the snmp_exporter VM in GCE whitelisted on the switch?
       summary: Prometheus is unable to scrape SNMP metrics from a switch.
+      description: >
+        Maybe the switch is down? Is the snmp_exporter using the right community
+        string? Look in switch-details.json in the m-lab/switch-config repo. Is
+        the IP of the snmp_exporter VM in GCE whitelisted on the switch?
+      dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
+
 # Prometheus is unable to get data from the script_exporter service.
   - alert: ScriptExporterDownOrMissing
     expr: up{job="script-exporter"} == 0 or absent(up{job="script-exporter"})
@@ -304,42 +330,53 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: 'The script_exporter service runs in a Docker container on a GCE VM named
-        ''script-exporter'' in each M-Lab GCP project. For deployment details and
-        troubleshooting, you can usually figure out the issue by looking through the
-        Travis-CI build logs: https://travis-ci.org/m-lab/script-exporter-support.
-        You can also look for hints in the dashboard for the GCE instance, or by SSHing
-        to the instance itself.'
-      summary: The script_exporter service is down on {{ $labels.instance }}.
+      summary: The script_exporter service is down on missing.
+      description: |
+        The script_exporter service runs in a Docker container on a GCE VM
+        named 'script-exporter' in each M-Lab GCP project. For deployment
+        details and troubleshooting, you can usually figure out the issue by
+        looking through the Travis-CI build logs[1]. You can also look for
+        hints in the GCP console for the GCE instance, or by SSHing to the
+        instance itself.
+        [1]: https://travis-ci.org/m-lab/script-exporter-support
+
 # Some script_exporter metrics are missing from Prometheus. These should always
 # be present. The wait period should be longer than that for the
 # ScriptExporterDownOrMissing alert.
   - alert: ScriptExporterMissingMetrics
-    expr: absent(script_success{service="ndt_e2e"}) or absent(script_success{service="ndt_queue"})
+    expr: |
+      absent(script_success{service="ndt_e2e"})
+        or absent(script_success{service="ndt_queue"})
     for: 30m
     labels:
       repo: dev-tracker
       severity: page
     annotations:
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
-      gcsbucket: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets
-      hints: If the script_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target status
-        in Prometheus.
-      prometheus_targets: http://status.mlab-oti.measurementlab.net:9090/targets
       summary: Expected script_exporter metrics are missing from Prometheus!
+      description: |
+        If the script_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS[1] and the target
+        status in Prometheus[2].
+
+        [1]: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets
+        [2]: http://prometheus.mlab-oti.measurementlab.net:9090/targets
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
+
 # Prometheus is unable to get data from the blackbox_exporter service for IPv4
 # probes. The service is down, or the metric is missing.
   - alert: BlackboxExporterIpv4DownOrMissing
-    expr: up{job="blackbox-exporter-ipv4"} == 0 or absent(up{job="blackbox-exporter-ipv4"})
+    expr: |
+      up{job="blackbox-exporter-ipv4"} == 0
+        or absent(up{job="blackbox-exporter-ipv4"})
     for: 10m
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: Check the status of the blackbox-server pod in the prometheus-federation
-        cluster on each M-Lab GCP project.
       summary: The blackbox_exporter service is down for IPv4 probes.
+      description: Check the status of the blackbox-server pod in the
+        prometheus-federation cluster on each M-Lab GCP project.
+
 # Prometheus is unable to get data from the blackbox_exporter service for IPv6
 # probes. The service is down, or the metric is missing.
   - alert: BlackboxExporterIpv6DownOrMissing
@@ -349,10 +386,12 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: The blackbox_exporter for IPv6 checks runs in a Linode VM. Make sure
-        the VM is up and running. If it is, check the status of the BBE container
-        running in the VM. Domains for VMs are like blackbox-exporter-ipv6.<project>.measurementlab.net.
       summary: The blackbox_exporter service is down or missing for IPv6 probes.
+      description: The blackbox_exporter for IPv6 checks runs in a Linode VM.
+        Make sure the VM is up and running. If it is, check the status of the
+        BBE container running in the VM. Domains for VMs are like
+        blackbox-exporter-ipv6.<project>.measurementlab.net.
+
 # More than a certain percentage of NDT servers meet the criteria for being
 # down.
   - alert: TooManyNdtServersDown
@@ -382,10 +421,12 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/JAq7W6Nmk/
-      hints: Make sure that the blackbox_exporter, script_exporter and node_exporters
-        are all working as expected. Was any update to the platform just released?
       summary: Too large a percentage of NDT servers are down.
+      description: Make sure that the blackbox_exporter, script_exporter and
+        node_exporters are all working as expected. Was any update to the
+        platform just released?
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/JAq7W6Nmk/
+
 # One or more NDT-specific metrics is missing. These are the NDT metrics that
 # mlab-ns relies on to determine whether NDT is up and running, so we need to
 # make sure that the metrics are always present. NOTE: mlab-ns additionally
@@ -405,11 +446,14 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      hints: If the blackbox_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target status
-        in Prometheus. vdlimit_* metrics are provided by node_exporter on each node.
-      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
       summary: A metric for an NDT service is missing.
+      description: |
+        If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target
+        status in Prometheus[1]. vdlimit_* metrics are provided by node_exporter
+        on each node.
+        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+
 # One or more Neubot-specific metrics is missing. These are the Neubot metrics that
 # mlab-ns relies on to determine whether Neubot is up and running, so we need to
 # make sure that the metrics are always present.
@@ -422,11 +466,13 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: If the blackbox_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target status
-        in Prometheus.
-      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
       summary: A metric for a Neubot service is missing.
+      description: |
+        If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target
+        status in Prometheus[1].
+        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+
 # One or more Mobiperf-specific metrics is missing. These are the Mobiperf
 # metrics that mlab-ns relies on to determine whether Mobiperf is up and
 # running, so we need to make sure that the metrics are always present.
@@ -439,11 +485,13 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: If the blackbox_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target status
-        in Prometheus.
-      prometheus_targets: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
       summary: A metric for a Mobiperf service is missing.
+      description: |
+        If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target
+        status in Prometheus[1].
+        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+
 # Some number of nodes don't have a lame-duck status.
   - alert: LameDuckMetricMissingForNode
     expr: |
@@ -454,10 +502,12 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: Check /var/spool/node_exporter/ on the node to see if the file lame_duck.prom
-        is missing. If it is, use the mlabops Ansible lame-duck.yaml playbook to restore
-        it.
       summary: Some number of nodes are missing lame-duck status metrics.
+      description: |
+        Check /var/spool/node_exporter/ on the node to see if the file
+        lame_duck.prom is missing. If it is, use the mlabops Ansible
+        lame-duck.yaml playbook to restore it.
+
 # vdlimit_used and/or vdlimit_free metrics are completely missing for a node.
 # There are other vdlimit_* metrics, but we care especially about these because
 # mlab-ns uses them to query Prometheus for node status.
@@ -470,10 +520,13 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
-      hints: Check /var/spool/node_exporter/ on the node to see if the file vdlimit.prom
-        is missing. The file is created by /etc/cron.d/prom_vdlimit_metrics.cron.
       summary: Some vdlimit_* metrics are missing.
+      description: |
+        Check /var/spool/node_exporter/ on the node to see if the file
+        vdlimit.prom is missing. The file is created by
+        /etc/cron.d/prom_vdlimit_metrics.cron.
+      dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
+
 # A collectd-mlab service has a problem and is down.
   - alert: CoreServices_CollectdMlabDown
     expr: |
@@ -484,11 +537,13 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: The collectd-mlab service runs in the mlab_utility slice. Try running
-        the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops
-        repository to configure collectd-mlab. Login to the node and run the check
-        script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py).
       summary: A collectd-mlab service is down.
+      description: The collectd-mlab service runs in the mlab_utility slice.
+        Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook
+        in the mlabops repository to configure collectd-mlab. Login to the node
+        and run the check script manually to see what the specific error is
+        (/usr/lib/nagios/plugins/check_collectd_mlab.py).
+
 # A collectd-mlab service metric is missing on some node.
   - alert: CoreServices_CollectdMlabMissing
     expr: |
@@ -499,11 +554,13 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: The collectd-mlab service runs in the mlab_utility slice. Try running
-        the ansible/disco/update-mlab-utility.yaml Ansible playbook in the mlabops
-        repository to configure collectd-mlab. Login to the node and run the check
-        script manually to see what the specific error is (/usr/lib/nagios/plugins/check_collectd_mlab.py).
       summary: A collectd-mlab service metric is missing.
+      description: The collectd-mlab service runs in the mlab_utility slice.
+        Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook
+        in the mlabops repository to configure collectd-mlab. Login to the node
+        and run the check script manually to see what the specific error is
+        (/usr/lib/nagios/plugins/check_collectd_mlab.py).
+
 # One or more of the backend services handled by the nginx proxy is down.
   - alert: Prometheus_NginxProxiedServiceDown
     expr: probe_success{job="nginx-proxied-services"} == 0
@@ -512,9 +569,10 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      hints: Did the nginx k8s deployment or nginx-lb k8s service fail? Did the
-        backend service or deployment fail in some way?
-      summary: One or more of the backend services handled by the nginx proxy is down.
+      summary: Backend services handled by the nginx proxy are down.
+      description: Did the nginx k8s deployment or nginx-lb k8s service fail?
+        Did the backend service or deployment fail in some way?
+
 # TODO:
 #   Replace this with two other alerts:
 #    1.  Alert if hourly test volume on servers drops relative to same hour on recent days.
@@ -568,20 +626,24 @@ groups:
       repo: dev-tracker
       severity: page
     annotations:
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/PKqnWeNmz/
-      hints: Are machines online? Is data being collected? Is the parser working?
       summary: Today's test volume is less than 70% of nominal daily volume.
+      description: Are machines online? Is data being collected? Is the parser working?
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/PKqnWeNmz/
+
 # The node_exporter running on eb.measurementlab.net is down.
   - alert: NodeExporterOnEbDownOrMissing
-    expr: up{job="eb-node-exporter"} == 0 or absent(up{job="eb-node-exporter"})
+    expr: |
+      up{job="eb-node-exporter"} == 0
+        or absent(up{job="eb-node-exporter"})
     for: 10m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      hints: Login to EB to see if it is in fact crashed. If so, look through the
-        logs.
-      summary: The node_exporter instance running on eb.measurementlab.net is down.
+      summary: The node_exporter running on eb.measurementlab.net is down.
+      description: Login to EB to see if it is in fact crashed. If so, look
+        through the logs.
+
 # The node_exporter running on mirror.measurementlab.net is down.
   - alert: NodeExporterOnMirrorDownOrMissing
     expr: up{job="mirror-node-exporter"} == 0 or absent(up{job="mirror-node-exporter"})
@@ -590,9 +652,10 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      hints: Login to to see if it is in fact crashed. If so, look through the logs.
-      summary: The node_exporter instance running on mirror.measurementlab.net is
-        down.
+      summary: The node_exporter running on mirror.measurementlab.net is down.
+      description: Login to to see if it is in fact crashed. If so, look
+        through the logs.
+
 # The node_exporter running on dns.measurementlab.net is down.
   - alert: NodeExporterOnDnsDownOrMissing
     expr: up{job="dns-node-exporter"} == 0 or absent(up{job="dns-node-exporter"})
@@ -601,20 +664,26 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      hints: Login to to see if it is in fact crashed. If so, look through the logs.
-      summary: The node_exporter instance running on dns.measurementlab.net is down.
+      summary: The node_exporter running on dns.measurementlab.net is down.
+      description: Login to to see if it is in fact crashed. If so, look
+        through the logs.
+
 # GardenerDownOrMissing fires when the etl-gardener is down or absent.
 # TODO: enable annotations to ignore some container ports, and simplify this query.
 # https://github.com/m-lab/prometheus-support/issues/48
   - alert: GardenerDownOrMissing
-    expr: up{container="etl-gardener",instance=~".*:9090"} == 0 or absent(up{container="etl-gardener",instance=~".*:9090"})
+    expr: |
+      up{container="etl-gardener",instance=~".*:9090"} == 0
+        or absent(up{container="etl-gardener",instance=~".*:9090"})
     for: 10m
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: The Gardener runs in the data-processing-cluster
-      summary: The ETL Gardener instance is down on {{ $labels.instance }}
+      summary: The ETL Gardener instance is down or missing.
+      description: Gardener runs in the data-processing-cluster.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik
+
 # ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
 # should always be zero because a panic indicates a bug in the parser. The
 # alert will continue to fire until the parser is restarted or a new version is
@@ -626,11 +695,13 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: Bugs cause panics. This bug should be fixed. Parsers run in AppEngine.
-        Check logs to see the panic stack trace. Identify the archive that led to
-        the panic (logs or TaskQueue tasks with many retries). Fix the bug or create
-        a new issue describing the failure and linking to the triggering archive.
       summary: An ETL parser panicked {{ $labels.instance }}
+      description: Bugs cause panics. This bug should be fixed. Parsers run in
+        AppEngine. Check logs to see the panic stack trace. Identify the archive
+        that led to the panic (logs or TaskQueue tasks with many retries). Fix
+        the bug or create a new issue describing the failure and linking to the
+        triggering archive.
+
 # ETL_AnnotationDownOrMissing fires when the annotator AppEngine service is down
 # (prometheus scrape attempts fail) or prometheus does not know about the
 # annotator service at all.
@@ -641,22 +712,25 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: The annotator runs in AppEngine. Check logs and recent deployments. The
-        daily and batch parsers may also be affected.
       summary: An ETL Annotation Server is offline or missing!
+      description: The annotator runs in AppEngine. Check logs and recent
+        deployments. The daily and batch parsers may also be affected.
+
 # NDT_AnnotationRatioTooLow fires when the client annotations on NDT
 # tests appears to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
   - alert: NDT_AnnotationRatioTooLow
-    expr: bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99 or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
+    expr: |
+      bq_ndt_annotation_success / bq_ndt_annotation_total < 0.99
+        or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: The annotator runs in AppEngine. Check logs and recent deployments. The
-        daily and batch parsers may also be affected.
       summary: Too many NDT tests are missing annotations!
+      description: The annotator runs in AppEngine. Check logs and recent
+        deployments. The daily and batch parsers may also be affected.
 
 # Gardener_ParseTimeDifferenceTooOld fires when the maximum and minimum
 # parse_time values for each data set are greater than 80 days.
@@ -667,7 +741,7 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      hints: Gardener throughput is dependent on the etl-batch-parser and
+      summary: 'Gardener progress is too slow for dataset: {{ $labels.dataset }}'
+      description: Gardener throughput is dependent on the etl-batch-parser and
         associated queues.yaml.
-      summary: 'Gardener progress is too slow for some dataset: {{ $labels.dataset }}'
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/
