@@ -115,7 +115,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - process_start_time_seconds{container=\"prometheus\"}",
+          "expr": "min(time() - process_start_time_seconds{container=\"prometheus\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1263,7 +1263,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - process_start_time_seconds{container=\"prometheus18\"}",
+          "expr": "min(time() - process_start_time_seconds{container=\"prometheus18\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
