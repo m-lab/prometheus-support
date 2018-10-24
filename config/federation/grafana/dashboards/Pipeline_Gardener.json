@@ -849,8 +849,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:185",
-          "expr": "1000*min_over_time(gardener_state_date{deployment=~\"$deployment\"}[1h])",
+          "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -877,7 +876,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:225",
           "decimals": null,
           "format": "dateTimeAsIso",
           "label": "State update for task date",
@@ -887,7 +885,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:226",
           "format": "short",
           "label": null,
           "logBase": 1,
