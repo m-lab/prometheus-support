@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: snmp-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: snmp-exporter
+  template:
+    metadata:
+      labels:
+        run: snmp-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+      - name: snmp-exporter
+        image: prom/snmp-exporter:v0.13.0
+        ports:
+        - containerPort: 9116
+      # The snmp-exporter will only be scheduled onto nodes that we labeled
+      # as having a static outbound IP.
+      nodeSelector:
+        outbound-ip: static
+      # We can also taint nodes with static outbound IPs so that services that
+      # do not require a static IP aren't scheduled to that node. This 
+      # deployment, however, will tolerate that taint.
+      tolerations:
+      - key: "outbound-ip"
+        value: "static"
+        effect: "NoSchedule"
