@@ -84,29 +84,44 @@ receivers:
     api_url: {{SLACK_CHANNEL_URL}}
     channel: alerts-{{SHORT_PROJECT}}
     username: alertmanager
-
     title: >
       [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
-      {{.GroupLabels.alertname}}: {{.CommonAnnotations.summary}}
-
+      {{.GroupLabels.alertname}}
     text: |
-      *Description:* '{{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}{{else}}Please add an alert description!{{end}}'
-      *Details:* {{range $key, $value := .CommonLabels }} {{ $key }}=`{{ $value }}` {{end}}
-
+      {{- if eq .Status "firing" -}}
+      {{.CommonAnnotations.summary}}
+      > {{if .CommonAnnotations.description}}{{.CommonAnnotations.description}}
+      {{- else}}*Please add an alert description!*{{end -}}
+      <https://github.com/m-lab/prometheus-support/edit/master/config/federation/prometheus/alerts.yml|(edit...)>
+      {{- end }}
+      {{ range $key, $value := .CommonLabels }} {{ $key }}=*{{ $value }}*, {{ end }}
     actions:
-    - type: button
-      text: '{{if .CommonAnnotations.dashboard}}Dashboard{{else}}Create Dashboard{{end}}'
-      url: '{{if .CommonAnnotations.dashboard}}{{.CommonAnnotations.dashboard}}{{else}}https://grafana.mlab-sandbox.measurementlab.net/dashboard/new?orgId=1{{end}}'
-    # NOTE: buttons do not display if the URL is empty or invalid.
+    # NOTE: An empty url is invalid config. An invalid URL will not display.
     - type: button
       text: Github
-      url: '{{GITHUB_ISSUE_QUERY}} '
-    # NOTE: this goop constructs a query string for the alertmanager to create
+      url: '{{GITHUB_ISSUE_QUERY}}%20'
+    # NOTE: Add a dashboard.
+    - type: button
+      text: '{{if .CommonAnnotations.dashboard}}Dashboard{{else}}Create Dashboard{{end}}'
+      url: >
+        {{- if .CommonAnnotations.dashboard }}{{ .CommonAnnotations.dashboard }}
+        {{- else }}https://grafana.mlab-sandbox.measurementlab.net/dashboard/new?orgId=1
+        {{- end -}}
+    # NOTE: this constructs a query string for the alertmanager to create
     # a silence. The format of the query is a url encoded label set: e.g.
     # {foo="a",bar="b"}
     - type: button
       text: Add Silence
-      url: '{{if eq .Status "firing"}}{{.ExternalURL}}/#/silences/new?filter=%7B{{$values := .CommonLabels.Values}}{{range $index, $name := .CommonLabels.Names}}{{if $index}}%2C{{end}}{{$name}}%3D%22{{index $values $index}}%22{{end}}%7D{{end}}'
+      url: >
+        {{- if eq .Status "firing" -}}
+          {{- .ExternalURL }}/#/silences/new?filter=
+          {{- printf "{" | urlquery }}
+          {{- range $index, $pair := .CommonLabels.SortedPairs }}
+            {{- if $index }}{{ printf "," | urlquery }}{{end}}
+            {{- printf "%s=\"%s\"" $pair.Name $pair.Value | urlquery }}
+          {{- end -}}
+          {{- printf "}" | urlquery }}
+        {{- end -}}
 
   # All alerts sent to slack are also sent to the github webhook receiver.
   webhook_configs:
