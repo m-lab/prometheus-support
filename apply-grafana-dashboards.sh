@@ -1,8 +1,9 @@
 #!/bin/bash
-
-USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
-PROJECT=${PROJECT:?Please provide project id: $USAGE}
-CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
+#
+# apply-grafana-dashboards.sh updates the grafana-dashboard-provisioning and
+# grafana-dashboards configmaps using configuration data from
+# config/fedefation/grafana. This script assumes the target cluster credentials
+# are already available.
 
 # Create provisioning configuration for grafana dashboards.
 kubectl create configmap grafana-dashboard-provisioning \
