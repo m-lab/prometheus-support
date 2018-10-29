@@ -77,7 +77,11 @@ deploy:
 #########################################
 ## Staging
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging prometheus-federation ./apply-global-prometheus.sh
+  # NOTE: on merge with staging (master branch), we deploy to mlab-staging and
+  # also deploy *only the grafana dashboards* to mlab-oti.
+  script:
+    $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging prometheus-federation ./apply-global-prometheus.sh
+    && $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti prometheus-federation ./apply-grafana-dashboards.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
