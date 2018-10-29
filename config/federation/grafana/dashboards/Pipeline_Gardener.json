@@ -17,15 +17,15 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 216,
-  "iteration": 1539714125140,
+  "iteration": 1540839840331,
   "links": [],
   "panels": [
     {
       "aliasColors": {},
-      "bars": false,
+      "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$prometheusDatasource",
       "fill": 1,
       "gridPos": {
         "h": 6,
@@ -33,7 +33,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 7,
+      "id": 19,
       "legend": {
         "avg": false,
         "current": false,
@@ -43,7 +43,7 @@
         "total": false,
         "values": false
       },
-      "lines": true,
+      "lines": false,
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
@@ -57,42 +57,49 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\"}",
+          "$$hashKey": "object:2608",
+          "expr": "bq_gardener_parse_time_difference_days / 7.0",
           "format": "time_series",
+          "instant": true,
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
+          "legendFormat": "{{dataset}}",
           "refId": "A"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Tasks In Flight",
+      "title": "Reprocessing Period",
       "tooltip": {
-        "shared": true,
+        "shared": false,
         "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
       "xaxis": {
         "buckets": null,
-        "mode": "time",
+        "mode": "series",
         "name": null,
         "show": true,
-        "values": []
+        "values": [
+          "total"
+        ]
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": null,
+          "decimals": 1,
+          "format": "none",
+          "label": "Weeks",
           "logBase": 1,
           "max": null,
           "min": "0",
           "show": true
         },
         {
+          "decimals": 0,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -109,7 +116,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "fill": 1,
       "gridPos": {
         "h": 6,
@@ -117,7 +124,7 @@
         "x": 6,
         "y": 0
       },
-      "id": 12,
+      "id": 2,
       "legend": {
         "avg": false,
         "current": false,
@@ -135,30 +142,60 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Warning:/",
+          "color": "#e5ac0e"
+        },
+        {
+          "alias": "/Failure:/",
+          "color": "#bf1b00"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "go_goroutines{container=\"etl-gardener\", deployment=~\"$deployment\"}",
+          "$$hashKey": "object:3454",
+          "expr": "irate(gardener_warning_total{container=\"etl-gardener\"}[12h])",
           "format": "time_series",
+          "hide": true,
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
+          "legendFormat": "{{status}}",
           "refId": "A"
         },
         {
-          "expr": "",
+          "$$hashKey": "object:3455",
+          "expr": "irate(gardener_fail_total{container=\"etl-gardener\"}[12h])",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{status}}",
+          "refId": "B"
+        },
+        {
+          "$$hashKey": "object:3456",
+          "expr": "3600 * rate(gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
+          "legendFormat": "Warning: {{status}}",
+          "refId": "C"
+        },
+        {
+          "$$hashKey": "object:3457",
+          "expr": "3600 * rate(gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Failure: {{status}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "GoRoutine Count",
+      "title": "Hourly Warning and Failure Rates",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -174,14 +211,17 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:4309",
+          "decimals": null,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": "0",
           "show": true
         },
         {
+          "$$hashKey": "object:4310",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -200,11 +240,11 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "fill": 1,
       "gridPos": {
         "h": 6,
-        "w": 6,
+        "w": 4,
         "x": 12,
         "y": 0
       },
@@ -232,6 +272,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:3271",
           "expr": "rate(process_cpu_seconds_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
@@ -284,12 +325,105 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "fill": 1,
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 18,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:3195",
+          "expr": "go_goroutines{container=\"etl-gardener\", deployment=~\"$deployment\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}}",
+          "refId": "A"
+        },
+        {
+          "$$hashKey": "object:3196",
+          "expr": "",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "GoRoutine Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
         "y": 0
       },
       "id": 5,
@@ -316,6 +450,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:3325",
           "expr": "process_virtual_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
           "format": "time_series",
           "intervalFactor": 1,
@@ -369,7 +504,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "fill": 1,
       "gridPos": {
         "h": 6,
@@ -377,7 +512,7 @@
         "x": 0,
         "y": 6
       },
-      "id": 2,
+      "id": 7,
       "legend": {
         "avg": false,
         "current": false,
@@ -395,56 +530,24 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/Warning:/",
-          "color": "#e5ac0e"
-        },
-        {
-          "alias": "/Failure:/",
-          "color": "#bf1b00"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(gardener_warning_total{container=\"etl-gardener\"}[12h])",
+          "$$hashKey": "object:2938",
+          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\"}",
           "format": "time_series",
-          "hide": true,
           "intervalFactor": 1,
-          "legendFormat": "{{status}}",
+          "legendFormat": "{{deployment}}",
           "refId": "A"
-        },
-        {
-          "expr": "irate(gardener_fail_total{container=\"etl-gardener\"}[12h])",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{status}}",
-          "refId": "B"
-        },
-        {
-          "expr": "gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Warning: {{status}}",
-          "refId": "C"
-        },
-        {
-          "expr": "gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Failure: {{status}}",
-          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Warnings and Failures Total",
+      "title": "Tasks In Flight",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -460,9 +563,8 @@
       },
       "yaxes": [
         {
-          "decimals": 1,
           "format": "short",
-          "label": "",
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": "0",
@@ -487,7 +589,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 0,
       "gridPos": {
@@ -520,6 +622,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:2171",
           "expr": "sum by(deployment, quantile, state)(-gardener_state_time_summary{quantile=\"0.5\", deployment=~\"$deployment\"})",
           "format": "time_series",
           "hide": false,
@@ -529,7 +632,17 @@
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "$$hashKey": "object:2215",
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 43200,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeShift": null,
       "title": "Time in State",
@@ -575,7 +688,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "description": "Number of tasks started and completed, per hour.",
       "fill": 1,
       "gridPos": {
@@ -633,6 +746,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:3510",
           "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -641,6 +755,7 @@
           "refId": "A"
         },
         {
+          "$$hashKey": "object:3511",
           "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -695,7 +810,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 1,
       "gridPos": {
@@ -753,6 +868,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:3626",
           "expr": "sum by(deployment) (increase(gardener_completed_total{deployment=~\"$deployment\"}[24h]))",
           "format": "time_series",
           "hide": false,
@@ -816,7 +932,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "description": "Task dates of the most recent updates to each task state.",
       "fill": 0,
       "gridPos": {
@@ -849,6 +965,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "$$hashKey": "object:3747",
           "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "hide": false,
@@ -903,7 +1020,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 0,
       "gridPos": {
@@ -936,18 +1053,26 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(deployment)(rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h])*3600)",
+          "$$hashKey": "object:484",
+          "expr": "sum by(deployment, year)(rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h])*3600)",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
+          "legendFormat": "{{deployment}} {{year}}",
           "refId": "A"
+        },
+        {
+          "$$hashKey": "object:1422",
+          "expr": "",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Submission Rate",
+      "title": "Byte Rate",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -963,6 +1088,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:594",
           "decimals": null,
           "format": "short",
           "label": "Bytes/Hour",
@@ -972,6 +1098,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:595",
           "format": "short",
           "label": "",
           "logBase": 1,
@@ -990,7 +1117,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 0,
       "gridPos": {
@@ -1020,7 +1147,8 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "File size",
+          "$$hashKey": "object:1929",
+          "alias": "/Avg Bytes.*/",
           "yaxis": 2
         }
       ],
@@ -1029,28 +1157,30 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(deployment)(rate(gardener_files_sum{deployment=~\"$deployment\"}[1h])*3600)",
+          "$$hashKey": "object:677",
+          "expr": "sum by(deployment, year)(rate(gardener_files_sum{deployment=~\"$deployment\"}[1h])*3600)",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Rate {{deployment}}",
+          "legendFormat": "Files/Hour {{deployment}}",
           "refId": "A"
         },
         {
-          "expr": "avg by(deployment)(rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h])/rate(gardener_files_sum{deployment=~\"$deployment\"}[1h]))",
+          "$$hashKey": "object:678",
+          "expr": "avg by(deployment, year) (\n    rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h]) /\n    rate(gardener_files_sum{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "File size {{deployment}} ",
+          "legendFormat": "Avg Bytes / File {{deployment}} {{year}}",
           "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Submission Rate",
+      "title": "File Rate",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1066,17 +1196,19 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:934",
           "decimals": null,
           "format": "short",
-          "label": "Files/Hour",
+          "label": "Files / Hour",
           "logBase": 10,
           "max": null,
           "min": null,
           "show": true
         },
         {
-          "format": "short",
-          "label": "Bytes/File",
+          "$$hashKey": "object:935",
+          "format": "decbytes",
+          "label": "Bytes / File",
           "logBase": 10,
           "max": null,
           "min": null,
@@ -1096,23 +1228,72 @@
   "templating": {
     "list": [
       {
+        "allValue": null,
         "current": {
           "tags": [],
+          "text": "mlab-oti",
+          "value": "mlab-oti"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Project",
+        "multi": false,
+        "name": "project",
+        "options": [
+          {
+            "$$hashKey": "object:2796",
+            "selected": false,
+            "text": "mlab-sandbox",
+            "value": "mlab-sandbox"
+          },
+          {
+            "$$hashKey": "object:2797",
+            "selected": false,
+            "text": "mlab-staging",
+            "value": "mlab-staging"
+          },
+          {
+            "$$hashKey": "object:2798",
+            "selected": true,
+            "text": "mlab-oti",
+            "value": "mlab-oti"
+          }
+        ],
+        "query": "mlab-sandbox,mlab-staging,mlab-oti",
+        "type": "custom"
+      },
+      {
+        "current": {
           "text": "Data Proc (mlab-oti)",
           "value": "Data Proc (mlab-oti)"
         },
-        "hide": 0,
-        "label": "Datasource",
-        "name": "datasource",
+        "hide": 2,
+        "label": "Data Processing",
+        "name": "pipelineDatasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "/Data Proc.*/",
+        "regex": "/Data Proc.*$project/",
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
+        },
+        "hide": 2,
+        "label": "Prometheus",
+        "name": "prometheusDatasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Prometheus.*$project/",
         "type": "datasource"
       },
       {
         "allValue": ".*",
         "current": {
+          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -1136,7 +1317,7 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-4d",
     "to": "now"
   },
   "timepicker": {
@@ -1167,5 +1348,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 41
+  "version": 54
 }
