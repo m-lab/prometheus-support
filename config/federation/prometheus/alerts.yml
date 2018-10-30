@@ -497,6 +497,7 @@ groups:
     expr: |
       up{service="nodeexporter"} == 1
         unless on(machine) lame_duck_node
+        unless on(machine) gmx_machine_maintenance == 1
     for: 30m
     labels:
       repo: dev-tracker
@@ -515,6 +516,7 @@ groups:
     expr: |
       up{service="nodeexporter"} == 1
         unless on(machine) (vdlimit_used and vdlimit_total)
+        unless on(machine) gmx_machine_maintenance == 1
     for: 30m
     labels:
       repo: ops-tracker
@@ -549,6 +551,7 @@ groups:
     expr: |
       up{service="nodeexporter"} == 1
         unless on(machine) collectd_mlab_success
+        unless on(machine) gmx_machine_maintenance == 1
     for: 10m
     labels:
       repo: dev-tracker
