@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 216,
-  "iteration": 1540853939437,
+  "iteration": 1540911009111,
   "links": [],
   "panels": [
     {
@@ -1025,7 +1025,7 @@
       "fill": 0,
       "gridPos": {
         "h": 6,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 24
       },
@@ -1060,13 +1060,6 @@
           "intervalFactor": 1,
           "legendFormat": "{{deployment}} {{year}}",
           "refId": "A"
-        },
-        {
-          "$$hashKey": "object:1422",
-          "expr": "",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1090,7 +1083,7 @@
         {
           "$$hashKey": "object:594",
           "decimals": null,
-          "format": "short",
+          "format": "decbytes",
           "label": "Bytes/Hour",
           "logBase": 10,
           "max": null,
@@ -1122,8 +1115,8 @@
       "fill": 0,
       "gridPos": {
         "h": 6,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 24
       },
       "id": 17,
@@ -1165,16 +1158,6 @@
           "intervalFactor": 1,
           "legendFormat": "Files/Hour {{deployment}}",
           "refId": "A"
-        },
-        {
-          "$$hashKey": "object:678",
-          "expr": "avg by(deployment, year) (\n    rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h]) /\n    rate(gardener_files_sum{deployment=~\"$deployment\"}[1h]))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Avg Bytes / File {{deployment}} {{year}}",
-          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1212,7 +1195,105 @@
           "logBase": 10,
           "max": null,
           "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "description": "",
+      "fill": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 24
+      },
+      "id": 20,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1929",
+          "alias": "/Avg Bytes.*/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:678",
+          "expr": "avg by(deployment, year) (\n    rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h]) /\n    rate(gardener_files_sum{deployment=~\"$deployment\"}[1h]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}} {{year}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Bytes / File",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:934",
+          "decimals": null,
+          "format": "decbytes",
+          "label": "Bytes / File",
+          "logBase": 10,
+          "max": null,
+          "min": null,
           "show": true
+        },
+        {
+          "$$hashKey": "object:935",
+          "format": "decbytes",
+          "label": "Bytes / File",
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": false
         }
       ],
       "yaxis": {
@@ -1232,7 +1313,6 @@
         "current": {
           "$$hashKey": "object:2798",
           "selected": true,
-          "tags": [],
           "text": "mlab-oti",
           "value": "mlab-oti"
         },
@@ -1266,6 +1346,7 @@
       },
       {
         "current": {
+          "selected": true,
           "text": "Data Proc (mlab-oti)",
           "value": "Data Proc (mlab-oti)"
         },
@@ -1280,6 +1361,7 @@
       },
       {
         "current": {
+          "selected": true,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -1349,5 +1431,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 57
+  "version": 58
 }
