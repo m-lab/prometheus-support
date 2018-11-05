@@ -15,25 +15,6 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
     spec:
-      # Pull the snmp-exporter configuration early so that it starts.
-      initContainers:
-      - image: measurementlab/gcp-service-discovery:v1.0
-        name: init-service-discovery
-        args: [ "--http-target=/config/snmp.yml",
-                "--http-source=https://storage.googleapis.com/switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml",
-                "--project={{GCLOUD_PROJECT}}"]
-        resources:
-          requests:
-            memory: "150Mi"
-            cpu: "50m"
-          limits:
-            memory: "150Mi"
-            cpu: "50m"
-        volumeMounts:
-        # Mount snmp-exporter-storage for write access to the snmp_exporter configuration.
-        - mountPath: /config
-          name: snmp-exporter-storage
-          subPath: snmp-exporter
       containers:
       - image: prom/snmp-exporter:v0.13.0
         name: snmp-exporter
