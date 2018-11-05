@@ -18,7 +18,7 @@ spec:
       # Pull the snmp-exporter configuration early so that it starts.
       initContainers:
       - image: measurementlab/gcp-service-discovery:v1.0
-        name: service-discovery
+        name: init-service-discovery
         args: [ "--http-target=/config/snmp.yml",
                 "--http-source=https://storage.googleapis.com/switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml",
                 "--project={{GCLOUD_PROJECT}}"]
@@ -30,9 +30,9 @@ spec:
             memory: "150Mi"
             cpu: "50m"
         volumeMounts:
-        # Mount prometheus-storage for write access to the snmp_exporter configuration.
+        # Mount snmp-exporter-storage for write access to the snmp_exporter configuration.
         - mountPath: /config
-          name: prometheus-storage
+          name: snmp-exporter-storage
           subPath: snmp-exporter
       containers:
       - image: prom/snmp-exporter:v0.13.0
@@ -41,7 +41,7 @@ spec:
         - containerPort: 9116
         volumeMounts:
         - mountPath: /etc/snmp_exporter
-          name: prometheus-storage
+          name: snmp-exporter-storage
           subPath: snmp-exporter
       # Pull the snmp-exporter configuration again so that we can watch it.
       - image: measurementlab/gcp-service-discovery:v1.0
@@ -57,9 +57,9 @@ spec:
             memory: "150Mi"
             cpu: "50m"
         volumeMounts:
-        # Mount prometheus-storage for write access to the snmp_exporter configuration.
+        # Mount snmp-exporter-storage for write access to the snmp_exporter configuration.
         - mountPath: /config
-          name: prometheus-storage
+          name: snmp-exporter-storage
           subPath: snmp-exporter
       # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
       # stable version.
@@ -77,7 +77,7 @@ spec:
         volumeMounts:
         # Mount the snmp-exporter config volume so we can watch it for changes.
         - mountPath: /config
-          name: prometheus-storage
+          name: snmp-exporter-storage
           subPath: snmp-exporter
       # The snmp-exporter will only be scheduled onto nodes that we labeled
       # as having a static outbound IP.
@@ -90,3 +90,9 @@ spec:
       - key: "outbound-ip"
         value: "static"
         effect: "NoSchedule"
+      # Disks created manually, can be named here explicitly using
+      # gcePersistentDisk instead of the persistentVolumeClaim.
+      volumes:
+      - name: snmp-exporter-storage
+        persistentVolumeClaim:
+          claimName: auto-prometheus-ssd0
