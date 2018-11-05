@@ -1,15 +1,14 @@
 alerts1='[
   {
     "labels": {
-       "alertname": "DiskRunningFull3",
+       "alertname": "ExampleAlertFiring",
        "dev": "sda1",
-       "instance": "instance3",
-       "severity": "page",
-       "repo": "public-issue-test"
+       "instance": "alert.example.com:9099",
+       "severity": "ticket"
      },
      "annotations": {
-        "summary": "please check the instance example3",
-        "description": "The disk sda1 is running full",
+        "summary": "This is the summary of the example alert.",
+        "description": "This is a longer *description* of what to do or what this alert means. For example, be sure to check the thing with the doodad and restart after logging all the steps.",
         "dashboard": "https://grafana.mlab-sandbox.measurementlab.net/d/000000187/soltesz-testing"
       }
   }
@@ -24,8 +23,8 @@ junk2='[
         "repo": "public-issue-test"
      },
      "annotations": {
-        "info": "The disk sda2 is running full",
-        "summary": "please check the instance example1"
+        "description": "The disk sda2 is running full.",
+        "summary": "Please check the instance example1."
       }
   }
 ]'
@@ -111,7 +110,7 @@ alerts4='[
   }
 ]'
 curl -XPOST -d"$alerts1" http://localhost:9093/api/v1/alerts
-curl -XPOST -d"$junk2" http://localhost:9093/api/v1/alerts
+#curl -XPOST -d"$junk2" http://localhost:9093/api/v1/alerts
 echo ''
 #while true ; do
 #curl -XPOST -d"$alerts3" http://localhost:9093/api/v1/alerts

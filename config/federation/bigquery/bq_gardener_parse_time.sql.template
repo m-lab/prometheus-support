@@ -8,7 +8,7 @@
 --       in days, labeled with the dataset name.
 
 SELECT
-  TIMESTAMP_DIFF(max_parse_time, min_parse_time, DAY) AS value_difference_days,
+  TIMESTAMP_DIFF(max_parse_time, min_parse_time, SECOND) / 86400.0 AS value_difference_days,
   dataset
 FROM (
     SELECT
