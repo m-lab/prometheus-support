@@ -15,6 +15,18 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
     spec:
+      # Do an early fetch of the configuration so that snmp-exporter will start
+      initContainers:
+      - image: busybox
+        name: fetch
+        command:
+        - wget
+        - "-O"
+        - "/config/snmp.yml"
+        - "https://storage.googleapis.com/switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml",
+        volumeMounts:
+        - mountPath: /config
+          name: snmp-exporter-storage
       containers:
       - image: prom/snmp-exporter:v0.13.0
         name: snmp-exporter
@@ -23,7 +35,6 @@ spec:
         volumeMounts:
         - mountPath: /etc/snmp_exporter
           name: snmp-exporter-storage
-          subPath: snmp-exporter
       # Pull the snmp-exporter configuration again so that we can watch it.
       - image: measurementlab/gcp-service-discovery:v1.0
         name: service-discovery
@@ -41,7 +52,6 @@ spec:
         # Mount snmp-exporter-storage for write access to the snmp_exporter configuration.
         - mountPath: /config
           name: snmp-exporter-storage
-          subPath: snmp-exporter
       # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
       # stable version.
       - image: jimmidyson/configmap-reload:v0.2.2
@@ -59,7 +69,6 @@ spec:
         # Mount the snmp-exporter config volume so we can watch it for changes.
         - mountPath: /config
           name: snmp-exporter-storage
-          subPath: snmp-exporter
       # The snmp-exporter will only be scheduled onto nodes that we labeled
       # as having a static outbound IP.
       nodeSelector:
@@ -71,9 +80,7 @@ spec:
       - key: "outbound-ip"
         value: "static"
         effect: "NoSchedule"
-      # Disks created manually, can be named here explicitly using
-      # gcePersistentDisk instead of the persistentVolumeClaim.
+      # Use an emptyDir volume just to share config between containers.
       volumes:
       - name: snmp-exporter-storage
-        persistentVolumeClaim:
-          claimName: auto-prometheus-ssd0
+        emptyDir: {}
