@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeip
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeip
+  template:
+      metadata:
+        labels:
+          app: kubeip
+      spec:
+        priorityClassName: system-cluster-critical
+        containers:
+        - name: "kubeip"
+          image: doitintl/kubeip:latest
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: google-cloud-key
+            mountPath: /var/secrets/google
+          env:
+          - name: "KUBEIP_LABELKEY"
+            value: "kubeip"
+          - name: "KUBEIP_LABELVALUE"
+            value: "prometheus-federation"
+          - name: "KUBEIP_NODEPOOL"
+            value: "static-outbound-ip"
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /var/secrets/google/key.json
+        restartPolicy: Always
+        serviceAccountName: kubeip
+        # kubeIP will only be scheduled onto nodes that we labeled
+        # as having a static outbound IP.
+        nodeSelector:
+          outbound-ip: static
+        # We can also taint nodes with static outbound IPs so that services that
+        # do not require a static IP aren't scheduled to that node. This 
+        # deployment, however, will tolerate that taint.
+        tolerations:
+        - key: "outbound-ip"
+          value: "static"
+          effect: "NoSchedule"
+        volumes:
+          - name: google-cloud-key
+            secret:
+              secretName: kubeip-key
