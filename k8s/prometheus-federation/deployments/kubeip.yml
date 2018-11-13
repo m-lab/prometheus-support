@@ -16,18 +16,23 @@ spec:
         priorityClassName: system-cluster-critical
         containers:
         - name: "kubeip"
-          image: doitintl/kubeip:latest
+          image: doitintl/kubeip:issue-34
           imagePullPolicy: Always
           volumeMounts:
           - name: google-cloud-key
             mountPath: /var/secrets/google
           env:
+            # Key for GCP address labels
           - name: "KUBEIP_LABELKEY"
             value: "kubeip"
+            # Value for GCP address labels
           - name: "KUBEIP_LABELVALUE"
             value: "prometheus-federation"
+            # Nodepool to which KubeIP assigns addresses
           - name: "KUBEIP_NODEPOOL"
             value: "static-outbound-ip"
+            # GCP Application Default Credentials (ADS)
+            # See: https://cloud.google.com/docs/authentication/production
           - name: "GOOGLE_APPLICATION_CREDENTIALS"
             value: /var/secrets/google/key.json
         restartPolicy: Always

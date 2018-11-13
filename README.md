@@ -629,6 +629,7 @@ to assign static IPs to its nodes.
 
 Create a two-node pool with a specific label (to make sure snmp-exporter can
 be selected onto it) and taint (to make sure other services are not run on it):
+
 ```
 gcloud container node-pools create static-outbound-ip \
 --cluster=prometheus-federation --machine-type=n1-standard-8 --num-nodes=2 \
@@ -642,32 +643,45 @@ Create gcloud service-account for kubeIP:
 ```
 gcloud iam service-accounts create kubeip-service-account --display-name "kubeIP"
 ```
+
 Create role and attach the service-account to it:
+
 ```
 gcloud iam roles create kubeip --project $GCLOUD_PROJECT --file config/kubeip/roles.yml
 gcloud projects add-iam-policy-binding $GCLOUD_PROJECT \
 --member serviceAccount:kubeip-service-account@$GCLOUD_PROJECT.iam.gserviceaccount.com \
 --role projects/$GCLOUD_PROJECT/roles/kubeip
 ```
+
 Grab a key file for the service-account:
+
 ```
 gcloud iam service-accounts keys create key.json --iam-account \
 kubeip-service-account@mlab-sandbox.iam.gserviceaccount.com
 ```
+
 And then turn it into a Kubernetes secret:
+
 ```
 kubectl create secret generic kubeip-key --from-file=key.json
 ```
+
 Finally reserve static IPs for your new nodepool:
+
 ```
 for i in {1..2}; do gcloud compute addresses create kubeip-ip$i \
 --project=$GCLOUD_PROJECT --region=us-central1; done
 ```
-And label them for kubeIP:
+
+And label them for kubeIP (use the same region as the GKE cluster). The
+label `kubeip=prometheus-federation` corresponds to the `KUBEIP_LABELKEY`
+and `KUBEIP_LABELVALUE` values in the kubeIP deployment:
+
 ```
 for i in {1..2}; do gcloud beta compute addresses update kubeip-ip$i \
---update-labels kubeip=$GCLOUD_PROJECT --region=us-central1; done
+--update-labels kubeip=prometheus-federation --region=us-central1; done
 ```
+
 Then continue your deployment as normal.
 
 # Pushgateway

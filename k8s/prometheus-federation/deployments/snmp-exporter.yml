@@ -36,6 +36,7 @@ spec:
         - mountPath: /etc/snmp_exporter
           name: snmp-exporter-storage
       # Pull the snmp-exporter configuration again so that we can watch it.
+      # NOTE: Do not update gcp-service-discovery version.
       - image: measurementlab/gcp-service-discovery:v1.0
         name: service-discovery
         args: [ "--http-target=/config/snmp.yml",
