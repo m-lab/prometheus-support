@@ -144,20 +144,32 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(annotator_Request_Response_Time_Summary_sum[5m])/rate(annotator_Request_Response_Time_Summary_count[5m])",
+          "expr": "avg(rate(annotator_Request_Response_Time_Summary_sum[5m])/rate(annotator_Request_Response_Time_Summary_count[5m])) by (service)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "Mean {{service}}",
           "metric": "annotator_Request_Response_Time_Summary_sum",
           "refId": "A",
-          "step": 20
+          "step": 20,
+          "hide": false
+        },
+        {
+          "expr": "max(annotator_Request_Response_Time_Summary{quantile=\"0.99\"}) by (service)",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Worst 99th {{service}}",
+          "metric": "annotator_Request_Response_Time_Summary_sum",
+          "refId": "B",
+          "step": 20,
+          "hide": false
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Internal Mean Response Time",
+      "title": "Mean and 99th Percentile Response Times",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -192,7 +204,9 @@
       "yaxis": {
         "align": false,
         "alignLevel": null
-      }
+      },
+      "description": "Means should be under 1 msec, and 99th percentiles should be under 1 second.",
+      "transparent": true
     },
     {
       "aliasColors": {},
