@@ -13,11 +13,8 @@
       }
     ]
   },
-  "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 20,
-  "iteration": 1539208281648,
   "links": [],
   "panels": [
     {
@@ -113,6 +110,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "description": "Means should be under 1 msec, and 99th percentiles should be under 1 second.",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -151,8 +149,7 @@
           "legendFormat": "Mean {{service}}",
           "metric": "annotator_Request_Response_Time_Summary_sum",
           "refId": "A",
-          "step": 20,
-          "hide": false
+          "step": 20
         },
         {
           "expr": "max(annotator_Request_Response_Time_Summary{quantile=\"0.99\"}) by (service)",
@@ -162,8 +159,7 @@
           "legendFormat": "Worst 99th {{service}}",
           "metric": "annotator_Request_Response_Time_Summary_sum",
           "refId": "B",
-          "step": 20,
-          "hide": false
+          "step": 20
         }
       ],
       "thresholds": [],
@@ -175,6 +171,7 @@
         "sort": 2,
         "value_type": "individual"
       },
+      "transparent": true,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -204,9 +201,7 @@
       "yaxis": {
         "align": false,
         "alignLevel": null
-      },
-      "description": "Means should be under 1 msec, and 99th percentiles should be under 1 second.",
-      "transparent": true
+      }
     },
     {
       "aliasColors": {},
@@ -762,9 +757,9 @@
           "expr": "rate(process_cpu_seconds_total{service=~\"annotator.*\"}[2m])/2",
           "format": "time_series",
           "intervalFactor": 2,
+          "legendFormat": "{{service}} {{instance}}",
           "refId": "A",
-          "step": 30,
-          "legendFormat": "{{service}} {{instance}}"
+          "step": 30
         }
       ],
       "thresholds": [],
@@ -1044,8 +1039,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(annotator_Annotation_Lookups_Total[5m])",
+          "expr": "sum by (service)(rate(annotator_Annotation_Lookups_Total[5m]))",
+          "format": "time_series",
           "intervalFactor": 2,
+          "legendFormat": "{{service}}",
           "metric": "annotator_Annotation_Lookups_Total",
           "refId": "A",
           "step": 20
@@ -1057,7 +1054,7 @@
       "title": "IP Lookups Per Second",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "transparent": false,
@@ -1129,8 +1126,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(annotator_Annotation_Requests_Total[5m])",
+          "expr": "sum by (service)(rate(annotator_Annotation_Requests_Total[5m]))",
+          "format": "time_series",
           "intervalFactor": 2,
+          "legendFormat": "{{service}}",
           "metric": "annotator_Annotation_Requests_Total",
           "refId": "A",
           "step": 20
@@ -1952,12 +1951,10 @@
             "value": "etl-ndt-batch-parser"
           },
           {
-            "selected": false,
             "text": "etl-sidestream-parser",
             "value": "etl-sidestream-parser"
           },
           {
-            "selected": true,
             "text": "etl-ndt-parser",
             "value": "etl-ndt-parser"
           }
@@ -2006,5 +2003,4 @@
   "timezone": "browser",
   "title": "Pipeline: Annotation Service",
   "uid": "000000020",
-  "version": 8
 }
