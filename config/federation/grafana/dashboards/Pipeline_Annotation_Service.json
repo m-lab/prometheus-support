@@ -745,11 +745,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{service=\"annotator\"}[2m])/2",
+          "expr": "rate(process_cpu_seconds_total{service=~\"annotator.*\"}[2m])/2",
           "format": "time_series",
           "intervalFactor": 2,
           "refId": "A",
-          "step": 30
+          "step": 30,
+          "legendFormat": "{{service}} {{instance}}"
         }
       ],
       "thresholds": [],
@@ -758,7 +759,7 @@
       "title": "Annotator CPU Utilization",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
