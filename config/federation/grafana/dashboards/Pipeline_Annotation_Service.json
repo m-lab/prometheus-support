@@ -1008,6 +1008,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "description": "Aggregate annotation rate (per service), and median annotations/CPU-sec.",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -1033,22 +1034,67 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Throughput (annotatorss)",
+          "color": "#d683ce"
+        },
+        {
+          "alias": "Median Annotations/CPU-sec (annotatorss)",
+          "color": "#962d82"
+        },
+        {
+          "alias": "Throughput (annotator)",
+          "color": "#447ebc"
+        },
+        {
+          "alias": "Median Annotations/CPU-sec (annotator)",
+          "color": "#0a50a1"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (service)(rate(annotator_Annotation_Lookups_Total[5m]))",
+          "expr": "-avg(rate(annotator_Annotation_Lookups_Total{service=\"annotator\"}[5m]))",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{service}}",
+          "legendFormat": "Throughput (annotator)",
           "metric": "annotator_Annotation_Lookups_Total",
           "refId": "A",
           "step": 20
+        },
+        {
+          "expr": "avg by (service)(rate(annotator_Annotation_Lookups_Total{service!=\"annotator\"}[5m]))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Throughput ({{service}})",
+          "metric": "annotator_Annotation_Lookups_Total",
+          "refId": "C",
+          "step": 20
+        },
+        {
+          "expr": "-quantile(0.5, rate(annotator_Annotation_Lookups_Total{service=\"annotator\"}[5m])/rate(process_cpu_seconds_total[5m]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Median Annotations/CPU-sec (annotator)",
+          "metric": "annotator_Annotation_Lookups_Total",
+          "refId": "B",
+          "step": 20
+        },
+        {
+          "expr": "quantile by (service)(0.5, rate(annotator_Annotation_Lookups_Total{service!=\"annotator\"}[5m])/rate(process_cpu_seconds_total[5m]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Median Annotations/CPU-sec ({{service}})",
+          "metric": "annotator_Annotation_Lookups_Total",
+          "refId": "D",
+          "step": 20
         }
       ],
-      "thresholds": [],
       "timeFrom": null,
       "timeShift": null,
       "title": "IP Lookups Per Second",
@@ -1068,16 +1114,18 @@
       },
       "yaxes": [
         {
-          "format": "short",
-          "label": null,
+          "decimals": null,
+          "format": "ops",
+          "label": "Service Throughput - IP/sec",
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": null,
           "show": true
         },
         {
+          "decimals": null,
           "format": "short",
-          "label": null,
+          "label": "Annotations/CPU-sec",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -1085,7 +1133,7 @@
         }
       ],
       "yaxis": {
-        "align": false,
+        "align": true,
         "alignLevel": null
       }
     },
