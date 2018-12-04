@@ -754,15 +754,25 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{service=~\"annotator.*\"}[2m])/2",
+          "expr": "quantile(0.9, irate(process_cpu_seconds_total{service=~\"annotator.*\"}[2m])) by (service)",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{service}} {{instance}}",
+          "legendFormat": "{{service}}",
           "refId": "A",
           "step": 30
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "value": 0.6,
+          "colorMode": "ok",
+          "op": "gt",
+          "fill": false,
+          "line": true,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeShift": null,
       "title": "Annotator CPU Utilization",
@@ -782,7 +792,7 @@
       "yaxes": [
         {
           "format": "percentunit",
-          "label": null,
+          "label": "90th Percentile CPU Utilization",
           "logBase": 1,
           "max": null,
           "min": "0",
@@ -800,7 +810,8 @@
       "yaxis": {
         "align": false,
         "alignLevel": null
-      }
+      },
+      "description": "Target CPU is 60%.  App Engine should add more instances if utilization is frequently above 60%, and drop instances if usually below."
     },
     {
       "aliasColors": {},
