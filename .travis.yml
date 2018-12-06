@@ -6,6 +6,7 @@ go:
 
 # Unconditionally place the repo at GOPATH/src/${go_import_path} to support
 # forks.
+# NOTE: This break go lint.
 go_import_path: github.com/m-lab/prometheus-support
 
 install:
@@ -18,11 +19,16 @@ install:
   # Install kexpand templating tool. Only works from HEAD.
 - go get github.com/kopeio/kexpand
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
+  # Install jsonlint (use npm which is lightweight and actually works)
+- npm install jsonlint -g
 
 script:
 # Run query "unit tests".
 - go test -v github.com/m-lab/prometheus-support/cmd/query_tester -args
 
+# Validate all json
+- which jsonlint
+- git ls-files | grep '\.json$' | xargs jsonlint -q
 # Use promtool to check current alerts and rules. This is only a syntax check.
 - promtool check rules config/federation/prometheus/alerts.yml
 - promtool check rules config/federation/prometheus/rules.yml
