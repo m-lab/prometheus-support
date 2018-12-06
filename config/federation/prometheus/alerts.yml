@@ -323,7 +323,7 @@ groups:
 
 # Prometheus is unable to get data from the script_exporter service.
   - alert: ScriptExporterDownOrMissing
-    expr: up{job="script-exporter"} == 0 or absent(up{job="script-exporter"})
+    expr: up{container="script-exporter"} == 0 or absent(up{container="script-exporter"})
     for: 10m
     labels:
       repo: dev-tracker
