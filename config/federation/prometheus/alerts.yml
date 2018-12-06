@@ -329,15 +329,10 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      summary: The script_exporter service is down on missing.
-      description: |
-        The script_exporter service runs in a Docker container on a GCE VM
-        named 'script-exporter' in each M-Lab GCP project. For deployment
-        details and troubleshooting, you can usually figure out the issue by
-        looking through the Travis-CI build logs[1]. You can also look for
-        hints in the GCP console for the GCE instance, or by SSHing to the
-        instance itself.
-        [1]: https://travis-ci.org/m-lab/script-exporter-support
+      summary: The script_exporter service is down or missing.
+      description: Check the status of Kubernetes clusters on each M-Lab GCP
+        project. Look at the travis deployment history for
+        m-lab/prometheus-support.
 
 # Some script_exporter metrics are missing from Prometheus. These should always
 # be present. The wait period should be longer than that for the
