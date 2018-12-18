@@ -25,16 +25,6 @@ spec:
         # Tell prometheus service discovery to scrape the pod containers.
         prometheus.io/scrape: 'true'
     spec:
-      # Update permissions for Prometheus v2.x; this should be removed after 
-      # all clusters are upgraded.
-      initContainers:
-      - name: reset-perms
-        image: busybox
-        command: ['/bin/sh']
-        args: ['-c', 'chown -R 65534:65534 /work-dir/*-targets*']
-        volumeMounts:
-        - mountPath: /work-dir
-          name: prometheus-storage
       # References a service account with RBAC permissions for accessing node
       # metrics. This is required for k8s version 1.6+.
       serviceAccountName: prometheus
@@ -188,6 +178,10 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/ssh806.json",
                 "--http-target=/targets/blackbox-targets-ipv6/ssh806_ipv6.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/ssh806_ipv6.json",
+                "--http-target=/targets/blackbox-targets/ssh.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/ssh.json",
+                "--http-target=/targets/blackbox-targets-ipv6/ssh_ipv6.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/ssh_ipv6.json",
                 "--http-target=/targets/blackbox-targets/rsyncd.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/rsyncd.json",
                 "--http-target=/targets/snmp-targets/snmpexporter.json",
