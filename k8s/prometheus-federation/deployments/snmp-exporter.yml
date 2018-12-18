@@ -17,13 +17,12 @@ spec:
     spec:
       # Do an early fetch of the configuration so that snmp-exporter will start
       initContainers:
-      - image: busybox
-        name: fetch
-        command:
-        - wget
-        - "-O"
-        - "/config/snmp.yml"
-        - "https://storage.googleapis.com/switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml"
+      - name: fetch
+        image: gcr.io/cloud-builders/gsutil
+        args:
+        - cp
+        - gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
+        - /config/snmp.yml
         volumeMounts:
         - mountPath: /config
           name: snmp-exporter-storage
@@ -36,12 +35,13 @@ spec:
         - mountPath: /etc/snmp_exporter
           name: snmp-exporter-storage
       # Pull the snmp-exporter configuration again so that we can watch it.
-      # NOTE: Do not update gcp-service-discovery version.
-      - image: measurementlab/gcp-service-discovery:v1.0
-        name: service-discovery
-        args: [ "--http-target=/config/snmp.yml",
-                "--http-source=https://storage.googleapis.com/switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml",
-                "--project={{GCLOUD_PROJECT}}"]
+      # TODO: replace this bash-loop with a special-purpose container.
+      - name: service-discovery
+        image: gcr.io/cloud-builders/gsutil
+        command:
+        - bash
+        - -c
+        - "while true; do gsutil cp gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml /config/snmp.yml ; sleep 600 ; done"
         resources:
           requests:
             memory: "150Mi"
@@ -75,7 +75,7 @@ spec:
       nodeSelector:
         outbound-ip: static
       # We can also taint nodes with static outbound IPs so that services that
-      # do not require a static IP aren't scheduled to that node. This 
+      # do not require a static IP aren't scheduled to that node. This
       # deployment, however, will tolerate that taint.
       tolerations:
       - key: "outbound-ip"
