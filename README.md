@@ -647,30 +647,36 @@ gcloud iam service-accounts create kubeip-service-account --display-name "kubeIP
 Create role and attach the service-account to it:
 
 ```
-gcloud iam roles create kubeip --project $GCLOUD_PROJECT --file config/kubeip/roles.yml
-gcloud projects add-iam-policy-binding $GCLOUD_PROJECT \
---member serviceAccount:kubeip-service-account@$GCLOUD_PROJECT.iam.gserviceaccount.com \
---role projects/$GCLOUD_PROJECT/roles/kubeip
+gcloud --project ${GCLOUD_PROJECT} \
+    iam roles create kubeip --file config/federation/kubeip/roles.yml
+gcloud --project ${GCLOUD_PROJECT} \
+    projects add-iam-policy-binding $GCLOUD_PROJECT \
+	--member serviceAccount:kubeip-service-account@$GCLOUD_PROJECT.iam.gserviceaccount.com \
+	--role projects/$GCLOUD_PROJECT/roles/kubeip
 ```
 
 Grab a key file for the service-account:
 
 ```
-gcloud iam service-accounts keys create key.json --iam-account \
-kubeip-service-account@mlab-sandbox.iam.gserviceaccount.com
+gcloud --project ${GCLOUD_PROJECT} \
+    iam service-accounts keys create key.json --iam-account \
+	kubeip-service-account@${GCLOUD_PROJECT}.iam.gserviceaccount.com
 ```
 
 And then turn it into a Kubernetes secret:
 
 ```
-kubectl create secret generic kubeip-key --from-file=key.json
+kubectl --project ${GCLOUD_PROJECT} \
+    create secret generic kubeip-key --from-file=key.json
 ```
 
 Finally reserve static IPs for your new nodepool:
 
 ```
-for i in {1..2}; do gcloud compute addresses create kubeip-ip$i \
---project=$GCLOUD_PROJECT --region=us-central1; done
+for i in {1..2}; do
+    gcloud --project ${GCLOUD_PROJECT} \
+	    compute addresses create kubeip-ip$i --region=us-central1
+done
 ```
 
 And label them for kubeIP (use the same region as the GKE cluster). The
@@ -678,8 +684,11 @@ label `kubeip=prometheus-federation` corresponds to the `KUBEIP_LABELKEY`
 and `KUBEIP_LABELVALUE` values in the kubeIP deployment:
 
 ```
-for i in {1..2}; do gcloud beta compute addresses update kubeip-ip$i \
---update-labels kubeip=prometheus-federation --region=us-central1; done
+for i in {1..2}; do
+    gcloud --project ${GCLOUD_PROJECT} \
+	    beta compute addresses update kubeip-ip$i \
+		--update-labels kubeip=prometheus-federation --region=us-central1
+done
 ```
 
 Then continue your deployment as normal.
