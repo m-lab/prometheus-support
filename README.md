@@ -651,8 +651,8 @@ gcloud --project ${GCLOUD_PROJECT} \
     iam roles create kubeip --file config/federation/kubeip/roles.yml
 gcloud --project ${GCLOUD_PROJECT} \
     projects add-iam-policy-binding $GCLOUD_PROJECT \
-	--member serviceAccount:kubeip-service-account@$GCLOUD_PROJECT.iam.gserviceaccount.com \
-	--role projects/$GCLOUD_PROJECT/roles/kubeip
+    --member serviceAccount:kubeip-service-account@$GCLOUD_PROJECT.iam.gserviceaccount.com \
+    --role projects/$GCLOUD_PROJECT/roles/kubeip
 ```
 
 Grab a key file for the service-account:
@@ -660,7 +660,7 @@ Grab a key file for the service-account:
 ```
 gcloud --project ${GCLOUD_PROJECT} \
     iam service-accounts keys create key.json --iam-account \
-	kubeip-service-account@${GCLOUD_PROJECT}.iam.gserviceaccount.com
+    kubeip-service-account@${GCLOUD_PROJECT}.iam.gserviceaccount.com
 ```
 
 And then turn it into a Kubernetes secret:
@@ -675,7 +675,7 @@ Finally reserve static IPs for your new nodepool:
 ```
 for i in {1..2}; do
     gcloud --project ${GCLOUD_PROJECT} \
-	    compute addresses create kubeip-ip$i --region=us-central1
+        compute addresses create kubeip-ip$i --region=us-central1
 done
 ```
 
@@ -686,8 +686,8 @@ and `KUBEIP_LABELVALUE` values in the kubeIP deployment:
 ```
 for i in {1..2}; do
     gcloud --project ${GCLOUD_PROJECT} \
-	    beta compute addresses update kubeip-ip$i \
-		--update-labels kubeip=prometheus-federation --region=us-central1
+        beta compute addresses update kubeip-ip$i \
+        --update-labels kubeip=prometheus-federation --region=us-central1
 done
 ```
 
