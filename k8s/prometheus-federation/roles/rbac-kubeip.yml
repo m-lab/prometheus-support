@@ -1,0 +1,32 @@
+# Define a service account for kubeIP
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubeip
+---
+# Allow kubeIP to keep an eye on nodes and pods
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kubeip
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get","list","watch","patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get","list","watch"]
+---
+# Bind the kubeIP account to its role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeip
+subjects:
+  - kind: ServiceAccount
+    name: kubeip
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: kubeip
+  apiGroup: rbac.authorization.k8s.io

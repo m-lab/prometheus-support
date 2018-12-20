@@ -514,17 +514,6 @@ scrape_configs:
         replacement: blackbox-service.default.svc.cluster.local:9115
 
 
-  # Scrape config for the snmp_exporter. There is one snmp_exporter service
-  # running in a Docker container on a GCE VM in each GCP project.
-  #
-  # The snmp_exporter generates its own labels.
-  - job_name: 'snmp-exporter'
-    static_configs:
-      - targets:
-        - snmp-exporter.c.{{PROJECT}}.internal:9116
-        - snmp-exporter.c.{{PROJECT}}.internal:9100
-
-
   # SNMP configurations.
   - job_name: 'snmp-targets'
     metrics_path: /snmp
@@ -561,7 +550,7 @@ scrape_configs:
       - source_labels: []
         regex: .*
         target_label: __address__
-        replacement: snmp-exporter.c.{{PROJECT}}.internal:9116
+        replacement: snmp-exporter-service.default.svc.cluster.local:9116
 
     # This relabel config is the last relabel processed before ingesting data
     # into the datastore.

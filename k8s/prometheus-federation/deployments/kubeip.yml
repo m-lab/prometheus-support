@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeip
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeip
+  template:
+      metadata:
+        labels:
+          app: kubeip
+      spec:
+        priorityClassName: system-cluster-critical
+        containers:
+        - name: "kubeip"
+          image: doitintl/kubeip:issue-34
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: google-cloud-key
+            mountPath: /var/secrets/google
+          env:
+            # Key for GCP address labels
+          - name: "KUBEIP_LABELKEY"
+            value: "kubeip"
+            # Value for GCP address labels
+          - name: "KUBEIP_LABELVALUE"
+            value: "prometheus-federation"
+            # Nodepool to which KubeIP assigns addresses
+          - name: "KUBEIP_NODEPOOL"
+            value: "static-outbound-ip"
+            # GCP Application Default Credentials (ADC)
+            # See: https://cloud.google.com/docs/authentication/production
+          - name: "GOOGLE_APPLICATION_CREDENTIALS"
+            value: /var/secrets/google/key.json
+        restartPolicy: Always
+        serviceAccountName: kubeip
+        volumes:
+          - name: google-cloud-key
+            secret:
+              secretName: kubeip-key

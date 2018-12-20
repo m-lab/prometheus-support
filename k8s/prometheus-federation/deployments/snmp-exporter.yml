@@ -1,0 +1,87 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: snmp-exporter
+spec:
+  # Run two so that we can make sure we have failover.
+  replicas: 2
+  selector:
+    matchLabels:
+      run: snmp-exporter
+  template:
+    metadata:
+      labels:
+        run: snmp-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      # Do an early fetch of the configuration so that snmp-exporter will start
+      initContainers:
+      - name: fetch
+        image: gcr.io/cloud-builders/gsutil
+        args:
+        - cp
+        - gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
+        - /config/snmp.yml
+        volumeMounts:
+        - mountPath: /config
+          name: snmp-exporter-storage
+      containers:
+      - image: prom/snmp-exporter:v0.13.0
+        name: snmp-exporter
+        ports:
+        - containerPort: 9116
+        volumeMounts:
+        - mountPath: /etc/snmp_exporter
+          name: snmp-exporter-storage
+      # Pull the snmp-exporter configuration again so that we can watch it.
+      # TODO: replace this bash-loop with a special-purpose container.
+      - name: service-discovery
+        image: gcr.io/cloud-builders/gsutil
+        command:
+        - bash
+        - -c
+        - "while true; do gsutil cp gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml /config/snmp.yml ; sleep 600 ; done"
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "50m"
+          limits:
+            memory: "150Mi"
+            cpu: "50m"
+        volumeMounts:
+        # Mount snmp-exporter-storage for write access to the snmp_exporter configuration.
+        - mountPath: /config
+          name: snmp-exporter-storage
+      # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
+      # stable version.
+      - image: jimmidyson/configmap-reload:v0.2.2
+        name: configmap-reload
+        args: ["-webhook-url", "http://localhost:9116/-/reload",
+               "-volume-dir", "/config"]
+        resources:
+          requests:
+            memory: "400Mi"
+            cpu: "200m"
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
+        volumeMounts:
+        # Mount the snmp-exporter config volume so we can watch it for changes.
+        - mountPath: /config
+          name: snmp-exporter-storage
+      # The snmp-exporter will only be scheduled onto nodes that we labeled
+      # as having a static outbound IP.
+      nodeSelector:
+        outbound-ip: static
+      # We can also taint nodes with static outbound IPs so that services that
+      # do not require a static IP aren't scheduled to that node. This
+      # deployment, however, will tolerate that taint.
+      tolerations:
+      - key: "outbound-ip"
+        value: "static"
+        effect: "NoSchedule"
+      # Use an emptyDir volume just to share config between containers.
+      volumes:
+      - name: snmp-exporter-storage
+        emptyDir: {}

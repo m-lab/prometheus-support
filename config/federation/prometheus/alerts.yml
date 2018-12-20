@@ -272,17 +272,16 @@ groups:
 
 # Prometheus is unable to get data from the snmp_exporter service.
   - alert: SnmpExporterDownOrMissing
-    expr: up{job="snmp-exporter"} == 0 or absent(up{job="snmp-exporter"})
+    expr: up{container="snmp-exporter"} == 0 or absent(up{container="snmp-exporter"})
     for: 10m
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
       summary: The snmp_exporter service is down or missing.
-      description: The snmp_exporter service runs in a Docker container on a
-        GCE VM named 'snmp-exporter' in each M-Lab GCP project. Look at the
-        Travis-CI builds/deploys for m-lab/snmp-exporter-support, or SSH to the
-        VM and poke around.
+      description: Check the status of Kubernetes clusters on each M-Lab GCP
+        project. Look at the travis deployment history for
+        m-lab/prometheus-support.
 
 # Some SNMP metrics are missing from Prometheus. These should always be present.
 # The wait period shouuld be longer than that for the SnmpExporterDownOrMissing
