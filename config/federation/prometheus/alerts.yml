@@ -55,7 +55,7 @@ groups:
       == 1)
     for: 10m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: page
     annotations:
       summary: "An M-Lab machine is online, but the sidestream exporter is not."
@@ -194,7 +194,7 @@ groups:
     expr: absent(up{service="sidestream"})
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: "All sidestream targets are missing."
@@ -204,7 +204,7 @@ groups:
     expr: up{service="sidestream"} unless on(machine) up{service="ssh806"}
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: "Sidestream is monitored on an unknown machine."
@@ -214,7 +214,7 @@ groups:
     expr: up{service="ssh806"} unless on(machine) up{service="sidestream"}
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: "Machines are missing sidestream monitoring."
@@ -225,7 +225,7 @@ groups:
     expr: up{container="scraper"} unless on(machine, experiment) up{service="rsyncd"}
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: "Scraper deployments are running without rsyncd monitoring"
@@ -275,7 +275,7 @@ groups:
     expr: up{container="snmp-exporter"} == 0 or absent(up{container="snmp-exporter"})
     for: 10m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: The snmp_exporter service is down or missing.
@@ -290,12 +290,11 @@ groups:
     expr: absent(ifHCOutOctets)
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: page
     annotations:
       summary: Expected SNMP metrics are missing from Prometheus!
-      description: |
-        If the snmp_exporter service is running, then there may be a
+      description: If the snmp_exporter service is running, then there may be a
         target configuration error. Check the target definitions in GCS[1] and
         the target status in Prometheus[2].
 
@@ -326,12 +325,11 @@ groups:
     expr: up{job="script-exporter"} == 0 or absent(up{job="script-exporter"})
     for: 10m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: The script_exporter service is down on missing.
-      description: |
-        The script_exporter service runs in a Docker container on a GCE VM
+      description: The script_exporter service runs in a Docker container on a GCE VM
         named 'script-exporter' in each M-Lab GCP project. For deployment
         details and troubleshooting, you can usually figure out the issue by
         looking through the Travis-CI build logs[1]. You can also look for
@@ -348,12 +346,11 @@ groups:
         or absent(script_success{service="ndt_queue"})
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: page
     annotations:
       summary: Expected script_exporter metrics are missing from Prometheus!
-      description: |
-        If the script_exporter service is running, then there may be a target
+      description: If the script_exporter service is running, then there may be a target
         configuration error. Check the target definitions in GCS[1] and the target
         status in Prometheus[2].
 
@@ -369,7 +366,7 @@ groups:
         or absent(up{job="blackbox-exporter-ipv4"})
     for: 10m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: The blackbox_exporter service is down for IPv4 probes.
@@ -382,7 +379,7 @@ groups:
     expr: up{job="blackbox-exporter-ipv6"} == 0 or absent(up{job="blackbox-exporter-ipv6"})
     for: 10m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: The blackbox_exporter service is down or missing for IPv6 probes.
@@ -417,7 +414,7 @@ groups:
       ) > 0.25
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: page
     annotations:
       summary: Too large a percentage of NDT servers are down.
@@ -442,12 +439,11 @@ groups:
         or absent(vdlimit_total{experiment="ndt.iupui"})
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: page
     annotations:
       summary: A metric for an NDT service is missing.
-      description: |
-        If the blackbox_exporter service is running, then there may be a target
+      description: If the blackbox_exporter service is running, then there may be a target
         configuration error. Check the target definitions in GCS and the target
         status in Prometheus[1]. vdlimit_* metrics are provided by node_exporter
         on each node.
@@ -462,12 +458,11 @@ groups:
         or absent(probe_success{service="neubot_ipv6"})
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: A metric for a Neubot service is missing.
-      description: |
-        If the blackbox_exporter service is running, then there may be a target
+      description: If the blackbox_exporter service is running, then there may be a target
         configuration error. Check the target definitions in GCS and the target
         status in Prometheus[1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
@@ -481,12 +476,11 @@ groups:
         or absent(probe_success{service="mobiperf_ipv6"})
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: A metric for a Mobiperf service is missing.
-      description: |
-        If the blackbox_exporter service is running, then there may be a target
+      description: If the blackbox_exporter service is running, then there may be a target
         configuration error. Check the target definitions in GCS and the target
         status in Prometheus[1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
@@ -499,12 +493,11 @@ groups:
         unless on(machine) gmx_machine_maintenance == 1
     for: 30m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: Some number of nodes are missing lame-duck status metrics.
-      description: |
-        Check /var/spool/node_exporter/ on the node to see if the file
+      description: Check /var/spool/node_exporter/ on the node to see if the file
         lame_duck.prom is missing. If it is, use the mlabops Ansible
         lame-duck.yaml playbook to restore it.
 
@@ -522,8 +515,7 @@ groups:
       severity: ticket
     annotations:
       summary: Some vdlimit_* metrics are missing.
-      description: |
-        Check /var/spool/node_exporter/ on the node to see if the file
+      description: Check /var/spool/node_exporter/ on the node to see if the file
         vdlimit.prom is missing. The file is created by
         /etc/cron.d/prom_vdlimit_metrics.cron.
       dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
@@ -535,7 +527,7 @@ groups:
         unless on(machine) gmx_machine_maintenance == 1
     for: 10m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: A collectd-mlab service is down.
@@ -553,7 +545,7 @@ groups:
         unless on(machine) gmx_machine_maintenance == 1
     for: 10m
     labels:
-      repo: dev-tracker
+      repo: ops-tracker
       severity: ticket
     annotations:
       summary: A collectd-mlab service metric is missing.
