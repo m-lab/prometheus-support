@@ -20,11 +20,12 @@ FROM (
       "sidestream" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
     FROM
       `{{PROJECT}}.base_tables.sidestream`
-  UNION ALL
-    SELECT
-      "traceroute" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
-    FROM
-      `{{PROJECT}}.base_tables.traceroute`
+-- TODO: enable once the traceroute parser is reenabled.
+--  UNION ALL
+--    SELECT
+--      "traceroute" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
+--    FROM
+--      `{{PROJECT}}.base_tables.traceroute`
   UNION ALL
     SELECT
       "switch" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
