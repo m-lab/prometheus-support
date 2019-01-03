@@ -685,9 +685,11 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik
 
 # ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
-# should always be zero because a panic indicates a bug in the parser. The
-# alert will continue to fire until the parser is restarted or a new version is
-# deployed (ideally with a fix).
+# may increase due to a transient issue or a short-lived trigger for a parser
+# bug. The alert will fire as long as the rate is above zero for more than 5
+# minutes. So, it's possible for false-negatives in response to isolated events,
+# but it also allows the alert to stop firing without a redeploy when the event
+# is short-lived.
   - alert: ETL_ParserPanicNonZero
     expr: irate(etl_panic_count[4m]) > 0
     for: 5m
