@@ -689,7 +689,7 @@ groups:
 # alert will continue to fire until the parser is restarted or a new version is
 # deployed (ideally with a fix).
   - alert: ETL_ParserPanicNonZero
-    expr: etl_panic_count > 0
+    expr: irate(etl_panic_count[4m]) > 0
     for: 10m
     labels:
       repo: dev-tracker
