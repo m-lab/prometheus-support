@@ -690,7 +690,7 @@ groups:
 # deployed (ideally with a fix).
   - alert: ETL_ParserPanicNonZero
     expr: irate(etl_panic_count[4m]) > 0
-    for: 10m
+    for: 5m
     labels:
       repo: dev-tracker
       severity: ticket
