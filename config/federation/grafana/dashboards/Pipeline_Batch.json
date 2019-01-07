@@ -294,7 +294,7 @@
           "legendFormat": "Requests",
           "metric": "etl_annotator_Error_Count",
           "refId": "A",
-          "step": 10
+          "step": 10,
         },
         {
           "expr": "sum by(source)(increase(etl_annotator_Error_Count{service=\"etl-batch-parser\"}[$interval]))",
@@ -303,7 +303,14 @@
           "intervalFactor": 2,
           "legendFormat": "Errors: {{source}}",
           "refId": "B",
-          "step": 20
+          "step": 20,
+        },
+        {
+          "refId": "C",
+          "expr": "sum(rate(annotator_external_latency_hist_msec_count{service=\"etl-batch-parser\"}[$interval])) by (le, detail, version)",
+          "intervalFactor": 1,
+          "format": "time_series",
+          "legendFormat": "V2 {{detail}} {{version}}"
         }
       ],
       "thresholds": [],
