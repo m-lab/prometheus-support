@@ -129,6 +129,26 @@ groups:
         Scraper-sync should only report on the last collection attempt of every
         active Scraper deployment.
 
+# Scraper_InconsistentDeployment checks whether each machine has the same
+# number of deployments as all other machines. This is achived by counting the
+# number of deployments per machine, and then comparing that number to the
+# total number of rsync_module. Each machine should have one of each.
+  - alert: Scraper_InconsistentDeployment
+    expr: |
+      count by(machine) (up{container="scraper"})
+        != scalar(count(count by(rsync_module) (up{container="scraper"})))
+    for: 2h
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      summary: Scraper deployent is missing or inconsistent
+      description: >
+        The number of scraper deployments should be the same for every machine.
+        When this alert fires, some machine has more or less deployments than
+        expected. Check whether there have been recent changes to the machine
+        or to scraper.
+
 # SwitchSLO
 #
 # A switch at a site has been down for too long and we need to contact the site
@@ -525,6 +545,26 @@ groups:
         vdlimit.prom is missing. The file is created by
         /etc/cron.d/prom_vdlimit_metrics.cron.
       dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
+
+# NPAD_VdlimitTooMuchUsedDisk checks whether NPAD is using more local storage
+# than scraper can support when all files are small (i.e. from
+# paris-traceroute).
+#
+# Note: the threshold is calculated from the number of default inodes allocated
+# in scraper disks (~700k) and the average paris-traceroute file size (~3800b)
+# plus the minimal experiment filesystem size (~1.2GB).
+  - alert: NPAD_VdlimitTooMuchUsedDisk
+    expr: vdlimit_used{experiment="npad.iupui"} > 3.5*1024*1024
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: NPAD disk usage is much higher than normal.
+      description: Check /var/spool/iupui_npad/ on the node to see if data is
+        being collected. If not, then check the health of scraper for this node
+        and slice. If so, then check or other sources of disk usage, like
+        /var/logs.
 
 # A collectd-mlab service has a problem and is down.
   - alert: CoreServices_CollectdMlabDown
