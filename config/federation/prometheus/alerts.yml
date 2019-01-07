@@ -747,3 +747,17 @@ groups:
       description: Gardener throughput is dependent on the etl-batch-parser and
         associated queues.yaml.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/
+
+# Rebot_MissingMetrics fires when no metrics can be collected for rebot for
+# the past 10 minutes.
+  - alert: Rebot_MissingMetrics
+    expr: absent(up{job='rebot'})
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The rebot instance running on eb.measurementlab.net is down.
+      description: Metrics for rebot cannot be collected. The instance is down
+        or not reachable. Check that the rebot daemon on eb.measurementlab.net
+        is running and port 9999 is reachable.

@@ -680,6 +680,15 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
 
+  # Scrape config for the rebot. There is only one rebot service currently
+  # running on the eb.measurementlab.net machine.
+  #
+  # The rebot service generates its own labels.
+  - job_name: 'rebot'
+    static_configs:
+      - targets:
+        - eb.measurementlab.net:9999
+
   # Scrape config for legacy targets.
   #
   # Using an out-of-band process, generated configs can be copied into the
