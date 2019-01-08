@@ -550,7 +550,9 @@ scrape_configs:
       - source_labels: []
         regex: .*
         target_label: __address__
-        replacement: snmp-exporter-service.default.svc.cluster.local:9116
+        # TODO: enable once all switches are updated.
+        # replacement: snmp-exporter-service.default.svc.cluster.local:9116
+        replacement: snmp-exporter.c.{{PROJECT}}.internal:9116
 
     # This relabel config is the last relabel processed before ingesting data
     # into the datastore.
