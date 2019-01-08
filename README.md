@@ -666,7 +666,7 @@ gcloud --project ${GCLOUD_PROJECT} \
 And then turn it into a Kubernetes secret:
 
 ```
-kubectl --project ${GCLOUD_PROJECT} \
+./kubectl.sh ${GCLOUD_PROJECT} \
     create secret generic kubeip-key --from-file=key.json
 ```
 
