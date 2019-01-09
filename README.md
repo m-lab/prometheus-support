@@ -663,11 +663,14 @@ gcloud --project ${GCLOUD_PROJECT} \
     kubeip-service-account@${GCLOUD_PROJECT}.iam.gserviceaccount.com
 ```
 
-And then turn it into a Kubernetes secret:
+And then turn it into a Kubernetes secret, after making sure the right project
+is selected for kubectl:
 
 ```
-kubectl --project ${GCLOUD_PROJECT} \
-    create secret generic kubeip-key --from-file=key.json
+gcloud container clusters get-credentials prometheus-federation `
+    --zone us-central1-a --project ${GCLOUD_PROJECT}
+
+kubectl create secret generic kubeip-key --from-file=key.json
 ```
 
 Finally reserve static IPs for your new nodepool:
