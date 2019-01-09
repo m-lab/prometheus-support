@@ -13,10 +13,10 @@
       }
     ]
   },
-  "editable": true,
+  "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1547037383115,
+  "iteration": 1547052036624,
   "links": [],
   "panels": [
     {
@@ -401,7 +401,7 @@
       "targets": [
         {
           "$$hashKey": "object:380",
-          "expr": "(label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0,\n\t\"site\", \"$1\", \"machine\", \".+?\\\\.(.+?)\\\\..+\")) unless on(machine) gmx_machine_maintenance == 1",
+          "expr": "(label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0,\n\t\"site\", \"$1\", \"machine\", \".+?\\\\.(.+?)\\\\..+\")) unless on(machine) gmx_machine_maintenance == 1 unless on(site) gmx_site_maintenance == 1",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -652,7 +652,7 @@
         }
       ],
       "datasource": "$datasource",
-      "description": "Returns a node which has been rebooted by Rebot during the last hour.",
+      "description": "Returns a node which has been rebooted by Rebot during the last 24 hours.\n\nTODO: use $__range after we upgrade to Grafana >v5.3",
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
@@ -701,7 +701,7 @@
       "targets": [
         {
           "$$hashKey": "object:3673",
-          "expr": "rebot_last_reboot_timestamp{} > time() - 3600",
+          "expr": "rebot_last_reboot_timestamp{} > time() - 86400",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -710,7 +710,7 @@
         }
       ],
       "timeFrom": null,
-      "title": "Rebot - Rebooted within the last hour",
+      "title": "Rebot - Rebooted in the last 24h",
       "transform": "timeseries_aggregations",
       "type": "table"
     },
@@ -2317,7 +2317,6 @@
     "list": [
       {
         "current": {
-          "tags": [],
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -2387,5 +2386,5 @@
   "timezone": "utc",
   "title": "Ops: Platform Overview",
   "uid": "JAq7W6Nmk",
-  "version": 118
+  "version": 121
 }
