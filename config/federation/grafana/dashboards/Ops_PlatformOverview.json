@@ -16,7 +16,7 @@
   "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1547052036624,
+  "iteration": 1547054442237,
   "links": [],
   "panels": [
     {
@@ -374,13 +374,7 @@
       },
       "styles": [
         {
-          "alias": "Time",
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "link": false,
-          "pattern": "Time",
-          "type": "string"
-        },
-        {
+          "$$hashKey": "object:659",
           "alias": "Node",
           "colorMode": null,
           "colors": [
@@ -401,7 +395,7 @@
       "targets": [
         {
           "$$hashKey": "object:380",
-          "expr": "(label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0,\n\t\"site\", \"$1\", \"machine\", \".+?\\\\.(.+?)\\\\..+\")) unless on(machine) gmx_machine_maintenance == 1 unless on(site) gmx_site_maintenance == 1",
+          "expr": "(label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0,\n\t\"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9tc]{2}).*\")) unless on(machine) gmx_machine_maintenance == 1 unless on(site) gmx_site_maintenance == 1",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -2386,5 +2380,5 @@
   "timezone": "utc",
   "title": "Ops: Platform Overview",
   "uid": "JAq7W6Nmk",
-  "version": 121
+  "version": 122
 }
