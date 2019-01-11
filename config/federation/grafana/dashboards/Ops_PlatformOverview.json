@@ -16,8 +16,7 @@
   "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 194,
-  "iteration": 1538498829575,
+  "iteration": 1547054442237,
   "links": [],
   "panels": [
     {
@@ -82,6 +81,7 @@
       "tableColumn": "",
       "targets": [
         {
+          "$$hashKey": "object:5899",
           "expr": "count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1 AND ON(machine)\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt_e2e\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.95\n)\n/\ncount(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1\n)",
           "format": "time_series",
           "instant": true,
@@ -355,10 +355,11 @@
     {
       "columns": [],
       "datasource": "$datasource",
+      "description": "Returns a node where 100% of probes have failed during the last 15 minutes. It excludes nodes which have been put into GMX maintenance mode.",
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 4,
         "x": 0,
         "y": 3
       },
@@ -373,13 +374,7 @@
       },
       "styles": [
         {
-          "alias": "Time",
-          "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "link": false,
-          "pattern": "Time",
-          "type": "string"
-        },
-        {
+          "$$hashKey": "object:659",
           "alias": "Node",
           "colorMode": null,
           "colors": [
@@ -400,7 +395,7 @@
       "targets": [
         {
           "$$hashKey": "object:380",
-          "expr": "sum_over_time(probe_success{service=\"ssh806\"}[10m]) < 5 AND changes(probe_success{service=\"ssh806\"}[1w]) > 0",
+          "expr": "(label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0,\n\t\"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9tc]{2}).*\")) unless on(machine) gmx_machine_maintenance == 1 unless on(site) gmx_site_maintenance == 1",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -415,10 +410,69 @@
     {
       "columns": [],
       "datasource": "$datasource",
+      "description": "Returns a switch when 100% of the probes have failed during the last 15 minutes. It excludes site which have been put into GMX maintenance mode.",
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 4,
+        "x": 4,
+        "y": 3
+      },
+      "id": 36,
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "hidden"
+        },
+        {
+          "alias": "Switch",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/Metric/",
+          "preserveFormat": true,
+          "sanitize": true,
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "$$hashKey": "object:2991",
+          "expr": "sum_over_time(probe_success{instance=~\"s1.*\", module=\"icmp\"}[15m]) == 0 unless on(site) gmx_site_maintenance == 1",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 2,
+          "legendFormat": "<font color=\"red\">s1.{{site}}</font>",
+          "refId": "A"
+        }
+      ],
+      "title": "Switches down",
+      "transform": "timeseries_aggregations",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "$datasource",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 5,
+        "w": 4,
         "x": 8,
         "y": 3
       },
@@ -470,15 +524,15 @@
     {
       "columns": [],
       "datasource": "$datasource",
-      "description": "Returns a switch when more than 50% of the last 10 probes have failed.",
+      "description": "Returns a machine which has been put into GMX maintenance mode.",
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 16,
+        "w": 4,
+        "x": 12,
         "y": 3
       },
-      "id": 36,
+      "id": 38,
       "links": [],
       "pageSize": null,
       "scroll": true,
@@ -492,10 +546,10 @@
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
-          "type": "hidden"
+          "type": "date"
         },
         {
-          "alias": "Switch",
+          "alias": "Node",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -504,8 +558,6 @@
           ],
           "decimals": 2,
           "pattern": "/Metric/",
-          "preserveFormat": true,
-          "sanitize": true,
           "thresholds": [],
           "type": "string",
           "unit": "short"
@@ -513,15 +565,146 @@
       ],
       "targets": [
         {
-          "expr": "sum_over_time(up{job=\"snmp-targets\"}[10m]) < 5",
+          "$$hashKey": "object:3673",
+          "expr": "gmx_machine_maintenance{} == 1",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
-          "legendFormat": "<font color=\"red\">s1.{{site}}</font>",
+          "legendFormat": "{{machine}}",
           "refId": "A"
         }
       ],
-      "title": "Switches down",
+      "title": "Nodes in GMX maintenance mode",
+      "transform": "timeseries_aggregations",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "$datasource",
+      "description": "Returns a site which has been put into GMX maintenance mode.",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 3
+      },
+      "id": 39,
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "$$hashKey": "object:4061",
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "$$hashKey": "object:4062",
+          "alias": "Site",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/Metric/",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "$$hashKey": "object:3673",
+          "expr": "gmx_site_maintenance{} == 1",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 2,
+          "legendFormat": "{{site}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Sites in GMX maintenance mode",
+      "transform": "timeseries_aggregations",
+      "type": "table"
+    },
+    {
+      "columns": [
+        {
+          "$$hashKey": "object:5103",
+          "text": "Current",
+          "value": "current"
+        }
+      ],
+      "datasource": "$datasource",
+      "description": "Returns a node which has been rebooted by Rebot during the last 24 hours.\n\nTODO: use $__range after we upgrade to Grafana >v5.3",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 3
+      },
+      "id": 40,
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "$$hashKey": "object:4061",
+          "alias": "Reboot time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": null,
+          "mappingType": 1,
+          "pattern": "Current",
+          "preserveFormat": false,
+          "sanitize": false,
+          "type": "string",
+          "unit": "s"
+        },
+        {
+          "$$hashKey": "object:4062",
+          "alias": "Site",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/Metric/",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "$$hashKey": "object:3673",
+          "expr": "rebot_last_reboot_timestamp{} > time() - 86400",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 2,
+          "legendFormat": "{{machine}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "title": "Rebot - Rebooted in the last 24h",
       "transform": "timeseries_aggregations",
       "type": "table"
     },
@@ -2128,8 +2311,8 @@
     "list": [
       {
         "current": {
-          "text": "default",
-          "value": "default"
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
         },
         "hide": 0,
         "label": "Data source",
@@ -2197,5 +2380,5 @@
   "timezone": "utc",
   "title": "Ops: Platform Overview",
   "uid": "JAq7W6Nmk",
-  "version": 55
+  "version": 122
 }
