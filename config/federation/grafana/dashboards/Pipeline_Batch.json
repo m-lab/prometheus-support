@@ -768,11 +768,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(status)(60*rate(etl_task_count{service=\"etl-batch-parser\"}[2m]))",
+          "expr": "sum by(status, table)(60*rate(etl_task_count{service=\"etl-batch-parser\"}[5m]))",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{status}}",
+          "legendFormat": "{{status}} {{table}}",
           "refId": "A",
           "step": 60
         }
@@ -800,7 +800,7 @@
       "yaxes": [
         {
           "format": "short",
-          "logBase": 1,
+          "logBase": 10,
           "show": true
         },
         {
@@ -1651,7 +1651,19 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Average/",
+          "color": "#65c5db",
+          "linewidth": 3
+        },
+        {
+          "alias": "/etl/",
+          "color": "rgba(146, 83, 83, 0.13)",
+          "dashLength": 1,
+          "spaceLength": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -1664,6 +1676,15 @@
           "legendFormat": "{{instance}}",
           "refId": "A",
           "step": 60
+        },
+        {
+          "expr": "avg(rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2) by (version)",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "Average {{version}}",
+          "refId": "B",
+          "step": 60
         }
       ],
       "thresholds": [],
@@ -1671,8 +1692,8 @@
       "timeShift": null,
       "title": "Per instance cpu utilization",
       "tooltip": {
-        "shared": true,
-        "sort": 0,
+        "shared": false,
+        "sort": 1,
         "value_type": "individual"
       },
       "transparent": false,
@@ -2517,7 +2538,7 @@
       }
     }
   ],
-  "refresh": "1m",
+  "refresh": "5m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -2652,7 +2673,7 @@
       "30d"
     ]
   },
-  "timezone": "browser",
+  "timezone": "utc",
   "title": "Pipeline: Batch (in progress)",
   "uid": "000000021",
   "version": 22
