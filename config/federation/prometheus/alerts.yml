@@ -546,15 +546,10 @@ groups:
         /etc/cron.d/prom_vdlimit_metrics.cron.
       dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
 
-# NPAD_VdlimitTooMuchUsedDisk checks whether NPAD is using more local storage
-# than scraper can support when all files are small (i.e. from
-# paris-traceroute).
-#
-# Note: the threshold is calculated from the number of default inodes allocated
-# in scraper disks (~700k) and the average paris-traceroute file size (~3800b)
-# plus the minimal experiment filesystem size (~1.2GB).
+# NPAD_VdlimitTooMuchUsedDisk checks whether the disk usage for the NPAD vserver
+# is higher than 9GB (90%, as NPAD is set up with a 10GB disk).
   - alert: NPAD_VdlimitTooMuchUsedDisk
-    expr: vdlimit_used{experiment="npad.iupui"} > 3.5*1024*1024
+    expr: vdlimit_used{experiment="npad.iupui"} > 9*1024*1024
     for: 30m
     labels:
       repo: ops-tracker
@@ -564,7 +559,7 @@ groups:
       description: Check /var/spool/iupui_npad/ on the node to see if data is
         being collected. If not, then check the health of scraper for this node
         and slice. If so, then check or other sources of disk usage, like
-        /var/logs.
+        /var/logs and /home/iupui_npad/VAR/logs/paris-traceroute.log.
 
 # A collectd-mlab service has a problem and is down.
   - alert: CoreServices_CollectdMlabDown
