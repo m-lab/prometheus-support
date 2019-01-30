@@ -1,0 +1,14 @@
+# config file version
+apiVersion: 1
+
+# list of datasources to insert/update depending
+# what's available in the database
+datasources:
+- name: k8s platform (mlab-oti)
+  type: prometheus
+  access: proxy
+  orgId: 1
+  url: http://k8s-prometheus.mlab-oti.measurementlab.net:9090
+  isDefault: {{IS_DEFAULT}}
+  version: 1
+  editable: false
