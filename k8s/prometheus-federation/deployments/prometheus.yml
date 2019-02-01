@@ -166,7 +166,7 @@ spec:
         - mountPath: /prometheus
           name: prometheus-storage
 
-      - image: measurementlab/gcp-service-discovery:v1.0
+      - image: measurementlab/gcp-service-discovery:v1.1
         name: service-discovery
         args: [ "--aef-target=/targets/aeflex-targets/aeflex.json",
                 "--gke-target=/targets/federation-targets/prometheus-clusters.json",
@@ -211,13 +211,15 @@ spec:
                 "--http-target=/targets/blackbox-targets/switches_ping.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/switches_ping.json",
                 "--project={{GCLOUD_PROJECT}}"]
+        ports:
+          - containerPort: 9373
         resources:
           requests:
             memory: "150Mi"
-            cpu: "50m"
+            cpu: "150m"
           limits:
             memory: "150Mi"
-            cpu: "50m"
+            cpu: "150m"
         volumeMounts:
         # Mount the the prometheus-storage for write access to the target
         # directories.
