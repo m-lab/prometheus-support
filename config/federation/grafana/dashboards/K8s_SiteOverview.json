@@ -4,7 +4,7 @@
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": false,
+        "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
@@ -15,29 +15,28 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 247,
-  "iteration": 1549574550543,
+  "id": 246,
+  "iteration": 1549572451017,
   "links": [],
   "panels": [
     {
-      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 95,
+      "id": 34,
       "panels": [],
-      "repeat": "master",
+      "repeat": "node",
       "scopedVars": {
-        "master": {
+        "node": {
           "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "mlab2",
+          "value": "mlab2"
         }
       },
-      "title": "$master",
+      "title": "$node",
       "type": "row"
     },
     {
@@ -50,7 +49,7 @@
         "#d44a3a"
       ],
       "datasource": "$datasource",
-      "decimals": null,
+      "decimals": 1,
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -65,7 +64,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 131,
+      "id": 26,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -94,10 +93,10 @@
         }
       ],
       "scopedVars": {
-        "master": {
+        "node": {
           "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "mlab2",
+          "value": "mlab2"
         }
       },
       "sparkline": {
@@ -109,8 +108,9 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=~\"$node.$site.*\"}) / (60 * 60 * 24)",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -134,21 +134,20 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "Sum of metrics over all CPU cores.",
       "fill": 1,
       "gridPos": {
         "h": 6,
-        "w": 7,
+        "w": 5,
         "x": 2,
         "y": 1
       },
-      "id": 129,
+      "id": 32,
       "legend": {
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -161,44 +160,35 @@
       "points": false,
       "renderer": "flot",
       "scopedVars": {
-        "master": {
+        "node": {
           "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "mlab2",
+          "value": "mlab2"
         }
       },
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Cached bytes",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"iowait\"}[5m]))",
+          "expr": "node_load1{node=~\"mlab[1-4].$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "iowait",
+          "legendFormat": "Load1",
           "refId": "A"
-        },
-        {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"user\"}[5m]))",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "user",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"system\"}[5m]))",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "system",
-          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "CPU",
+      "title": "Load1",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -214,106 +204,7 @@
       },
       "yaxes": [
         {
-          "format": "percentunit",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 7,
-        "x": 9,
-        "y": 1
-      },
-      "id": 110,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "scopedVars": {
-        "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
-        }
-      },
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(node_disk_read_bytes_total{node=~\"k8s-platform-master.$master\"}[5m])",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Read {{device}}",
-          "refId": "A"
-        },
-        {
-          "expr": "rate(node_disk_written_bytes_total{node=~\"k8s-platform-master.$master\"}[5m])",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Written {{device}}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Disk I/O Bytes/s",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "Bps",
+          "format": "none",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -343,18 +234,134 @@
       "fill": 1,
       "gridPos": {
         "h": 6,
-        "w": 7,
-        "x": 16,
+        "w": 5,
+        "x": 7,
         "y": 1
       },
-      "id": 108,
+      "id": 31,
       "legend": {
-        "alignAsTable": false,
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": true,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "scopedVars": {
+        "node": {
+          "selected": true,
+          "text": "mlab2",
+          "value": "mlab2"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "Cached bytes",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "node_memory_Cached_bytes{node=~\"$node.$site.*\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Cache",
+          "refId": "A"
+        },
+        {
+          "expr": "node_memory_Buffers_bytes{node=~\"$node.$site.*\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Buffers",
+          "refId": "B"
+        },
+        {
+          "expr": "node_memory_Active_bytes{node=~\"$node.$site.*\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Active",
+          "refId": "D"
+        },
+        {
+          "expr": "node_memory_MemFree_bytes{node=~\"$node.$site.*\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Free",
+          "refId": "E"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 28,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
         "show": true,
         "total": false,
         "values": false
@@ -368,10 +375,10 @@
       "points": false,
       "renderer": "flot",
       "scopedVars": {
-        "master": {
+        "node": {
           "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "mlab2",
+          "value": "mlab2"
         }
       },
       "seriesOverrides": [],
@@ -380,27 +387,25 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"ens4\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"eth0\", node=~\"$node.$site.*\"}[4m])",
           "format": "time_series",
-          "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{device}}: Out",
-          "refId": "B"
+          "legendFormat": "TX eth0",
+          "refId": "A"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"ens4\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"eth0\", node=~\"$node.$site.*\"}[4m])",
           "format": "time_series",
-          "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{device}}: In",
-          "refId": "A"
+          "legendFormat": "RX eth0",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Host network",
+      "title": "Network",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -438,182 +443,6 @@
       }
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "$datasource",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 0,
-        "y": 4
-      },
-      "id": 132,
-      "interval": null,
-      "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "scopedVars": {
-        "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
-        }
-      },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "expr": "node_load5{node=~\"k8s-platform-master.$master\"}",
-          "format": "time_series",
-          "instant": false,
-          "intervalFactor": 2,
-          "refId": "A"
-        }
-      ],
-      "thresholds": "5,10",
-      "title": "Load5",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "No data!",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
-    },
-    {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "$datasource",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 0,
-        "y": 7
-      },
-      "id": 7,
-      "interval": null,
-      "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "scopedVars": {
-        "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
-        }
-      },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "expr": "node_load15{node=~\"k8s-platform-master.$master\"}",
-          "format": "time_series",
-          "instant": false,
-          "intervalFactor": 2,
-          "refId": "A"
-        }
-      ],
-      "thresholds": "5,10",
-      "title": "Load15",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "No data!",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -622,126 +451,11 @@
       "fill": 1,
       "gridPos": {
         "h": 6,
-        "w": 7,
-        "x": 2,
-        "y": 7
+        "w": 6,
+        "x": 18,
+        "y": 1
       },
-      "id": 97,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": true,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "scopedVars": {
-        "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
-        }
-      },
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "node_memory_Cached_bytes{node=\"k8s-platform-master-$master\"}",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Cache",
-          "refId": "B"
-        },
-        {
-          "expr": "node_memory_Buffers_bytes{node=\"k8s-platform-master-$master\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Buffer",
-          "refId": "A"
-        },
-        {
-          "expr": "node_memory_Active_bytes{node=\"k8s-platform-master-$master\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Active",
-          "refId": "C"
-        },
-        {
-          "expr": "node_memory_MemFree_bytes{node=\"k8s-platform-master-$master\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Free",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": null,
-          "format": "bytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 7,
-        "x": 9,
-        "y": 7
-      },
-      "id": 111,
+      "id": 30,
       "legend": {
         "avg": false,
         "current": false,
@@ -760,33 +474,326 @@
       "points": false,
       "renderer": "flot",
       "scopedVars": {
-        "master": {
+        "node": {
           "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "mlab2",
+          "value": "mlab2"
         }
       },
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "% sec/sec (sda)",
+          "yaxis": 2
+        },
+        {
+          "alias": "% sec/sec (sr0)",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
-      "stack": true,
+      "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_io_time_seconds_total{node=~\"k8s-platform-master.$master\"}[5m])",
+          "expr": "rate(node_disk_read_bytes_total{node=~\"$node.$site.*\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{device}}",
+          "legendFormat": "Read ({{device}})",
           "refId": "A"
+        },
+        {
+          "expr": "rate(node_disk_written_bytes_total{node=~\"$node.$site.*\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Written ({{device}})",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(node_disk_io_time_seconds_total{node=~\"$node.$site.*\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "% sec/sec ({{device}})",
+          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Disk I/O % (sec/sec)",
+      "title": "Disk I/O",
       "tooltip": {
         "shared": true,
         "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "decimals": 1,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 4
+      },
+      "id": 36,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "node": {
+          "selected": true,
+          "text": "mlab2",
+          "value": "mlab2"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "node_load15{node=~\"$node.$site.*\"}",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "20,30",
+      "title": "Load15",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "decimals": 1,
+      "format": "percentunit",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 7
+      },
+      "id": 21,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "node": {
+          "selected": true,
+          "text": "mlab2",
+          "value": "mlab2"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"}",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "80,90",
+      "title": "Rootfs",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 2,
+        "y": 7
+      },
+      "id": 15,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "scopedVars": {
+        "node": {
+          "selected": true,
+          "text": "mlab2",
+          "value": "mlab2"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(\n  container_cpu_usage_seconds_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    container_label_io_kubernetes_pod_namespace=~\"default\",\n    node=~\"$node.$site.*\"\n  }\n[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} ({{container_label_io_kubernetes_pod_name}})",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Pod CPU Usage",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -826,22 +833,22 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "fill": 1,
+      "fill": 0,
       "gridPos": {
         "h": 6,
-        "w": 7,
-        "x": 16,
+        "w": 5,
+        "x": 7,
         "y": 7
       },
-      "id": 107,
+      "id": 17,
       "legend": {
-        "alignAsTable": false,
         "avg": false,
         "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
         "max": false,
         "min": false,
-        "rightSide": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -854,10 +861,10 @@
       "points": false,
       "renderer": "flot",
       "scopedVars": {
-        "master": {
+        "node": {
           "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "mlab2",
+          "value": "mlab2"
         }
       },
       "seriesOverrides": [],
@@ -866,30 +873,126 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "expr": "container_memory_usage_bytes{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    node=~\"$node.$site.*\"\n}",
           "format": "time_series",
-          "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{device}}: Out",
-          "refId": "D"
-        },
-        {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=~\"k8s-platform-master.$master\"}[4m])",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "{{device}}: In",
-          "refId": "C"
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} ({{container_label_io_kubernetes_pod_name}})",
+          "refId": "A"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Flannel network",
+      "title": "Pod Memory",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 19,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "scopedVars": {
+        "node": {
+          "selected": true,
+          "text": "mlab2",
+          "value": "mlab2"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "-8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net2)\",\n    node=~\"$node.$site.*\"\n  }\n[5m])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "RX {{interface}} ({{container_label_io_kubernetes_pod_name}})",
+          "refId": "A"
+        },
+        {
+          "expr": "8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net2)\",\n    node=~\"$node.$site.*\"\n  }\n[5m])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "TX {{interface}} ({{container_label_io_kubernetes_pod_name}})",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Pod Network",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -934,7 +1037,8 @@
       ],
       "datasource": "$datasource",
       "decimals": 1,
-      "format": "percentunit",
+      "description": "Average temperature of all cores. Not sure how meaningful this is.",
+      "format": "none",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -948,7 +1052,7 @@
         "x": 0,
         "y": 10
       },
-      "id": 18,
+      "id": 35,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -965,10 +1069,10 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "postfix": "",
+      "postfix": "C",
       "postfixFontSize": "80%",
       "prefix": "",
-      "prefixFontSize": "80%",
+      "prefixFontSize": "50%",
       "rangeMaps": [
         {
           "from": "null",
@@ -976,45 +1080,44 @@
           "to": "null"
         }
       ],
-      "repeat": null,
       "scopedVars": {
-        "master": {
+        "node": {
           "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "mlab2",
+          "value": "mlab2"
         }
       },
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
         "lineColor": "rgb(31, 120, 193)",
-        "show": false
+        "show": true
       },
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"}",
+          "expr": "avg(node_hwmon_temp_celsius{node=~\"$node.$site.*\", chip=\"platform_coretemp_0\"})",
           "format": "time_series",
-          "instant": false,
-          "intervalFactor": 2,
+          "instant": true,
+          "intervalFactor": 1,
           "refId": "A"
         }
       ],
-      "thresholds": "0.80,0.90",
-      "title": "Root fs",
-      "transparent": false,
+      "thresholds": "176,194",
+      "title": "Core temp",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
         {
           "op": "=",
-          "text": "No data!",
+          "text": "N/A",
           "value": "null"
         }
       ],
       "valueName": "current"
     }
   ],
+  "refresh": false,
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -1022,8 +1125,8 @@
     "list": [
       {
         "current": {
-          "text": "k8s platform (mlab-staging)",
-          "value": "k8s platform (mlab-staging)"
+          "text": "k8s platform (mlab-sandbox)",
+          "value": "k8s platform (mlab-sandbox)"
         },
         "hide": 0,
         "label": "Datasource",
@@ -1038,20 +1141,71 @@
       {
         "allValue": null,
         "current": {
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "text": "lga0t",
+          "value": "lga0t"
+        },
+        "datasource": "$datasource",
+        "definition": "label_values(node)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Site",
+        "multi": false,
+        "name": "site",
+        "options": [],
+        "query": "label_values(node)",
+        "refresh": 1,
+        "regex": "/^mlab[1-4]\\.([a-z]{3}[0-9ct]{2})/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "mlab2",
+          "value": "mlab2"
         },
         "datasource": "$datasource",
         "definition": "label_values(node)",
         "hide": 0,
         "includeAll": true,
-        "label": "Master",
+        "label": "Node",
         "multi": false,
-        "name": "master",
+        "name": "node",
         "options": [],
         "query": "label_values(node)",
         "refresh": 1,
-        "regex": "/k8s-platform-master-(.*)/",
+        "regex": "/(mlab[1-4]).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "$datasource",
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Pod",
+        "multi": false,
+        "name": "pod",
+        "options": [],
+        "query": "query_result(container_start_time_seconds{container_label_io_kubernetes_pod_namespace=\"default\"})",
+        "refresh": 1,
+        "regex": "/container_label_io_kubernetes_pod_name=\"(.*?)-\\w+\"/",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
@@ -1092,7 +1246,7 @@
     ]
   },
   "timezone": "",
-  "title": "k8s: Master Cluster Copy",
-  "uid": "K8-zAIuik",
-  "version": 5
+  "title": "k8s: Site Overview",
+  "uid": "rJ7z2Suik",
+  "version": 6
 }
