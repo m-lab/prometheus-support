@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 247,
-  "iteration": 1549569378084,
+  "iteration": 1549574550543,
   "links": [],
   "panels": [
     {
@@ -33,8 +33,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "title": "$master",
@@ -43,13 +43,14 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
       "datasource": "$datasource",
+      "decimals": null,
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -64,7 +65,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 132,
+      "id": 131,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -81,8 +82,8 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
+      "postfix": "d",
+      "postfixFontSize": "80%",
       "prefix": "",
       "prefixFontSize": "50%",
       "rangeMaps": [
@@ -95,8 +96,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "sparkline": {
@@ -108,21 +109,20 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load5{node=~\"k8s-platform-master.$master\"}",
+          "expr": "(time() - node_boot_time_seconds{node=\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
           "format": "time_series",
-          "instant": false,
-          "intervalFactor": 2,
+          "intervalFactor": 1,
           "refId": "A"
         }
       ],
-      "thresholds": "5,10",
-      "title": "Load5",
+      "thresholds": "",
+      "title": "Uptime",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
         {
           "op": "=",
-          "text": "No data!",
+          "text": "N/A",
           "value": "null"
         }
       ],
@@ -163,8 +163,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "seriesOverrides": [],
@@ -269,8 +269,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "seriesOverrides": [],
@@ -370,8 +370,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "seriesOverrides": [],
@@ -461,6 +461,94 @@
         "x": 0,
         "y": 4
       },
+      "id": 132,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "master": {
+          "selected": true,
+          "text": "us-central1-a",
+          "value": "us-central1-a"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "node_load5{node=~\"k8s-platform-master.$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "5,10",
+      "title": "Load5",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "No data!",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 7
+      },
       "id": 7,
       "interval": null,
       "links": [],
@@ -492,8 +580,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "sparkline": {
@@ -514,97 +602,6 @@
       ],
       "thresholds": "5,10",
       "title": "Load15",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "No data!",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
-    },
-    {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "$datasource",
-      "decimals": 1,
-      "format": "percentunit",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 0,
-        "y": 7
-      },
-      "id": 18,
-      "interval": null,
-      "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "80%",
-      "prefix": "",
-      "prefixFontSize": "80%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "repeat": null,
-      "scopedVars": {
-        "master": {
-          "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
-        }
-      },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"}",
-          "format": "time_series",
-          "instant": false,
-          "intervalFactor": 2,
-          "refId": "A"
-        }
-      ],
-      "thresholds": "0.80,0.90",
-      "title": "Root fs",
-      "transparent": false,
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -650,8 +647,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "seriesOverrides": [],
@@ -765,8 +762,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "seriesOverrides": [],
@@ -859,8 +856,8 @@
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "seriesOverrides": [],
@@ -929,14 +926,15 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": false,
+      "colorValue": true,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
       "datasource": "$datasource",
-      "format": "dateTimeAsIso",
+      "decimals": 1,
+      "format": "percentunit",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -950,7 +948,7 @@
         "x": 0,
         "y": 10
       },
-      "id": 131,
+      "id": 18,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -968,9 +966,9 @@
       "nullPointMode": "connected",
       "nullText": null,
       "postfix": "",
-      "postfixFontSize": "50%",
+      "postfixFontSize": "80%",
       "prefix": "",
-      "prefixFontSize": "50%",
+      "prefixFontSize": "80%",
       "rangeMaps": [
         {
           "from": "null",
@@ -978,11 +976,12 @@
           "to": "null"
         }
       ],
+      "repeat": null,
       "scopedVars": {
         "master": {
           "selected": true,
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         }
       },
       "sparkline": {
@@ -994,20 +993,22 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_boot_time_seconds{node=~\"k8s-platform-master-$master\"} * 1000",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"}",
           "format": "time_series",
-          "intervalFactor": 1,
+          "instant": false,
+          "intervalFactor": 2,
           "refId": "A"
         }
       ],
-      "thresholds": "",
-      "title": "Booted",
+      "thresholds": "0.80,0.90",
+      "title": "Root fs",
+      "transparent": false,
       "type": "singlestat",
-      "valueFontSize": "30%",
+      "valueFontSize": "80%",
       "valueMaps": [
         {
           "op": "=",
-          "text": "N/A",
+          "text": "No data!",
           "value": "null"
         }
       ],
@@ -1021,9 +1022,8 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "k8s platform (mlab-sandbox)",
-          "value": "k8s platform (mlab-sandbox)"
+          "text": "k8s platform (mlab-staging)",
+          "value": "k8s platform (mlab-staging)"
         },
         "hide": 0,
         "label": "Datasource",
@@ -1038,9 +1038,8 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
-          "text": "us-east1-b",
-          "value": "us-east1-b"
+          "text": "us-central1-a",
+          "value": "us-central1-a"
         },
         "datasource": "$datasource",
         "definition": "label_values(node)",
@@ -1095,5 +1094,5 @@
   "timezone": "",
   "title": "k8s: Master Cluster Copy",
   "uid": "K8-zAIuik",
-  "version": 4
+  "version": 5
 }
