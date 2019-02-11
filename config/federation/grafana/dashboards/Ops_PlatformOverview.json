@@ -15,7 +15,8 @@
   "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1549324218169,
+  "id": 249,
+  "iteration": 1549915763831,
   "links": [],
   "panels": [
     {
@@ -54,12 +55,14 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "decimals": 2,
+          "mappingType": 1,
           "pattern": "/Metric/",
           "preserveFormat": true,
           "sanitize": true,
           "thresholds": [],
           "type": "string",
-          "unit": "short"
+          "unit": "short",
+          "valueMaps": []
         }
       ],
       "targets": [
@@ -73,59 +76,6 @@
         }
       ],
       "title": "Switches down",
-      "transform": "timeseries_aggregations",
-      "type": "table"
-    },
-    {
-      "columns": [],
-      "datasource": "$datasource",
-      "description": "Returns a node where 100% of probes have failed during the last 15 minutes. It excludes nodes which have been put into GMX maintenance mode.",
-      "fontSize": "100%",
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 4,
-        "y": 0
-      },
-      "id": 34,
-      "links": [],
-      "pageSize": null,
-      "scroll": true,
-      "showHeader": true,
-      "sort": {
-        "col": 0,
-        "desc": true
-      },
-      "styles": [
-        {
-          "alias": "Node",
-          "colorMode": null,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "decimals": 2,
-          "link": false,
-          "pattern": "/Metric/",
-          "preserveFormat": true,
-          "sanitize": true,
-          "thresholds": [],
-          "type": "string",
-          "unit": "short"
-        }
-      ],
-      "targets": [
-        {
-          "expr": "(label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0,\n\t\"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9tc]{2}).*\")) unless on(machine) gmx_machine_maintenance == 1 unless on(site) gmx_site_maintenance == 1",
-          "format": "time_series",
-          "instant": true,
-          "intervalFactor": 2,
-          "legendFormat": "<font color=\"red\">{{machine}}</font>",
-          "refId": "A"
-        }
-      ],
-      "title": "Nodes down",
       "transform": "timeseries_aggregations",
       "type": "table"
     },
@@ -150,7 +100,7 @@
       "gridPos": {
         "h": 3,
         "w": 4,
-        "x": 8,
+        "x": 4,
         "y": 0
       },
       "height": "50px",
@@ -234,7 +184,7 @@
       "gridPos": {
         "h": 3,
         "w": 4,
-        "x": 12,
+        "x": 8,
         "y": 0
       },
       "height": "50px",
@@ -315,7 +265,7 @@
       "gridPos": {
         "h": 3,
         "w": 4,
-        "x": 16,
+        "x": 12,
         "y": 0
       },
       "height": "50px",
@@ -399,7 +349,7 @@
       "gridPos": {
         "h": 3,
         "w": 4,
-        "x": 20,
+        "x": 16,
         "y": 0
       },
       "height": "50px",
@@ -464,11 +414,64 @@
     {
       "columns": [],
       "datasource": "$datasource",
+      "description": "Returns a node where 100% of probes have failed during the last 15 minutes. It excludes nodes which have been put into GMX maintenance mode.",
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 6,
+        "w": 4,
         "x": 0,
+        "y": 3
+      },
+      "id": 34,
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Node",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "link": false,
+          "pattern": "/Metric/",
+          "preserveFormat": true,
+          "sanitize": true,
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "expr": "(label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0,\n\t\"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9tc]{2}).*\")) unless on(machine) gmx_machine_maintenance == 1 unless on(site) gmx_site_maintenance == 1",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 2,
+          "legendFormat": "<font color=\"red\">{{machine}}</font>",
+          "refId": "A"
+        }
+      ],
+      "title": "Nodes down",
+      "transform": "timeseries_aggregations",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "$datasource",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
         "y": 3
       },
       "id": 35,
@@ -523,8 +526,8 @@
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 6,
-        "x": 6,
+        "w": 4,
+        "x": 8,
         "y": 3
       },
       "id": 38,
@@ -579,7 +582,7 @@
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 6,
+        "w": 4,
         "x": 12,
         "y": 3
       },
@@ -640,8 +643,8 @@
       "fontSize": "100%",
       "gridPos": {
         "h": 5,
-        "w": 6,
-        "x": 18,
+        "w": 8,
+        "x": 16,
         "y": 3
       },
       "id": 40,
@@ -2384,6 +2387,6 @@
   },
   "timezone": "utc",
   "title": "Ops: Platform Overview",
-  "uid": "JAq7W6Nmk",
-  "version": 136
+  "uid": "6XLZXJXmz",
+  "version": 3
 }
