@@ -299,6 +299,10 @@ scrape_configs:
     static_configs:
       - targets: ['dns.measurementlab.net:9100']
 
+  # Scrape config for the epoxy-boot-api.
+  - job_name: 'epoxy-boot-api'
+    static_configs:
+      - targets: ['epoxy-boot-api.{{PROJECT}}.measurementlab.net:9000']
 
   # Scrape config for federation.
   #
