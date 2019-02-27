@@ -2,7 +2,6 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:85",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -15,10 +14,36 @@
   },
   "editable": true,
   "gnetId": null,
-  "graphTooltip": 0,
-  "id": 216,
-  "iteration": 1540911009111,
-  "links": [],
+  "graphTooltip": 1,
+  "id": 240,
+  "iteration": 1551295457250,
+  "links": [
+    {
+      "icon": "external link",
+      "includeVars": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Sandbox Instances",
+      "type": "link",
+      "url": "https://console.cloud.google.com/kubernetes/workload?project=mlab-sandbox&organizationId=433637338589&workload_list_tablesize=50&workload_list_tablequery=%255B%257B_22k_22_3A_22is_system_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22false_5C_22_22_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22metadata%252Fname_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22gardener_5C_22_22%257D%255D"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Staging instances",
+      "type": "link",
+      "url": "https://pantheon.corp.google.com/kubernetes/workload?project=mlab-staging&organizationId=433637338589&workload_list_tablesize=50&workload_list_tablequery=%255B%257B_22k_22_3A_22is_system_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22false_5C_22_22_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22metadata%252Fname_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22gardener_5C_22_22%257D%255D"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Production Instances",
+      "type": "link",
+      "url": "https://console.cloud.google.com/kubernetes/workload?project=mlab-oti&organizationId=433637338589&workload_list_tablesize=50&workload_list_tablequery=%255B%257B_22k_22_3A_22is_system_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22false_5C_22_22_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22metadata%252Fname_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22gardener_5C_22_22%257D%255D"
+    }
+  ],
   "panels": [
     {
       "aliasColors": {},
@@ -57,8 +82,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2608",
-          "expr": "bq_gardener_parse_time_difference_days / 7.0",
+          "expr": "bq_gardener_parse_time_difference_days",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -69,6 +93,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Reprocessing Period",
       "tooltip": {
@@ -90,7 +115,7 @@
         {
           "decimals": 1,
           "format": "none",
-          "label": "Weeks",
+          "label": "Days",
           "logBase": 1,
           "max": null,
           "min": "0",
@@ -157,7 +182,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:3454",
           "expr": "irate(gardener_warning_total{container=\"etl-gardener\"}[12h])",
           "format": "time_series",
           "hide": true,
@@ -166,7 +190,6 @@
           "refId": "A"
         },
         {
-          "$$hashKey": "object:3455",
           "expr": "irate(gardener_fail_total{container=\"etl-gardener\"}[12h])",
           "format": "time_series",
           "hide": true,
@@ -176,7 +199,6 @@
           "refId": "B"
         },
         {
-          "$$hashKey": "object:3456",
           "expr": "3600 * rate(gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "intervalFactor": 1,
@@ -184,7 +206,6 @@
           "refId": "C"
         },
         {
-          "$$hashKey": "object:3457",
           "expr": "3600 * rate(gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "intervalFactor": 1,
@@ -194,6 +215,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Hourly Warning and Failure Rates",
       "tooltip": {
@@ -211,7 +233,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:4309",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -221,7 +242,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:4310",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -272,7 +292,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:3271",
           "expr": "rate(process_cpu_seconds_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
@@ -282,6 +301,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "CPU Utilization",
       "tooltip": {
@@ -357,7 +377,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:3195",
           "expr": "go_goroutines{container=\"etl-gardener\", deployment=~\"$deployment\"}",
           "format": "time_series",
           "intervalFactor": 1,
@@ -365,7 +384,6 @@
           "refId": "A"
         },
         {
-          "$$hashKey": "object:3196",
           "expr": "",
           "format": "time_series",
           "intervalFactor": 1,
@@ -375,6 +393,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "GoRoutine Count",
       "tooltip": {
@@ -450,7 +469,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:3325",
           "expr": "process_virtual_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
           "format": "time_series",
           "intervalFactor": 1,
@@ -460,6 +478,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Virtual Memory",
       "tooltip": {
@@ -536,7 +555,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2938",
           "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\"}",
           "format": "time_series",
           "intervalFactor": 1,
@@ -546,6 +564,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Tasks In Flight",
       "tooltip": {
@@ -590,7 +609,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
-      "description": "",
+      "description": "How long each date spends in each processing state.\nIf Processing exceeds 12 hours, then there will likely be data loss from expiration in the task queue.",
       "fill": 0,
       "gridPos": {
         "h": 12,
@@ -622,19 +641,26 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:2171",
-          "expr": "sum by(deployment, quantile, state)(-gardener_state_time_summary{quantile=\"0.5\", deployment=~\"$deployment\"})",
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\"}[1h])) by (deployment, state, le))",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{state}} {{deployment}}",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\"}[1h])) by (deployment, state, le))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "q:{{quantile}} {{state}} {{deployment}}",
-          "refId": "A"
+          "legendFormat": "{{state}} {{deployment}}",
+          "refId": "C"
         }
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:2215",
           "colorMode": "critical",
           "fill": true,
           "line": true,
@@ -644,8 +670,9 @@
         }
       ],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
-      "title": "Time in State",
+      "title": "Time in State (95th Percentile)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -665,7 +692,7 @@
           "format": "s",
           "label": null,
           "logBase": 10,
-          "max": "100000",
+          "max": "50000",
           "min": "0.1",
           "show": true
         },
@@ -746,7 +773,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:3510",
           "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -755,7 +781,6 @@
           "refId": "A"
         },
         {
-          "$$hashKey": "object:3511",
           "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -766,6 +791,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Start and Completion Rate (hourly)",
       "tooltip": {
@@ -815,7 +841,7 @@
       "fill": 1,
       "gridPos": {
         "h": 6,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 18
       },
@@ -868,7 +894,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:3626",
           "expr": "sum by(deployment) (increase(gardener_completed_total{deployment=~\"$deployment\"}[24h]))",
           "format": "time_series",
           "hide": false,
@@ -888,6 +913,7 @@
         }
       ],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "SLO: Completion Rate (Tasks / day)",
       "tooltip": {
@@ -933,12 +959,107 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
-      "description": "Task dates of the most recent updates to each task state.",
+      "description": "",
       "fill": 0,
       "gridPos": {
         "h": 6,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
+        "y": 18
+      },
+      "id": 21,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/Avg Bytes.*/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, avg(gardener_empty_stats_recovery_sec) by (version, status, le))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{status}} {{version}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Empty TQ Stats Resolution Time",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "decbytes",
+          "label": "Bytes / File",
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "decbytes",
+          "label": "Bytes / File",
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "description": "Task dates of the most recent updates to each task state.\n\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.",
+      "fill": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
         "y": 18
       },
       "id": 15,
@@ -965,17 +1086,25 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:3747",
-          "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\"}[1h])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\"}[20m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "legendFormat": "{{deployment}} {{state}}",
           "refId": "A"
+        },
+        {
+          "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\"}[10m])",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}} {{state}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Task Date of Recent State Updates",
       "tooltip": {
@@ -1021,7 +1150,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
-      "description": "",
+      "description": "This measures the bytes submitted for processing. \n It reflects the ETL throughput, which is governed by the task queue rate and concurrency settings.\n\nThe rate is governed by how fast the ETL pipeline drains the task queues.  The balance across types is governed by the rate/concurrency settings on the queues.\n\nThis is fundamentally rather lumpy at the 10 minute level, so we average over an hour or more.  Aside from the fine-grained lumpiness, this should be the most stable of the throughput metrics, because it reflects the quantity of data, rather than the number or size of files.",
       "fill": 0,
       "gridPos": {
         "h": 6,
@@ -1053,7 +1182,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:484",
           "expr": "sum by(deployment, year)(rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h])*3600)",
           "format": "time_series",
           "hide": false,
@@ -1064,6 +1192,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Byte Rate",
       "tooltip": {
@@ -1081,7 +1210,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:594",
           "decimals": null,
           "format": "decbytes",
           "label": "Bytes/Hour",
@@ -1091,7 +1219,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:595",
           "format": "short",
           "label": "",
           "logBase": 1,
@@ -1140,7 +1267,6 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "$$hashKey": "object:1929",
           "alias": "/Avg Bytes.*/",
           "yaxis": 2
         }
@@ -1150,7 +1276,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:677",
           "expr": "sum by(deployment, year)(rate(gardener_files_sum{deployment=~\"$deployment\"}[1h])*3600)",
           "format": "time_series",
           "hide": false,
@@ -1162,6 +1287,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "File Rate",
       "tooltip": {
@@ -1179,7 +1305,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:934",
           "decimals": null,
           "format": "short",
           "label": "Files / Hour",
@@ -1189,7 +1314,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:935",
           "format": "decbytes",
           "label": "Bytes / File",
           "logBase": 10,
@@ -1238,7 +1362,6 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "$$hashKey": "object:1929",
           "alias": "/Avg Bytes.*/",
           "yaxis": 2
         }
@@ -1248,7 +1371,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:678",
           "expr": "avg by(deployment, year) (\n    rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h]) /\n    rate(gardener_files_sum{deployment=~\"$deployment\"}[1h]))",
           "format": "time_series",
           "hide": false,
@@ -1260,6 +1382,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Bytes / File",
       "tooltip": {
@@ -1277,7 +1400,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:934",
           "decimals": null,
           "format": "decbytes",
           "label": "Bytes / File",
@@ -1287,7 +1409,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:935",
           "format": "decbytes",
           "label": "Bytes / File",
           "logBase": 10,
@@ -1302,7 +1423,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "5m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -1311,10 +1432,10 @@
       {
         "allValue": null,
         "current": {
-          "$$hashKey": "object:2798",
-          "selected": true,
-          "text": "mlab-oti",
-          "value": "mlab-oti"
+          "selected": false,
+          "tags": [],
+          "text": "mlab-staging",
+          "value": "mlab-staging"
         },
         "hide": 0,
         "includeAll": false,
@@ -1323,32 +1444,29 @@
         "name": "project",
         "options": [
           {
-            "$$hashKey": "object:2796",
             "selected": false,
             "text": "mlab-sandbox",
             "value": "mlab-sandbox"
           },
           {
-            "$$hashKey": "object:2797",
-            "selected": false,
+            "selected": true,
             "text": "mlab-staging",
             "value": "mlab-staging"
           },
           {
-            "$$hashKey": "object:2798",
-            "selected": true,
+            "selected": false,
             "text": "mlab-oti",
             "value": "mlab-oti"
           }
         ],
         "query": "mlab-sandbox,mlab-staging,mlab-oti",
+        "skipUrlSync": false,
         "type": "custom"
       },
       {
         "current": {
-          "selected": true,
-          "text": "Data Proc (mlab-oti)",
-          "value": "Data Proc (mlab-oti)"
+          "text": "Data Proc (mlab-staging)",
+          "value": "Data Proc (mlab-staging)"
         },
         "hide": 2,
         "label": "Data Processing",
@@ -1357,13 +1475,13 @@
         "query": "prometheus",
         "refresh": 1,
         "regex": "/Data Proc.*$project/",
+        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "current": {
-          "selected": true,
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "text": "Prometheus (mlab-staging)",
+          "value": "Prometheus (mlab-staging)"
         },
         "hide": 2,
         "label": "Prometheus",
@@ -1372,6 +1490,7 @@
         "query": "prometheus",
         "refresh": 1,
         "regex": "/Prometheus.*$project/",
+        "skipUrlSync": false,
         "type": "datasource"
       },
       {
@@ -1381,6 +1500,7 @@
           "value": "$__all"
         },
         "datasource": "$pipelineDatasource",
+        "definition": "",
         "hide": 0,
         "includeAll": true,
         "label": "Gardener Deployment",
@@ -1390,6 +1510,7 @@
         "query": "label_values(up{deployment=~\"etl-gardener-.*\"}, deployment)",
         "refresh": 2,
         "regex": "",
+        "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
         "tags": [],
@@ -1400,7 +1521,7 @@
     ]
   },
   "time": {
-    "from": "now-4d",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
