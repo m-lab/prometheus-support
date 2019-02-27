@@ -796,3 +796,35 @@ groups:
       description: Metrics for rebot cannot be collected. The instance is down
         or not reachable. Check that the rebot daemon on eb.measurementlab.net
         is running and port 9999 is reachable.
+
+# Cloud_TooManyAppEngineVersions fires when there are too many AE versions.
+  - alert: Cloud_TooManyAppEngineVersions
+    expr: sum(gcp_aeflex_versions{container="service-discovery"}) / 210 > 0.99
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: Too many AppEngine versions for the project.
+      description: AppEngine has a project maximum of 210 versions across all
+        services. Until old versions are deleted, future deployments will begin
+        to fail. Please delete them or create a tool that does it automatically.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/Yor77urmk/cloud-appengine
+
+# Cloud_TooManyInactiveInstances checks that all running instances are active
+# rather than wasting resources.
+  - alert: Cloud_TooManyInactiveInstances
+    expr: |
+      sum (gcp_aeflex_instances{container="service-discovery", active="false"})
+        / sum (gcp_aeflex_instances{container="service-discovery"}) > 0.25
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: Too many AppEngine instances are running but not serving.
+      description: Failed or interrupted deployments do not shutdown instances
+        completely. Over time, a project accumulates inactive instances that
+        waste resources. Please delete them or create a tool that does it
+        automatically.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/Yor77urmk/cloud-appengine
