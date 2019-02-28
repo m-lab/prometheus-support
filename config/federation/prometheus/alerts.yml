@@ -828,3 +828,18 @@ groups:
         waste resources. Please delete them or create a tool that does it
         automatically.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/Yor77urmk/cloud-appengine
+
+# Boot_MachineFailedToBoot a machine has failed to boot for more than a day.
+  - alert: Boot_MachineFailedToBoot
+    expr: epoxy_last_success < epoxy_last_boot
+    for: 24h
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: A machine booted recently, but has not reported success yet.
+      description: Failing to report succes may be due to a configuration or
+        runtime failures. Check the machine console messages via the DRAC.
+        Check the k8s setup logs on the machine. Check the epoxy-boot-api VM
+        logs in Stackdriver.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/JaSyFC9mk/boot-nodes
