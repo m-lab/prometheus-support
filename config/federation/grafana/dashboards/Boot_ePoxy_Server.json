@@ -15,19 +15,19 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 251,
-  "iteration": 1551378389496,
+  "id": 252,
+  "iteration": 1551399244725,
   "links": [],
   "panels": [
     {
-      "content": "# Help\n\nThere's not much here. Please add a new panel that helps you answer the question you're investigating now.\n\n## Ideas\n\n* Trace the entire boot process for an individual machine: time of first contact to epoxy, time of later stages, time of token allocation, time of joining the k8s cluster, time services start running. I imagine this being visualized as a horizontal bar colored for each stage.",
+      "content": "# Help\n\nThere's not much here. Please add a new panel that helps you answer the question you're investigating now.\n\n## Ideas\n\n* Links to cloud builder in each project\n* Links to stack driver\n* Links to list of relevant GCE VMs",
       "gridPos": {
         "h": 9,
         "w": 4,
         "x": 0,
         "y": 0
       },
-      "id": 4,
+      "id": 5,
       "links": [],
       "mode": "markdown",
       "title": "",
@@ -46,14 +46,12 @@
         "x": 4,
         "y": 0
       },
-      "id": 2,
+      "id": 3,
       "legend": {
-        "alignAsTable": true,
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "rightSide": true,
         "show": true,
         "total": false,
         "values": false
@@ -72,19 +70,24 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(epoxy_last_success - epoxy_last_boot) / 60",
+          "expr": "up{job=\"epoxy-boot-api\"}",
           "format": "time_series",
-          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{machine}}",
+          "legendFormat": "Online",
           "refId": "A"
+        },
+        {
+          "expr": "",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Boot time",
+      "title": "ePoxy Boot API is online",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -101,10 +104,100 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "Minutes",
+          "label": null,
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 4,
+        "y": 9
+      },
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(increase(epoxy_stage1_total[1h]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "boots / hr",
+          "refId": "A"
+        },
+        {
+          "expr": "",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Boot Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
@@ -129,11 +222,11 @@
     "list": [
       {
         "current": {
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "text": "Prometheus (mlab-staging)",
+          "value": "Prometheus (mlab-staging)"
         },
-        "hide": 0,
-        "label": "Datasource",
+        "hide": 1,
+        "label": null,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
@@ -174,7 +267,7 @@
     ]
   },
   "timezone": "",
-  "title": "Boot: Machines",
-  "uid": "JaSyFC9mk",
-  "version": 5
+  "title": "Boot: ePoxy Server",
+  "uid": "t_juk39ik",
+  "version": 2
 }
