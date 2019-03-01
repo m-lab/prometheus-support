@@ -843,3 +843,19 @@ groups:
         Check the k8s setup logs on the machine (/tmp/setup_k8s.log). Check the
         epoxy-boot-api VM logs in Stackdriver.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/JaSyFC9mk/boot-nodes
+
+# Boot_EpoxyServerOfflineOrMissing a machine has failed to boot for more than a
+# day.
+  - alert: Boot_EpoxyServerOfflineOrMissing
+    expr: up{job="epoxy-boot-api"} == 0 or absent(up{job="epoxy-boot-api"})
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: The ePoxy boot api server is down or missing. Nodes cannot boot!
+      description: Has the configuration been removed from prometheus? Is the
+        service running? Check for the epoxy-boot-api-* VM. Check for recent
+        failed Cloud Builder builds caused by recent commits; check those logs.
+        Check the VM service logs from Stackdriver.
+      dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/t_juk39ik/boot-epoxy-server
