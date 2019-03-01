@@ -844,8 +844,8 @@ groups:
         epoxy-boot-api VM logs in Stackdriver.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/JaSyFC9mk/boot-nodes
 
-# Boot_EpoxyServerOfflineOrMissing a machine has failed to boot for more than a
-# day.
+# Boot_EpoxyServerOfflineOrMissing fires when the epoxy boot api server is
+# offline or misconfigured.
   - alert: Boot_EpoxyServerOfflineOrMissing
     expr: up{job="epoxy-boot-api"} == 0 or absent(up{job="epoxy-boot-api"})
     for: 30m
