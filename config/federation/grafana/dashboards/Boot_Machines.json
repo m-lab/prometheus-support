@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 251,
-  "iteration": 1551378389496,
+  "iteration": 1551890864240,
   "links": [],
   "panels": [
     {
@@ -39,6 +38,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "$datasource",
       "fill": 1,
       "gridPos": {
         "h": 9,
@@ -72,7 +72,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(epoxy_last_success - epoxy_last_boot) / 60",
+          "expr": "(epoxy_last_success{machine=~\".*$site.*\"} - epoxy_last_boot{machine=~\".*$site.*\"}) / 60",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -120,8 +120,343 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "columns": [],
+      "datasource": "$datasource",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 17,
+        "w": 11,
+        "x": 0,
+        "y": 9
+      },
+      "id": 6,
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 7,
+        "desc": false
+      },
+      "styles": [
+        {
+          "alias": "Time to Boot Successfully",
+          "colorMode": "cell",
+          "colors": [
+            "#e24d42",
+            "#629e51",
+            "#ef843c"
+          ],
+          "decimals": 2,
+          "pattern": "/Value #A/",
+          "thresholds": [
+            "0",
+            "600",
+            "1800"
+          ],
+          "type": "number",
+          "unit": "s"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "link": false,
+          "mappingType": 1,
+          "pattern": "instance",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "job",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "Time",
+          "thresholds": [],
+          "type": "date",
+          "unit": "short"
+        },
+        {
+          "alias": "Is Booting",
+          "colorMode": "cell",
+          "colors": [
+            "#511749",
+            "#629e51",
+            "#ef843c"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "/Value #B/",
+          "thresholds": [
+            "0",
+            "1"
+          ],
+          "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "/__name__/",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "Time Since Last Boot",
+          "colorMode": "cell",
+          "colors": [
+            "#ef843c",
+            "#bf1b00",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "/Value #C/",
+          "thresholds": [
+            "1800"
+          ],
+          "type": "number",
+          "unit": "s"
+        }
+      ],
+      "targets": [
+        {
+          "expr": "(epoxy_last_success{machine=~\".*$site.*\"} - epoxy_last_boot{machine=~\".*$site.*\"}) > 0",
+          "format": "table",
+          "instant": true,
+          "intervalFactor": 1,
+          "legendFormat": "Time to Boot Successfully",
+          "refId": "A"
+        },
+        {
+          "expr": "epoxy_last_success{machine=~\".*$site.*\"} < bool epoxy_last_boot{machine=~\".*$site.*\"} ",
+          "format": "table",
+          "instant": true,
+          "intervalFactor": 1,
+          "legendFormat": "Booting",
+          "refId": "B"
+        },
+        {
+          "expr": "(time() - epoxy_last_boot{machine=~\".*$site.*\"}) unless on(machine) (epoxy_last_success{machine=~\".*$site.*\"} - epoxy_last_boot{machine=~\".*$site.*\"}) > 0",
+          "format": "table",
+          "instant": true,
+          "intervalFactor": 1,
+          "legendFormat": "Time Since Last Boot",
+          "refId": "C"
+        }
+      ],
+      "title": "",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "$datasource",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 17,
+        "w": 8,
+        "x": 11,
+        "y": 9
+      },
+      "id": 7,
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 3,
+        "desc": false
+      },
+      "styles": [
+        {
+          "alias": "Time to Boot Successfully",
+          "colorMode": "cell",
+          "colors": [
+            "#e24d42",
+            "#629e51",
+            "#ef843c"
+          ],
+          "decimals": 2,
+          "pattern": "/Value #A/",
+          "thresholds": [
+            "0",
+            "600",
+            "1800"
+          ],
+          "type": "number",
+          "unit": "s"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "link": false,
+          "mappingType": 1,
+          "pattern": "instance",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "job",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "Time",
+          "thresholds": [],
+          "type": "date",
+          "unit": "short"
+        },
+        {
+          "alias": "Is Booting",
+          "colorMode": "cell",
+          "colors": [
+            "#511749",
+            "#629e51",
+            "#ef843c"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 0,
+          "mappingType": 1,
+          "pattern": "/Value #B/",
+          "thresholds": [
+            "0",
+            "1"
+          ],
+          "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "/__name__/",
+          "thresholds": [],
+          "type": "hidden",
+          "unit": "short"
+        },
+        {
+          "alias": "Time Since Last Boot",
+          "colorMode": "cell",
+          "colors": [
+            "#ef843c",
+            "#bf1b00",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "/Value #C/",
+          "thresholds": [
+            "1800"
+          ],
+          "type": "number",
+          "unit": "s"
+        }
+      ],
+      "targets": [
+        {
+          "expr": "(epoxy_last_success < bool epoxy_last_boot) == 1",
+          "format": "table",
+          "instant": true,
+          "intervalFactor": 1,
+          "legendFormat": "Booting",
+          "refId": "B"
+        },
+        {
+          "expr": "(time() - epoxy_last_boot) unless on(machine) (epoxy_last_success{machine=~\".*$site.*\"} - epoxy_last_boot{machine=~\".*$site.*\"}) > 0",
+          "format": "table",
+          "instant": true,
+          "intervalFactor": 1,
+          "legendFormat": "Time Since Last Boot",
+          "refId": "C"
+        }
+      ],
+      "title": "Failed Boots",
+      "transform": "table",
+      "type": "table"
     }
   ],
+  "refresh": "5m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -129,8 +464,9 @@
     "list": [
       {
         "current": {
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "tags": [],
+          "text": "Prometheus (mlab-staging)",
+          "value": "Prometheus (mlab-staging)"
         },
         "hide": 0,
         "label": "Datasource",
@@ -141,11 +477,757 @@
         "regex": "/Prometheus/",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": ".....",
+          "value": "....."
+        },
+        "datasource": "$datasource",
+        "definition": "label_values(machine)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Site",
+        "multi": false,
+        "name": "site",
+        "options": [
+          {
+            "selected": false,
+            "text": "acc02",
+            "value": "acc02"
+          },
+          {
+            "selected": true,
+            "text": "akl01",
+            "value": "akl01"
+          },
+          {
+            "selected": false,
+            "text": "ams01",
+            "value": "ams01"
+          },
+          {
+            "selected": false,
+            "text": "ams03",
+            "value": "ams03"
+          },
+          {
+            "selected": false,
+            "text": "ams04",
+            "value": "ams04"
+          },
+          {
+            "selected": false,
+            "text": "ams05",
+            "value": "ams05"
+          },
+          {
+            "selected": false,
+            "text": "ams06",
+            "value": "ams06"
+          },
+          {
+            "selected": false,
+            "text": "ams07",
+            "value": "ams07"
+          },
+          {
+            "selected": false,
+            "text": "arn02",
+            "value": "arn02"
+          },
+          {
+            "selected": false,
+            "text": "arn03",
+            "value": "arn03"
+          },
+          {
+            "selected": false,
+            "text": "arn04",
+            "value": "arn04"
+          },
+          {
+            "selected": false,
+            "text": "arn05",
+            "value": "arn05"
+          },
+          {
+            "selected": false,
+            "text": "ath03",
+            "value": "ath03"
+          },
+          {
+            "selected": false,
+            "text": "atl01",
+            "value": "atl01"
+          },
+          {
+            "selected": false,
+            "text": "atl02",
+            "value": "atl02"
+          },
+          {
+            "selected": false,
+            "text": "atl03",
+            "value": "atl03"
+          },
+          {
+            "selected": false,
+            "text": "atl04",
+            "value": "atl04"
+          },
+          {
+            "selected": false,
+            "text": "atl05",
+            "value": "atl05"
+          },
+          {
+            "selected": false,
+            "text": "atl06",
+            "value": "atl06"
+          },
+          {
+            "selected": false,
+            "text": "atl07",
+            "value": "atl07"
+          },
+          {
+            "selected": false,
+            "text": "bcn01",
+            "value": "bcn01"
+          },
+          {
+            "selected": false,
+            "text": "beg01",
+            "value": "beg01"
+          },
+          {
+            "selected": false,
+            "text": "bom01",
+            "value": "bom01"
+          },
+          {
+            "selected": false,
+            "text": "bom02",
+            "value": "bom02"
+          },
+          {
+            "selected": false,
+            "text": "bru01",
+            "value": "bru01"
+          },
+          {
+            "selected": false,
+            "text": "bru02",
+            "value": "bru02"
+          },
+          {
+            "selected": false,
+            "text": "bru03",
+            "value": "bru03"
+          },
+          {
+            "selected": false,
+            "text": "bru04",
+            "value": "bru04"
+          },
+          {
+            "selected": false,
+            "text": "chs0c",
+            "value": "chs0c"
+          },
+          {
+            "selected": false,
+            "text": "cpt01",
+            "value": "cpt01"
+          },
+          {
+            "selected": false,
+            "text": "den01",
+            "value": "den01"
+          },
+          {
+            "selected": false,
+            "text": "den02",
+            "value": "den02"
+          },
+          {
+            "selected": false,
+            "text": "den04",
+            "value": "den04"
+          },
+          {
+            "selected": false,
+            "text": "den05",
+            "value": "den05"
+          },
+          {
+            "selected": false,
+            "text": "dfw01",
+            "value": "dfw01"
+          },
+          {
+            "selected": false,
+            "text": "dfw02",
+            "value": "dfw02"
+          },
+          {
+            "selected": false,
+            "text": "dfw03",
+            "value": "dfw03"
+          },
+          {
+            "selected": false,
+            "text": "dfw05",
+            "value": "dfw05"
+          },
+          {
+            "selected": false,
+            "text": "dfw06",
+            "value": "dfw06"
+          },
+          {
+            "selected": false,
+            "text": "dfw07",
+            "value": "dfw07"
+          },
+          {
+            "selected": false,
+            "text": "dub01",
+            "value": "dub01"
+          },
+          {
+            "selected": false,
+            "text": "fln01",
+            "value": "fln01"
+          },
+          {
+            "selected": false,
+            "text": "fra01",
+            "value": "fra01"
+          },
+          {
+            "selected": false,
+            "text": "fra02",
+            "value": "fra02"
+          },
+          {
+            "selected": false,
+            "text": "fra03",
+            "value": "fra03"
+          },
+          {
+            "selected": false,
+            "text": "fra04",
+            "value": "fra04"
+          },
+          {
+            "selected": false,
+            "text": "ham01",
+            "value": "ham01"
+          },
+          {
+            "selected": false,
+            "text": "hnd01",
+            "value": "hnd01"
+          },
+          {
+            "selected": false,
+            "text": "hnd02",
+            "value": "hnd02"
+          },
+          {
+            "selected": false,
+            "text": "iad02",
+            "value": "iad02"
+          },
+          {
+            "selected": false,
+            "text": "iad03",
+            "value": "iad03"
+          },
+          {
+            "selected": false,
+            "text": "iad04",
+            "value": "iad04"
+          },
+          {
+            "selected": false,
+            "text": "iad05",
+            "value": "iad05"
+          },
+          {
+            "selected": false,
+            "text": "iad06",
+            "value": "iad06"
+          },
+          {
+            "selected": false,
+            "text": "iad0c",
+            "value": "iad0c"
+          },
+          {
+            "selected": false,
+            "text": "iad0t",
+            "value": "iad0t"
+          },
+          {
+            "selected": false,
+            "text": "iad1t",
+            "value": "iad1t"
+          },
+          {
+            "selected": false,
+            "text": "jnb01",
+            "value": "jnb01"
+          },
+          {
+            "selected": false,
+            "text": "lax01",
+            "value": "lax01"
+          },
+          {
+            "selected": false,
+            "text": "lax02",
+            "value": "lax02"
+          },
+          {
+            "selected": false,
+            "text": "lax03",
+            "value": "lax03"
+          },
+          {
+            "selected": false,
+            "text": "lax04",
+            "value": "lax04"
+          },
+          {
+            "selected": false,
+            "text": "lax05",
+            "value": "lax05"
+          },
+          {
+            "selected": false,
+            "text": "lax0c",
+            "value": "lax0c"
+          },
+          {
+            "selected": false,
+            "text": "lba01",
+            "value": "lba01"
+          },
+          {
+            "selected": false,
+            "text": "lca01",
+            "value": "lca01"
+          },
+          {
+            "selected": false,
+            "text": "lga02",
+            "value": "lga02"
+          },
+          {
+            "selected": false,
+            "text": "lga03",
+            "value": "lga03"
+          },
+          {
+            "selected": false,
+            "text": "lga04",
+            "value": "lga04"
+          },
+          {
+            "selected": false,
+            "text": "lga05",
+            "value": "lga05"
+          },
+          {
+            "selected": false,
+            "text": "lga06",
+            "value": "lga06"
+          },
+          {
+            "selected": false,
+            "text": "lga07",
+            "value": "lga07"
+          },
+          {
+            "selected": false,
+            "text": "lga0t",
+            "value": "lga0t"
+          },
+          {
+            "selected": false,
+            "text": "lga1t",
+            "value": "lga1t"
+          },
+          {
+            "selected": false,
+            "text": "lhr02",
+            "value": "lhr02"
+          },
+          {
+            "selected": false,
+            "text": "lhr03",
+            "value": "lhr03"
+          },
+          {
+            "selected": false,
+            "text": "lhr04",
+            "value": "lhr04"
+          },
+          {
+            "selected": false,
+            "text": "lhr05",
+            "value": "lhr05"
+          },
+          {
+            "selected": false,
+            "text": "lis01",
+            "value": "lis01"
+          },
+          {
+            "selected": false,
+            "text": "lis02",
+            "value": "lis02"
+          },
+          {
+            "selected": false,
+            "text": "lju01",
+            "value": "lju01"
+          },
+          {
+            "selected": false,
+            "text": "los01",
+            "value": "los01"
+          },
+          {
+            "selected": false,
+            "text": "mad02",
+            "value": "mad02"
+          },
+          {
+            "selected": false,
+            "text": "mad03",
+            "value": "mad03"
+          },
+          {
+            "selected": false,
+            "text": "mad04",
+            "value": "mad04"
+          },
+          {
+            "selected": false,
+            "text": "mia01",
+            "value": "mia01"
+          },
+          {
+            "selected": false,
+            "text": "mia02",
+            "value": "mia02"
+          },
+          {
+            "selected": false,
+            "text": "mia03",
+            "value": "mia03"
+          },
+          {
+            "selected": false,
+            "text": "mia04",
+            "value": "mia04"
+          },
+          {
+            "selected": false,
+            "text": "mia05",
+            "value": "mia05"
+          },
+          {
+            "selected": false,
+            "text": "mil02",
+            "value": "mil02"
+          },
+          {
+            "selected": false,
+            "text": "mil03",
+            "value": "mil03"
+          },
+          {
+            "selected": false,
+            "text": "mil04",
+            "value": "mil04"
+          },
+          {
+            "selected": false,
+            "text": "mil05",
+            "value": "mil05"
+          },
+          {
+            "selected": false,
+            "text": "mnl01",
+            "value": "mnl01"
+          },
+          {
+            "selected": false,
+            "text": "mpm01",
+            "value": "mpm01"
+          },
+          {
+            "selected": false,
+            "text": "nbo01",
+            "value": "nbo01"
+          },
+          {
+            "selected": false,
+            "text": "nuq02",
+            "value": "nuq02"
+          },
+          {
+            "selected": false,
+            "text": "nuq03",
+            "value": "nuq03"
+          },
+          {
+            "selected": false,
+            "text": "nuq04",
+            "value": "nuq04"
+          },
+          {
+            "selected": false,
+            "text": "nuq06",
+            "value": "nuq06"
+          },
+          {
+            "selected": false,
+            "text": "nuq07",
+            "value": "nuq07"
+          },
+          {
+            "selected": false,
+            "text": "oma0c",
+            "value": "oma0c"
+          },
+          {
+            "selected": false,
+            "text": "ord01",
+            "value": "ord01"
+          },
+          {
+            "selected": false,
+            "text": "ord02",
+            "value": "ord02"
+          },
+          {
+            "selected": false,
+            "text": "ord03",
+            "value": "ord03"
+          },
+          {
+            "selected": false,
+            "text": "ord04",
+            "value": "ord04"
+          },
+          {
+            "selected": false,
+            "text": "ord05",
+            "value": "ord05"
+          },
+          {
+            "selected": false,
+            "text": "par02",
+            "value": "par02"
+          },
+          {
+            "selected": false,
+            "text": "par03",
+            "value": "par03"
+          },
+          {
+            "selected": false,
+            "text": "par04",
+            "value": "par04"
+          },
+          {
+            "selected": false,
+            "text": "par05",
+            "value": "par05"
+          },
+          {
+            "selected": false,
+            "text": "pdx0c",
+            "value": "pdx0c"
+          },
+          {
+            "selected": false,
+            "text": "prg02",
+            "value": "prg02"
+          },
+          {
+            "selected": false,
+            "text": "prg03",
+            "value": "prg03"
+          },
+          {
+            "selected": false,
+            "text": "prg04",
+            "value": "prg04"
+          },
+          {
+            "selected": false,
+            "text": "prg05",
+            "value": "prg05"
+          },
+          {
+            "selected": false,
+            "text": "sea01",
+            "value": "sea01"
+          },
+          {
+            "selected": false,
+            "text": "sea02",
+            "value": "sea02"
+          },
+          {
+            "selected": false,
+            "text": "sea03",
+            "value": "sea03"
+          },
+          {
+            "selected": false,
+            "text": "sea04",
+            "value": "sea04"
+          },
+          {
+            "selected": false,
+            "text": "sea06",
+            "value": "sea06"
+          },
+          {
+            "selected": false,
+            "text": "sea07",
+            "value": "sea07"
+          },
+          {
+            "selected": false,
+            "text": "sin01",
+            "value": "sin01"
+          },
+          {
+            "selected": false,
+            "text": "sjc01",
+            "value": "sjc01"
+          },
+          {
+            "selected": false,
+            "text": "svg01",
+            "value": "svg01"
+          },
+          {
+            "selected": false,
+            "text": "syd01",
+            "value": "syd01"
+          },
+          {
+            "selected": false,
+            "text": "syd02",
+            "value": "syd02"
+          },
+          {
+            "selected": false,
+            "text": "tgd01",
+            "value": "tgd01"
+          },
+          {
+            "selected": false,
+            "text": "tnr01",
+            "value": "tnr01"
+          },
+          {
+            "selected": false,
+            "text": "tpe01",
+            "value": "tpe01"
+          },
+          {
+            "selected": false,
+            "text": "trn01",
+            "value": "trn01"
+          },
+          {
+            "selected": false,
+            "text": "tun01",
+            "value": "tun01"
+          },
+          {
+            "selected": false,
+            "text": "tyo01",
+            "value": "tyo01"
+          },
+          {
+            "selected": false,
+            "text": "tyo02",
+            "value": "tyo02"
+          },
+          {
+            "selected": false,
+            "text": "tyo03",
+            "value": "tyo03"
+          },
+          {
+            "selected": false,
+            "text": "vie01",
+            "value": "vie01"
+          },
+          {
+            "selected": false,
+            "text": "wlg02",
+            "value": "wlg02"
+          },
+          {
+            "selected": false,
+            "text": "yqm01",
+            "value": "yqm01"
+          },
+          {
+            "selected": false,
+            "text": "yul02",
+            "value": "yul02"
+          },
+          {
+            "selected": false,
+            "text": "yvr01",
+            "value": "yvr01"
+          },
+          {
+            "selected": false,
+            "text": "ywg01",
+            "value": "ywg01"
+          },
+          {
+            "selected": false,
+            "text": "yyc02",
+            "value": "yyc02"
+          },
+          {
+            "selected": false,
+            "text": "yyz02",
+            "value": "yyz02"
+          }
+        ],
+        "query": "label_values(machine)",
+        "refresh": 0,
+        "regex": "/mlab[1-4].(.*).measurement-lab.org/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -173,8 +1255,8 @@
       "30d"
     ]
   },
-  "timezone": "",
+  "timezone": "utc",
   "title": "Boot: Machines",
   "uid": "JaSyFC9mk",
-  "version": 5
+  "version": 9
 }
