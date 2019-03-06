@@ -288,7 +288,7 @@
           "refId": "C"
         }
       ],
-      "title": "",
+      "title": "Selected Recent Boots for: \"$site\"",
       "transform": "table",
       "type": "table"
     },
@@ -443,7 +443,7 @@
           "refId": "B"
         },
         {
-          "expr": "(time() - epoxy_last_boot) unless on(machine) (epoxy_last_success{machine=~\".*$site.*\"} - epoxy_last_boot{machine=~\".*$site.*\"}) > 0",
+          "expr": "(time() - epoxy_last_boot) unless on(machine) (epoxy_last_success - epoxy_last_boot) > 0",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -451,7 +451,7 @@
           "refId": "C"
         }
       ],
-      "title": "Failed Boots",
+      "title": "All Failed Boots",
       "transform": "table",
       "type": "table"
     }
@@ -1258,5 +1258,5 @@
   "timezone": "utc",
   "title": "Boot: Machines",
   "uid": "JaSyFC9mk",
-  "version": 9
+  "version": 10
 }
