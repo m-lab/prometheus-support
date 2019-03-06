@@ -797,9 +797,10 @@ groups:
         or not reachable. Check that the rebot daemon on eb.measurementlab.net
         is running and port 9999 is reachable.
 
-# Cloud_TooManyAppEngineVersions fires when there are too many AE versions.
+# Cloud_TooManyAppEngineVersions fires when there are too many AE versions to deploy
+# full ETL deployment successfully.
   - alert: Cloud_TooManyAppEngineVersions
-    expr: sum(gcp_aeflex_versions{container="service-discovery"}) / 210 > 0.99
+    expr: sum(gcp_aeflex_versions{container="service-discovery"}) / 210 > 0.95
     for: 10m
     labels:
       repo: dev-tracker
