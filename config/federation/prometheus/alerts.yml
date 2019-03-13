@@ -859,4 +859,22 @@ groups:
         service running? Check for the epoxy-boot-api-* VM. Check for recent
         failed Cloud Builder builds caused by recent commits; check those logs.
         Check the VM service logs from Stackdriver.
-      dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/t_juk39ik/boot-epoxy-server
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/t_juk39ik/boot-epoxy-server
+
+# ClusterDown_PlatformMaster extends the ClusterDown alert to apply only to the
+# platform cluster instance of prometheus.
+# TODO: retire this alert in favor of ClusterDown when possible.
+  - alert: ClusterDown_PlatformMaster
+    expr: up{job="k8s-prometheus"}
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: Prometheus is down on the k8s platform master.
+      description: Prometheus instance on the platform cluster appears to be
+        down. This makes investigation using Prometheus impossible. Log into a
+        k8s master node. Verify that the cluster is healthy. Verify that the
+        node is connected to the cluster. Verify the Prometheus deployment is
+        running using - `kubectl get pods`. Check pod logs.
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
