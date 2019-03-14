@@ -861,11 +861,11 @@ groups:
         Check the VM service logs from Stackdriver.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/t_juk39ik/boot-epoxy-server
 
-# ClusterDown_PlatformMaster extends the ClusterDown alert to apply only to the
-# platform cluster instance of prometheus.
+# Cluster_PlatformMasterDownOrMissing extends the ClusterDown alert to apply
+# only to the platform cluster instance of prometheus.
 # TODO: retire this alert in favor of ClusterDown when possible.
-  - alert: ClusterDown_PlatformMaster
-    expr: up{job="k8s-prometheus"}
+  - alert: Cluster_PlatformMasterDownOrMissing
+    expr: up{job="k8s-prometheus"} == 0 or absent(up{job="k8s-prometheus"})
     for: 1h
     labels:
       repo: ops-tracker
