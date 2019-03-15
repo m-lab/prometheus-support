@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 247,
-  "iteration": 1549574550543,
+  "id": 244,
+  "iteration": 1552679545790,
   "links": [],
   "panels": [
     {
@@ -32,9 +32,9 @@
       "repeat": "master",
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "title": "$master",
@@ -43,14 +43,13 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": false,
+      "colorValue": true,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
       "datasource": "$datasource",
-      "decimals": null,
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -65,7 +64,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 131,
+      "id": 132,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -82,8 +81,8 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "postfix": "d",
-      "postfixFontSize": "80%",
+      "postfix": "",
+      "postfixFontSize": "50%",
       "prefix": "",
       "prefixFontSize": "50%",
       "rangeMaps": [
@@ -95,9 +94,9 @@
       ],
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "sparkline": {
@@ -109,20 +108,21 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "expr": "node_load5{node=~\"k8s-platform-master-$master\"}",
           "format": "time_series",
-          "intervalFactor": 1,
+          "instant": false,
+          "intervalFactor": 2,
           "refId": "A"
         }
       ],
-      "thresholds": "",
-      "title": "Uptime",
+      "thresholds": "5,10",
+      "title": "Load5",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
         {
           "op": "=",
-          "text": "N/A",
+          "text": "No data!",
           "value": "null"
         }
       ],
@@ -162,9 +162,9 @@
       "renderer": "flot",
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "seriesOverrides": [],
@@ -268,9 +268,9 @@
       "renderer": "flot",
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "seriesOverrides": [],
@@ -279,14 +279,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_read_bytes_total{node=~\"k8s-platform-master.$master\"}[5m])",
+          "expr": "rate(node_disk_read_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read {{device}}",
           "refId": "A"
         },
         {
-          "expr": "rate(node_disk_written_bytes_total{node=~\"k8s-platform-master.$master\"}[5m])",
+          "expr": "rate(node_disk_written_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written {{device}}",
@@ -369,9 +369,9 @@
       "renderer": "flot",
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "seriesOverrides": [],
@@ -380,7 +380,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"ens4\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -388,7 +388,7 @@
           "refId": "B"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"ens4\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -461,94 +461,6 @@
         "x": 0,
         "y": 4
       },
-      "id": 132,
-      "interval": null,
-      "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "scopedVars": {
-        "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
-        }
-      },
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "expr": "node_load5{node=~\"k8s-platform-master.$master\"}",
-          "format": "time_series",
-          "instant": false,
-          "intervalFactor": 2,
-          "refId": "A"
-        }
-      ],
-      "thresholds": "5,10",
-      "title": "Load5",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "No data!",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
-    },
-    {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": true,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "$datasource",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 0,
-        "y": 7
-      },
       "id": 7,
       "interval": null,
       "links": [],
@@ -579,9 +491,9 @@
       ],
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "sparkline": {
@@ -593,7 +505,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=~\"k8s-platform-master.$master\"}",
+          "expr": "node_load15{node=~\"k8s-platform-master-$master\"}",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 2,
@@ -602,6 +514,97 @@
       ],
       "thresholds": "5,10",
       "title": "Load15",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "No data!",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "decimals": 1,
+      "format": "percentunit",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 7
+      },
+      "id": 18,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "80%",
+      "prefix": "",
+      "prefixFontSize": "80%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": null,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "0.80,0.90",
+      "title": "Root fs",
+      "transparent": false,
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -632,7 +635,7 @@
         "current": false,
         "max": false,
         "min": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -640,53 +643,42 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "percentage": true,
+      "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "seriesOverrides": [],
       "spaceLength": 10,
-      "stack": true,
+      "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_memory_Cached_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "(node_memory_MemTotal_bytes{node=~\"k8s-platform-master-$master\"} -\n    node_memory_MemFree_bytes{node=~\"k8s-platform-master-$master\"}) / \nnode_memory_MemTotal_bytes{node=~\"k8s-platform-master-$master\"}",
           "format": "time_series",
-          "interval": "",
+          "instant": false,
+          "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "Cache",
-          "refId": "B"
-        },
-        {
-          "expr": "node_memory_Buffers_bytes{node=\"k8s-platform-master-$master\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Buffer",
+          "legendFormat": "{{node}}",
           "refId": "A"
-        },
-        {
-          "expr": "node_memory_Active_bytes{node=\"k8s-platform-master-$master\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Active",
-          "refId": "C"
-        },
-        {
-          "expr": "node_memory_MemFree_bytes{node=\"k8s-platform-master-$master\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Free",
-          "refId": "D"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 0.9,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -706,8 +698,8 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "bytes",
+          "decimals": 2,
+          "format": "percentunit",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -720,7 +712,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": false
+          "show": true
         }
       ],
       "yaxis": {
@@ -761,9 +753,9 @@
       "renderer": "flot",
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "seriesOverrides": [],
@@ -772,7 +764,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_io_time_seconds_total{node=~\"k8s-platform-master.$master\"}[5m])",
+          "expr": "rate(node_disk_io_time_seconds_total{node=\"k8s-platform-master-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{device}}",
@@ -855,9 +847,9 @@
       "renderer": "flot",
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
         }
       },
       "seriesOverrides": [],
@@ -926,6 +918,617 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "short",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 10
+      },
+      "id": 131,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "d",
+      "postfixFontSize": "80%",
+      "prefix": "",
+      "prefixFontSize": "80%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-a",
+          "value": "us-west2-a"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "(time() - node_boot_time_seconds{node=~\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "title": "Uptime",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 133,
+      "panels": [],
+      "repeat": null,
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 95,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "title": "$master",
+      "type": "row"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 14
+      },
+      "id": 134,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 132,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "node_load5{node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "5,10",
+      "title": "Load5",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "No data!",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "Sum of metrics over all CPU cores.",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 2,
+        "y": 14
+      },
+      "id": 135,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 129,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"iowait\"}[5m]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "iowait",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"user\"}[5m]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "user",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"system\"}[5m]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "system",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 9,
+        "y": 14
+      },
+      "id": 136,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 110,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(node_disk_read_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Read {{device}}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(node_disk_written_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Written {{device}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk I/O Bytes/s",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 16,
+        "y": 14
+      },
+      "id": 137,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 108,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: Out",
+          "refId": "B"
+        },
+        {
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: In",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Host network",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 17
+      },
+      "id": 138,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 7,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "node_load15{node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "5,10",
+      "title": "Load15",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "No data!",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
       "colorValue": true,
       "colors": [
         "#299c46",
@@ -946,9 +1549,9 @@
         "h": 3,
         "w": 2,
         "x": 0,
-        "y": 10
+        "y": 20
       },
-      "id": 18,
+      "id": 139,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -977,11 +1580,14 @@
         }
       ],
       "repeat": null,
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 18,
+      "repeatedByRow": true,
       "scopedVars": {
         "master": {
-          "selected": true,
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
         }
       },
       "sparkline": {
@@ -993,7 +1599,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master.$master\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"}",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 2,
@@ -1013,6 +1619,1421 @@
         }
       ],
       "valueName": "current"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 2,
+        "y": 20
+      },
+      "id": 140,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 97,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(node_memory_MemTotal_bytes{node=~\"k8s-platform-master-$master\"} -\n    node_memory_MemFree_bytes{node=~\"k8s-platform-master-$master\"}) / \nnode_memory_MemTotal_bytes{node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 0.9,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 2,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 9,
+        "y": 20
+      },
+      "id": 141,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 111,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(node_disk_io_time_seconds_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk I/O % (sec/sec)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 16,
+        "y": 20
+      },
+      "id": 142,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 107,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: Out",
+          "refId": "D"
+        },
+        {
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: In",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Flannel network",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "short",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 23
+      },
+      "id": 143,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "d",
+      "postfixFontSize": "80%",
+      "prefix": "",
+      "prefixFontSize": "80%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 131,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-b",
+          "value": "us-west2-b"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "(time() - node_boot_time_seconds{node=~\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "title": "Uptime",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 144,
+      "panels": [],
+      "repeat": null,
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 95,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "title": "$master",
+      "type": "row"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 27
+      },
+      "id": 145,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 132,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "node_load5{node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "5,10",
+      "title": "Load5",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "No data!",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "Sum of metrics over all CPU cores.",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 2,
+        "y": 27
+      },
+      "id": 146,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 129,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"iowait\"}[5m]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "iowait",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"user\"}[5m]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "user",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"system\"}[5m]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "system",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 9,
+        "y": 27
+      },
+      "id": 147,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 110,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(node_disk_read_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Read {{device}}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(node_disk_written_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Written {{device}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk I/O Bytes/s",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 16,
+        "y": 27
+      },
+      "id": 148,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 108,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: Out",
+          "refId": "B"
+        },
+        {
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: In",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Host network",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 30
+      },
+      "id": 149,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 7,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "node_load15{node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "5,10",
+      "title": "Load15",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "No data!",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "decimals": 1,
+      "format": "percentunit",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 33
+      },
+      "id": 150,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "80%",
+      "prefix": "",
+      "prefixFontSize": "80%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 18,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "intervalFactor": 2,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "0.80,0.90",
+      "title": "Root fs",
+      "transparent": false,
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "No data!",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 2,
+        "y": 33
+      },
+      "id": 151,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 97,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(node_memory_MemTotal_bytes{node=~\"k8s-platform-master-$master\"} -\n    node_memory_MemFree_bytes{node=~\"k8s-platform-master-$master\"}) / \nnode_memory_MemTotal_bytes{node=~\"k8s-platform-master-$master\"}",
+          "format": "time_series",
+          "instant": false,
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 0.9,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 2,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 9,
+        "y": 33
+      },
+      "id": 152,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 111,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(node_disk_io_time_seconds_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk I/O % (sec/sec)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 16,
+        "y": 33
+      },
+      "id": 153,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 107,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: Out",
+          "refId": "D"
+        },
+        {
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=~\"k8s-platform-master.$master\"}[4m])",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{device}}: In",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Flannel network",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "$datasource",
+      "format": "short",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 0,
+        "y": 36
+      },
+      "id": 154,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "d",
+      "postfixFontSize": "80%",
+      "prefix": "",
+      "prefixFontSize": "80%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatIteration": 1552679545790,
+      "repeatPanelId": 131,
+      "repeatedByRow": true,
+      "scopedVars": {
+        "master": {
+          "selected": false,
+          "text": "us-west2-c",
+          "value": "us-west2-c"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "(time() - node_boot_time_seconds{node=~\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "title": "Uptime",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
     }
   ],
   "schemaVersion": 16,
@@ -1022,8 +3043,10 @@
     "list": [
       {
         "current": {
-          "text": "k8s platform (mlab-staging)",
-          "value": "k8s platform (mlab-staging)"
+          "selected": false,
+          "tags": [],
+          "text": "k8s platform (mlab-sandbox)",
+          "value": "k8s platform (mlab-sandbox)"
         },
         "hide": 0,
         "label": "Datasource",
@@ -1038,8 +3061,9 @@
       {
         "allValue": null,
         "current": {
-          "text": "us-central1-a",
-          "value": "us-central1-a"
+          "tags": [],
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "$datasource",
         "definition": "label_values(node)",
@@ -1051,7 +3075,7 @@
         "options": [],
         "query": "label_values(node)",
         "refresh": 1,
-        "regex": "/k8s-platform-master-(.*)/",
+        "regex": "k8s-platform-master-(.*)",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
@@ -1093,6 +3117,6 @@
   },
   "timezone": "",
   "title": "k8s: Master Cluster",
-  "uid": "K8-zAIuik",
-  "version": 5
+  "uid": "Uu56HtIfb",
+  "version": 27
 }
