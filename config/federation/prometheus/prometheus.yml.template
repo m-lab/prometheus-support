@@ -287,10 +287,10 @@ scrape_configs:
     honor_labels: true
     metrics_path: '/federate'
     params:
+      # Scrape the status of all jobs. This should allow us determine
+      # whether, for example, node_exporter is failing to be scraped
+      # somewhere, as well as other core and experiment services."
       'match[]':
-	# Scrape the status of all jobs. This should allow us determine
-	# whether, for example, node_exporter is failing to be scraped
-	# somewhere.
         - 'up{job=".+"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
