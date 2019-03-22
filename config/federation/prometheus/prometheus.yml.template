@@ -291,7 +291,7 @@ scrape_configs:
 	# Scrape the status of all jobs. This should allow us determine
 	# whether, for example, node_exporter is failing to be scraped
 	# somewhere.
-	- 'up{job=".+"}'
+        - 'up{job=".+"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
 
