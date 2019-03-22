@@ -284,6 +284,14 @@ scrape_configs:
   # Monitor whether we can monitor the k8s platform master.
   # TODO: add to federation-targets job.
   - job_name: 'k8s-prometheus'
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+	# Scrape the status of all jobs. This should allow us determine
+	# whether, for example, node_exporter is failing to be scraped
+	# somewhere.
+	- 'up{job=".+"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
 
@@ -344,7 +352,6 @@ scrape_configs:
           - /federation-targets/*.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
-
 
   # Blackbox configurations.
   #
