@@ -879,3 +879,51 @@ groups:
         node is connected to the cluster. Verify the Prometheus deployment is
         running using - `kubectl get pods`. Check pod logs.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+
+  - alert: Cluster_PlatformNodeExporterDownOrMissing
+    expr: |
+      up{deployment="node-exporter", cluster="k8s-platform"} == 0 or
+        absent(up{deployment="node-exporter", cluster="k8s-platform"})
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: At least one node-exporter instance is down on the k8s-platform cluster.
+      description: At least one node-exporter instance is down. Verify that
+        the node-exporter DaemonSet is healthy. Maybe there is a node down
+        causing node-exporter to be down on that node too? Try using `kubectl
+        get nodes` to view node states, and `kubectl get pods` to see pod state.
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  - alert: Cluster_PlatformCadvisorDownOrMissing
+    expr: |
+      up{deployment="cadvisor", cluster="k8s-platform"} == 0 or
+        absent(up{deployment="cadvisor", cluster="k8s-platform"})
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: At least one CAdvisor instance is down on the k8s-platform cluster.
+      description: At least one CAdvisor instance is down. Verify that the
+        CAdvisor DaemonSet is healthy. Maybe there is a node down causing
+        CAdvisor to be down on that node too? Try using `kubectl get nodes` to
+        view node states, and `kubectl get pods` to see pod state.
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  - alert: Cluster_PlatformNdtDownOrMissing
+    expr: |
+      up{deployment="ndt", cluster="k8s-platform"} == 0 or
+        absent(up{deployment="ndt", cluster="k8s-platform"})
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: At least one NDT instance is down on the k8s-platform cluster.
+      description: At least one NDT instance is down. Verify that the NDT
+        DaemonSet is healthy. Maybe there is a node down causing NDT to be down
+        on that node too? Try using `kubectl get nodes` to view node states, and
+        `kubectl get pods` to see pod state.
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
