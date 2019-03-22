@@ -291,7 +291,7 @@ scrape_configs:
       # whether, for example, node_exporter is failing to be scraped
       # somewhere, as well as other core and experiment services."
       'match[]':
-        - 'up{job=".+"}'
+        - 'up{job=~".+"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
 
