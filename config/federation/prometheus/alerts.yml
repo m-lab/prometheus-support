@@ -862,68 +862,121 @@ groups:
         Check the VM service logs from Stackdriver.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/t_juk39ik/boot-epoxy-server
 
-# Cluster_PlatformMasterDownOrMissing extends the ClusterDown alert to apply
-# only to the platform cluster instance of prometheus.
+# PlatformCluster_DownOrMissing extends the ClusterDown alert to apply only to
+# the platform cluster instance of Prometheus.
 # TODO: retire this alert in favor of ClusterDown when possible.
   - alert: PlatformCluster_DownOrMissing
-    expr: up{job="k8s-prometheus"} == 0 or absent(up{job="k8s-prometheus"})
+    expr: up{job="platform-cluster"} == 0 or absent(up{job="platform-cluster"})
     for: 1h
     labels:
       repo: ops-tracker
       severity: page
     annotations:
-      summary: Prometheus is down on the k8s platform master.
-      description: Prometheus instance on the platform cluster appears to be
-        down. This makes investigation using Prometheus impossible. Log into a
-        k8s master node. Verify that the cluster is healthy. Verify that the
-        node is connected to the cluster. Verify the Prometheus deployment is
-        running using - `kubectl get pods`. Check pod logs.
+      summary: Prometheus is down on the k8s platform cluster.
+      description: The Prometheus instance on the platform cluster appears to
+        be down. This makes investigation using Prometheus impossible. Verify
+        ithat the node where Prometheus should be running is healthy (`kubectl
+        get nodes --selector run=prometheus-server`). Verify that the node is
+        connected to the cluster. Verify the Prometheus deployment is running
+        using - `kubectl get pods`. Check pod logs.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
-  - alert: PlatformCluster_NodeExporterDownOrMissing
-    expr: |
-      up{deployment="node-exporter", cluster="k8s-platform"} == 0 or
-        absent(up{deployment="node-exporter", cluster="k8s-platform"})
-    for: 1h
+  - alert: PlatformCluster_NodeExporterMissing
+    expr: absent(up{deployment="node-exporter", job="platform-cluster"})
+    for: 5m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: At least one node-exporter instance is down on the k8s-platform cluster.
-      description: At least one node-exporter instance is down. Verify that
-        the node-exporter DaemonSet is healthy. Maybe there is a node down
-        causing node-exporter to be down on that node too? Try using `kubectl
-        get nodes` to view node states, and `kubectl get pods` to see pod state.
+      summary: The node_exporter DaemonSet is missing or has no metrics.
+      description: The node_exporter DaemonSet is missing or has no metrics.
+        Verify that the DaemonSet is healthy (`kubectl describe ds
+        node-exporter`).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
-  - alert: PlatformCluster_CadvisorDownOrMissing
+  # If a node_exporter pod is down or otherwise broken, fire an alert, unless
+  # the node is in lame-duck mode, GMX maintenance mode, or the scrape job for
+  # the entire node is down.
+  - alert: PlatformCluster_NodeExporterDown
     expr: |
-      up{deployment="cadvisor", cluster="k8s-platform"} == 0 or
-        absent(up{deployment="cadvisor", cluster="k8s-platform"})
+      up{deployment="node-exporter", job="platform-cluster"} == 0 unless on(node) (
+          label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1 "node", "$1", "machine", "(.*)") or
+          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)")
+        )
     for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: At least one CAdvisor instance is down on the k8s-platform cluster.
-      description: At least one CAdvisor instance is down. Verify that the
-        CAdvisor DaemonSet is healthy. Maybe there is a node down causing
-        CAdvisor to be down on that node too? Try using `kubectl get nodes` to
-        view node states, and `kubectl get pods` to see pod state.
+      summary: At least one node has a broken or no node_exporter pod.
+      description: At least one node has a broken or no node_exporter pod.
+        Verify that the DaemonSet is healthy. Check the status of the node that
+        the pod is supposed to be running on. Check the status of the pod
+        itself, if it exists.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
-  - alert: PlatformCluster_NdtDownOrMissing
+  - alert: PlatformCluster_CadvisorMissing
+    expr: absent(up{deployment="cadvisor", job="platform-cluster"})
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The CAdvisor DaemonSet is missing or has no metrics.
+      description: The CAdvisor DaemonSet is missing or has no metrics. Verify that
+        the DaemonSet is healthy (`kubectl describe ds cadvisor`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  # If a CAdvisor pod is down or otherwise broken, fire an alert, unless the
+  # node is in lame-duck mode, GMX maintenance mode, or the scrape job for the
+  # entire node is down.
+  - alert: PlatformCluster_CadvisorDown
     expr: |
-      up{deployment="ndt", cluster="k8s-platform"} == 0 or
-        absent(up{deployment="ndt", cluster="k8s-platform"})
+      up{deployment="cadvisor", job="platform-cluster"} == 0 unless on(node) (
+          label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1 "node", "$1", "machine", "(.*)") or
+          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)")
+        )
     for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: At least one NDT instance is down on the k8s-platform cluster.
-      description: At least one NDT instance is down. Verify that the NDT
-        DaemonSet is healthy. Maybe there is a node down causing NDT to be down
-        on that node too? Try using `kubectl get nodes` to view node states, and
-        `kubectl get pods` to see pod state.
+      summary: At least one node has a broken or no CAdvisor pod.
+      description: At least one node has a broken or no CAdvisor pod. Verify that
+        the DaemonSet is healthy. Check the status of the node that the pod is
+        supposed to be running on. Check the status of the pod itself, if it
+        exists.
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  - alert: PlatformCluster_NdtMissing
+    expr: absent(up{deployment="ndt", job="platform-cluster"})
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The NDT DaemonSet is missing or has no metrics.
+      description: The NDT DaemonSet is missing or has no metrics. Verify that
+        the DaemonSet is healthy (`kubectl describe ds ndt`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  # If a NDT pod is down or otherwise broken, fire an alert, unless the node is
+  # in lame-duck mode, GMX maintenance mode, or the scrape job for the entire
+  # node is down.
+  - alert: PlatformCluster_NdtDown
+    expr: |
+      up{deployment="ndt", job="platform-cluster"} == 0 unless on(node) (
+          label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1 "node", "$1", "machine", "(.*)") or
+          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)")
+        )
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: At least one node has a broken or no NDT pod.
+      description: At least one node has a broken or no NDT pod. Verify that
+        the DaemonSet is healthy. Check the status of the node that the pod
+        is supposed to be running on. Check the status of the pod itself, if it
+        exists.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
