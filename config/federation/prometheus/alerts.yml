@@ -901,7 +901,7 @@ groups:
     expr: |
       up{deployment="node-exporter", job="platform-cluster"} == 0 unless on(node) (
           label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
-          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)")
+          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)") == 0
         )
     for: 1h
     labels:
@@ -934,7 +934,7 @@ groups:
     expr: |
       up{deployment="cadvisor", job="platform-cluster"} == 0 unless on(node) (
           label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
-          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)")
+          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)") == 0
         )
     for: 1h
     labels:
@@ -967,7 +967,7 @@ groups:
     expr: |
       up{deployment="ndt", job="platform-cluster"} == 0 unless on(node) (
           label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
-          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)")
+          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)") == 0
         )
     for: 1h
     labels:
