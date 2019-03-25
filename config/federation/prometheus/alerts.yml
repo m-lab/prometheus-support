@@ -865,7 +865,7 @@ groups:
 # Cluster_PlatformMasterDownOrMissing extends the ClusterDown alert to apply
 # only to the platform cluster instance of prometheus.
 # TODO: retire this alert in favor of ClusterDown when possible.
-  - alert: Cluster_PlatformMasterDownOrMissing
+  - alert: PlatformCluster_DownOrMissing
     expr: up{job="k8s-prometheus"} == 0 or absent(up{job="k8s-prometheus"})
     for: 1h
     labels:
@@ -880,7 +880,7 @@ groups:
         running using - `kubectl get pods`. Check pod logs.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
-  - alert: Cluster_PlatformNodeExporterDownOrMissing
+  - alert: PlatformCluster_NodeExporterDownOrMissing
     expr: |
       up{deployment="node-exporter", cluster="k8s-platform"} == 0 or
         absent(up{deployment="node-exporter", cluster="k8s-platform"})
@@ -896,7 +896,7 @@ groups:
         get nodes` to view node states, and `kubectl get pods` to see pod state.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
-  - alert: Cluster_PlatformCadvisorDownOrMissing
+  - alert: PlatformCluster_CadvisorDownOrMissing
     expr: |
       up{deployment="cadvisor", cluster="k8s-platform"} == 0 or
         absent(up{deployment="cadvisor", cluster="k8s-platform"})
@@ -912,7 +912,7 @@ groups:
         view node states, and `kubectl get pods` to see pod state.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
-  - alert: Cluster_PlatformNdtDownOrMissing
+  - alert: PlatformCluster_NdtDownOrMissing
     expr: |
       up{deployment="ndt", cluster="k8s-platform"} == 0 or
         absent(up{deployment="ndt", cluster="k8s-platform"})
