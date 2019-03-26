@@ -294,6 +294,8 @@ scrape_configs:
         - 'up{job=~".+"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
+        labels:
+          cluster: "platform-cluster"
 
   # Scrape config for the node_exporter on eb.measurementlab.net.
   - job_name: 'eb-node-exporter'
