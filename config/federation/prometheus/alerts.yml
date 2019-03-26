@@ -899,9 +899,10 @@ groups:
   # the entire node is down.
   - alert: PlatformCluster_NodeExporterDown
     expr: |
-      up{deployment="node-exporter", job="platform-cluster"} == 0 unless on(node) (
-          label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
-          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)") == 0
+      up{deployment="node-exporter", job="platform-cluster"} == 0 unless on(machine) (
+          lame_duck_node == 1 or
+          gmx_machine_maintenance == 1 or
+          up{job="kubernetes-nodes"} == 0
         )
     for: 1h
     labels:
@@ -932,9 +933,10 @@ groups:
   # entire node is down.
   - alert: PlatformCluster_CadvisorDown
     expr: |
-      up{deployment="cadvisor", job="platform-cluster"} == 0 unless on(node) (
-          label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
-          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)") == 0
+      up{deployment="cadvisor", job="platform-cluster"} == 0 unless on(machine) (
+          lame_duck_node == 1 or
+          gmx_machine_maintenance == 1 or
+          up{job="kubernetes-nodes"} == 0
         )
     for: 1h
     labels:
@@ -965,9 +967,10 @@ groups:
   # node is down.
   - alert: PlatformCluster_NdtDown
     expr: |
-      up{deployment="ndt", job="platform-cluster"} == 0 unless on(node) (
-          label_replace(lame_duck_node == 1 or gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
-          label_replace(up{job="kubernetes-nodes"}, "node", "$1", "kubernetes_io_hostname", "(.*)") == 0
+      up{deployment="ndt", job="platform-cluster"} == 0 unless on(machine) (
+          lame_duck_node == 1 or
+          gmx_machine_maintenance == 1 or
+          up{job="kubernetes-nodes"} == 0
         )
     for: 1h
     labels:
