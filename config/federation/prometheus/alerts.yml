@@ -882,7 +882,7 @@ groups:
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
   - alert: PlatformCluster_NodeExporterMissing
-    expr: absent(up{deployment="node-exporter", job="platform-cluster"})
+    expr: absent(up{deployment="node-exporter", cluster="platform-cluster"})
     for: 5m
     labels:
       repo: ops-tracker
@@ -899,10 +899,10 @@ groups:
   # the entire node is down.
   - alert: PlatformCluster_NodeExporterDown
     expr: |
-      up{deployment="node-exporter", job="platform-cluster"} == 0 unless on(machine) (
+      up{deployment="node-exporter", cluster="platform-cluster"} == 0 unless on(machine) (
           lame_duck_node == 1 or
           gmx_machine_maintenance == 1 or
-          up{job="kubernetes-nodes"} == 0
+          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
     for: 1h
     labels:
@@ -917,7 +917,7 @@ groups:
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
   - alert: PlatformCluster_CadvisorMissing
-    expr: absent(up{deployment="cadvisor", job="platform-cluster"})
+    expr: absent(up{deployment="cadvisor", cluster="platform-cluster"})
     for: 5m
     labels:
       repo: ops-tracker
@@ -933,10 +933,10 @@ groups:
   # entire node is down.
   - alert: PlatformCluster_CadvisorDown
     expr: |
-      up{deployment="cadvisor", job="platform-cluster"} == 0 unless on(machine) (
+      up{deployment="cadvisor", cluster="platform-cluster"} == 0 unless on(machine) (
           lame_duck_node == 1 or
           gmx_machine_maintenance == 1 or
-          up{job="kubernetes-nodes"} == 0
+          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
     for: 1h
     labels:
@@ -951,7 +951,7 @@ groups:
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
   - alert: PlatformCluster_NdtMissing
-    expr: absent(up{deployment="ndt", job="platform-cluster"})
+    expr: absent(up{deployment="ndt", cluster="platform-cluster"})
     for: 5m
     labels:
       repo: ops-tracker
@@ -967,10 +967,10 @@ groups:
   # node is down.
   - alert: PlatformCluster_NdtDown
     expr: |
-      up{deployment="ndt", job="platform-cluster"} == 0 unless on(machine) (
+      up{deployment="ndt", cluster="platform-cluster"} == 0 unless on(machine) (
           lame_duck_node == 1 or
           gmx_machine_maintenance == 1 or
-          up{job="kubernetes-nodes"} == 0
+          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
     for: 1h
     labels:
