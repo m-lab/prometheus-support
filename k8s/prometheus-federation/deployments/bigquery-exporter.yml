@@ -18,6 +18,7 @@ spec:
       - name: bigquery-exporter
         image: measurementlab/prometheus-bigquery-exporter:production-0.3
         args: [ "--project={{GCLOUD_PROJECT}}",
+                "--type=gauge", "--query=/queries/bq_mlabns_sixhour_requests.sql",
                 "--type=gauge", "--query=/queries/bq_ndt_tests.sql",
                 "--type=gauge", "--query=/queries/bq_ipv6_bias.sql",
                 "--type=gauge", "--query=/queries/bq_ndt_annotation.sql",
@@ -25,7 +26,6 @@ spec:
                 "--type=gauge", "--query=/queries/bq_ndt_worldmap_server.sql",
                 "--type=gauge", "--query=/queries/bq_ndt_geohash_client.sql",
                 "--type=gauge", "--query=/queries/bq_ndt_server.sql",
-                "--type=gauge", "--query=/queries/bq_mlabns_sixhour_requests.sql",
               ]
         ports:
         - containerPort: 9050
