@@ -4,7 +4,7 @@
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": true,
+        "enable": false,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
@@ -16,8 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 257,
-  "iteration": 1553886501954,
+  "iteration": 1553954296881,
   "links": [],
   "panels": [
     {
@@ -26,7 +25,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "The query used to collect these counts is based on the one used by mlab-ns-rate-limiter.\n\nCounts are offset 15m",
+      "description": "The query used to collect these counts is based on the one used by mlab-ns-rate-limiter.\n\nTimestamps are offset 15m later than actual time.",
       "fill": 1,
       "gridPos": {
         "h": 14,
@@ -52,7 +51,12 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Bandwidth/",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -62,8 +66,15 @@
           "format": "time_series",
           "interval": "5m",
           "intervalFactor": 1,
-          "legendFormat": "{{resource}}",
+          "legendFormat": "Request - {{resource}}",
           "refId": "A"
+        },
+        {
+          "expr": "sum by (index)(8 * rate(sidestream_transmit_bytes_total{index=~\"neubot.mlab|ndt.iupui\"}[5m] offset 15m))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Bandwidth - {{index}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -87,102 +98,15 @@
       "yaxes": [
         {
           "format": "short",
-          "label": null,
+          "label": "mlab-ns Requests",
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "description": "The query used to collect these counts is based on the one used by mlab-ns-rate-limiter.\n\nCounts are offset 15m",
-      "fill": 1,
-      "gridPos": {
-        "h": 14,
-        "w": 24,
-        "x": 0,
-        "y": 14
-      },
-      "id": 3,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (index)(8 * rate(sidestream_transmit_bytes_total{index=~\"neubot.mlab|ndt.iupui\"}[5m]))",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{index}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Raw 5m Request Counts to MLAB-NS by 6-hour clients",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
         {
           "format": "bps",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
+          "label": "Sidestream Bandwidth",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -204,8 +128,8 @@
       {
         "current": {
           "tags": [],
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "text": "Prometheus (mlab-sandbox)",
+          "value": "Prometheus (mlab-sandbox)"
         },
         "hide": 0,
         "label": "Datasource",
@@ -220,7 +144,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -251,5 +175,5 @@
   "timezone": "",
   "title": "MLAB-NS: 6-hour Client Counts",
   "uid": "CR4zGH6mk",
-  "version": 4
+  "version": 5
 }
