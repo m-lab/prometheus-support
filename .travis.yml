@@ -139,37 +139,39 @@ deploy:
   on:
     repo: m-lab/prometheus-support
     all_branches: true
-    # Note: Condition allows pushes to a hotfix branch or tags that match a prefix "production"
-    # Warning: *** Only use hotfix-* branches in an emergency ***
-    condition: ( $TRAVIS_EVENT_TYPE == push && $TRAVIS_BRANCH == hotfix-* ) || $TRAVIS_TAG == production*
+    condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti data-processing-cluster ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    tags: true
+    all_branches: true
+    condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti scraper-cluster ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    tags: true
+    all_branches: true
+    condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti downloader ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    tags: true
+    all_branches: true
+    condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
 
 - provider: script
   script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-oti LINODE_PRIVATE_KEY_ipv6_monitoring"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    tags: true
+    all_branches: true
+    condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
 
 
 before_install:
