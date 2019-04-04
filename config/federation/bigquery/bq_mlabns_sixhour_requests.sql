@@ -58,12 +58,6 @@ WITH
       -- Guarantee that each client runs in each period by totaling the 'period'
       -- values. If all periods are represented, then the sum(1 + 2 + 4 + 8) = 15.
       total = 15
-  ),
-  uniqueIPsInSixHourPeriods AS (
-    (SELECT ip FROM nsRequestsInSixHourPeriods WHERE resource = "/neubot" -- AND ip NOT IN ( SELECT ip FROM clientsOutsideSixHourPeriods )
-     intersect DISTINCT
-     SELECT ip FROM nsRequestsInSixHourPeriods WHERE resource = "/ndt" -- AND ip NOT IN ( SELECT ip FROM clientsOutsideSixHourPeriods ))
-	)
   )
 
 SELECT
@@ -78,6 +72,6 @@ WHERE
   AND protoPayload.starttime <= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 10 MINUTE)
   AND (protoPayload.resource = '/neubot' OR protoPayload.resource = '/ndt')
   AND protoPayload.userAgent IS NULL
-  AND protoPayload.ip IN ( SELECT ip FROM uniqueIPsInSixHourPeriods )
+  AND protoPayload.ip IN ( SELECT ip FROM `mlab-ns.library.six_hour_ips_20190331` )
 GROUP BY
   resource
