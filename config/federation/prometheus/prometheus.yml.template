@@ -290,16 +290,18 @@ scrape_configs:
       # Scrape the status of all jobs. This should allow us determine
       # whether, for example, node_exporter is failing to be scraped
       # somewhere, as well as other core and experiment services. Also scrape
-      # lame_duck_experiment metrics, since mlab-ns needs these.
+      # lame_duck_experiment metrics, since mlab-ns needs these, but ignorning
+      # the fake metric scraped from node-exporter.
+      # TODO: remove the synthetic ConfigMap node-exporter lame-duck metrics.
       'match[]':
         - 'up{job=~".+"}'
-        - 'lame_duck_experiment{deployment="ndt"}'
+        - 'lame_duck_experiment{job!="node-exporter"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
         labels:
           cluster: "platform-cluster"
 
-    relabel_configs:
+    metric_relabel_configs:
       # Adds an experiment label to lame_duck_experiment metrics for
       # consistency with our legacy way of doing things.
       #
