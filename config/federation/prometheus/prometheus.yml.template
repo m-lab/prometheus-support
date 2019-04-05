@@ -321,6 +321,13 @@ scrape_configs:
         regex: ^ndt.*
         target_label: experiment
         replacement: ndt.iupui
+      # mlab-ns queries use a 'machine' label for grouping results. This is the
+      # same as the value of the 'node' label in k8s metrics. Write the value
+      # of 'node' to a new label 'machine' so that mlab-ns will correctly
+      # identify and use lame_duck_experiment metrics.
+      - source_labels: [node]
+        action: replace
+        target_label: machine
 
   # Scrape config for the node_exporter on eb.measurementlab.net.
   - job_name: 'eb-node-exporter'
