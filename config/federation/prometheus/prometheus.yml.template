@@ -289,10 +289,19 @@ scrape_configs:
     params:
       # Scrape the status of all jobs. This should allow us determine
       # whether, for example, node_exporter is failing to be scraped
-      # somewhere, as well as other core and experiment services. Also scrape
-      # lame_duck_experiment metrics, since mlab-ns needs these, but ignorning
-      # the fake metric scraped from node-exporter.
-      # TODO: remove the synthetic ConfigMap node-exporter lame-duck metrics.
+      # somewhere, as well as other core and experiment services.
+      #
+      # Also scrape lame_duck_experiment metrics, since mlab-ns needs these,
+      # but ignorning the fake metric scraped from node-exporter.
+      #
+      # TODO/NOTE: Currently, this prometheus-federation cluster is scraping a
+      # publicly available endpoint of platform cluster metrics. This will add
+      # additional delay in the propagation of lame_duck_experiment status to
+      # mlab-ns, since the platform cluster scrapes every minute, and the
+      # federation cluster scrapes that cluster every minute, and mlab-ns
+      # queries the federation cluster every minute. We could potentially have
+      # up to 3m delay in propagation. We should find a better way to handle
+      # this.
       'match[]':
         - 'up{job=~".+"}'
         - 'lame_duck_experiment{job!="node-exporter"}'
@@ -305,7 +314,7 @@ scrape_configs:
       # Adds an experiment label to lame_duck_experiment metrics for
       # consistency with our legacy way of doing things.
       #
-      # NOTE : In the future we may drop the 'experiment' label altogether in
+      # TODO: In the future we may drop the 'experiment' label altogether in
       # favor of some native k8s one (e.g., 'deployment'), or to at the very
       # least shorten the name to just 'ndt'
       - source_labels: [deployment]
