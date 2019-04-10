@@ -305,6 +305,8 @@ scrape_configs:
       'match[]':
         - 'up{job=~".+"}'
         - 'lame_duck_experiment{job!="node-exporter"}'
+        - 'node_filesystem_size_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
+        - 'node_filesystem_free_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
         labels:
