@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 246,
-  "iteration": 1549572451017,
+  "iteration": 1554933705005,
   "links": [],
   "panels": [
     {
@@ -1037,8 +1037,8 @@
       ],
       "datasource": "$datasource",
       "decimals": 1,
-      "description": "Average temperature of all cores. Not sure how meaningful this is.",
-      "format": "none",
+      "description": "",
+      "format": "percentunit",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -1069,7 +1069,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "postfix": "C",
+      "postfix": "",
       "postfixFontSize": "80%",
       "prefix": "",
       "prefixFontSize": "50%",
@@ -1096,15 +1096,15 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "avg(node_hwmon_temp_celsius{node=~\"$node.$site.*\", chip=\"platform_coretemp_0\"})",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"} -\n  node_filesystem_free_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"})\n  / node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
       ],
-      "thresholds": "176,194",
-      "title": "Core temp",
+      "thresholds": "80,90",
+      "title": "Data partition",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -1248,5 +1248,5 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 6
+  "version": 7
 }
