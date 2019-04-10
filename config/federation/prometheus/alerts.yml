@@ -983,3 +983,27 @@ groups:
         is supposed to be running on. Check the status of the pod itself, if it
         exists.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  # The /cache/data mount point on a node has exceeded 95% of its capacity.
+  # This is where all pods write all experiment and core service data (shared
+  # pool of space). If this mount point fill up, all experiments and core
+  # services will fail in some way.
+  - alert: PlatformCluster_DataPartitionTooFull
+    expr: |
+      ((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
+          node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
+          / node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
+        > 0.95
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The /cache/data mount point on a node is more than 95% full.
+      description: All experiment and core service data is written to a shared
+        pool of disk space on a partition mounted at /cache/data. The mount
+        point has exceed 95% usage. Check that the pusher sidecar container in
+        all pods is working. See which pod is using all the space with `df -sh
+        /cache/data/*`.
+      dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
