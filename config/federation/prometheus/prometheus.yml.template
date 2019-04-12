@@ -307,7 +307,7 @@ scrape_configs:
         - 'lame_duck_experiment{job!="node-exporter"}'
         - 'node_filesystem_size_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
         - 'node_filesystem_free_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
-        - 'kube_node_spec_taint{value="lame-duck"}'
+        - 'kube_node_spec_taint{key="lame-duck"}'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
         labels:
