@@ -251,9 +251,12 @@ groups:
       summary: "Scraper deployments are running without rsyncd monitoring"
       description: ""
 
-# Rsync inventory includes machine "b", but machine "b" does not have a configured scraper.
+# Rsync inventory includes machine "b" and rsyncd is actually running, but
+# machine "b" does not have a configured scraper.
   - alert: RsyncRunningWithoutScraper
-    expr: up{service="rsyncd"} unless on(machine, experiment) up{container="scraper"}
+    expr: |
+      up{service="rsyncd"} and on(machine, experiment) probe_success{service="rsyncd"} == 1
+        unless on(machine, experiment) up{container="scraper"}
     for: 30m
     labels:
       repo: dev-tracker
