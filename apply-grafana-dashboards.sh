@@ -14,9 +14,11 @@ kubectl create configmap grafana-dashboard-provisioning \
 # cannot be larger than 1MB. Like below, this is just a stopgap until even the
 # minified JSON concatenated into a single ConfigMap exceeds the limit.
 mkdir -p config/federation/grafana/dashboards-minified
-for d in $(find config/federation/grafana/dashboards -type f); do
-  jq -c . < $d > config/federation/grafana/dashboards-minified/$d
+pushd config/federation/grafana
+for d in $(ls dashboards); do
+  jq -c . < dashboards/$d > dashboards-minified/$d
 done
+popd
 
 # Create conigmap for actual grafana dashboards.
 #
