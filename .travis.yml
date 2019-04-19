@@ -42,8 +42,8 @@ deploy:
 ## Sandbox
 - provider: script
   script:
-    $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-global-prometheus.sh
-    && $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-grafana-dashboards.sh
+    "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-global-prometheus.sh
+    && $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-grafana-dashboards.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
@@ -51,7 +51,7 @@ deploy:
     condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox data-processing-cluster ./apply-cluster.sh
+  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox data-processing-cluster ./apply-cluster.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
@@ -59,7 +59,7 @@ deploy:
     condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster ./apply-cluster.sh
+  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster ./apply-cluster.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
@@ -67,7 +67,7 @@ deploy:
     condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh
+  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
