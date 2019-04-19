@@ -15,7 +15,7 @@ kubectl create configmap grafana-dashboard-provisioning \
 # minified JSON concatenated into a single ConfigMap exceeds the limit.
 mkdir -p config/federation/grafana/dashboards-minified
 pushd config/federation/grafana
-for d in $(ls dashboards); do
+for d in $(ls dashboards/*.json); do
   jq -c . < dashboards/$d > dashboards-minified/$d
 done
 popd
