@@ -10,6 +10,14 @@ kubectl create configmap grafana-dashboard-provisioning \
     --from-file=config/federation/grafana/provisioning/dashboards \
     --dry-run -o json | kubectl apply -f -
 
+# Minify the JSON dashboards to help get around the limitation that ConfigMaps
+# cannot be larger than 1MB. Like below, this is just a stopgap until even the
+# minified JSON concatenated into a single ConfigMap exceeds the limit.
+mkdir -p config/federation/grafana/dashboards-minified
+for d in $(find -type f config/federation/grafana/dashboards); do
+  jq -c . < $d > config/federation/grafana/dashboards-minified/$d
+done
+
 # Create conigmap for actual grafana dashboards.
 #
 # NOTE: We are piping the configmap data to `kubectl replace` here (instead of
@@ -19,5 +27,5 @@ kubectl create configmap grafana-dashboard-provisioning \
 # metadata allowing room for the new. We will still have a problem when the
 # total size of the JSON files exceeds the maximium size for a ConfigMap (1MB).
 kubectl create configmap grafana-dashboards \
-    --from-file=config/federation/grafana/dashboards \
+    --from-file=config/federation/grafana/dashboards-minified \
     --dry-run -o json | kubectl replace -f -
