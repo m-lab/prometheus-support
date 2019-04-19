@@ -47,32 +47,32 @@ deploy:
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox data-processing-cluster ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
   script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-sandbox LINODE_PRIVATE_KEY_ipv6_monitoring"
