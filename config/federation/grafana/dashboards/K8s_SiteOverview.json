@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 246,
-  "iteration": 1555703347577,
+  "iteration": 1555973359839,
   "links": [],
   "panels": [
     {
@@ -108,7 +108,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=~\"$node.$site.*\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=\"$node.$site.measurement-lab.org\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -626,7 +626,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=~\"$node.$site.*\"}",
+          "expr": "node_load15{node=\"$node.$site.measurement-lab.org\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -805,7 +805,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1215,7 +1215,8 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
+          "tags": [],
           "text": "k8s platform (mlab-sandbox)",
           "value": "k8s platform (mlab-sandbox)"
         },
@@ -1232,7 +1233,6 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
           "text": "lga0t",
           "value": "lga0t"
         },
@@ -1258,8 +1258,6 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "tags": [],
           "text": "mlab4",
           "value": "mlab4"
         },
@@ -1285,18 +1283,19 @@
       {
         "allValue": ".*",
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "tags": [],
+          "text": "ndt",
+          "value": "ndt"
         },
         "datasource": "$datasource",
-        "definition": "label_values(label_app)",
+        "definition": "label_values(label_workload)",
         "hide": 0,
         "includeAll": true,
         "label": "Pod",
         "multi": false,
         "name": "pod",
         "options": [],
-        "query": "label_values(label_app)",
+        "query": "label_values(label_workload)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1341,5 +1340,5 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 9
+  "version": 10
 }
