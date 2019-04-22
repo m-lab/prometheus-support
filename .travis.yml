@@ -42,37 +42,37 @@ deploy:
 ## Sandbox
 - provider: script
   script:
-    $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-global-prometheus.sh
-    && $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-grafana-dashboards.sh
+    "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-global-prometheus.sh
+    && $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox prometheus-federation ./apply-grafana-dashboards.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox data-processing-cluster ./apply-cluster.sh
+  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox data-processing-cluster ./apply-cluster.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster ./apply-cluster.sh
+  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox scraper-cluster ./apply-cluster.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh
+  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == sandbox-* && $TRAVIS_EVENT_TYPE == push
+    branch: sandbox-*
+    condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
   script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-sandbox LINODE_PRIVATE_KEY_ipv6_monitoring"
@@ -179,4 +179,4 @@ before_install:
   keys/service-accounts.tar.enc /tmp/service-accounts.tar /tmp
 - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
 - sudo apt-get -qq update
-- sudo apt-get install -y apache2-utils
+- sudo apt-get install -y apache2-utils jq
