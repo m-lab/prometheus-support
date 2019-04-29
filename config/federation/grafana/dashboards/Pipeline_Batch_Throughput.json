@@ -2,7 +2,6 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:84",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -13,11 +12,10 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 32,
-  "iteration": 1539209670552,
+  "iteration": 1556571006552,
   "links": [
     {
       "icon": "external link",
@@ -60,7 +58,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -98,7 +96,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:173",
           "expr": "sum by(status)(60*rate(etl_task_count{service=\"etl-batch-parser\"}[2m]))",
           "format": "time_series",
           "interval": "60s",
@@ -110,6 +107,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Tasks/Min by Status",
       "tooltip": {
@@ -150,7 +148,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -188,7 +186,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:227",
           "expr": "sum by(state)(etl_worker_state{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "interval": "60s",
@@ -200,6 +197,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Worker States",
       "tooltip": {
@@ -240,7 +238,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -278,7 +276,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:281",
           "expr": "sum by(instance) (process_resident_memory_bytes{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "interval": "60s",
@@ -290,6 +287,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Process Resident Memory",
       "tooltip": {
@@ -330,7 +328,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -375,7 +373,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:335",
           "expr": "count(process_start_time_seconds{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "intervalFactor": 2,
@@ -384,7 +381,6 @@
           "step": 20
         },
         {
-          "$$hashKey": "object:336",
           "expr": "sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "intervalFactor": 2,
@@ -395,6 +391,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Per Instance Uptime",
       "tooltip": {
@@ -439,7 +436,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -477,7 +474,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:411",
           "expr": "etl_worker_count{service=\"etl-batch-parser\"}",
           "format": "time_series",
           "interval": "60s",
@@ -489,6 +485,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Worker Count By Instance",
       "tooltip": {
@@ -529,7 +526,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -567,7 +564,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:465",
           "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2",
           "format": "time_series",
           "interval": "60s",
@@ -579,6 +575,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Per instance cpu utilization",
       "tooltip": {
@@ -620,7 +617,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -658,7 +655,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:519",
           "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
@@ -667,7 +663,6 @@
           "step": 10
         },
         {
-          "$$hashKey": "object:520",
           "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
@@ -676,7 +671,6 @@
           "step": 10
         },
         {
-          "$$hashKey": "object:521",
           "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
@@ -685,7 +679,6 @@
           "step": 10
         },
         {
-          "$$hashKey": "object:522",
           "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
@@ -694,7 +687,6 @@
           "step": 10
         },
         {
-          "$$hashKey": "object:523",
           "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
@@ -703,7 +695,6 @@
           "step": 10
         },
         {
-          "$$hashKey": "object:524",
           "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
@@ -714,6 +705,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Approximate Insertion Time Percentiles",
       "tooltip": {
@@ -755,7 +747,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 1,
       "gridPos": {
         "h": 8,
@@ -797,6 +789,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Backend Failures",
       "tooltip": {
@@ -840,7 +833,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 1,
       "gridPos": {
         "h": 8,
@@ -872,7 +865,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:587",
           "expr": "sum(etl_annotator_Annotation_Time_Summary{quantile=\"0.99\", test_type=\"NDT\"})",
           "format": "time_series",
           "interval": "",
@@ -883,7 +875,6 @@
           "step": 20
         },
         {
-          "$$hashKey": "object:588",
           "expr": "sum(etl_annotator_Annotation_Time_Summary{quantile=\"0.9\", test_type=\"NDT\"})",
           "format": "time_series",
           "interval": "",
@@ -894,7 +885,6 @@
           "step": 20
         },
         {
-          "$$hashKey": "object:589",
           "expr": "sum(etl_annotator_Annotation_Time_Summary{quantile=\"0.5\", test_type=\"NDT\"})",
           "format": "time_series",
           "interval": "",
@@ -907,6 +897,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Annotator request latency",
       "tooltip": {
@@ -950,7 +941,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "$datasource",
       "fill": 1,
       "gridPos": {
         "h": 8,
@@ -982,7 +973,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:685",
           "expr": "avg by(test_type)(etl_annotator_Annotation_Time_Summary{quantile=\"0.99\"})",
           "format": "time_series",
           "interval": "",
@@ -992,7 +982,6 @@
           "step": 20
         },
         {
-          "$$hashKey": "object:686",
           "expr": "avg by(test_type)(etl_annotator_Annotation_Time_Summary{quantile=\"0.9\"})",
           "format": "time_series",
           "interval": "",
@@ -1002,7 +991,6 @@
           "step": 20
         },
         {
-          "$$hashKey": "object:687",
           "expr": "avg by(test_type)(etl_annotator_Annotation_Time_Summary{quantile=\"0.5\"})",
           "format": "time_series",
           "interval": "",
@@ -1014,6 +1002,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Annotation time",
       "tooltip": {
@@ -1140,12 +1129,28 @@
         "query": "10m,1h,3h,6h,12h,18h,1d,2d,1w,4w,13w,1y",
         "refresh": false,
         "regex": "",
+        "skipUrlSync": false,
         "type": "custom"
+      },
+      {
+        "current": {
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
+        },
+        "hide": 0,
+        "label": null,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Prometheus.*/",
+        "skipUrlSync": false,
+        "type": "datasource"
       }
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1176,5 +1181,5 @@
   "timezone": "browser",
   "title": "Pipeline: Batch Throughput",
   "uid": "000000032",
-  "version": 4
+  "version": 71
 }
