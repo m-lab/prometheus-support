@@ -1016,7 +1016,7 @@ groups:
 
   - alert: PlatformCluster_EtcdHasNoLeader
     expr: etcd_server_has_leader == 0
-    for: 3m
+    for: 5m
     labels:
       repo: ops-tracker
       severity: page
@@ -1029,8 +1029,8 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/milv1PgZz/k8s-etcd-overview
 
   - alert: PlatformCluster_EtcdTooManyLeaderChanges
-    expr: rate(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}[15m]) > 3
-    for: 15m
+    expr: rate(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}[30m]) > 3
+    for: 30m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1043,8 +1043,8 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
   - alert: PlatformCluster_EtcdTooManyProposalFailures
-    expr: rate(etcd_server_proposals_failed_total[15m]) > 5
-    for: 15m
+    expr: rate(etcd_server_proposals_failed_total[30m]) > 5
+    for: 30m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1059,9 +1059,9 @@ groups:
   - alert: PlatformCluster_EtcdMemberCommunicationTooSlow
     expr: |
       histogram_quantile(0.99,
-        rate(etcd_network_peer_round_trip_time_seconds_bucket{job=~".*etcd.*"}[5m])
+        rate(etcd_network_peer_round_trip_time_seconds_bucket{job=~".*etcd.*"}[30m])
       ) > 0.15
-    for: 10m
+    for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1074,8 +1074,8 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/milv1PgZz/k8s-etcd-overview
 
   - alert: PlatformCluster_EtcdWalFsyncsTooSlow
-    expr: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m])) > 0.5
-    for: 10m
+    expr: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[30m])) > 0.5
+    for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1090,9 +1090,9 @@ groups:
   - alert: PlatformCluster_EtcdBackedCommitsTooSlow
     expr: |
       histogram_quantile(0.99,
-        rate(etcd_disk_backend_commit_duration_seconds_bucket{job=~".*etcd.*"}[5m])
+        rate(etcd_disk_backend_commit_duration_seconds_bucket{job=~".*etcd.*"}[30m])
       ) > 0.25
-    for: 10m
+    for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
