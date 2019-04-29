@@ -503,7 +503,7 @@
           "step": 60
         },
         {
-          "expr": "avg(etl_worker_count{service=\"etl-batch-parser\"}) by (table)",
+          "expr": "avg(avg_over_time(etl_worker_count{service=\"etl-batch-parser\"}[10m])) by (table)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Average {{table}}",
