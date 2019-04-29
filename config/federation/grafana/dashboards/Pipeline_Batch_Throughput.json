@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1556571006552,
+  "iteration": 1556571006560,
   "links": [
     {
       "icon": "external link",
@@ -468,7 +468,26 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Average ndt",
+          "color": "#6ed0e0",
+          "fill": 0,
+          "linewidth": 2
+        },
+        {
+          "alias": "Average sidestream",
+          "color": "#d683ce",
+          "fill": 0,
+          "linewidth": 2
+        },
+        {
+          "alias": "Average switch",
+          "color": "#bf1b00",
+          "fill": 0,
+          "linewidth": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -476,11 +495,19 @@
         {
           "expr": "etl_worker_count{service=\"etl-batch-parser\"}",
           "format": "time_series",
+          "hide": false,
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "{{instance}} {{table}}",
           "refId": "A",
           "step": 60
+        },
+        {
+          "expr": "avg(etl_worker_count{service=\"etl-batch-parser\"}) by (table)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Average {{table}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -489,8 +516,8 @@
       "timeShift": null,
       "title": "Worker Count By Instance",
       "tooltip": {
-        "shared": true,
-        "sort": 0,
+        "shared": false,
+        "sort": 2,
         "value_type": "individual"
       },
       "transparent": false,
@@ -1134,8 +1161,9 @@
       },
       {
         "current": {
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "tags": [],
+          "text": "Prometheus (mlab-staging)",
+          "value": "Prometheus (mlab-staging)"
         },
         "hide": 0,
         "label": null,
