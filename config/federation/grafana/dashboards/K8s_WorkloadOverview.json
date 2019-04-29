@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1556568689370,
+  "iteration": 1556570505236,
   "links": [],
   "panels": [
     {
@@ -66,7 +66,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_name:container_cpu_usage_seconds_total:sum_rate5m /\n  ignoring(container_label_io_kubernetes_container_name) group_left sum(machine_cpu_cores)\n",
+          "expr": "container_name:container_cpu_usage_seconds:sum_rate5m /\n  ignoring(container_label_io_kubernetes_container_name) group_left sum(machine_cpu_cores)\n",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
@@ -74,7 +74,7 @@
           "refId": "A"
         },
         {
-          "expr": "container_name:container_cpu_usage_seconds_total:sum_rate5m",
+          "expr": "container_name:container_cpu_usage_seconds:sum_rate5m",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Cores {{container_label_io_kubernetes_container_name}}",
@@ -272,14 +272,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  node_containername:container_cpu_usage_seconds_total:sum_rate5m / on(node) group_left machine_cpu_cores\n)",
+          "expr": "topk(10,\n  node_container_name:container_cpu_usage_seconds:sum_rate5m / on(node) group_left machine_cpu_cores\n)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{node}})",
           "refId": "A"
         },
         {
-          "expr": "topk(10,\n  node_containername:container_cpu_usage_seconds_total:sum_rate5m\n)",
+          "expr": "topk(10,\n  node_container_name:container_cpu_usage_seconds:sum_rate5m\n)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Cores {{container_label_io_kubernetes_container_name}} ({{node}})",
@@ -373,14 +373,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  node_containername:container_memory_working_set_bytes:sum_rate5m / on(node) group_left machine_memory_bytes\n)",
+          "expr": "topk(10,\n  node_container_name:container_memory_working_set_bytes:sum_rate5m / on(node) group_left machine_memory_bytes\n)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{node}})",
           "refId": "A"
         },
         {
-          "expr": "topk(10,\n  node_containername:container_memory_working_set_bytes:sum_rate5m\n)",
+          "expr": "topk(10,\n  node_container_name:container_memory_working_set_bytes:sum_rate5m\n)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Memory {{container_label_io_kubernetes_container_name}} ({{node}})",
@@ -1334,5 +1334,6 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 81
+  "version": 82
 }
+
