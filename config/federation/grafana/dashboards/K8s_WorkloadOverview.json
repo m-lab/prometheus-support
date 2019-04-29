@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1556314159362,
+  "iteration": 1556562899704,
   "links": [],
   "panels": [
     {
@@ -29,19 +29,21 @@
       "fill": 1,
       "gridPos": {
         "h": 7,
-        "w": 8,
+        "w": 12,
         "x": 0,
         "y": 0
       },
       "id": 28,
       "legend": {
+        "alignAsTable": true,
         "avg": false,
         "current": false,
         "hideEmpty": true,
         "hideZero": true,
         "max": false,
         "min": false,
-        "show": false,
+        "rightSide": true,
+        "show": true,
         "total": false,
         "values": false
       },
@@ -53,7 +55,12 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/^Cores/",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -61,9 +68,17 @@
         {
           "expr": "container_name:container_cpu_usage_seconds_total:sum_rate5m /\n  ignoring(container_label_io_kubernetes_container_name) group_left sum(machine_cpu_cores)\n",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}}",
+          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}}",
           "refId": "A"
+        },
+        {
+          "expr": "container_name:container_cpu_usage_seconds_total:sum_rate5m",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Cores {{container_label_io_kubernetes_container_name}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -88,7 +103,7 @@
         {
           "decimals": null,
           "format": "percentunit",
-          "label": null,
+          "label": "% Total Cores",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -96,7 +111,7 @@
         },
         {
           "format": "short",
-          "label": null,
+          "label": "Cores",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -118,17 +133,19 @@
       "fill": 1,
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 8,
+        "w": 12,
+        "x": 12,
         "y": 0
       },
       "id": 29,
       "legend": {
+        "alignAsTable": true,
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "show": false,
+        "rightSide": true,
+        "show": true,
         "total": false,
         "values": false
       },
@@ -140,7 +157,12 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/^Memory/",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -150,8 +172,15 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}}",
+          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}}",
           "refId": "A"
+        },
+        {
+          "expr": "container_name:container_memory_working_set_bytes:sum_rate5m",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Memory {{container_label_io_kubernetes_container_name}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -176,15 +205,15 @@
         {
           "decimals": null,
           "format": "percentunit",
-          "label": null,
+          "label": "% Total Memory",
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
         {
-          "format": "short",
-          "label": null,
+          "format": "decbytes",
+          "label": "Memory",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -206,9 +235,213 @@
       "fill": 1,
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 0
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
+      "id": 31,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/^Cores/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "topk(10,\n  node_containername:container_cpu_usage_seconds_total:sum_rate5m / on(node) group_left machine_cpu_cores\n)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "refId": "A"
+        },
+        {
+          "expr": "topk(10,\n  node_containername:container_cpu_usage_seconds_total:sum_rate5m\n)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Cores {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Top 10: Container CPU usage by node",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": "% Total Cores",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "Cores",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 32,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/^Memory/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "topk(10,\n  node_containername:container_memory_working_set_bytes:sum_rate5m / on(node) group_left machine_memory_bytes\n)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "refId": "A"
+        },
+        {
+          "expr": "topk(10,\n  node_containername:container_memory_working_set_bytes:sum_rate5m\n)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Memory {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Top10: container memory usage by node",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": "% Total Memory",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "decbytes",
+          "label": "Memory",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 14
       },
       "id": 30,
       "legend": {
@@ -300,185 +533,9 @@
       "fill": 1,
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 7
-      },
-      "id": 31,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "hideEmpty": true,
-        "hideZero": true,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "topk(10,\n  node_containername:container_cpu_usage_seconds_total:sum_rate5m / on(node) group_left machine_cpu_cores\n)",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} ({{node}})",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Top 10: Container CPU usage by node",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": null,
-          "format": "percentunit",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "description": "",
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 7
-      },
-      "id": 32,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "topk(10,\n  node_containername:container_memory_working_set_bytes:sum_rate5m/ on(node) group_left machine_memory_bytes\n)",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} ({{node}})",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Top10: container memory usage by node",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": null,
-          "format": "percentunit",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "description": "",
-      "fill": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 7
+        "w": 12,
+        "x": 12,
+        "y": 14
       },
       "id": 33,
       "legend": {
@@ -570,7 +627,7 @@
         "h": 10,
         "w": 5,
         "x": 0,
-        "y": 14
+        "y": 21
       },
       "hideTimeOverride": false,
       "id": 23,
@@ -676,7 +733,7 @@
         "h": 10,
         "w": 5,
         "x": 5,
-        "y": 14
+        "y": 21
       },
       "hideTimeOverride": false,
       "id": 24,
@@ -785,7 +842,7 @@
         "h": 5,
         "w": 6,
         "x": 10,
-        "y": 14
+        "y": 21
       },
       "id": 19,
       "legend": {
@@ -867,7 +924,7 @@
         "h": 4,
         "w": 8,
         "x": 16,
-        "y": 14
+        "y": 21
       },
       "id": 17,
       "links": [],
@@ -947,7 +1004,7 @@
         "h": 3,
         "w": 8,
         "x": 16,
-        "y": 18
+        "y": 25
       },
       "id": 14,
       "links": [],
@@ -1048,7 +1105,7 @@
         "h": 5,
         "w": 6,
         "x": 10,
-        "y": 19
+        "y": 26
       },
       "id": 21,
       "legend": {
@@ -1132,7 +1189,7 @@
         "h": 3,
         "w": 8,
         "x": 16,
-        "y": 21
+        "y": 28
       },
       "id": 4,
       "links": [],
@@ -1230,7 +1287,6 @@
     "list": [
       {
         "current": {
-          "tags": [],
           "text": "k8s platform (mlab-sandbox)",
           "value": "k8s platform (mlab-sandbox)"
         },
@@ -1247,7 +1303,7 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -1278,5 +1334,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 79
+  "version": 80
 }
