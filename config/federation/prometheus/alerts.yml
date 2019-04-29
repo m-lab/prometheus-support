@@ -1016,7 +1016,7 @@ groups:
 
   - alert: PlatformCluster_EtcdHasNoLeader
     expr: etcd_server_has_leader == 0
-    for: 1m
+    for: 3m
     labels:
       repo: ops-tracker
       severity: page
@@ -1040,7 +1040,7 @@ groups:
         Leader changes are normal (e.g., a master node is rebooted), but they
         should not happen too often. Look into networking, resource or other
         issues on the master nodes.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
   - alert: PlatformCluster_EtcdTooManyProposalFailures
     expr: rate(etcd_server_proposals_failed_total[15m]) > 5
@@ -1085,7 +1085,7 @@ groups:
         it are taking too long. Check that there are no problems with the disk
         on the master node, and that disk I/O throughput is not becoming a
         bottleneck.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
   - alert: PlatformCluster_EtcdBackedCommitsTooSlow
     expr: |
@@ -1102,6 +1102,6 @@ groups:
         taking too long to complete.  Check that there are no problems with the
         disk on the master node, and that disk I/O throughput is not becoming a
         bottleneck.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
 # Platform Cluster API server alerts.
