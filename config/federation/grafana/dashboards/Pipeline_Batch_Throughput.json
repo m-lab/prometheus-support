@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1556571006560,
+  "iteration": 1556573891717,
   "links": [
     {
       "icon": "external link",
@@ -186,11 +186,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(state)(etl_worker_state{service=\"etl-batch-parser\"})",
+          "expr": "sum by(state, table)(etl_worker_state{service=\"etl-batch-parser\"})",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{state}}",
+          "legendFormat": "{{state}} {{table}}",
           "refId": "A",
           "step": 60
         }
@@ -471,21 +471,21 @@
       "seriesOverrides": [
         {
           "alias": "Average ndt",
-          "color": "#6ed0e0",
+          "color": "#052b51",
           "fill": 0,
-          "linewidth": 2
+          "linewidth": 3
         },
         {
           "alias": "Average sidestream",
-          "color": "#d683ce",
+          "color": "#2f575e",
           "fill": 0,
-          "linewidth": 2
+          "linewidth": 3
         },
         {
           "alias": "Average switch",
           "color": "#bf1b00",
           "fill": 0,
-          "linewidth": 2
+          "linewidth": 3
         }
       ],
       "spaceLength": 10,
@@ -493,7 +493,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "etl_worker_count{service=\"etl-batch-parser\"}",
+          "expr": "sum(etl_worker_count{service=\"etl-batch-parser\"}) by (instance)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
@@ -1069,7 +1069,7 @@
       }
     }
   ],
-  "refresh": "5m",
+  "refresh": "1m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -1209,5 +1209,5 @@
   "timezone": "browser",
   "title": "Pipeline: Batch Throughput",
   "uid": "000000032",
-  "version": 71
+  "version": 74
 }
