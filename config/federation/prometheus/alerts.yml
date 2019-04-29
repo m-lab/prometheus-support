@@ -1010,3 +1010,98 @@ groups:
         /cache/data/*`.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
+# PlatformCluster Etcd alerts.
+# Mostly gleaned from:
+# https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/etcd3_alert.rules.yml
+
+  - alert: PlatformCluster_EtcdHasNoLeader
+    expr: etcd_server_has_leader == 0
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: At least one etcd cluster member has no leader.
+      description: An etcd cluster member is reporting that it has no leader.
+        This should never happen. Find out which master server is hosting the
+        ectd instance(s) and make sure that node is healthy and has network
+        connectivity to the other masters.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/milv1PgZz/k8s-etcd-overview
+
+  - alert: PlatformCluster_EtcdTooManyLeaderChanges
+    expr: rate(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}[30m]) > 3
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Too many leader changes in the etcd cluster.
+      description: etcd cluster members are changing leaders too frequently.
+        Leader changes are normal (e.g., a master node is rebooted), but they
+        should not happen too often. Look into networking, resource or other
+        issues on the master nodes.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+
+  - alert: PlatformCluster_EtcdTooManyProposalFailures
+    expr: rate(etcd_server_proposals_failed_total[30m]) > 5
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Too many raft protocol proposal failures in the etcd cluster.
+      description: There are too many raft protocol proposal failures happening
+        in the etcd cluster. These type of errors are normally related to two
+        issues - temporary failures related to a leader election or longer
+        downtime caused by a loss of quorum in the cluster.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/milv1PgZz/k8s-etcd-overview
+
+  - alert: PlatformCluster_EtcdMemberCommunicationTooSlow
+    expr: |
+      histogram_quantile(0.99,
+        rate(etcd_network_peer_round_trip_time_seconds_bucket{job=~".*etcd.*"}[30m])
+      ) > 0.15
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Network communication between etcd cluster members is too slow.
+      description: The members of the etcd cluster are on different master
+        nodes, and each node is in a different power zone. Communication
+        between the members is taking too long. Make sure that the VPC network
+        is working as intended, and that it isn't overloaded.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/milv1PgZz/k8s-etcd-overview
+
+  - alert: PlatformCluster_EtcdWalFsyncsTooSlow
+    expr: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket[30m])) > 0.5
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: etcd write-ahead-log fsync operations are taking too long.
+      description: etcd uses a WAL (Write Ahead Log), and fsync operations to
+        it are taking too long. Check that there are no problems with the disk
+        on the master node, and that disk I/O throughput is not becoming a
+        bottleneck.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+
+  - alert: PlatformCluster_EtcdBackedCommitsTooSlow
+    expr: |
+      histogram_quantile(0.99,
+        rate(etcd_disk_backend_commit_duration_seconds_bucket{job=~".*etcd.*"}[30m])
+      ) > 0.25
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: etcd backend commits are taking too long to complete.
+      description: etcd writes incremental snapshots to disk. These writes are
+        taking too long to complete.  Check that there are no problems with the
+        disk on the master node, and that disk I/O throughput is not becoming a
+        bottleneck.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+
+# Platform Cluster API server alerts.

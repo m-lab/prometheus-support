@@ -308,6 +308,12 @@ scrape_configs:
         - 'node_filesystem_size_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
         - 'node_filesystem_free_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
         - 'kube_node_spec_taint{key="lame-duck"}'
+        - 'etcd_server_has_leader'
+        - 'etcd_server_leader_changes_seen_total'
+        - 'etcd_server_proposals_failed_total'
+        - 'etcd_network_peer_round_trip_time_seconds_bucket'
+        - 'etcd_disk_wal_fsync_duration_seconds_bucket'
+        - 'etcd_disk_backend_commit_duration_seconds_bucket'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
         labels:
