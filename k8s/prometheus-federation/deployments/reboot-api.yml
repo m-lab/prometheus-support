@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reboot-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      workload: reboot-api
+  template:
+    metadata:
+      labels:
+        workload: reboot-api
+    spec:
+      containers:
+      - name: reboot-api
+        image: measurementlab/reboot-api:latest
+        args:
+          - "-datastore.project={{GCLOUD_PROJECT}}"
+          - "-reboot.key=/var/secrets/reboot-api-ssh.key"
+        env:
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /var/secrets/reboot-api-credentials.json
+        volumeMounts:
+          - name: credentials
+            mountPath: /var/secrets/
+        resources:
+          limits:
+            cpu: 200m
+            memory: 50Mi
+          requests:
+            cpu: 200m
+            memory: 50Mi
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      volumes:
+        # Google credentials to connect to Datastore and the SSH key to log
+        # into the nodes are provided through a single Kubernetes secret.
+        - name: credentials
+          secret:
+            secretName: reboot-api-credentials
