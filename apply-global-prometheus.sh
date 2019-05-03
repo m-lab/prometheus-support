@@ -238,7 +238,7 @@ popd
 
 ## Reboot API
 # HTTP Basic auth credentials.
-export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_USER_${PROJECT/-/_}
+export REBOOTAPI_BASIC_AUTH=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
 # JSON credentials for the reboot-api service account.
 export REBOOTAPI_SERVICE_ACCOUNT=REBOOTAPI_SERVICE_ACCOUNT_${PROJECT/-/_}
@@ -256,7 +256,7 @@ kubectl create secret generic reboot-api-credentials\
     --dry-run -o json | kubectl apply -f -
 
 # Replace variables in reboot-api.yml.
-sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH_USER}'|g' \
+sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH}'|g' \
     -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
     k8s/prometheus-federation/deployments/reboot-api.yml
 
