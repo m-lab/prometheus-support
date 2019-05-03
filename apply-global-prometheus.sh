@@ -236,6 +236,12 @@ pushd config/federation/vms
       done
 popd
 
+# Evaluate the Reboot API deployment template.
+export REBOOTAPI_TLS_HOST=REBOOTAPI_TLS_HOST_${PROJECT/-/_}
+sed -i -e 's|{{REBOOTAPI_TLS_HOST}}|'${!REBOOTAPI_TLS_HOST}'|g' \
+    -e 's|{{REBOOTAPI_USER}}|'${REBOOTAPI_BASIC_AUTH_USER}'|g' \
+    -e 's|{{REBOOTAPI_PASS}}|'${REBOOTAPI_BASIC_AUTH_PASS}'|g' \
+    k8s/prometheus-federation/deployments/reboot-api.yml
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
