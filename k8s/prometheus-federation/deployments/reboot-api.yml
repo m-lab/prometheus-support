@@ -21,19 +21,20 @@ spec:
           - "-auth.username={{REBOOTAPI_USER}}"
           - "-auth.password={{REBOOTAPI_PASS}}"
           - "-tls.host={{REBOOTAPI_TLS_HOST}}"
-        env:
-          - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: /var/secrets/reboot-api-credentials.json
+        # On GKE this should work without using any service account.
+        #env:
+        #  - name: GOOGLE_APPLICATION_CREDENTIALS
+        #    value: /var/secrets/reboot-api-credentials.json
         volumeMounts:
           - name: credentials
             mountPath: /var/secrets/
         resources:
           limits:
             cpu: 200m
-            memory: 100Mi
+            memory: 50Mi
           requests:
             cpu: 200m
-            memory: 100Mi
+            memory: 50Mi
       volumes:
         # Google credentials to connect to Datastore and the SSH key to log
         # into the nodes are provided through a single Kubernetes secret.
