@@ -240,19 +240,14 @@ popd
 # HTTP Basic auth credentials.
 export REBOOTAPI_BASIC_AUTH=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
-# JSON credentials for the reboot-api service account.
-export REBOOTAPI_SERVICE_ACCOUNT=REBOOTAPI_SERVICE_ACCOUNT_${PROJECT/-/_}
 
 # Create credentials as Kubernetes secrets.
 ### Write keys to a file to prevent printing key in travis logs.
 ( set +x; echo "${REBOOTAPI_COREOS_SSH_KEY}" | base64 -d \
   > /tmp/reboot-api-ssh.key )
-( set +x; echo "${!REBOOTAPI_SERVICE_ACCOUNT}" | base64 -d \
-  > /tmp/reboot-api-credentials.json )
 
 kubectl create secret generic reboot-api-credentials\
     "--from-file=/tmp/reboot-api-ssh.key" \
-    "--from-file=/tmp/reboot-api-credentials.json" \
     --dry-run -o json | kubectl apply -f -
 
 # Replace variables in reboot-api.yml.
