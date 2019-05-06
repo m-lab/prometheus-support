@@ -31,8 +31,7 @@ spec:
             cpu: 200m
             memory: 50Mi
       volumes:
-        # Google credentials to connect to Datastore and the SSH key to log
-        # into the nodes are provided through a single Kubernetes secret.
+        # SSH key to log into CoreOS nodes is provided as a Kubernetes secret.
         - name: credentials
           secret:
             secretName: reboot-api-credentials
