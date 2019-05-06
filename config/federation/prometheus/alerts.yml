@@ -762,6 +762,7 @@ groups:
   - alert: NDT_AnnotationRatioTooLow
     expr: |
       bq_ndt_annotation_success / bq_ndt_annotation_total < 0.98
+        or absent(bq_ndt_annotation_success) or absent(bq_ndt_annotation_total)
         or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
     for: 30m
     labels:
@@ -775,7 +776,7 @@ groups:
 # Gardener_ParseTimeDifferenceTooOld fires when the maximum and minimum
 # parse_time values for each data set are greater than 80 days.
   - alert: Gardener_ParseTimeDifferenceTooOld
-    expr: bq_gardener_parse_time_difference_days > 80
+    expr: absent(bq_gardener_parse_time_difference_days) or bq_gardener_parse_time_difference_days > 80
     for: 10m
     labels:
       repo: dev-tracker
