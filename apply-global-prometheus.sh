@@ -236,6 +236,24 @@ pushd config/federation/vms
       done
 popd
 
+## Reboot API
+# HTTP Basic auth credentials.
+export REBOOTAPI_BASIC_AUTH=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
+export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
+
+# Create credentials as Kubernetes secrets.
+### Write keys to a file to prevent printing key in travis logs.
+( set +x; echo "${REBOOTAPI_COREOS_SSH_KEY}" | base64 -d \
+  > /tmp/reboot-api-ssh.key )
+
+kubectl create secret generic reboot-api-credentials\
+    "--from-file=/tmp/reboot-api-ssh.key" \
+    --dry-run -o json | kubectl apply -f -
+
+# Replace variables in reboot-api.yml.
+sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH}'|g' \
+    -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
+    k8s/prometheus-federation/deployments/reboot-api.yml
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reboot-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: reboot-api
+  template:
+    metadata:
+      labels:
+        run: reboot-api
+    spec:
+      containers:
+      - name: reboot-api
+        image: measurementlab/reboot-api:v0.1.0
+        args:
+          - "-datastore.project={{GCLOUD_PROJECT}}"
+          - "-reboot.key=/var/secrets/reboot-api-ssh.key"
+          - "-auth.username={{REBOOTAPI_USER}}"
+          - "-auth.password={{REBOOTAPI_PASS}}"
+        volumeMounts:
+          - name: credentials
+            mountPath: /var/secrets/
+        resources:
+          limits:
+            cpu: 200m
+            memory: 50Mi
+          requests:
+            cpu: 200m
+            memory: 50Mi
+      volumes:
+        # SSH key to log into CoreOS nodes is provided as a Kubernetes secret.
+        - name: credentials
+          secret:
+            secretName: reboot-api-credentials
