@@ -759,11 +759,10 @@ groups:
 # NDT_AnnotationRatioTooLow fires when the client annotations on NDT
 # tests appears to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
-  - alert: NDT_AnnotationRatioTooLow
+  - alert: NDT_AnnotationRatioTooLowOrMissing
     expr: |
       bq_ndt_annotation_success / bq_ndt_annotation_total < 0.98
-        or absent(bq_ndt_annotation_success) or absent(bq_ndt_annotation_total)
-          or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
+        or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
@@ -774,11 +773,12 @@ groups:
         deployments. The daily and batch parsers may also be affected.
 
 # Gardener_ParseTimeDifferenceTooOld fires when the maximum and minimum
-# parse_time values for each data set are greater than 80 days.
-  - alert: Gardener_ParseTimeDifferenceTooOld
+# parse_time values for each data set are greater than 80 days or the
+# bq_gardener_parse_time_difference_days metrics disappear.
+  - alert: Gardener_ParseTimeDifferenceTooOldOrMissing
     expr: |
-      absent(bq_gardener_parse_time_difference_days)
-        or bq_gardener_parse_time_difference_days > 80
+      bq_gardener_parse_time_difference_days > 80
+        or absent(bq_gardener_parse_time_difference_days)
     for: 10m
     labels:
       repo: dev-tracker
