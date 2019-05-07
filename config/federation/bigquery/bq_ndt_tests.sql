@@ -43,11 +43,11 @@ FROM (
       connection_spec.server_hostname AS machine,
       ROW_NUMBER() OVER (PARTITION BY test_id) row_number
     FROM
-      `measurement-lab.base_tables.ndt`
+      `measurement-lab.ndt.web100`
     WHERE
       -- Restrict queries to tests in the range 2d <= log_time < today()
-          _PARTITIONTIME >= TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY))
-      AND _PARTITIONTIME <  TIMESTAMP(CURRENT_DATE())
+          partition_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+      AND partition_date <  CURRENT_DATE()
       -- Further restrict queries to a 3x refresh rate window on both sides of the interval of interest.
       AND log_time >= TIMESTAMP_SUB(timestampAlign(CURRENT_TIMESTAMP(), REFRESH_RATE_SEC, -3 * REFRESH_RATE_SEC), INTERVAL 36 HOUR)
       AND log_time <  TIMESTAMP_SUB(timestampAlign(CURRENT_TIMESTAMP(), REFRESH_RATE_SEC,  4 * REFRESH_RATE_SEC), INTERVAL 36 HOUR)
