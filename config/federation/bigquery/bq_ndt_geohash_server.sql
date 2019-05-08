@@ -87,13 +87,13 @@ FROM
     REGEXP_EXTRACT(connection_spec.server_hostname, r"mlab[1-4].([a-z]{3}[0-9]{2}).*") as site,
     COUNT(*) AS value_tests
   FROM
-    `measurement-lab.base_tables.ndt`
+    `measurement-lab.ndt.web100`
   WHERE
-        -- For faster queries we use _PARTITIONTIME boundaries. And, to
-        -- guarantee the _PARTITIONTIME data is "complete" (all data collected
+        -- For faster queries we use `partition_date` boundaries. And, to
+        -- guarantee the partition_date data is "complete" (all data collected
         -- and parsed) we should wait 36 hours after start of a given day.
         -- The following is equivalent to the pseudo code: date(now() - 12h) - 1d
-    _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
+    partition_date = DATE(TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR))
     -- Basic test quality filters for safe division.
     AND web100_log_entry.snap.Duration > 0
     AND (web100_log_entry.snap.SndLimTimeRwin + web100_log_entry.snap.SndLimTimeCwnd + web100_log_entry.snap.SndLimTimeSnd) > 0
@@ -114,11 +114,11 @@ FROM
   FROM
     `measurement-lab.base_tables.ndt`
   WHERE
-    -- For faster queries we use _PARTITIONTIME boundaries. And, to
-    -- guarantee the _PARTITIONTIME data is "complete" (all data collected
+    -- For faster queries we use `partition_date` boundaries. And, to
+    -- guarantee the partition_date data is "complete" (all data collected
     -- and parsed) we should wait 36 hours after start of a given day.
     -- The following is equivalent to the pseudo code: date(now() - 12h) - 1d
-    _PARTITIONTIME = TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR)
+    partition_date = DATE(TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR))
   GROUP BY
     metro
   HAVING
