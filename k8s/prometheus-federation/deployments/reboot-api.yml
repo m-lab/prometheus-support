@@ -11,6 +11,8 @@ spec:
     metadata:
       labels:
         run: reboot-api
+      annotations:
+        prometheus.io/scrape: 'true'
     spec:
       containers:
       - name: reboot-api
@@ -30,6 +32,8 @@ spec:
           requests:
             cpu: 200m
             memory: 50Mi
+        ports:
+          - containerPort: 9990
       volumes:
         # SSH key to log into CoreOS nodes is provided as a Kubernetes secret.
         - name: credentials
