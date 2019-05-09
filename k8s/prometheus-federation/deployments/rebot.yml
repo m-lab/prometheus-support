@@ -17,11 +17,12 @@ spec:
       containers:
       - name: rebot
         image: measurementlab/rebot:v0.1.0
+        imagePullPolicy: Always
         args:
           - "-project={{GCLOUD_PROJECT}}"
           - "-reboot.username={{REBOOTAPI_USER}}"
           - "-reboot.password={{REBOOTAPI_PASS}}"
-          - "-reboot.addr=reboot.{{GCLOUD_PROJECT}}.measurementlab.net"
+          - "-reboot.addr=https://reboot.{{GCLOUD_PROJECT}}.measurementlab.net"
           - "-prometheus.username={{PROM_AUTH_USER}}"
           - "-prometheus.password={{PROM_AUTH_PASS}}"
         resources:
