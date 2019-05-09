@@ -3,13 +3,13 @@
 -- per day.
 --
 -- This query exports two values:
---   bq_ndt_geo_annotation_success -- number of successfully geo annotated NDT tests.
---   bq_ndt_asn_annotation_success -- number of successfully asn annotated NDT tests.
+--   bq_ndt_annotation_geo_success -- number of successfully geo annotated NDT tests.
+--   bq_ndt_annotation_asn_success -- number of successfully asn annotated NDT tests.
 --   bq_ndt_annotation_total -- total number of tests checked for annotations.
 
 SELECT
-  COUNTIF(latitude IS NOT NULL AND longitude IS NOT NULL) AS geo_annotation_success,
-  COUNTIF(asn IS NOT NULL) AS asn_annotation_success,
+  COUNTIF(latitude IS NOT NULL AND longitude IS NOT NULL) AS value_geo_success,
+  COUNTIF(asn IS NOT NULL) AS value_asn_success,
   COUNT(*) AS value_total
 
 FROM (
