@@ -238,7 +238,7 @@ popd
 
 ## Reboot API
 # HTTP Basic auth credentials.
-export REBOOTAPI_BASIC_AUTH=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
+export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
 
 # Create credentials as Kubernetes secrets.
@@ -251,13 +251,13 @@ kubectl create secret generic reboot-api-credentials\
     --dry-run -o json | kubectl apply -f -
 
 # Replace variables in reboot-api.yml.
-sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH}'|g' \
+sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH_USER}'|g' \
     -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
     k8s/prometheus-federation/deployments/reboot-api.yml
 
 ## Rebot
 # Replace variables in rebot.yml.
-sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH}'|g' \
+sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH_USER}'|g' \
     -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
     -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
     -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
