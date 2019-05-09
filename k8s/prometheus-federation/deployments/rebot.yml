@@ -22,9 +22,6 @@ spec:
           - "-reboot.addr=reboot.{{GCLOUD_PROJECT}}.measurementlab.net"
           - "-prometheus.username={{PROM_AUTH_USER}}"
           - "-prometheus.password={{PROM_AUTH_PASS}}"
-        volumeMounts:
-          - name: credentials
-            mountPath: /var/secrets/
         resources:
           limits:
             cpu: 200m
@@ -32,8 +29,3 @@ spec:
           requests:
             cpu: 200m
             memory: 50Mi
-      volumes:
-        # SSH key to log into CoreOS nodes is provided as a Kubernetes secret.
-        - name: credentials
-          secret:
-            secretName: reboot-api-credentials
