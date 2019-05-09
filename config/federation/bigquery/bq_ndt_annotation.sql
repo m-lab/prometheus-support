@@ -7,13 +7,15 @@
 --   bq_ndt_annotation_total -- total number of tests checked for annotations.
 
 SELECT
-  COUNTIF(latitude IS NOT NULL AND longitude IS NOT NULL) AS value_success,
+  COUNTIF(latitude IS NOT NULL AND longitude IS NOT NULL) AS geo_annotation_success,
+  COUNTIF(asn IS NOT NULL) AS asn_annotation_success,
   COUNT(*) AS value_total
 
 FROM (
   SELECT
     connection_spec.client_geolocation.latitude as latitude,
-    connection_spec.client_geolocation.longitude as longitude
+    connection_spec.client_geolocation.longitude as longitude,
+    connection_spec.client.network.asn as asn
 
   FROM
     `measurement-lab.ndt.web100`
