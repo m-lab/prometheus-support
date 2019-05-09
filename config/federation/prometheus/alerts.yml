@@ -808,7 +808,7 @@ groups:
 # Rebot_MissingMetrics fires when no metrics can be collected for rebot for
 # the past 10 minutes.
   - alert: Rebot_MissingMetrics
-    expr: absent(up{job='rebot'})
+    expr: absent(up{run='rebot'})
     for: 10m
     labels:
       repo: ops-tracker
