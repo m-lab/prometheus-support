@@ -35,5 +35,6 @@ FROM (
     web100_log_entry.connection_spec.remote_port,
     connection_spec.client_geolocation.latitude,
     connection_spec.client_geolocation.longitude,
-    web100_log_entry.connection_spec.local_port
+    web100_log_entry.connection_spec.local_port,
+    connection_spec.client.network.asn
 )
