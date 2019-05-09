@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rebot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: rebot
+  template:
+    metadata:
+      labels:
+        run: rebot
+    spec:
+      containers:
+      - name: rebot
+        image: measurementlab/rebot:latest
+        args:
+          - "-project={{GCLOUD_PROJECT}}"
+          - "-reboot.key=/var/secrets/reboot-api-ssh.key"
+          - "-reboot.username={{REBOOTAPI_USER}}"
+          - "-reboot.password={{REBOOTAPI_PASS}}"
+          - "-reboot.addr=reboot.{{GCLOUD_PROJECT}}.measurementlab.net"
+          - "-prometheus.username={{PROM_AUTH_USER}}"
+          - "-prometheus.password={{PROM_AUTH_PASS}}"
+        volumeMounts:
+          - name: credentials
+            mountPath: /var/secrets/
+        resources:
+          limits:
+            cpu: 200m
+            memory: 50Mi
+          requests:
+            cpu: 200m
+            memory: 50Mi
+      volumes:
+        # SSH key to log into CoreOS nodes is provided as a Kubernetes secret.
+        - name: credentials
+          secret:
+            secretName: reboot-api-credentials

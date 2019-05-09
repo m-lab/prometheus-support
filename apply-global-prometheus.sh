@@ -255,6 +255,14 @@ sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH}'|g' \
     -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
     k8s/prometheus-federation/deployments/reboot-api.yml
 
+## Rebot
+# Replace variables in rebot.yml.
+sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH}'|g' \
+    -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
+    -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+    -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
+    k8s/prometheus-federation/deployments/rebot.yml
+
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
   echo "No template variables found for k8s/${CLUSTER}/${PROJECT}.yml"
