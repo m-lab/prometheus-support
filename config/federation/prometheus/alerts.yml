@@ -756,19 +756,35 @@ groups:
       description: The annotator runs in AppEngine. Check logs and recent
         deployments. The daily and batch parsers may also be affected.
 
-# NDT_AnnotationRatioTooLowOrMissing fires when the client annotations on NDT
+# NDT_AsnAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
 # tests appears to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
-  - alert: NDT_AnnotationRatioTooLowOrMissing
+  - alert: NDT_AsnAnnotationRatioTooLowOrMissing
     expr: |
-      bq_ndt_annotation_success / bq_ndt_annotation_total < 0.98
-        or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
+      bq_ndt_annotation_asn_success / bq_ndt_annotation_total < 0.98
+        or absent(bq_ndt_annotation_asn_success / bq_ndt_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
-      summary: Too many NDT tests are missing annotations!
+      summary: Too many NDT tests are missing asn annotations!
+      description: The annotator runs in AppEngine. Check logs and recent
+        deployments. The daily and batch parsers may also be affected.
+
+# NDT_GeoAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
+# tests appears to have too many failures or the bq_ndt_annotation_* metrics
+# disappear.
+  - alert: NDT_GeoAnnotationRatioTooLowOrMissing
+    expr: |
+      bq_ndt_annotation_geo_success / bq_ndt_annotation_total < 0.98
+        or absent(bq_ndt_annotation_geo_success / bq_ndt_annotation_total)
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: Too many NDT tests are missing geolocation annotations!
       description: The annotator runs in AppEngine. Check logs and recent
         deployments. The daily and batch parsers may also be affected.
 
