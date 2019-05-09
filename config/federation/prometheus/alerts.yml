@@ -761,8 +761,8 @@ groups:
 # disappear.
   - alert: NDT_AsnAnnotationRatioTooLowOrMissing
     expr: |
-      bq_ndt_asn_annotation_success / bq_ndt_annotation_total < 0.98
-        or absent(bq_asn_geo_annotation_success / bq_ndt_annotation_total)
+      bq_ndt_annotation_asn_success / bq_ndt_annotation_total < 0.98
+        or absent(bq_ndt_annotation_asn_success / bq_ndt_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
@@ -777,8 +777,8 @@ groups:
 # disappear.
   - alert: NDT_GeoAnnotationRatioTooLowOrMissing
     expr: |
-      bq_ndt_geo_annotation_success / bq_ndt_annotation_total < 0.98
-        or absent(bq_ndt_geo_annotation_success / bq_ndt_annotation_total)
+      bq_ndt_annotation_geo_success / bq_ndt_annotation_total < 0.98
+        or absent(bq_ndt_annotation_geo_success / bq_ndt_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
