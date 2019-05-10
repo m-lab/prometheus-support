@@ -549,20 +549,20 @@ groups:
         /etc/cron.d/prom_vdlimit_metrics.cron.
       dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
 
-# NPAD_VdlimitTooMuchUsedDisk checks whether the disk usage for the NPAD vserver
-# is higher than 9GB (90%, as NPAD is set up with a 10GB disk).
-  - alert: NPAD_VdlimitTooMuchUsedDisk
-    expr: vdlimit_used{experiment="npad.iupui"} > 9*1024*1024
+# VdlimitTooMuchUsedDisk checks if the disk usage for a vserver is higher
+# than 80% of the allowed quota.
+  - alert: VdlimitTooMuchUsedDisk
+    expr: vdlimit_used / vdlimit_total > 0.8
     for: 30m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: NPAD disk usage is much higher than normal.
-      description: Check /var/spool/iupui_npad/ on the node to see if data is
+      summary: A vserver disk usage is much higher than normal.
+      description: Check /var/spool/<vserver>/ on the node to see if data is
         being collected. If not, then check the health of scraper for this node
         and slice. If so, then check or other sources of disk usage, like
-        /var/logs and /home/iupui_npad/VAR/logs/paris-traceroute.log.
+        /var/logs and /home/<vserver>.
 
 # A collectd-mlab service has a problem and is down.
   - alert: CoreServices_CollectdMlabDown
