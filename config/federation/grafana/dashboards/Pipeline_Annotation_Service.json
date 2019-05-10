@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 237,
-  "iteration": 1551289906914,
+  "iteration": 1557431064620,
   "links": [],
   "panels": [
     {
@@ -972,6 +971,96 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 15
+      },
+      "id": 33,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum (rate(annotator_Annotation_Response_Missing_Annotation_total[10m])) by (version, type) / sum(rate(annotator_Annotation_Lookups_total[10m])) by (version)",
+          "format": "time_series",
+          "hide": true,
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "",
+          "metric": "downloader_Download_Failed",
+          "refId": "A",
+          "step": 30
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Annotation Missing Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
       "description": "Average GC duration (msec, left) and fraction of CPU spent on GC (%, right).",
       "editable": false,
       "error": false,
@@ -980,7 +1069,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 15
+        "y": 21
       },
       "id": 32,
       "isNew": false,
@@ -1294,7 +1383,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 22
+        "y": 28
       },
       "id": 10,
       "legend": {
@@ -1387,7 +1476,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 34
       },
       "id": 31,
       "mode": "markdown",
@@ -1406,7 +1495,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 29
+        "y": 35
       },
       "id": 9,
       "legend": {
@@ -1496,7 +1585,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 29
+        "y": 35
       },
       "id": 11,
       "legend": {
@@ -1585,7 +1674,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 29
+        "y": 35
       },
       "id": 24,
       "legend": {
@@ -1673,7 +1762,6 @@
         "auto_count": 30,
         "auto_min": "10s",
         "current": {
-          "selected": true,
           "text": "10m",
           "value": "10m"
         },
@@ -1735,7 +1823,6 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
           "text": "All",
           "value": "$__all"
         },
@@ -1786,9 +1873,9 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "tags": [],
+          "text": "Prometheus (mlab-staging)",
+          "value": "Prometheus (mlab-staging)"
         },
         "hide": 0,
         "label": null,
@@ -1803,7 +1890,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -1834,5 +1921,5 @@
   "timezone": "utc",
   "title": "Pipeline: Annotation Service",
   "uid": "000000020",
-  "version": 61
+  "version": 34
 }
