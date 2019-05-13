@@ -39,3 +39,14 @@ spec:
         - name: credentials
           secret:
             secretName: reboot-api-credentials
+      # The Reboot API will only be scheduled onto nodes that we labeled
+      # as having a static outbound IP.
+      nodeSelector:
+        outbound-ip: static
+      # We can also taint nodes with static outbound IPs so that services that
+      # do not require a static IP aren't scheduled to that node. This
+      # deployment, however, will tolerate that taint.
+      tolerations:
+      - key: "outbound-ip"
+        value: "static"
+        effect: "NoSchedule"
