@@ -43,6 +43,8 @@ spec:
         - -source=gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
         - -output=/config
         - -period=5m
+        ports:
+        - containerPort: 9990
         resources:
           requests:
             memory: "150Mi"
