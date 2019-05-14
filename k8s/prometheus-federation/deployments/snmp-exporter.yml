@@ -20,8 +20,8 @@ spec:
       - name: gcs-downloader-once
         image: measurementlab/gcs-downloader:v0.1
         args:
-        - -source gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
-        - -output /config/snmp.yml
+        - -source=gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
+        - -output=/config/snmp.yml
         - -once
         volumeMounts:
         - mountPath: /config
@@ -38,9 +38,9 @@ spec:
       - name: gcs-downloader
         image: measurementlab/gcs-downloader:v0.1
         args:
-        - -source gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
-        - -output /config/snmp.yml
-        - -period 5
+        - -source=gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
+        - -output=/config/snmp.yml
+        - -period=5
         resources:
           requests:
             memory: "150Mi"
