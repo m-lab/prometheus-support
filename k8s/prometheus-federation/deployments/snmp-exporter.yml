@@ -15,6 +15,16 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - snmp-exporter
+            topologyKey: kubernetes.io/hostname
       # Do an early fetch of the configuration so that snmp-exporter will start
       initContainers:
       - name: gcs-downloader-once
