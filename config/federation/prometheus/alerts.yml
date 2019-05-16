@@ -988,6 +988,40 @@ groups:
         pod is scheduled on. Check the status of the pod itself, if it exists.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
+  # The desired number of pods for a DaemonSet are not equal to the current
+  # number scheduled.
+  - alert: PlatformCluster_DaemonSetHasTooFewPods
+    expr: |
+      kube_daemonset_status_desired_number_scheduled{cluster="platform-cluster"} !=
+        kube_daemonset_status_current_number_scheduled{cluster="platform-cluster"}
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: DaemonSet {{ $labels.daemonset }} has fewer pods scheduled than desired.
+      description: DaemonSet {{ $labels.daemonset }} has fewer pods scheduled than desired.
+        Check the status of the DaemonSet for clues with
+        `kubectl describe daemonset {{ $labels.daemonset }}`
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  # The desired number of replicas for a Deployment are not equal to the
+  # current number scheduled.
+  - alert: PlatformCluster_DeploymentHasTooFewReplicas
+    expr: |
+      kube_deployment_spec_replicas{cluster="platform-cluster"} !=
+        kube_deployment_status_replicas{cluster="platform-cluster"}
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Deployment {{ $labels.exported_deployment }} has less replicas than desired.
+      description: Deployment {{ $labels.exported_deployment }} has less replicas than desired.
+        Check the status of the deployment for clues with
+        `kubectl describe deployment {{ $labels.exported_deployment }}`
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
   # The /cache/data mount point on a node has exceeded 95% of its capacity.
   # This is where all pods write all experiment and core service data (shared
   # pool of space). If this mount point fills up, all experiments and core
