@@ -903,40 +903,7 @@ groups:
         using - `kubectl get pods`. Check pod logs.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
-  - alert: PlatformCluster_NodeExporterMissing
-    expr: absent(up{deployment="node-exporter", cluster="platform-cluster"})
-    for: 5m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: The node_exporter DaemonSet is missing or has no metrics.
-      description: The node_exporter DaemonSet is missing or has no metrics.
-        Verify that the DaemonSet is healthy (`kubectl describe ds
-        node-exporter`).
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
-
-  # If a node_exporter pod is down or otherwise broken, fire an alert, unless
-  # the node is in lame-duck mode, GMX maintenance mode, or the scrape job for
-  # the entire node is down.
-  - alert: PlatformCluster_NodeExporterDown
-    expr: |
-      up{deployment="node-exporter", cluster="platform-cluster"} == 0 unless on(machine) (
-          lame_duck_node == 1 or
-          gmx_machine_maintenance == 1 or
-          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
-        )
-    for: 1h
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: At least one node has a broken or no node_exporter pod.
-      description: At least one node has a broken or no node_exporter pod.
-        Verify that the DaemonSet is healthy. Check the status of the node that
-        the pod is supposed to be running on. Check the status of the pod
-        itself, if it exists.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+# Check for missing workloads.
 
   - alert: PlatformCluster_CadvisorMissing
     expr: absent(up{deployment="cadvisor", cluster="platform-cluster"})
@@ -948,29 +915,19 @@ groups:
       summary: The CAdvisor DaemonSet is missing or has no metrics.
       description: The CAdvisor DaemonSet is missing or has no metrics. Verify that
         the DaemonSet is healthy (`kubectl describe ds cadvisor`).
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
-  # If a CAdvisor pod is down or otherwise broken, fire an alert, unless the
-  # node is in lame-duck mode, GMX maintenance mode, or the scrape job for the
-  # entire node is down.
-  - alert: PlatformCluster_CadvisorDown
-    expr: |
-      up{deployment="cadvisor", cluster="platform-cluster"} == 0 unless on(machine) (
-          lame_duck_node == 1 or
-          gmx_machine_maintenance == 1 or
-          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
-        )
-    for: 1h
+  - alert: PlatformCluster_FluentdMissing
+    expr: absent(up{deployment="fluentd", cluster="platform-cluster"})
+    for: 5m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: At least one node has a broken or no CAdvisor pod.
-      description: At least one node has a broken or no CAdvisor pod. Verify that
-        the DaemonSet is healthy. Check the status of the node that the pod is
-        supposed to be running on. Check the status of the pod itself, if it
-        exists.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+      summary: The Fluentd DaemonSet is missing or has no metrics.
+      description: The Fluentd DaemonSet is missing or has no metrics. Verify that
+        the DaemonSet is healthy (`kubectl describe ds fluentd`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   - alert: PlatformCluster_NdtMissing
     expr: absent(up{deployment="ndt", cluster="platform-cluster"})
@@ -982,14 +939,40 @@ groups:
       summary: The NDT DaemonSet is missing or has no metrics.
       description: The NDT DaemonSet is missing or has no metrics. Verify that
         the DaemonSet is healthy (`kubectl describe ds ndt`).
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
-  # If a NDT pod is down or otherwise broken, fire an alert, unless the node is
+  - alert: PlatformCluster_NodeExporterMissing
+    expr: absent(up{deployment="node-exporter", cluster="platform-cluster"})
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The node_exporter DaemonSet is missing or has no metrics.
+      description: The node_exporter DaemonSet is missing or has no metrics.
+        Verify that the DaemonSet is healthy (`kubectl describe ds
+        node-exporter`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  - alert: PlatformCluster_NodeinfoMissing
+    expr: absent(up{deployment="nodeinfo", cluster="platform-cluster"})
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The nodeinfo DaemonSet is missing or has no metrics.
+      description: The nodeinfo DaemonSet is missing or has no metrics.
+        Verify that the DaemonSet is healthy (`kubectl describe ds
+        nodeinfo`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  # If any pod is down or otherwise broken, fire an alert, unless the node is
   # in lame-duck mode, GMX maintenance mode, or the scrape job for the entire
   # node is down.
-  - alert: PlatformCluster_NdtDown
+  - alert: PlatformCluster_PodDown
     expr: |
-      up{deployment="ndt", cluster="platform-cluster"} == 0 unless on(machine) (
+      up{deployment=~".+", cluster="platform-cluster"} == 0 unless on(machine) (
           lame_duck_node == 1 or
           gmx_machine_maintenance == 1 or
           up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
@@ -999,16 +982,15 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: At least one node has a broken or no NDT pod.
-      description: At least one node has a broken or no NDT pod. Verify that
-        the DaemonSet is healthy. Check the status of the node that the pod
-        is supposed to be running on. Check the status of the pod itself, if it
-        exists.
+      summary: A {{ $labels.deployment }} pod is down or broken.
+      description: A {{ $labels.deployment }} pod is down or broken. Verify that the
+        DaemonSet or Deployment is healthy. Check the status of the node that the
+        pod is scheduled on. Check the status of the pod itself, if it exists.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
   # The /cache/data mount point on a node has exceeded 95% of its capacity.
   # This is where all pods write all experiment and core service data (shared
-  # pool of space). If this mount point fill up, all experiments and core
+  # pool of space). If this mount point fills up, all experiments and core
   # services will fail in some way.
   - alert: PlatformCluster_DataPartitionTooFull
     expr: |
