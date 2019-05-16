@@ -314,6 +314,10 @@ scrape_configs:
         - 'etcd_network_peer_round_trip_time_seconds_bucket'
         - 'etcd_disk_wal_fsync_duration_seconds_bucket'
         - 'etcd_disk_backend_commit_duration_seconds_bucket'
+        - 'kube_daemonset_status_current_number_scheduled'
+        - 'kube_daemonset_status_desired_number_scheduled'
+        - 'kube_deployment_status_replicas'
+        - 'kube_deployment_spec_replicas'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
         labels:
