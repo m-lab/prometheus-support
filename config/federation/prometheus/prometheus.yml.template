@@ -462,6 +462,11 @@ scrape_configs:
         target_label: __address__
         replacement: blackbox-service.default.svc.cluster.local:9115
 
+    metric_relabel_configs:
+      - source_labels: [machine]
+        regex: mlab[1-4c]\.([a-z]{3}[0-9t]{2}).+
+        target_label: site
+        replacement: $1
 
   # Blackbox configurations for IPv6 probes.
   #
@@ -2623,7 +2628,3 @@ scrape_configs:
         regex: 11
         target_label: index
         replacement: utility.mlab
-      - source_labels: [machine]
-        regex: mlab[1-4c]\.([a-z]{3}[0-9t]{2}).+
-        target_label: site
-        replacement: $1
