@@ -2623,3 +2623,7 @@ scrape_configs:
         regex: 11
         target_label: index
         replacement: utility.mlab
+      - source_labels: [machine]
+        regex: mlab[1-4c]\.([a-z]{3}[0-9t]{2}).+
+        target_label: site
+        replacement: $1
