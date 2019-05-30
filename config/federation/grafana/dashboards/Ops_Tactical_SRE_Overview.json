@@ -1,0 +1,650 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": false,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "This dashboard displays metrics that are useful to be reviewed as part of the Ops Tactical meetings and SRE rotation.",
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 266,
+    "iteration": 1559130930050,
+    "links": [],
+    "panels": [
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "$datasource",
+        "fill": 1,
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "hideTimeOverride": false,
+        "id": 11,
+        "legend": {
+          "avg": false,
+          "current": true,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null",
+        "options": {},
+        "percentage": false,
+        "pointradius": 0.5,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [
+          {
+            "alias": "Active",
+            "color": "#bf1b00"
+          },
+          {
+            "alias": "Suppressed",
+            "color": "#f2c96d"
+          }
+        ],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": true,
+        "targets": [
+          {
+            "expr": "sum(alertmanager_alerts{kubernetes_name=\"alertmanager-tls-service\",state=\"active\"}) by (kubernetes_name)",
+            "format": "time_series",
+            "hide": false,
+            "instant": false,
+            "interval": "",
+            "intervalFactor": 1,
+            "legendFormat": "Active",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(alertmanager_alerts{kubernetes_name=\"alertmanager-tls-service\",state=\"suppressed\"}) by (kubernetes_name)",
+            "format": "time_series",
+            "instant": false,
+            "interval": "",
+            "intervalFactor": 1,
+            "legendFormat": "Suppressed",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Alerts (active + suppressed)",
+        "tooltip": {
+          "shared": false,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": 0,
+            "format": "short",
+            "label": "# of alerts",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": "",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {
+          "b mlab1.lax01.measurement-lab.org": "#E0752D",
+          "b mlab1.lga03.measurement-lab.org": "#1F78C1",
+          "b mlab1.lhr05.measurement-lab.org": "#BF1B00",
+          "inotify - mlab1.lax04.measurement-lab.org": "#7EB26D",
+          "inotify - mlab1.lax05.measurement-lab.org": "#7EB26D",
+          "mlab1.lax01.measurement-lab.org": "#E24D42",
+          "mlab1.lga03.measurement-lab.org": "#DEDAF7",
+          "mlab1.mia02.measurement-lab.org": "#F9D9F9",
+          "mlab1.ord04.measurement-lab.org": "#7EB26D",
+          "switch - ord04": "#F4D598",
+          "switch - peak - lax04": "#EF843C",
+          "switch - peak - lax05": "#EF843C"
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "$datasource",
+        "fill": 0,
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 8,
+        "legend": {
+          "alignAsTable": true,
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "rightSide": true,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null as zero",
+        "options": {},
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [
+          {
+            "alias": "/inotify .*/",
+            "color": "#e24d42",
+            "linewidth": 2
+          },
+          {
+            "alias": "/switch .*/",
+            "color": "#c15c17",
+            "linewidth": 2
+          },
+          {
+            "alias": "/disk i/o .*/",
+            "color": "#f2c96d"
+          },
+          {
+            "alias": "/disk usage .*/",
+            "color": "#bf1b00"
+          }
+        ],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "candidate_site:uplink:90th_quantile_6h{ifAlias=\"uplink\", speed=\"1g\"} / 1e9 > (40 / 100)",
+            "format": "time_series",
+            "hide": false,
+            "interval": "1m",
+            "intervalFactor": 1,
+            "legendFormat": "switch > 40% - {{site}}",
+            "refId": "F",
+            "step": 300
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "6h, 1G sites where 90th Percentile is over 40% Capacity",
+        "tooltip": {
+          "shared": false,
+          "sort": 1,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": null,
+            "format": "percentunit",
+            "label": "% Utilized",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": true
+          },
+          {
+            "decimals": null,
+            "format": "bps",
+            "label": "Switch Rate",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "columns": [
+          {
+            "text": "Current",
+            "value": "current"
+          }
+        ],
+        "description": "Nodes which have been rebooted by Rebot.",
+        "fontSize": "100%",
+        "gridPos": {
+          "h": 9,
+          "w": 6,
+          "x": 0,
+          "y": 9
+        },
+        "id": 14,
+        "links": [],
+        "options": {},
+        "pageSize": null,
+        "scroll": true,
+        "showHeader": true,
+        "sort": {
+          "col": 0,
+          "desc": true
+        },
+        "styles": [
+          {
+            "alias": "Rebooted",
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": null,
+            "mappingType": 1,
+            "pattern": "Current",
+            "preserveFormat": false,
+            "sanitize": false,
+            "type": "date",
+            "unit": "s"
+          },
+          {
+            "alias": "Node",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "decimals": 2,
+            "pattern": "/Metric/",
+            "thresholds": [],
+            "type": "string",
+            "unit": "short"
+          }
+        ],
+        "targets": [
+          {
+            "expr": "(rebot_last_reboot_timestamp{} > time() - 86400) * 1000",
+            "format": "time_series",
+            "instant": false,
+            "intervalFactor": 2,
+            "legendFormat": "{{machine}}",
+            "refId": "A"
+          }
+        ],
+        "timeFrom": null,
+        "title": "Rebooted nodes",
+        "transform": "timeseries_aggregations",
+        "type": "table"
+      },
+      {
+        "columns": [],
+        "datasource": "$datasource",
+        "description": "Sites that are in GMX maintenance.",
+        "fontSize": "100%",
+        "gridPos": {
+          "h": 9,
+          "w": 6,
+          "x": 6,
+          "y": 9
+        },
+        "id": 4,
+        "links": [],
+        "options": {},
+        "pageSize": null,
+        "scroll": true,
+        "showHeader": true,
+        "sort": {
+          "col": 0,
+          "desc": true
+        },
+        "styles": [
+          {
+            "alias": "Time",
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "pattern": "Time",
+            "type": "date"
+          },
+          {
+            "alias": "Site",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "Metric",
+            "thresholds": [],
+            "type": "number",
+            "unit": "short"
+          }
+        ],
+        "targets": [
+          {
+            "expr": "gmx_site_maintenance == 1",
+            "format": "time_series",
+            "instant": true,
+            "intervalFactor": 1,
+            "legendFormat": "{{site}}",
+            "refId": "A"
+          }
+        ],
+        "title": "Sites GMX maintenance",
+        "transform": "timeseries_aggregations",
+        "type": "table"
+      },
+      {
+        "columns": [],
+        "datasource": "$datasource",
+        "description": "Nodes that are in GMX maintenance.",
+        "fontSize": "100%",
+        "gridPos": {
+          "h": 9,
+          "w": 6,
+          "x": 12,
+          "y": 9
+        },
+        "id": 6,
+        "links": [],
+        "options": {},
+        "pageSize": null,
+        "scroll": true,
+        "showHeader": true,
+        "sort": {
+          "col": 0,
+          "desc": false
+        },
+        "styles": [
+          {
+            "alias": "Node",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "Metric",
+            "preserveFormat": false,
+            "sanitize": false,
+            "thresholds": [],
+            "type": "string",
+            "unit": "short"
+          }
+        ],
+        "targets": [
+          {
+            "expr": "label_replace(gmx_machine_maintenance == 1, \"site\", \"$1\", \"machine\", \".+?\\\\.(.+?)\\\\..+\") unless on(site) gmx_site_maintenance == 1",
+            "format": "time_series",
+            "instant": true,
+            "intervalFactor": 1,
+            "legendFormat": "{{machine}}",
+            "refId": "A"
+          }
+        ],
+        "timeFrom": null,
+        "title": "Nodes GMX maintenance",
+        "transform": "timeseries_aggregations",
+        "type": "table"
+      },
+      {
+        "columns": [],
+        "datasource": "$datasource",
+        "description": "Nodes that are currently in lame-duck mode.",
+        "fontSize": "100%",
+        "gridPos": {
+          "h": 9,
+          "w": 6,
+          "x": 18,
+          "y": 9
+        },
+        "id": 9,
+        "links": [],
+        "options": {},
+        "pageSize": null,
+        "scroll": true,
+        "showHeader": true,
+        "sort": {
+          "col": 0,
+          "desc": false
+        },
+        "styles": [
+          {
+            "alias": "Node",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "Metric",
+            "preserveFormat": false,
+            "sanitize": false,
+            "thresholds": [],
+            "type": "string",
+            "unit": "short"
+          }
+        ],
+        "targets": [
+          {
+            "expr": "lame_duck_node == 1 OR kube_node_spec_taint{key=\"lame-duck\"} == 1",
+            "format": "time_series",
+            "instant": true,
+            "intervalFactor": 1,
+            "legendFormat": "{{machine}}",
+            "refId": "A"
+          }
+        ],
+        "timeFrom": null,
+        "title": "Lame-ducked nodes",
+        "transform": "timeseries_aggregations",
+        "type": "table"
+      },
+      {
+        "columns": [],
+        "datasource": "$datasource",
+        "fontSize": "100%",
+        "gridPos": {
+          "h": 9,
+          "w": 24,
+          "x": 0,
+          "y": 18
+        },
+        "id": 13,
+        "links": [],
+        "options": {},
+        "pageSize": null,
+        "scroll": true,
+        "showHeader": true,
+        "sort": {
+          "col": 0,
+          "desc": true
+        },
+        "styles": [
+          {
+            "alias": "Time",
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "pattern": "Time",
+            "type": "date"
+          },
+          {
+            "alias": "Alert",
+            "colorMode": "value",
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "name",
+            "preserveFormat": false,
+            "sanitize": false,
+            "thresholds": [
+              ""
+            ],
+            "type": "string",
+            "unit": "short"
+          },
+          {
+            "alias": "State",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "state",
+            "thresholds": [],
+            "type": "string",
+            "unit": "short"
+          },
+          {
+            "alias": "Count",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "Value",
+            "thresholds": [],
+            "type": "number",
+            "unit": "short"
+          }
+        ],
+        "targets": [
+          {
+            "expr": "sum(githubreceiver_alerts_total) by (alertname, status)",
+            "format": "table",
+            "instant": true,
+            "intervalFactor": 1,
+            "legendFormat": "",
+            "refId": "A"
+          }
+        ],
+        "timeFrom": null,
+        "timeShift": null,
+        "title": "Alerts",
+        "transform": "table",
+        "type": "table"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 18,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "text": "Prometheus (mlab-oti)",
+            "value": "Prometheus (mlab-oti)"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "Data source",
+          "multi": false,
+          "name": "datasource",
+          "options": [],
+          "query": "prometheus",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-7d",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ]
+    },
+    "timezone": "",
+    "title": "Ops: Tactical & SRE Overview",
+    "uid": "_fugwnWZk",
+    "version": 17
+  }
