@@ -954,17 +954,17 @@ groups:
         node-exporter`).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
-  - alert: PlatformCluster_NodeinfoMissing
-    expr: absent(up{deployment="nodeinfo", cluster="platform-cluster"})
+  - alert: PlatformCluster_HostExperimentMissing
+    expr: absent(up{deployment="host", cluster="platform-cluster"})
     for: 5m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: The nodeinfo DaemonSet is missing or has no metrics.
-      description: The nodeinfo DaemonSet is missing or has no metrics.
+      summary: The host DaemonSet is missing or has no metrics.
+      description: The host DaemonSet is missing or has no metrics.
         Verify that the DaemonSet is healthy (`kubectl describe ds
-        nodeinfo`).
+        host`).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   # If any pod is down or otherwise broken, fire an alert, unless the node is
