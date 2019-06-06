@@ -1057,12 +1057,13 @@ groups:
       severity: ticket
     annotations:
       summary: Metrics are missing for etcd.
-      description: Metrics are missing for etcd. Scraping of the platform
-        cluster instance of Prometheus is probably failing. Check to be sure
-        that the platform cluster instance is running. Is there is a TLS
-        certificate error causing scraping to fail, or a network issue? Look at
-        the "Error" column of the targets page on the Prometheus Web interface
-        for clues http://prometheus-platform-cluster.mlab-oti.measurementlab.net:9090/targets#job-kubernetes-etcd
+      description: Metrics are missing for etcd. Scraping of etcd
+        is probably failing, or Prometheus is having trouble scraping the
+        federated platform cluster instance. Check to be sure that the platform
+        cluster instance is running. Is there is a TLS certificate error
+        causing scraping to fail, or a network issue? Look at the "Error"
+        column of the targets page on the Prometheus Web interface for clues
+        http://prometheus-platform-cluster.mlab-oti.measurementlab.net:9090/targets#job-kubernetes-etcd
 
   - alert: PlatformCluster_EtcdHasNoLeader
     expr: etcd_server_has_leader == 0
