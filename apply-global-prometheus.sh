@@ -218,23 +218,6 @@ if [[ -z "${pod}" ]] ; then
   echo "ERROR: failed to identify prometheus-server pod from cluster" >&2
   exit 1
 fi
-# Copy each json config file to the prometheus cluster using the same name.
-pushd config/federation/vms
-  # Update in place with the correct BBE port based on the project.
-  sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
-    blackbox-targets-ipv6/vms_ndt_raw_ipv6.json
-  sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
-    blackbox-targets-ipv6/vms_ndt_ssl_ipv6.json
-
-  # Copy the configs directly to the prometheus pod.
-  ls */*.json | grep vms 2> /dev/null \
-    | while read file ; do
-        echo $file
-        # Exit if the JSON is malformed.
-        python -m json.tool ${file} > /dev/null || exit 1
-        kubectl cp $file ${pod}:/${file} || true
-      done
-popd
 
 ## Reboot API
 # HTTP Basic auth credentials.
