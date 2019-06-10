@@ -60,7 +60,7 @@ iface eth0 inet6 static
 }
 ```
 * Pull the blackbox\_exporter Docker image: `$ docker pull
-  prom/blackbox-exporter:v0.14.0`.
+  prom/blackbox-exporter:v0.12.0`.
 
 * Manually upload [the blackbox\_exporter config
   file](https://github.com/m-lab/prometheus-support/blob/master/config/federation/blackbox/config.yml)
@@ -75,20 +75,20 @@ blackbox-exporter-config-mlab-sandbox.yml
 blackbox-exporter-config-mlab-staging.yml
 blackbox-exporter-config-mlab-oti.yml
 ```
-* Instantiate the Docker containers (as the user mlab). **NOTE**: it is very
-  important to include the `--restart always` flag and argument. Without it, if
-  the machine is rebooted or the container crashes, then it won't start again
-  automatically.
+* Instantiate the Docker containers (as the user mlab, `pwd` must be /home/mlab).
+  **NOTE**: it is very important to include the `--restart always` flag and argument.
+  Without it, if the machine is rebooted or the container crashes, then it won't
+  start again automatically.
 ```
 $ docker run --detach --publish 7115:9115 --volume `pwd`:/config \
-    --restart always --name mlab-sandbox prom/blackbox-exporter:v0.14.0 \
+    --restart always --name mlab-sandbox prom/blackbox-exporter:v0.12.0 \
     --config.file=/config/blackbox-exporter-config-mlab-sandbox.yml
 
 $ docker run --detach --publish 8115:9115 --volume `pwd`:/config \
-    --restart always --name mlab-staging prom/blackbox-exporter:v0.14.0 \
+    --restart always --name mlab-staging prom/blackbox-exporter:v0.12.0 \
     --config.file=/config/blackbox-exporter-config-mlab-staging.yml
 
 $ docker run --detach --publish 9115:9115 --volume `pwd`:/config \
-    --restart always --name mlab-oti prom/blackbox-exporter:v0.14.0 \
+    --restart always --name mlab-oti prom/blackbox-exporter:v0.12.0 \
     --config.file=/config/blackbox-exporter-config-mlab-oti.yml
 ```
