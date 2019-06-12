@@ -1,34 +1,39 @@
 #standardSQL
--- bq_gardener_parse_time calculates the maximum difference of parse_times in
+-- bq_gardener_parse_time calculates the maximum age of parse_times in
 -- seconds for each gardener managed dataset.
 --
 -- This query exports one metric:
 --
---   bq_gardener_parse_time_difference_days -- (MAX(parse_time) - MIN(parse_time))
+--   bq_gardener_parse_time_difference_days -- (CURRENT_TIMESTAMP() - MIN(parse_time))
 --       in days, labeled with the dataset name.
 
 SELECT
-  TIMESTAMP_DIFF(max_parse_time, min_parse_time, SECOND) / 86400.0 AS value_difference_days,
+  TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, SECOND) / 86400.0 AS value_difference_days,
   dataset
 FROM (
     SELECT
-      "ndt" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
+      "ndt" AS dataset, MIN(parse_time) AS min_parse_time
     FROM
-      `{{PROJECT}}.base_tables.ndt`
+      `{{PROJECT}}.ndt.web100`
   UNION ALL
     SELECT
-      "sidestream" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
+      "sidestream" AS dataset, MIN(parse_time) AS min_parse_time
     FROM
-      `{{PROJECT}}.base_tables.sidestream`
+      `{{PROJECT}}.sidestream.web100`
 -- TODO: enable once the traceroute parser is reenabled.
 --  UNION ALL
 --    SELECT
---      "traceroute" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
+--      "traceroute" AS dataset, MIN(parse_time) AS min_parse_time
 --    FROM
 --      `{{PROJECT}}.base_tables.traceroute`
   UNION ALL
     SELECT
-      "switch" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
+      "switch" AS dataset, MIN(parse_time) AS min_parse_time
     FROM
-      `{{PROJECT}}.base_tables.switch`
+      `{{PROJECT}}.switch`
+  UNION ALL
+    SELECT
+      "ndt/tcpinfo" AS dataset, MIN(parse_time) AS min_parse_time
+    FROM
+      `{{PROJECT}}.ndt.tcpinfo`
 )
