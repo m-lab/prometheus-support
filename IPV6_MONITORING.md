@@ -92,3 +92,15 @@ $ docker run --detach --publish 9115:9115 --volume `pwd`:/config \
     --restart always --name mlab-oti prom/blackbox-exporter:v0.12.0 \
     --config.file=/config/blackbox-exporter-config-mlab-oti.yml
 ```
+* Install node\_exporter so that we can scrape metrics from this machine.
+
+$ sudo apt install prometheus-node-exporter
+
+Then edit /etc/default/prometheus-node-exporter, comment out the existing ARGS
+definition, and add this one:
+
+ARGS="-collectors.enabled=filesystem,loadavg,meminfo,netdev"
+
+Restart node-exporter:
+
+$ sudo systemctl restart prometheus-node-exporter
