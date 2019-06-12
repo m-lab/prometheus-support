@@ -15,33 +15,46 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - snmp-exporter
+            topologyKey: kubernetes.io/hostname
       # Do an early fetch of the configuration so that snmp-exporter will start
       initContainers:
-      - name: fetch
-        image: gcr.io/cloud-builders/gsutil
+      - name: gcs-downloader-once
+        image: measurementlab/gcs-downloader:v0.1
         args:
-        - cp
-        - gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
-        - /config/snmp.yml
+        - -source=gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
+        - -output=/config
+        - -once
         volumeMounts:
         - mountPath: /config
           name: snmp-exporter-storage
       containers:
-      - image: prom/snmp-exporter:v0.13.0
-        name: snmp-exporter
+      - name: snmp-exporter
+        image: prom/snmp-exporter:v0.15.0
+        args:
+        - --config.file=/etc/snmp_exporter/snmp_exporter_config.yaml
         ports:
         - containerPort: 9116
         volumeMounts:
         - mountPath: /etc/snmp_exporter
           name: snmp-exporter-storage
-      # Pull the snmp-exporter configuration again so that we can watch it.
-      # TODO: replace this bash-loop with a special-purpose container.
-      - name: service-discovery
-        image: gcr.io/cloud-builders/gsutil
-        command:
-        - bash
-        - -c
-        - "while true; do gsutil cp gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml /config/snmp.yml ; sleep 600 ; done"
+      # Pull the snmp-exporter configuration from GCS every 5 minutes.
+      - name: gcs-downloader
+        image: measurementlab/gcs-downloader:v0.1
+        args:
+        - -source=gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
+        - -output=/config
+        - -period=5m
+        ports:
+        - containerPort: 9990
         resources:
           requests:
             memory: "150Mi"

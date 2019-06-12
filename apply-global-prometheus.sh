@@ -218,24 +218,33 @@ if [[ -z "${pod}" ]] ; then
   echo "ERROR: failed to identify prometheus-server pod from cluster" >&2
   exit 1
 fi
-# Copy each json config file to the prometheus cluster using the same name.
-pushd config/federation/vms
-  # Update in place with the correct BBE port based on the project.
-  sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
-    blackbox-targets-ipv6/vms_ndt_raw_ipv6.json
-  sed -i -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
-    blackbox-targets-ipv6/vms_ndt_ssl_ipv6.json
 
-  # Copy the configs directly to the prometheus pod.
-  ls */*.json | grep vms 2> /dev/null \
-    | while read file ; do
-        echo $file
-        # Exit if the JSON is malformed.
-        python -m json.tool ${file} > /dev/null || exit 1
-        kubectl cp $file ${pod}:/${file} || true
-      done
-popd
+## Reboot API
+# HTTP Basic auth credentials.
+export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
+export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
 
+# Create credentials as Kubernetes secrets.
+### Write keys to a file to prevent printing key in travis logs.
+( set +x; echo "${REBOOTAPI_COREOS_SSH_KEY}" | base64 -d \
+  > /tmp/reboot-api-ssh.key )
+
+kubectl create secret generic reboot-api-credentials\
+    "--from-file=/tmp/reboot-api-ssh.key" \
+    --dry-run -o json | kubectl apply -f -
+
+# Replace variables in reboot-api.yml.
+sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH_USER}'|g' \
+    -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
+    k8s/prometheus-federation/deployments/reboot-api.yml
+
+## Rebot
+# Replace variables in rebot.yml.
+sed -i -e 's|{{REBOOTAPI_USER}}|'${!REBOOTAPI_BASIC_AUTH_USER}'|g' \
+    -e 's|{{REBOOTAPI_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
+    -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+    -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
+    k8s/prometheus-federation/deployments/rebot.yml
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then

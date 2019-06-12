@@ -549,20 +549,20 @@ groups:
         /etc/cron.d/prom_vdlimit_metrics.cron.
       dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
 
-# NPAD_VdlimitTooMuchUsedDisk checks whether the disk usage for the NPAD vserver
-# is higher than 9GB (90%, as NPAD is set up with a 10GB disk).
-  - alert: NPAD_VdlimitTooMuchUsedDisk
-    expr: vdlimit_used{experiment="npad.iupui"} > 9*1024*1024
+# VdlimitTooMuchUsedDisk checks if the disk usage for a vserver is higher
+# than 80% of the allowed quota.
+  - alert: VdlimitTooMuchUsedDisk
+    expr: vdlimit_used / vdlimit_total > 0.8
     for: 30m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: NPAD disk usage is much higher than normal.
-      description: Check /var/spool/iupui_npad/ on the node to see if data is
+      summary: A vserver disk usage is much higher than normal.
+      description: Check /var/spool/<vserver>/ on the node to see if data is
         being collected. If not, then check the health of scraper for this node
         and slice. If so, then check or other sources of disk usage, like
-        /var/logs and /home/iupui_npad/VAR/logs/paris-traceroute.log.
+        /var/logs and /home/<vserver>.
 
 # A collectd-mlab service has a problem and is down.
   - alert: CoreServices_CollectdMlabDown
@@ -756,26 +756,45 @@ groups:
       description: The annotator runs in AppEngine. Check logs and recent
         deployments. The daily and batch parsers may also be affected.
 
-# NDT_AnnotationRatioTooLow fires when the client annotations on NDT
+# NDT_AsnAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
 # tests appears to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
-  - alert: NDT_AnnotationRatioTooLow
+  - alert: NDT_AsnAnnotationRatioTooLowOrMissing
     expr: |
-      bq_ndt_annotation_success / bq_ndt_annotation_total < 0.98
-        or absent(bq_ndt_annotation_success / bq_ndt_annotation_total)
+      bq_ndt_annotation_asn_success / bq_ndt_annotation_total < 0.98
+        or absent(bq_ndt_annotation_asn_success / bq_ndt_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
-      summary: Too many NDT tests are missing annotations!
+      summary: Too many NDT tests are missing asn annotations!
       description: The annotator runs in AppEngine. Check logs and recent
         deployments. The daily and batch parsers may also be affected.
 
-# Gardener_ParseTimeDifferenceTooOld fires when the maximum and minimum
-# parse_time values for each data set are greater than 80 days.
-  - alert: Gardener_ParseTimeDifferenceTooOld
-    expr: bq_gardener_parse_time_difference_days > 80
+# NDT_GeoAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
+# tests appears to have too many failures or the bq_ndt_annotation_* metrics
+# disappear.
+  - alert: NDT_GeoAnnotationRatioTooLowOrMissing
+    expr: |
+      bq_ndt_annotation_geo_success / bq_ndt_annotation_total < 0.98
+        or absent(bq_ndt_annotation_geo_success / bq_ndt_annotation_total)
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: Too many NDT tests are missing geolocation annotations!
+      description: The annotator runs in AppEngine. Check logs and recent
+        deployments. The daily and batch parsers may also be affected.
+
+# Gardener_ParseTimeDifferenceTooOldOrMissing fires when the maximum and minimum
+# parse_time values for each data set are greater than 80 days or the
+# bq_gardener_parse_time_difference_days metrics disappear.
+  - alert: Gardener_ParseTimeDifferenceTooOldOrMissing
+    expr: |
+      bq_gardener_parse_time_difference_days > 80
+        or absent(bq_gardener_parse_time_difference_days)
     for: 10m
     labels:
       repo: dev-tracker
@@ -789,7 +808,7 @@ groups:
 # Rebot_MissingMetrics fires when no metrics can be collected for rebot for
 # the past 10 minutes.
   - alert: Rebot_MissingMetrics
-    expr: absent(up{job='rebot'})
+    expr: absent(up{run='rebot'})
     for: 10m
     labels:
       repo: ops-tracker
@@ -884,40 +903,7 @@ groups:
         using - `kubectl get pods`. Check pod logs.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
-  - alert: PlatformCluster_NodeExporterMissing
-    expr: absent(up{deployment="node-exporter", cluster="platform-cluster"})
-    for: 5m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: The node_exporter DaemonSet is missing or has no metrics.
-      description: The node_exporter DaemonSet is missing or has no metrics.
-        Verify that the DaemonSet is healthy (`kubectl describe ds
-        node-exporter`).
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
-
-  # If a node_exporter pod is down or otherwise broken, fire an alert, unless
-  # the node is in lame-duck mode, GMX maintenance mode, or the scrape job for
-  # the entire node is down.
-  - alert: PlatformCluster_NodeExporterDown
-    expr: |
-      up{deployment="node-exporter", cluster="platform-cluster"} == 0 unless on(machine) (
-          lame_duck_node == 1 or
-          gmx_machine_maintenance == 1 or
-          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
-        )
-    for: 1h
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: At least one node has a broken or no node_exporter pod.
-      description: At least one node has a broken or no node_exporter pod.
-        Verify that the DaemonSet is healthy. Check the status of the node that
-        the pod is supposed to be running on. Check the status of the pod
-        itself, if it exists.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+# Check for missing workloads.
 
   - alert: PlatformCluster_CadvisorMissing
     expr: absent(up{deployment="cadvisor", cluster="platform-cluster"})
@@ -929,29 +915,19 @@ groups:
       summary: The CAdvisor DaemonSet is missing or has no metrics.
       description: The CAdvisor DaemonSet is missing or has no metrics. Verify that
         the DaemonSet is healthy (`kubectl describe ds cadvisor`).
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
-  # If a CAdvisor pod is down or otherwise broken, fire an alert, unless the
-  # node is in lame-duck mode, GMX maintenance mode, or the scrape job for the
-  # entire node is down.
-  - alert: PlatformCluster_CadvisorDown
-    expr: |
-      up{deployment="cadvisor", cluster="platform-cluster"} == 0 unless on(machine) (
-          lame_duck_node == 1 or
-          gmx_machine_maintenance == 1 or
-          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
-        )
-    for: 1h
+  - alert: PlatformCluster_FluentdMissing
+    expr: absent(up{deployment="fluentd", cluster="platform-cluster"})
+    for: 5m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: At least one node has a broken or no CAdvisor pod.
-      description: At least one node has a broken or no CAdvisor pod. Verify that
-        the DaemonSet is healthy. Check the status of the node that the pod is
-        supposed to be running on. Check the status of the pod itself, if it
-        exists.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+      summary: The Fluentd DaemonSet is missing or has no metrics.
+      description: The Fluentd DaemonSet is missing or has no metrics. Verify that
+        the DaemonSet is healthy (`kubectl describe ds fluentd`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   - alert: PlatformCluster_NdtMissing
     expr: absent(up{deployment="ndt", cluster="platform-cluster"})
@@ -963,14 +939,40 @@ groups:
       summary: The NDT DaemonSet is missing or has no metrics.
       description: The NDT DaemonSet is missing or has no metrics. Verify that
         the DaemonSet is healthy (`kubectl describe ds ndt`).
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
-  # If a NDT pod is down or otherwise broken, fire an alert, unless the node is
+  - alert: PlatformCluster_NodeExporterMissing
+    expr: absent(up{deployment="node-exporter", cluster="platform-cluster"})
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The node_exporter DaemonSet is missing or has no metrics.
+      description: The node_exporter DaemonSet is missing or has no metrics.
+        Verify that the DaemonSet is healthy (`kubectl describe ds
+        node-exporter`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  - alert: PlatformCluster_HostExperimentMissing
+    expr: absent(up{deployment="host", cluster="platform-cluster"})
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The host DaemonSet is missing or has no metrics.
+      description: The host DaemonSet is missing or has no metrics.
+        Verify that the DaemonSet is healthy (`kubectl describe ds
+        host`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  # If any pod is down or otherwise broken, fire an alert, unless the node is
   # in lame-duck mode, GMX maintenance mode, or the scrape job for the entire
   # node is down.
-  - alert: PlatformCluster_NdtDown
+  - alert: PlatformCluster_PodDown
     expr: |
-      up{deployment="ndt", cluster="platform-cluster"} == 0 unless on(machine) (
+      up{deployment=~".+", cluster="platform-cluster"} == 0 unless on(machine) (
           lame_duck_node == 1 or
           gmx_machine_maintenance == 1 or
           up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
@@ -980,16 +982,49 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: At least one node has a broken or no NDT pod.
-      description: At least one node has a broken or no NDT pod. Verify that
-        the DaemonSet is healthy. Check the status of the node that the pod
-        is supposed to be running on. Check the status of the pod itself, if it
-        exists.
+      summary: A {{ $labels.deployment }} pod is down or broken.
+      description: A {{ $labels.deployment }} pod is down or broken. Verify that the
+        DaemonSet or Deployment is healthy. Check the status of the node that the
+        pod is scheduled on. Check the status of the pod itself, if it exists.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  # The desired number of pods for a DaemonSet are not equal to the current
+  # number scheduled.
+  - alert: PlatformCluster_DaemonSetHasTooFewPods
+    expr: |
+      kube_daemonset_status_desired_number_scheduled{cluster="platform-cluster"} !=
+        kube_daemonset_status_current_number_scheduled{cluster="platform-cluster"}
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: DaemonSet {{ $labels.daemonset }} has fewer pods scheduled than desired.
+      description: DaemonSet {{ $labels.daemonset }} has fewer pods scheduled than desired.
+        Check the status of the DaemonSet for clues with
+        `kubectl describe daemonset {{ $labels.daemonset }}`
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  # The desired number of replicas for a Deployment are not equal to the
+  # current number scheduled.
+  - alert: PlatformCluster_DeploymentHasTooFewReplicas
+    expr: |
+      kube_deployment_spec_replicas{cluster="platform-cluster"} !=
+        kube_deployment_status_replicas{cluster="platform-cluster"}
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Deployment {{ $labels.exported_deployment }} has less replicas than desired.
+      description: Deployment {{ $labels.exported_deployment }} has less replicas than desired.
+        Check the status of the deployment for clues with
+        `kubectl describe deployment {{ $labels.exported_deployment }}`
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   # The /cache/data mount point on a node has exceeded 95% of its capacity.
   # This is where all pods write all experiment and core service data (shared
-  # pool of space). If this mount point fill up, all experiments and core
+  # pool of space). If this mount point fills up, all experiments and core
   # services will fail in some way.
   - alert: PlatformCluster_DataPartitionTooFull
     expr: |
@@ -1013,6 +1048,22 @@ groups:
 # PlatformCluster Etcd alerts.
 # Mostly gleaned from:
 # https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/etcd3_alert.rules.yml
+
+  - alert: PlatformCluster_EtcdMetricsMissing
+    expr: absent(etcd_server_has_leader)
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Metrics are missing for etcd.
+      description: Metrics are missing for etcd. Scraping of etcd
+        is probably failing, or Prometheus is having trouble scraping the
+        federated platform cluster instance. Check to be sure that the platform
+        cluster instance is running. Is there is a TLS certificate error
+        causing scraping to fail, or a network issue? Look at the "Error"
+        column of the targets page on the Prometheus Web interface for clues
+        http://prometheus-platform-cluster.mlab-oti.measurementlab.net:9090/targets#job-kubernetes-etcd
 
   - alert: PlatformCluster_EtcdHasNoLeader
     expr: etcd_server_has_leader == 0

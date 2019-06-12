@@ -20,12 +20,10 @@
     {
       "columns": [
         {
-          "$$hashKey": "object:2087",
           "text": "Current",
           "value": "current"
         }
       ],
-      "datasource": null,
       "description": "Nodes which have been rebooted by Rebot during the last 24 hours.\n\nTODO: use $__range after we upgrade to Grafana >v5.3",
       "fontSize": "100%",
       "gridPos": {
@@ -45,7 +43,6 @@
       },
       "styles": [
         {
-          "$$hashKey": "object:2059",
           "alias": "Rebooted",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": null,
@@ -57,7 +54,6 @@
           "unit": "s"
         },
         {
-          "$$hashKey": "object:2060",
           "alias": "Node",
           "colorMode": null,
           "colors": [
@@ -74,7 +70,6 @@
       ],
       "targets": [
         {
-          "$$hashKey": "object:1868",
           "expr": "(rebot_last_reboot_timestamp{} > time() - 86400) * 1000",
           "format": "time_series",
           "instant": true,
@@ -90,7 +85,6 @@
     },
     {
       "columns": [],
-      "datasource": "Prometheus (mlab-oti)",
       "description": "Currently offline nodes. This panel runs Rebot's nodes query.",
       "fontSize": "100%",
       "gridPos": {
@@ -130,7 +124,7 @@
       ],
       "targets": [
         {
-          "expr": "label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) == 0 ,\n      \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9tc]{2}).*\")\n  UNLESS ON(site) gmx_site_maintenance == 1\n  UNLESS ON(machine) gmx_machine_maintenance == 1\n  UNLESS ON(machine) lame_duck_node == 1\n  UNLESS ON(machine) sum_over_time(probe_success{service=\"ssh\", module=\"ssh_v4_online\"}[15m]) > 0\n\tUNLESS ON(machine) count_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) < 14\n\tUNLESS ON(machine) rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[15m]) > 0",
+          "expr": "label_replace(sum_over_time(probe_success{service=\"ssh\", module=\"ssh_v4_online\"}[15m]) == 0 ,\n      \"site\", \"$1\", \"machine\", \".+?\\\\.(.+?)\\\\..+\")\n  UNLESS ON(machine) label_replace(sum_over_time(probe_success{service=\"ssh806\", module=\"ssh_v4_online\"}[15m]) > 0,\n    \"site\", \"$1\", \"machine\", \".+?\\\\.(.+?)\\\\..+\")\n  UNLESS ON(site) gmx_site_maintenance == 1\n  UNLESS ON(machine) gmx_machine_maintenance == 1\n  UNLESS ON(machine) lame_duck_node == 1\n  UNLESS ON(machine) kube_node_spec_taint{key=\"lame-duck\"} == 1\n  UNLESS ON(machine) count_over_time(probe_success{service=\"ssh\", module=\"ssh_v4_online\"}[15m]) < 14\n\tUNLESS ON(machine) rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[15m]) > 0\n\tUNLESS ON(machine) increase(ndt_test_total[15m]) > 0",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -146,7 +140,6 @@
     },
     {
       "columns": [],
-      "datasource": "Prometheus (mlab-oti)",
       "description": "Currently offline sites. This panel runs Rebot's offline sites query.",
       "fontSize": "100%",
       "gridPos": {
@@ -226,7 +219,6 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
       "description": "Number of offline nodes as seen by Rebot, after applying the offline sites filtering.\n\nThis is NOT the same as the candidates list as it also includes nodes for which a reboot has been attempted in the last 24h.",
       "fill": 1,
       "gridPos": {
@@ -259,7 +251,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:318",
           "expr": "rebot_machines_offline",
           "format": "time_series",
           "interval": "",
@@ -270,6 +261,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Offline node count",
       "tooltip": {
@@ -288,7 +280,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:369",
           "decimals": 0,
           "format": "short",
           "label": "",
@@ -298,7 +289,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:370",
           "format": "short",
           "label": "",
           "logBase": 1,
@@ -314,7 +304,6 @@
     },
     {
       "columns": [],
-      "datasource": "Prometheus (mlab-oti)",
       "description": "Nodes that have been placed in lame-duck status.",
       "fontSize": "100%",
       "gridPos": {
@@ -369,7 +358,6 @@
     },
     {
       "columns": [],
-      "datasource": "Prometheus (mlab-oti)",
       "description": "Nodes that are in GMX maintenance. These nodes will not be considered as reboot candidates.",
       "fontSize": "100%",
       "gridPos": {
@@ -424,7 +412,6 @@
     },
     {
       "columns": [],
-      "datasource": "Prometheus (mlab-oti)",
       "description": "Sites that are in GMX maintenance. Nodes in these sites will not be considered as reboot candidates.",
       "fontSize": "100%",
       "gridPos": {
@@ -521,5 +508,5 @@
   "timezone": "",
   "title": "Ops: Rebot Monitoring",
   "uid": "t5NhbCBiz",
-  "version": 20
+  "version": 27
 }

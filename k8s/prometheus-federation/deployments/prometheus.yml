@@ -128,7 +128,7 @@ spec:
         - mountPath: /prometheus
           name: prometheus-storage
 
-      - image: measurementlab/gcp-service-discovery:v1.4.0
+      - image: measurementlab/gcp-service-discovery:v1.5.0
         name: service-discovery
         args: [ "--aef-target=/targets/aeflex-targets/aeflex.json",
                 "--gke-target=/targets/federation-targets/prometheus-clusters.json",
@@ -162,6 +162,10 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/ndt_ssl_ipv6.json",
                 "--http-target=/targets/legacy-targets/ndt_inotify.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/legacy-targets/ndt_inotify.json",
+                "--http-target=/targets/blackbox-targets/ndt7.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/ndt7.json",
+                "--http-target=/targets/blackbox-targets-ipv6/ndt7_ipv6.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/ndt7_ipv6.json",
                 "--http-target=/targets/blackbox-targets/mobiperf.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/mobiperf.json",
                 "--http-target=/targets/blackbox-targets-ipv6/mobiperf_ipv6.json",

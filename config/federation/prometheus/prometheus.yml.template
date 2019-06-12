@@ -314,6 +314,10 @@ scrape_configs:
         - 'etcd_network_peer_round_trip_time_seconds_bucket'
         - 'etcd_disk_wal_fsync_duration_seconds_bucket'
         - 'etcd_disk_backend_commit_duration_seconds_bucket'
+        - 'kube_daemonset_status_current_number_scheduled'
+        - 'kube_daemonset_status_desired_number_scheduled'
+        - 'kube_deployment_status_replicas'
+        - 'kube_deployment_spec_replicas'
     static_configs:
       - targets: ['k8s-prometheus.{{PROJECT}}.measurementlab.net:9090']
         labels:
@@ -458,6 +462,14 @@ scrape_configs:
         target_label: __address__
         replacement: blackbox-service.default.svc.cluster.local:9115
 
+    # This metric relabel config adds the "site" label on blackbox-exporter
+    # targets.
+    # TODO: retire this in favor of adding the label at target generation time.
+    metric_relabel_configs:
+      - source_labels: [machine]
+        regex: mlab[1-4]\.([a-z]{3}[0-9tc]{2}).+
+        target_label: site
+        replacement: $1
 
   # Blackbox configurations for IPv6 probes.
   #
@@ -729,15 +741,6 @@ scrape_configs:
           - /slow-targets/*-5m.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
-
-  # Scrape config for the rebot. There is only one rebot service currently
-  # running on the eb.measurementlab.net machine.
-  #
-  # The rebot service generates its own labels.
-  - job_name: 'rebot'
-    static_configs:
-      - targets:
-        - eb.measurementlab.net:9999
 
   # Scrape config for legacy targets.
   #
