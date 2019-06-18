@@ -53,8 +53,8 @@ groups:
       sum_over_time(up{service="sidestream"}[10m]) == 0
         and on(machine)
       sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.9
-        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1
-          or node_filesystem_size_bytes{cluster="platform-cluster"})
+        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
+        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
     for: 10m
     labels:
       repo: ops-tracker
@@ -89,8 +89,8 @@ groups:
       (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (56 * 60 * 60)
         and on(machine)
       (time() - process_start_time_seconds{service="sidestream"})> (30 * 60 * 60)
-        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1
-          or node_filesystem_size_bytes{cluster="platform-cluster"})
+        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
+        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
     for: 2h
     labels:
       repo: dev-tracker
