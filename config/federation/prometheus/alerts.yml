@@ -252,8 +252,8 @@ groups:
 # platform cluster, if the metric exists for a given machine then we don't care
 # about the status of any scraper container for that machine.
   - alert: ScraperRunningWithoutRsyncd
-    expr: up{container="scraper"} unless on(machine) (up{service="rsyncd"}
-      or node_filesystem_size_bytes{cluster="platform-cluster"})
+    expr: up{container="scraper"} unless on(machine, experiment) up{service="rsyncd"}
+      unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
     for: 30m
     labels:
       repo: ops-tracker
