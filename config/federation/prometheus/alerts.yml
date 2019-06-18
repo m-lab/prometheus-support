@@ -45,14 +45,16 @@ groups:
 #
 # CoreServices_SidestreamIsNotRunning: an M-Lab server is online, but the
 # sidestream exporter is not. Since sidestream is a core service, this must be
-# fixed.
+# fixed. This alert checks for the existence of node_filesystem_size_bytes with
+# a label that is specific to the new k8s platform cluster. We don't want this
+# alert to fire for nodes that have been migrated to the platform cluster.
   - alert: CoreServices_SidestreamIsNotRunning
     expr: |
       sum_over_time(up{service="sidestream"}[10m]) == 0
         and on(machine)
       sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.9
-        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance
-      == 1)
+        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1
+          or node_filesystem_size_bytes{cluster="platform-cluster"})
     for: 10m
     labels:
       repo: ops-tracker
@@ -77,13 +79,18 @@ groups:
 # then the machine will need time for scraper to catch up once it is network
 # accessible again.
 #
+# Note: this alert checks for the existence of node_filesystem_size_bytes{} with
+# a label that is specific to the new k8s platform cluster. We don't want this
+# alert to fire for nodes that have been migrated to the platform cluster.
+#
 # TODO(soltesz): remove the != 0 check when legacy records are removed.
   - alert: ScraperMostRecentArchivedFileTimeIsTooOld
     expr: |
       (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (56 * 60 * 60)
         and on(machine)
       (time() - process_start_time_seconds{service="sidestream"})> (30 * 60 * 60)
-        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
+        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1
+          or node_filesystem_size_bytes{cluster="platform-cluster"})
     for: 2h
     labels:
       repo: dev-tracker
@@ -240,9 +247,13 @@ groups:
       summary: "Machines are missing sidestream monitoring."
       description: ""
 
-# Scrapers are configured on machine "c", but machine "c" is not in the rsyncd inventory.
+# Scrapers are configured on machine "c", but machine "c" is not in the rsyncd
+# inventory. The metric node_filesystem_size_bytes is specific to the k8s
+# platform cluster, if the metric exists for a given machine then we don't care
+# about the status of any scraper container for that machine.
   - alert: ScraperRunningWithoutRsyncd
-    expr: up{container="scraper"} unless on(machine, experiment) up{service="rsyncd"}
+    expr: up{container="scraper"} unless on(machine) (up{service="rsyncd"}
+      or node_filesystem_size_bytes{cluster="platform-cluster"})
     for: 30m
     labels:
       repo: ops-tracker
