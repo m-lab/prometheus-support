@@ -13,6 +13,7 @@ spec:
         run: github-receiver
       annotations:
         prometheus.io/scrape: 'true'
+        prometheus.io/port: '9990'
     spec:
       containers:
       - name: github-receiver
@@ -30,4 +31,6 @@ spec:
                 "--enable-inmemory={{GITHUB_RECEIVER_INMEMORY}}" ]
         ports:
         - containerPort: 9393
+          name: receiver
         - containerPort: 9990
+          name: metrics
