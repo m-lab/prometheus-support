@@ -13,7 +13,7 @@ PROJECT=${1:?Please provide project name: $USAGE}
 BASEDIR=${PWD}
 
 # Generate the configs.
-${BASEDIR}/generate_prometheus_targets.sh > /dev/null
+${BASEDIR}/generate-prometheus-targets.sh > /dev/null
 
 # Be sure that gcloud is PATH
 source "${HOME}/google-cloud-sdk/path.bash.inc"
