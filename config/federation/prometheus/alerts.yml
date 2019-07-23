@@ -472,14 +472,37 @@ groups:
         or absent(probe_success{service="ndt_raw_ipv6"})
         or absent(probe_success{service="ndt_ssl"})
         or absent(probe_success{service="ndt_ssl_ipv6"})
-        or absent(vdlimit_used{experiment="ndt.iupui"})
-        or absent(vdlimit_total{experiment="ndt.iupui"})
     for: 30m
     labels:
       repo: ops-tracker
       severity: page
     annotations:
       summary: A metric for an NDT service is missing.
+      description: >
+        If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target
+        status in Prometheus[1].
+        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+
+# One or more legacy NDT-specific metrics is missing. These are NDT metrics that
+# mlab-ns relies on to determine whether NDT is up and running, so we need to
+# make sure that the metrics are always present. NOTE: mlab-ns additionally
+# relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
+# alerting for that metric is already handled by the
+# ScriptExporterMissingMetrics alert.
+#
+# TODO: This alert is only relevant for PLC-managed nodes. Once the migration
+# to the platform cluster is complete, this alert should be removed.
+  - alert: LegacyNdtMetricsMissing
+    expr: |
+      absent(vdlimit_used{experiment="ndt.iupui"})
+        or absent(vdlimit_total{experiment="ndt.iupui"})
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: A legacy metric for an NDT service is missing.
       description: >
         If the blackbox_exporter service is running, then there may be a target
         configuration error. Check the target definitions in GCS and the target
