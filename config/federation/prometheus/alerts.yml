@@ -466,12 +466,17 @@ groups:
 # relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
 # alerting for that metric is already handled by the
 # ScriptExporterMissingMetrics alert.
+#
+# NOTE: The metric node_filesystem_size_bytes{} is not technically an NDT
+# metric, but we add it here because we use it to decide whether production
+# traffic should go to a node.
   - alert: NdtMetricsMissing
     expr: |
       absent(probe_success{service="ndt_raw"})
         or absent(probe_success{service="ndt_raw_ipv6"})
         or absent(probe_success{service="ndt_ssl"})
         or absent(probe_success{service="ndt_ssl_ipv6"})
+        or absent(node_filesystem_size_bytes)
     for: 30m
     labels:
       repo: ops-tracker
