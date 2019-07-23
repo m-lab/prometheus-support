@@ -466,20 +466,48 @@ groups:
 # relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
 # alerting for that metric is already handled by the
 # ScriptExporterMissingMetrics alert.
+#
+# NOTE: The metric node_filesystem_size_bytes{} is not technically an NDT
+# metric, but we add it here because we use it to decide whether production
+# traffic should go to a node.
   - alert: NdtMetricsMissing
     expr: |
       absent(probe_success{service="ndt_raw"})
         or absent(probe_success{service="ndt_raw_ipv6"})
         or absent(probe_success{service="ndt_ssl"})
         or absent(probe_success{service="ndt_ssl_ipv6"})
-        or absent(vdlimit_used{experiment="ndt.iupui"})
-        or absent(vdlimit_total{experiment="ndt.iupui"})
+        or absent(node_filesystem_size_bytes)
     for: 30m
     labels:
       repo: ops-tracker
       severity: page
     annotations:
       summary: A metric for an NDT service is missing.
+      description: >
+        If the blackbox_exporter service is running, then there may be a target
+        configuration error. Check the target definitions in GCS and the target
+        status in Prometheus[1].
+        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
+
+# One or more legacy NDT-specific metrics is missing. These are NDT metrics that
+# mlab-ns relies on to determine whether NDT is up and running, so we need to
+# make sure that the metrics are always present. NOTE: mlab-ns additionally
+# relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
+# alerting for that metric is already handled by the
+# ScriptExporterMissingMetrics alert.
+#
+# TODO: This alert is only relevant for PLC-managed nodes. Once the migration
+# to the platform cluster is complete, this alert should be removed.
+  - alert: LegacyNdtMetricsMissing
+    expr: |
+      absent(vdlimit_used{experiment="ndt.iupui"})
+        or absent(vdlimit_total{experiment="ndt.iupui"})
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: A legacy metric for an NDT service is missing.
       description: >
         If the blackbox_exporter service is running, then there may be a target
         configuration error. Check the target definitions in GCS and the target
@@ -525,12 +553,15 @@ groups:
         status in Prometheus[1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
 
-# Some number of nodes don't have a lame-duck status.
+# Some number of nodes don't have a lame-duck status. Adding the
+# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
+# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
   - alert: LameDuckMetricMissingForNode
     expr: |
       up{service="nodeexporter"} == 1
         unless on(machine) lame_duck_node
         unless on(machine) gmx_machine_maintenance == 1
+        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
     for: 30m
     labels:
       repo: ops-tracker
@@ -543,12 +574,15 @@ groups:
 
 # vdlimit_used and/or vdlimit_free metrics are completely missing for a node.
 # There are other vdlimit_* metrics, but we care especially about these because
-# mlab-ns uses them to query Prometheus for node status.
+# mlab-ns uses them to query Prometheus for node status. Adding the
+# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
+# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
   - alert: VdlimitMetricsMissingForNode
     expr: |
       up{service="nodeexporter"} == 1
         unless on(machine) (vdlimit_used and vdlimit_total)
         unless on(machine) gmx_machine_maintenance == 1
+        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
     for: 30m
     labels:
       repo: ops-tracker
@@ -575,11 +609,14 @@ groups:
         and slice. If so, then check or other sources of disk usage, like
         /var/logs and /home/<vserver>.
 
-# A collectd-mlab service has a problem and is down.
+# A collectd-mlab service has a problem and is down. Adding the
+# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
+# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
   - alert: CoreServices_CollectdMlabDown
     expr: |
       collectd_mlab_success == 0
         unless on(machine) gmx_machine_maintenance == 1
+        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
     for: 10m
     labels:
       repo: ops-tracker
@@ -592,12 +629,15 @@ groups:
         and run the check script manually to see what the specific error is
         (/usr/lib/nagios/plugins/check_collectd_mlab.py).
 
-# A collectd-mlab service metric is missing on some node.
+# A collectd-mlab service metric is missing on some node. Adding the
+# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
+# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
   - alert: CoreServices_CollectdMlabMissing
     expr: |
       up{service="nodeexporter"} == 1
         unless on(machine) collectd_mlab_success
         unless on(machine) gmx_machine_maintenance == 1
+        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
     for: 10m
     labels:
       repo: ops-tracker
