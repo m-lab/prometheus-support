@@ -472,13 +472,8 @@ groups:
         or absent(probe_success{service="ndt_raw_ipv6"})
         or absent(probe_success{service="ndt_ssl"})
         or absent(probe_success{service="ndt_ssl_ipv6"})
-        or (
-          (
-            absent(vdlimit_used{experiment="ndt.iupui"})
-              or absent(vdlimit_total{experiment="ndt.iupui"})
-          )
-          and absent(node_filesystem_size_bytes{cluster="platform-cluster"})
-        )
+        or absent(vdlimit_used{experiment="ndt.iupui"})
+        or absent(vdlimit_total{experiment="ndt.iupui"})
     for: 30m
     labels:
       repo: ops-tracker
