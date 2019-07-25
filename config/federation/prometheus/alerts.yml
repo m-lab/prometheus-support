@@ -1023,9 +1023,9 @@ groups:
   # node is down.
   - alert: PlatformCluster_PodDown
     expr: |
-      up{deployment=~".+", cluster="platform-cluster"} == 0 unless on(machine) (
-          lame_duck_node == 1 or
-          gmx_machine_maintenance == 1 or
+      kube_pod_info == 1 and on(exported_pod) kube_pod_status_ready{condition="true"} == 0 unless on(node) (
+          kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
+          label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
           up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
     for: 1h
