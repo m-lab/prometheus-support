@@ -747,6 +747,15 @@ scrape_configs:
           - /slow-targets/*-5m.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
+  # Scrape BMC targets every 5m (NOTE: do not poll less frequently without
+  # updating the prometheus flag -query.staleness-delta).
+  - job_name: 'bmc-targets'
+    scrape_interval: 5m
+    file_sd_configs:
+      - files:
+          - /bmc-targets/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
 
   # Scrape config for legacy targets.
   #
