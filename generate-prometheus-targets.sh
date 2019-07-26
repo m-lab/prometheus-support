@@ -216,7 +216,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   # BMC monitoring via the Reboot API
   # TODO: add authentication
   ./mlabconfig.py --format=prom-targets-nodes \
-      --template_target="https://reboot.${project}.measurementlab.net/v1/e2e?target={{hostname}}" \
+      --template_target="reboot.${project}.measurementlab.net/v1/e2e?target={{hostname}}" \
       --label service=bmc_e2e \
       --physical \
       --select "${!pattern}" \
