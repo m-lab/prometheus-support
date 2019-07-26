@@ -218,7 +218,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   ./mlabconfig.py --format=prom-targets-nodes \
       --template_target="https://reboot.${project}.measurementlab.net/v1/e2e?target={{hostname}}" \
       --label service=bmc_e2e \
-      --physical
+      --physical \
       --select "${!pattern}" \
       --decoration "d" > ${output}/e2e-targets/bmc_e2e.json
 
