@@ -213,4 +213,13 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --select "${!pattern}" \
       --decoration "v6" > ${output}/blackbox-targets-ipv6/ssh_ipv6.json
 
+  # BMC monitoring via the Reboot API
+  # TODO: add authentication
+  ./mlabconfig.py --format=prom-targets-nodes \
+      --template_target="https://reboot.${project}.measurementlab.net/v1/e2e?target={{hostname}}" \
+      --label service=bmc_e2e \
+      --physical
+      --select "${!pattern}" \
+      --decoration "d" > ${output}/e2e-targets/bmc_e2e.json
+
 done
