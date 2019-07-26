@@ -29,7 +29,7 @@ BBE_IPV6_PORT_mlab_sandbox="7115"
 
 # Fetch mlabconfig.py from the siteinfo repo.
 # TODO: Replace curl with a native go-get once mlabconfig is rewritten in Go.
-curl --location "https://raw.githubusercontent.com/m-lab/siteinfo/sandbox-roberto-mlabconfig-bmc/cmd/mlabconfig.py" > \
+curl --location "https://raw.githubusercontent.com/m-lab/siteinfo/master/cmd/mlabconfig.py" > \
     ./mlabconfig.py
 chmod +x ./mlabconfig.py
 
