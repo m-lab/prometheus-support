@@ -176,6 +176,8 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/neubot_ipv6.json",
                 "--http-target=/targets/blackbox-targets/switches_ping.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/switches_ping.json",
+                "--http-target=/targets/slow-targets/bmc_e2e-5m.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/slow-targets/bmc_e2e-5m.json",
                 "--project={{GCLOUD_PROJECT}}"]
         ports:
           - containerPort: 9373

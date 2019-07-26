@@ -7,7 +7,7 @@ BASEDIR=${PWD}
 
 # Create all output directories.
 for project in mlab-sandbox mlab-staging mlab-oti ; do
-  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets,e2e-targets}
+  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets,slow-targets}
 done
 
 # All testing sites and machines.
@@ -220,6 +220,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=bmc_e2e \
       --physical \
       --select "${!pattern}" \
-      --decoration "d" > ${output}/e2e-targets/bmc_e2e.json
+      --decoration "d" > ${output}/slow-targets/bmc_e2e-5m.json
 
 done
