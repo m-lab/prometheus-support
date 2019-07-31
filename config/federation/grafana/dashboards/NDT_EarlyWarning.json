@@ -135,7 +135,7 @@
           "step": 300
         },
         {
-          "expr": "candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_$interval / 100e6 > ($percent / 100)",
+          "expr": "candidate_ndt:vdlimit_used_ratio_12h_prediction:98th_quantile_$interval > ($percent / 100)",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -143,6 +143,37 @@
           "legendFormat": "disk usage > $percent% {{machine}}",
           "refId": "H",
           "step": 300
+        },
+        {
+          "expr": "/* k8s */",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        },
+        {
+          "expr": "machine:ndt_test_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "ndt_tests  > $percent% - {{machine}}",
+          "refId": "B"
+        },
+        {
+          "expr": "machine:node_disk_io_time_seconds_max:98th_quantile_$interval > ($percent / 100)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "disk i/o > $percent% {{machine}}",
+          "refId": "C"
+        },
+        {
+          "expr": "machine:node_filesystem_used_ratio_12h_prediction:98th_quantile_$interval > ($percent/100)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "disk usage > $percent% {{machine}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -747,6 +778,7 @@
         "y": 22
       },
       "id": 14,
+      "interval": "",
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -846,6 +878,53 @@
           "legendFormat": "q98 - {{machine}}",
           "refId": "E",
           "step": 900
+        },
+        {
+          "expr": "/* k8s */",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "refId": "F"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range]) > 0.5",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "warning - {{machine}}",
+          "refId": "G"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range]) > 0.8",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "error - {{machine}}",
+          "refId": "H"
+        },
+        {
+          "expr": "machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "raw - {{machine}}",
+          "refId": "I"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q90 - {{machine}}",
+          "refId": "J"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q98 - {{machine}}",
+          "refId": "K"
         }
       ],
       "thresholds": [],
@@ -954,7 +1033,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > 50000000",
+          "expr": "quantile_over_time(0.90, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .5",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -963,7 +1042,7 @@
           "step": 900
         },
         {
-          "expr": "quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > 80000000",
+          "expr": "quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .8",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -972,7 +1051,7 @@
           "step": 900
         },
         {
-          "expr": "ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
+          "expr": "ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -982,7 +1061,7 @@
           "step": 900
         },
         {
-          "expr": "quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "expr": "quantile_over_time(0.90, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -992,7 +1071,7 @@
           "step": 900
         },
         {
-          "expr": "quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "expr": "quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -1000,6 +1079,54 @@
           "legendFormat": "q98 - {{machine}}",
           "refId": "A",
           "step": 900
+        },
+        {
+          "expr": "/* k8s */",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .5",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "warning - {{machine}}",
+          "refId": "C"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .8",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "error - {{machine}}",
+          "refId": "D"
+        },
+        {
+          "expr": "machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "raw - {{machine}}",
+          "refId": "I"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q90 - {{machine}}",
+          "refId": "J"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q98 - {{machine}}",
+          "refId": "K"
         }
       ],
       "thresholds": [],
@@ -1022,7 +1149,7 @@
       },
       "yaxes": [
         {
-          "format": "deckbytes",
+          "format": "percentunit",
           "label": "Used Space",
           "logBase": 1,
           "max": null,
