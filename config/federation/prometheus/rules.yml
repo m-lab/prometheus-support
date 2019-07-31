@@ -39,6 +39,7 @@ groups:
 # Precalculate the sum of sidestream connections per experiment "last six bits".
   - record: lsb:sidestream_connection_count:increase2m
     expr: sum by(lsb) (increase(sidestream_connection_count{type=~"ipv4|ipv6"}[2m]))
+
 ## NDT Early Warning aggregation rules.
 #
 # Rules are evaluated every global.evaluation_interval seconds. When
@@ -62,7 +63,7 @@ groups:
   - record: switch:ifHCOutOctets:bps2m
     expr: 8 * irate(ifHCOutOctets{ifAlias="uplink"}[4m])
 # Per-machine maximum ratio of time spent performing I/O on all devices.
-# Units: none
+# Units: none (sec/sec)
   - record: machine:node_disk_io_time_ms:max_ratio2m
     expr: max without(device) (irate(node_disk_io_time_ms{service="nodeexporter"}[4m])) / 1000
 # NDT vserver disk quota utilization, 12 hour estimate. Base 12h estimate on a
@@ -70,6 +71,27 @@ groups:
 # Units: KB
   - record: ndt:vdlimit_used:predict_linear3h_12h
     expr: predict_linear(vdlimit_used{experiment="ndt.iupui"}[3h], 12 * 60 * 60)
+
+## NDT Early Warning aggregation rules for Kubernetes platform.
+#
+# Per-machine successful NDT5 tests counted by the server.
+# Units: requests per minute.
+  - record: machine:ndt_test:rpm2m
+    expr: 60 * sum without(direction) (irate(ndt_test_total{code="200"}[4m]))
+  # Per-machine maximum ratio of time spent performing I/O on all devices.
+  # Units: none (sec/sec)
+  - record: machine:node_disk_io_time_seconds:max2m
+    expr: max without(device) (irate(node_disk_io_time_seconds_total{deployment="node-exporter"}[4m]))
+  # Machine disk quota utilization, 12 hour estimate. Base 12h estimate on a
+  # time range at least 25% of the time forward.
+  # Units: B(ytes)
+  - record: node:node_filesystem_used_bytes
+    expr: 1 - node_filesystem_avail_bytes{mountpoint="/cache/data"} / node_filesystem_size_bytes{mountpoint="/cache/data"}
+  # NOTE: this expression uses the recording rule above. This may add an extra
+  # minute to current data, but the time scale of the prediction is much longer.
+  - record: node:node_filesystem_used_bytes:predict_linear3h_12h
+    expr: predict_linear(node:node_filesystem_used_bytes[3h], 12 * 60 * 60)
+
 ## Switch SNMP metrics
 #
 # Discarded packets for Junipers
