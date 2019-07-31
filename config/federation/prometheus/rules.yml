@@ -56,21 +56,27 @@ groups:
 # Units: requests per minute.
   - record: machine:inotify_extension_create:rpm2m
     expr: 60 * sum without(ext) (irate(inotify_extension_create_total{ext=~".*_snaplog"}[4m]))
-# TODO: aggregate on per-machine interface aliases when available.
-# Per-switch "Out" (i.e. Download) bits per second. We use irate to calculate
-# rates over the last two samples only.
-# Units: bits per second.
+  # TODO: aggregate on per-machine interface aliases when available.
+  # Per-switch "Out" (i.e. Download) bits per second. We use irate to calculate
+  # rates over the last two samples only.
+  # Units: bits per second.
   - record: switch:ifHCOutOctets:bps2m
     expr: 8 * irate(ifHCOutOctets{ifAlias="uplink"}[4m])
-# Per-machine maximum ratio of time spent performing I/O on all devices.
-# Units: none (sec/sec)
+  # Per-machine maximum ratio of time spent performing I/O on all devices.
+  # Units: none (sec/sec)
   - record: machine:node_disk_io_time_ms:max_ratio2m
     expr: max without(device) (irate(node_disk_io_time_ms{service="nodeexporter"}[4m])) / 1000
-# NDT vserver disk quota utilization, 12 hour estimate. Base 12h estimate on a
-# time range at least 25% of the time forward.
-# Units: KB
+  # NDT vserver disk quota utilization, 12 hour estimate. Base 12h estimate on a
+  # time range at least 25% of the time forward.
+  # Units: KB
+  # TODO: remove this metric in favor of the ratio metrics below.
   - record: ndt:vdlimit_used:predict_linear3h_12h
     expr: predict_linear(vdlimit_used{experiment="ndt.iupui"}[3h], 12 * 60 * 60)
+  # NOTE: here we add a ratio value to calculate %used rather than an absolute usage count.
+  - record: ndt:vdlimit_used_bytes:ratio
+    expr: vdlimit_used{experiment="ndt.iupui"} / vdlimit_total{experiment="ndt.iupui"}
+  - record: ndt:vdlimit_used_ratio:predict_linear3h_12h
+    expr: predict_linear(ndt:vdlimit_used_bytes:ratio[3h], 12 * 60 * 60)
 
 ## NDT Early Warning aggregation rules for Kubernetes platform.
 #
@@ -84,7 +90,7 @@ groups:
     expr: max without(device) (irate(node_disk_io_time_seconds_total{deployment="node-exporter"}[4m]))
   # Machine disk quota utilization, 12 hour estimate. Base 12h estimate on a
   # time range at least 25% of the time forward.
-  # Units: B(ytes)
+  # Units: none (bytes/bytes)
   - record: machine:node_filesystem_used_bytes:ratio
     expr: 1 - node_filesystem_avail_bytes{mountpoint="/cache/data"} / node_filesystem_size_bytes{mountpoint="/cache/data"}
   # NOTE: this expression uses the recording rule above. This may add an extra
@@ -126,7 +132,7 @@ groups:
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_30m
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[30m])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_30m
-    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[30m])
+    expr: quantile_over_time(0.9, ndt:vdlimit_used_ratio:predict_linear3h_12h[30m])
   # k8s
   - record: machine:ndt_test_rpm:90th_quantile_30m
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[30m])
@@ -144,7 +150,7 @@ groups:
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_1h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[1h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_1h
-    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[1h])
+    expr: quantile_over_time(0.9, ndt:vdlimit_used_ratio:predict_linear3h_12h[1h])
   # k8s
   - record: machine:ndt_test_rpm:90th_quantile_1h
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[1h])
@@ -162,7 +168,7 @@ groups:
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_2h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[2h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_2h
-    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[2h])
+    expr: quantile_over_time(0.9, ndt:vdlimit_used_ratio:predict_linear3h_12h[2h])
   # k8s
   - record: machine:ndt_test_rpm:90th_quantile_2h
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[2h])
@@ -180,7 +186,7 @@ groups:
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_6h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[6h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_6h
-    expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[6h])
+    expr: quantile_over_time(0.9, ndt:vdlimit_used_ratio:predict_linear3h_12h[6h])
   # k8s
   - record: machine:ndt_test_rpm:90th_quantile_6h
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[6h])
@@ -199,7 +205,7 @@ groups:
   - record: candidate_machine:node_disk_io_time_ratio:98th_quantile_2h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[2h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_2h
-    expr: quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[2h])
+    expr: quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h[2h])
   # k8s
   - record: machine:ndt_test_rpm:98th_quantile_2h
     expr: quantile_over_time(0.98, machine:ndt_test:rpm2m[2h])
@@ -217,7 +223,7 @@ groups:
   - record: candidate_machine:node_disk_io_time_ratio:98th_quantile_6h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[6h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_6h
-    expr: quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[6h])
+    expr: quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h[6h])
   # k8s
   - record: machine:ndt_test_rpm:98th_quantile_6h
     expr: quantile_over_time(0.98, machine:ndt_test:rpm2m[6h])
