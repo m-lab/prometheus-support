@@ -85,12 +85,12 @@ groups:
   # Machine disk quota utilization, 12 hour estimate. Base 12h estimate on a
   # time range at least 25% of the time forward.
   # Units: B(ytes)
-  - record: machine:node_filesystem_used_bytes
+  - record: machine:node_filesystem_used_bytes:ratio
     expr: 1 - node_filesystem_avail_bytes{mountpoint="/cache/data"} / node_filesystem_size_bytes{mountpoint="/cache/data"}
   # NOTE: this expression uses the recording rule above. This may add an extra
   # minute to current data, but the time scale of the prediction is much longer.
-  - record: machine:node_filesystem_used_bytes:predict_linear3h_12h
-    expr: predict_linear(machine:node_filesystem_used_bytes[3h], 12 * 60 * 60)
+  - record: machine:node_filesystem_used_ratio:predict_linear3h_12h
+    expr: predict_linear(machine:node_filesystem_used_bytes:ratio[3h], 12 * 60 * 60)
 
 ## Switch SNMP metrics
 #
@@ -132,8 +132,8 @@ groups:
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[30m])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_30m
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[30m])
-  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_30m
-    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[30m])
+  - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_30m
+    expr: quantile_over_time(0.9, machine:node_filesystem_ratio_bytes:predict_linear3h_12h[30m])
 
 # 90th percentiles @ 1h.
   - record: candidate_site:uplink:90th_quantile_1h
@@ -150,8 +150,8 @@ groups:
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[1h])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_1h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[1h])
-  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_1h
-    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[1h])
+  - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_1h
+    expr: quantile_over_time(0.9, machine:node_filesystem_used_ratio:predict_linear3h_12h[1h])
 
 # 90th percentiles @ 2h.
   - record: candidate_site:uplink:90th_quantile_2h
@@ -168,8 +168,8 @@ groups:
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[2h])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_2h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[2h])
-  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_2h
-    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[2h])
+  - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_2h
+    expr: quantile_over_time(0.9, machine:node_filesystem_used_ratio:predict_linear3h_12h[2h])
 
 # 90th percentiles @ 6h.
   - record: candidate_site:uplink:90th_quantile_6h
@@ -186,8 +186,8 @@ groups:
     expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[6h])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_6h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[6h])
-  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_6h
-    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[6h])
+  - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_6h
+    expr: quantile_over_time(0.9, machine:node_filesystem_used_ratio:predict_linear3h_12h[6h])
 
 ##############################################################################
 # 98th percentiles @ 2h.
@@ -205,8 +205,8 @@ groups:
     expr: quantile_over_time(0.98, machine:ndt_test:rpm2m[2h])
   - record: machine:node_disk_io_time_seconds_max:98th_quantile_2h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m[2h])
-  - record: machine:node_filesystem_used_bytes_12h_prediction:98th_quantile_2h
-    expr: quantile_over_time(0.98, machine:node_filesystem_used_bytes:predict_linear3h_12h[2h])
+  - record: machine:node_filesystem_used_ratio_12h_prediction:98th_quantile_2h
+    expr: quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h[2h])
 
 # 98th percentiles @ 6h.
   - record: candidate_site:uplink:98th_quantile_6h
@@ -223,8 +223,8 @@ groups:
     expr: quantile_over_time(0.98, machine:ndt_test:rpm2m[6h])
   - record: machine:node_disk_io_time_seconds_max:98th_quantile_6h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m[6h])
-  - record: machine:node_filesystem_used_bytes_12h_prediction:98th_quantile_6h
-    expr: quantile_over_time(0.98, machine:node_filesystem_used_bytes:predict_linear3h_12h[6h])
+  - record: machine:node_filesystem_used_ratio_12h_prediction:98th_quantile_6h
+    expr: quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h[6h])
 
 ## Parser volume checks.
 #
