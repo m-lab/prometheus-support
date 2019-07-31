@@ -320,6 +320,12 @@ scrape_configs:
         - 'kube_deployment_spec_replicas'
         - 'kube_pod_info'
         - 'kube_pod_status_ready'
+        # For recording rules for NDT Early Warning dashboard and Global Test Rates.
+        - 'ndt_test_total'
+        - 'ndt_active_tests'
+        - 'node_disk_io_time_seconds_total{deployment="node-exporter"}'
+        - 'node_filesystem_avail_bytes{mountpoint="/cache/data"}'
+        - 'node_filesystem_size_bytes{mountpoint="/cache/data"}'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
