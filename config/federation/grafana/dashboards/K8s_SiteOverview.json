@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 65,
-  "iteration": 1564585391076,
+  "id": 246,
+  "iteration": 1564586475947,
   "links": [],
   "panels": [
     {
@@ -501,7 +501,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kubelet_running_pod_count{node=\"$node.$site.measurement-lab.org\"} != count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud|update-agent)\"})",
+          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud|update-agent)\"})",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1830,7 +1830,7 @@
       "id": 48,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -1896,7 +1896,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1996,7 +1996,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2015,7 +2015,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kubelet_running_pod_count{node=\"$node.$site.measurement-lab.org\"} != count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud|update-agent)\"})",
+          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud|update-agent)\"})",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2098,7 +2098,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2202,7 +2202,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2305,7 +2305,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2398,7 +2398,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2492,7 +2492,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2586,7 +2586,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2657,7 +2657,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2758,7 +2758,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2880,7 +2880,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2983,7 +2983,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3102,7 +3102,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3200,7 +3200,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3298,7 +3298,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3383,7 +3383,7 @@
       "id": 64,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -3449,7 +3449,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3549,7 +3549,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3568,7 +3568,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kubelet_running_pod_count{node=\"$node.$site.measurement-lab.org\"} != count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud|update-agent)\"})",
+          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud|update-agent)\"})",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -3651,7 +3651,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3755,7 +3755,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3858,7 +3858,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3951,7 +3951,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4045,7 +4045,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4139,7 +4139,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4210,7 +4210,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4311,7 +4311,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4433,7 +4433,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4536,7 +4536,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4655,7 +4655,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4753,7 +4753,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4851,7 +4851,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564585391076,
+      "repeatIteration": 1564586475947,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4953,6 +4953,7 @@
       {
         "allValue": null,
         "current": {
+          "tags": [],
           "text": "den06",
           "value": "den06"
         },
@@ -5004,6 +5005,7 @@
       {
         "allValue": ".*",
         "current": {
+          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -5060,5 +5062,5 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 6
+  "version": 17
 }
