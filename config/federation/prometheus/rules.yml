@@ -120,69 +120,112 @@ groups:
 # 90th percentiles @ 30m
   - record: candidate_site:uplink:90th_quantile_30m
     expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[30m])
+  # vserver
   - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_30m
     expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[30m])
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_30m
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[30m])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_30m
     expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[30m])
+  # k8s
+  - record: machine:ndt_test_rpm:90th_quantile_30m
+    expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[30m])
+  - record: machine:node_disk_io_time_seconds_max:90th_quantile_30m
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[30m])
+  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_30m
+    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[30m])
+
 # 90th percentiles @ 1h.
   - record: candidate_site:uplink:90th_quantile_1h
     expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[1h])
+  # vserver
   - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_1h
     expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[1h])
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_1h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[1h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_1h
     expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[1h])
+  # k8s
+  - record: machine:ndt_test_rpm:90th_quantile_1h
+    expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[1h])
+  - record: machine:node_disk_io_time_seconds_max:90th_quantile_1h
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[1h])
+  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_1h
+    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[1h])
+
 # 90th percentiles @ 2h.
   - record: candidate_site:uplink:90th_quantile_2h
     expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
+  # vserver
   - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_2h
     expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[2h])
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_2h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[2h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_2h
     expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[2h])
+  # k8s
+  - record: machine:ndt_test_rpm:90th_quantile_2h
+    expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[2h])
+  - record: machine:node_disk_io_time_seconds_max:90th_quantile_2h
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[2h])
+  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_2h
+    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[2h])
+
 # 90th percentiles @ 6h.
   - record: candidate_site:uplink:90th_quantile_6h
     expr: quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
+  # vserver
   - record: candidate_machine:inotify_extension_create_rpm:90th_quantile_6h
     expr: quantile_over_time(0.9, machine:inotify_extension_create:rpm2m[6h])
   - record: candidate_machine:node_disk_io_time_ratio:90th_quantile_6h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_ms:max_ratio2m[6h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:90th_quantile_6h
     expr: quantile_over_time(0.9, ndt:vdlimit_used:predict_linear3h_12h[6h])
+  # k8s
+  - record: machine:ndt_test_rpm:90th_quantile_6h
+    expr: quantile_over_time(0.9, machine:ndt_test:rpm2m[6h])
+  - record: machine:node_disk_io_time_seconds_max:90th_quantile_6h
+    expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[6h])
+  - record: machine:node_filesystem_used_bytes_12h_prediction:90th_quantile_6h
+    expr: quantile_over_time(0.9, machine:node_filesystem_used_bytes:predict_linear3h_12h[6h])
+
 ##############################################################################
 # 98th percentiles @ 2h.
   - record: candidate_site:uplink:98th_quantile_2h
     expr: quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[2h])
+  # vserver
   - record: candidate_machine:inotify_extension_create_rpm:98th_quantile_2h
     expr: quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[2h])
   - record: candidate_machine:node_disk_io_time_ratio:98th_quantile_2h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[2h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_2h
     expr: quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[2h])
+  # k8s
+  - record: machine:ndt_test_rpm:98th_quantile_2h
+    expr: quantile_over_time(0.98, machine:ndt_test:rpm2m[2h])
+  - record: machine:node_disk_io_time_seconds_max:98th_quantile_2h
+    expr: quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m[2h])
+  - record: machine:node_filesystem_used_bytes_12h_prediction:98th_quantile_2h
+    expr: quantile_over_time(0.98, machine:node_filesystem_used_bytes:predict_linear3h_12h[2h])
+
 # 98th percentiles @ 6h.
   - record: candidate_site:uplink:98th_quantile_6h
     expr: quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias="uplink"}[6h])
+  # vserver
   - record: candidate_machine:inotify_extension_create_rpm:98th_quantile_6h
     expr: quantile_over_time(0.98, machine:inotify_extension_create:rpm2m[6h])
   - record: candidate_machine:node_disk_io_time_ratio:98th_quantile_6h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m[6h])
   - record: candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_6h
     expr: quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h[6h])
-## NDT Early Warning 2x site capacity thresholds.
-#
-# Raw boolean threshold violations.
-  - record: candidate_site:uplink:gt_500mbps
-    expr: switch:ifHCOutOctets:bps2m{ifAlias="uplink"} > bool 5e+08
-  - record: candidate_machine:inotify_extension_create_rpm:gt_60
-    expr: machine:inotify_extension_create:rpm2m > bool 60
-  - record: candidate_machine:node_disk_io_time_ratio:gt_50_pct
-    expr: machine:node_disk_io_time_ms:max_ratio2m > bool 0.5
-  - record: candidate_ndt:vdlimit_used_12h_prediction:gt_50gb
-    expr: ndt:vdlimit_used:predict_linear3h_12h > bool 5e+07
+  # k8s
+  - record: machine:ndt_test_rpm:98th_quantile_6h
+    expr: quantile_over_time(0.98, machine:ndt_test:rpm2m[6h])
+  - record: machine:node_disk_io_time_seconds_max:98th_quantile_6h
+    expr: quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m[6h])
+  - record: machine:node_filesystem_used_bytes_12h_prediction:98th_quantile_6h
+    expr: quantile_over_time(0.98, machine:node_filesystem_used_bytes:predict_linear3h_12h[6h])
+
 ## Parser volume checks.
 #
 # This rule optimizes the alert query used for ParserDailyVolumeTooLow. Rather
