@@ -306,7 +306,7 @@ scrape_configs:
         - 'up{job=~".+"}'
         - 'lame_duck_experiment{job!="node-exporter"}'
         - 'node_filesystem_size_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
-        - 'node_filesystem_free_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
+        - 'node_filesystem_avail_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
         - 'kube_node_spec_taint{key="lame-duck"}'
         - 'etcd_server_has_leader'
         - 'etcd_server_leader_changes_seen_total'
@@ -320,6 +320,10 @@ scrape_configs:
         - 'kube_deployment_spec_replicas'
         - 'kube_pod_info'
         - 'kube_pod_status_ready'
+        # For recording rules for NDT Early Warning dashboard and Global Test Rates.
+        - 'ndt_test_total'
+        - 'ndt_active_tests'
+        - 'node_disk_io_time_seconds_total{deployment="node-exporter"}'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
