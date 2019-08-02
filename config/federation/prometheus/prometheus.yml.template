@@ -307,6 +307,7 @@ scrape_configs:
         - 'lame_duck_experiment{job!="node-exporter"}'
         - 'node_filesystem_size_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
         - 'node_filesystem_avail_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
+        - 'node_memory_MemTotal_bytes'
         - 'kube_node_spec_taint{key="lame-duck"}'
         - 'etcd_server_has_leader'
         - 'etcd_server_leader_changes_seen_total'
