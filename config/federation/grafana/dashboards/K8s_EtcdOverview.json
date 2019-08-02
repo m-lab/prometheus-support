@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 260,
-  "iteration": 1555955660676,
+  "id": 74,
+  "iteration": 1564688191798,
   "links": [],
   "panels": [
     {
@@ -73,6 +73,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -156,6 +157,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -238,6 +240,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "/s",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -321,6 +324,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -403,6 +407,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "/s",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -485,6 +490,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "/s",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -567,6 +573,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "/s",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -649,6 +656,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "/s",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -731,6 +739,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -785,8 +794,8 @@
       "scopedVars": {
         "node": {
           "selected": true,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "title": "$node",
@@ -814,17 +823,20 @@
         "y": 6
       },
       "heatmap": {},
+      "hideZeroBuckets": false,
       "highlightCards": true,
       "id": 16,
       "legend": {
         "show": true
       },
       "links": [],
+      "options": {},
+      "reverseYBuckets": false,
       "scopedVars": {
         "node": {
           "selected": true,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "targets": [
@@ -889,6 +901,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -896,8 +909,8 @@
       "scopedVars": {
         "node": {
           "selected": true,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -913,21 +926,21 @@
           "refId": "B"
         },
         {
-          "expr": "rate(etcd_server_proposals_committed_total{instance=\"k8s-platform-master-$node\"}[4m])",
+          "expr": "rate(etcd_server_proposals_committed_total{instance=\"master-platform-cluster-$node\"}[4m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Committed",
           "refId": "A"
         },
         {
-          "expr": "rate(etcd_server_proposals_pending{instance=\"k8s-platform-master-$node\"}[4m])",
+          "expr": "rate(etcd_server_proposals_pending{instance=\"master-platform-cluster-$node\"}[4m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Pending",
           "refId": "C"
         },
         {
-          "expr": "rate(etcd_server_proposals_failed_total{instance=\"k8s-platform-master-$node\"}[4m])",
+          "expr": "rate(etcd_server_proposals_failed_total{instance=\"master-platform-cluster-$node\"}[4m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Failed",
@@ -997,17 +1010,20 @@
         "y": 12
       },
       "heatmap": {},
+      "hideZeroBuckets": false,
       "highlightCards": true,
       "id": 17,
       "legend": {
         "show": true
       },
       "links": [],
+      "options": {},
+      "reverseYBuckets": false,
       "scopedVars": {
         "node": {
           "selected": true,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "targets": [
@@ -1072,6 +1088,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1079,8 +1096,8 @@
       "scopedVars": {
         "node": {
           "selected": true,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -1089,14 +1106,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(etcd_network_peer_received_bytes_total{instance=\"k8s-platform-master-$node\"}[2m])",
+          "expr": "8 * rate(etcd_network_peer_received_bytes_total{instance=\"master-platform-cluster-$node\"}[2m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "From: {{From}}",
           "refId": "A"
         },
         {
-          "expr": "- 8 * rate(etcd_network_peer_sent_bytes_total{instance=\"k8s-platform-master-$node\"}[2m])",
+          "expr": "- 8 * rate(etcd_network_peer_sent_bytes_total{instance=\"master-platform-cluster-$node\"}[2m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "To: {{To}}",
@@ -1166,17 +1183,20 @@
         "y": 18
       },
       "heatmap": {},
+      "hideZeroBuckets": false,
       "highlightCards": true,
       "id": 18,
       "legend": {
         "show": true
       },
       "links": [],
+      "options": {},
+      "reverseYBuckets": false,
       "scopedVars": {
         "node": {
           "selected": true,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "targets": [
@@ -1242,6 +1262,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1249,8 +1270,8 @@
       "scopedVars": {
         "node": {
           "selected": true,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -1315,23 +1336,25 @@
       }
     }
   ],
-  "schemaVersion": 16,
+  "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "k8s platform (mlab-sandbox)",
-          "value": "k8s platform (mlab-sandbox)"
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
         },
         "hide": 0,
-        "label": null,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "",
+        "regex": "/^Platform Cluster/",
         "skipUrlSync": false,
         "type": "datasource"
       },
@@ -1339,8 +1362,8 @@
         "allValue": "",
         "current": {
           "tags": [],
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         },
         "datasource": "$datasource",
         "definition": "label_values(instance)",
@@ -1352,7 +1375,7 @@
         "options": [],
         "query": "label_values(instance)",
         "refresh": 1,
-        "regex": "k8s-platform-master-(.*)",
+        "regex": "master-platform-cluster-(.*)",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
@@ -1395,5 +1418,5 @@
   "timezone": "",
   "title": "K8s: Etcd Overview",
   "uid": "milv1PgZz",
-  "version": 13
+  "version": 1
 }
