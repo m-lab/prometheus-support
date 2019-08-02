@@ -1219,7 +1219,7 @@ groups:
       summary: System RAM is below the expected minimum value.
       description: All M-Lab machines have at least 16GB of RAM. The quantity
         of RAM on one or more machines has gone below 16GB, which may indicate
-        a failed RAM module. Log into the machine and double check
+        a failed RAM module. Login to the machine and double check
         the hardware and/or system messages.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
@@ -1236,6 +1236,36 @@ groups:
       summary: The amount of reported system RAM changed.
       description: The amount of RAM in a machine should never change. The
         reported amount of RAM in one or more machine changed, which may
-        indicate some problem with a RAM module. Log into the machine and
+        indicate some problem with a RAM module. Login to the machine and
         double check the hardware and/or system messages.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  - alert: PlatformHardware_EdacUncorrectableErrors
+    expr: |
+      node_edac_uncorrectable_errors_total{machine=~"^mlab[1-4].[a-z]{3}[0-9tc]{2}.*"} > 0
+    for: 1d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Uncorrectable errors detected in RAM.
+      description: EDAC metrics are reporting uncorrectable memory errors.
+        This may indicate a DIMM module beginning to go bad or an issue with
+        the mainboard. Login to the machine and double check the hardware
+        and/or system messages.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+  - alert: PlatformHardware_EdacCorrectableErrors
+    expr: |
+      node_edac_correctable_errors_total{machine=~"^mlab[1-4].[a-z]{3}[0-9tc]{2}.*"} > 0
+    for: 1d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Correctable errors detected in RAM.
+      description: EDAC metrics are reporting correctable memory errors.
+        While correctable, this may indicate some issue with a DIMM module or
+        the mainboard. Login to the machine and double check the hardware
+        and/or system messages.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
