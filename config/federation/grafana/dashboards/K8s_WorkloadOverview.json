@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 75,
-  "iteration": 1564688639331,
+  "id": 261,
+  "iteration": 1564758340532,
   "links": [],
   "panels": [
     {
@@ -569,17 +569,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  sum by (node, container_label_workload) (\n    rate (\n      container_network_transmit_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
+          "expr": "topk(10,\n  sum by (machine, container_label_workload) (\n    rate (\n      container_network_transmit_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_workload}} tranmitted ({{node}})",
+          "legendFormat": "{{container_label_workload}} tranmitted ({{machine}})",
           "refId": "B"
         },
         {
-          "expr": "topk(10,\n  sum by (node, container_label_workload) (\n    - rate (\n      container_network_receive_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
+          "expr": "topk(10,\n  sum by (machine, container_label_workload) (\n    - rate (\n      container_network_receive_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_workload}} received ({{node}})",
+          "legendFormat": "{{container_label_workload}} received ({{machine}})",
           "refId": "A"
         }
       ],
@@ -1349,5 +1349,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 1
+  "version": 84
 }
