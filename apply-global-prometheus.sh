@@ -35,7 +35,8 @@ BBE_IPV6_PORT_mlab_sandbox="7115"
 # Construct the per-project blackbox_exporter port using the passed $PROJECT
 # argument.
 bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
-
+rebootapi_user=REBOOTAPI_BASIC_AUTH_USER_${PROJECT/-/_}
+rebootapi_pass=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
 
 # Config maps and Secrets
 
@@ -56,6 +57,8 @@ export AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
 # Evaluate the Prometheus configuration template.
 sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
+    -e 's|{{REBOOTAPI_BASIC_AUTH_USER}}|'${!rebootapi_user}'|g' \
+    -e 's|{{REBOOTAPI_BASIC_AUTH_PASS}}|'${!rebootapi_pass}'|g' \
     config/federation/prometheus/prometheus.yml.template > \
     config/federation/prometheus/prometheus.yml
 
