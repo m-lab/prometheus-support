@@ -7,7 +7,7 @@ BASEDIR=${PWD}
 
 # Create all output directories.
 for project in mlab-sandbox mlab-staging mlab-oti ; do
-  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets}
+  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets,bmc-targets}
 done
 
 # All testing sites and machines.
@@ -212,5 +212,13 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --physical \
       --select "${!pattern}" \
       --decoration "v6" > ${output}/blackbox-targets-ipv6/ssh_ipv6.json
+
+  # BMC monitoring via the Reboot API
+  ./mlabconfig.py --format=prom-targets-nodes \
+      --template_target={{hostname}} \
+      --label service=bmc_e2e \
+      --physical \
+      --select "${!pattern}" \
+      --decoration "d" > ${output}/bmc-targets/bmc_e2e.json
 
 done
