@@ -747,6 +747,7 @@ scrape_configs:
           - /slow-targets/*-5m.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
+
   # Scrape BMC targets every 5m (NOTE: do not poll less frequently without
   # updating the prometheus flag -query.staleness-delta).
   - job_name: 'bmc-targets'
@@ -756,6 +757,31 @@ scrape_configs:
           - /bmc-targets/*.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
+    # This relabel config is necessary. The relabel config redefines the address
+    # to scrape and sets the correct parameters to pass to the scrape target.
+    relabel_configs:
+
+      # The default __address__ value is a target host from the config file.
+      # Here, we set (i.e. "replace") a request parameter "target" equal to the
+      # host value.
+      - source_labels: [__address__]
+        regex: (.*)
+        target_label: __param_target
+        replacement: ${1}
+
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the script_exporter
+      # address.
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: reboot.mlab-sandbox.measurementlab.net:443
+
+      - source_labels: []
+        regex: .*
+        target_label: __metrics_path__
+        replacement: /v1/e2e
+
 
   # Scrape config for legacy targets.
   #
