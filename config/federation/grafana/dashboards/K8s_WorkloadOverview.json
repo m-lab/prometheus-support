@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1556570505236,
+  "iteration": 1564758340532,
   "links": [],
   "panels": [
     {
@@ -51,6 +51,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -153,6 +154,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -257,6 +259,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -272,17 +275,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  node_container_name:container_cpu_usage_seconds:sum_rate5m / on(node) group_left machine_cpu_cores\n)",
+          "expr": "topk(10,\n  node_container_name:container_cpu_usage_seconds:sum_rate5m / on(machine) group_left machine_cpu_cores\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{machine}})",
           "refId": "A"
         },
         {
           "expr": "topk(10,\n  node_container_name:container_cpu_usage_seconds:sum_rate5m\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Cores {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "legendFormat": "Cores {{container_label_io_kubernetes_container_name}} ({{machine}})",
           "refId": "B"
         }
       ],
@@ -358,6 +361,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -373,17 +377,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  node_container_name:container_memory_working_set_bytes:sum_rate5m / on(node) group_left machine_memory_bytes\n)",
+          "expr": "topk(10,\n  node_container_name:container_memory_working_set_bytes:sum_rate5m / on(machine) group_left machine_memory_bytes\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{machine}})",
           "refId": "A"
         },
         {
           "expr": "topk(10,\n  node_container_name:container_memory_working_set_bytes:sum_rate5m\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Memory {{container_label_io_kubernetes_container_name}} ({{node}})",
+          "legendFormat": "Memory {{container_label_io_kubernetes_container_name}} ({{machine}})",
           "refId": "B"
         }
       ],
@@ -457,6 +461,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -553,6 +558,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -563,17 +569,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  sum by (node, container_label_workload) (\n    rate (\n      container_network_transmit_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
+          "expr": "topk(10,\n  sum by (machine, container_label_workload) (\n    rate (\n      container_network_transmit_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_workload}} tranmitted ({{node}})",
+          "legendFormat": "{{container_label_workload}} tranmitted ({{machine}})",
           "refId": "B"
         },
         {
-          "expr": "topk(10,\n  sum by (node, container_label_workload) (\n    - rate (\n      container_network_receive_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
+          "expr": "topk(10,\n  sum by (machine, container_label_workload) (\n    - rate (\n      container_network_receive_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_workload}} received ({{node}})",
+          "legendFormat": "{{container_label_workload}} received ({{machine}})",
           "refId": "A"
         }
       ],
@@ -632,6 +638,7 @@
       "hideTimeOverride": false,
       "id": 23,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -738,6 +745,7 @@
       "hideTimeOverride": false,
       "id": 24,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -858,6 +866,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -928,6 +937,7 @@
       },
       "id": 17,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -953,7 +963,7 @@
           "unit": "short"
         },
         {
-          "alias": "Namespace",
+          "alias": "Node",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -963,7 +973,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 2,
           "mappingType": 1,
-          "pattern": "/^namespace$/",
+          "pattern": "/^node$/",
           "thresholds": [],
           "type": "string",
           "unit": "short"
@@ -985,7 +995,7 @@
       ],
       "targets": [
         {
-          "expr": "kube_pod_status_ready{condition=\"true\"} == 0",
+          "expr": "kube_pod_info == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"} == 0",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -1008,6 +1018,7 @@
       },
       "id": 14,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -1123,6 +1134,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1193,6 +1205,7 @@
       },
       "id": 4,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -1280,30 +1293,32 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 16,
+  "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "k8s platform (mlab-sandbox)",
-          "value": "k8s platform (mlab-sandbox)"
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
         },
         "hide": 0,
+        "includeAll": false,
         "label": "Datasource",
+        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "",
+        "regex": "/^Platform Cluster/",
         "skipUrlSync": false,
         "type": "datasource"
       }
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -1334,6 +1349,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 82
+  "version": 84
 }
-

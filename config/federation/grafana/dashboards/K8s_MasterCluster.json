@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 244,
-  "iteration": 1558032409900,
+  "id": 63,
+  "iteration": 1564687572433,
   "links": [],
   "panels": [
     {
@@ -33,8 +33,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "title": "$master",
@@ -82,6 +82,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "d",
       "postfixFontSize": "80%",
       "prefix": "",
@@ -96,8 +97,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "sparkline": {
@@ -109,7 +110,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=\"master-platform-cluster-$master\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -157,6 +158,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -164,8 +166,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -174,21 +176,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"iowait\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"iowait\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "iowait",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"user\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"user\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "user",
           "refId": "B"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"system\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"system\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "system",
@@ -263,6 +265,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -270,8 +273,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -280,14 +283,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_read_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_read_bytes_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read {{device}}",
           "refId": "A"
         },
         {
-          "expr": "rate(node_disk_written_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_written_bytes_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written {{device}}",
@@ -364,6 +367,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -371,8 +375,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -381,7 +385,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -389,7 +393,7 @@
           "refId": "B"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -479,6 +483,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -493,8 +498,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "sparkline": {
@@ -506,7 +511,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load5{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_load5{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -567,6 +572,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -581,8 +587,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "sparkline": {
@@ -594,7 +600,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_load15{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -641,6 +647,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": true,
       "pointradius": 5,
       "points": false,
@@ -648,8 +655,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -666,21 +673,21 @@
           "refId": "B"
         },
         {
-          "expr": "node_memory_Buffers_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_Buffers_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Buffer",
           "refId": "A"
         },
         {
-          "expr": "node_memory_Active_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_Active_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Active",
           "refId": "C"
         },
         {
-          "expr": "node_memory_MemFree_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_MemFree_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Free",
@@ -756,6 +763,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -763,8 +771,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -773,7 +781,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_io_time_seconds_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_io_time_seconds_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{device}}",
@@ -850,6 +858,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -857,8 +866,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "seriesOverrides": [],
@@ -867,7 +876,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -875,7 +884,7 @@
           "refId": "D"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -966,6 +975,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "80%",
       "prefix": "",
@@ -981,8 +991,8 @@
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-a",
-          "value": "us-west2-a"
+          "text": "us-east1-b",
+          "value": "us-east1-b"
         }
       },
       "sparkline": {
@@ -994,7 +1004,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -1003,7 +1013,6 @@
       ],
       "thresholds": "0.80,0.90",
       "title": "Root fs",
-      "transparent": false,
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -1026,13 +1035,13 @@
       "id": 133,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 95,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "title": "$master",
@@ -1080,6 +1089,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "d",
       "postfixFontSize": "80%",
       "prefix": "",
@@ -1091,14 +1101,14 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 131,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "sparkline": {
@@ -1110,7 +1120,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=\"master-platform-cluster-$master\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1158,18 +1168,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 129,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "seriesOverrides": [],
@@ -1178,21 +1189,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"iowait\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"iowait\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "iowait",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"user\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"user\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "user",
           "refId": "B"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"system\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"system\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "system",
@@ -1267,18 +1278,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 110,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "seriesOverrides": [],
@@ -1287,14 +1299,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_read_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_read_bytes_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read {{device}}",
           "refId": "A"
         },
         {
-          "expr": "rate(node_disk_written_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_written_bytes_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written {{device}}",
@@ -1371,18 +1383,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 108,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "seriesOverrides": [],
@@ -1391,7 +1404,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1399,7 +1412,7 @@
           "refId": "B"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1489,6 +1502,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -1500,14 +1514,14 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 132,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "sparkline": {
@@ -1519,7 +1533,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load5{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_load5{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -1580,6 +1594,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -1591,14 +1606,14 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 7,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "sparkline": {
@@ -1610,7 +1625,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_load15{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -1657,18 +1672,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": true,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 97,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "seriesOverrides": [],
@@ -1685,21 +1701,21 @@
           "refId": "B"
         },
         {
-          "expr": "node_memory_Buffers_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_Buffers_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Buffer",
           "refId": "A"
         },
         {
-          "expr": "node_memory_Active_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_Active_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Active",
           "refId": "C"
         },
         {
-          "expr": "node_memory_MemFree_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_MemFree_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Free",
@@ -1775,18 +1791,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 111,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "seriesOverrides": [],
@@ -1795,7 +1812,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_io_time_seconds_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_io_time_seconds_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{device}}",
@@ -1872,18 +1889,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 107,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "seriesOverrides": [],
@@ -1892,7 +1910,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1900,7 +1918,7 @@
           "refId": "D"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1991,6 +2009,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "80%",
       "prefix": "",
@@ -2003,14 +2022,14 @@
         }
       ],
       "repeat": null,
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 18,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-b",
-          "value": "us-west2-b"
+          "text": "us-east1-c",
+          "value": "us-east1-c"
         }
       },
       "sparkline": {
@@ -2022,7 +2041,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -2031,7 +2050,6 @@
       ],
       "thresholds": "0.80,0.90",
       "title": "Root fs",
-      "transparent": false,
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -2054,13 +2072,13 @@
       "id": 144,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 95,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "title": "$master",
@@ -2108,6 +2126,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "d",
       "postfixFontSize": "80%",
       "prefix": "",
@@ -2119,14 +2138,14 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 131,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "sparkline": {
@@ -2138,7 +2157,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"k8s-platform-master-$master\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=\"master-platform-cluster-$master\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2186,18 +2205,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 129,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "seriesOverrides": [],
@@ -2206,21 +2226,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"iowait\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"iowait\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "iowait",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"user\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"user\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "user",
           "refId": "B"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"k8s-platform-master-$master\", mode=\"system\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"system\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "system",
@@ -2295,18 +2315,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 110,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "seriesOverrides": [],
@@ -2315,14 +2336,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_read_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_read_bytes_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read {{device}}",
           "refId": "A"
         },
         {
-          "expr": "rate(node_disk_written_bytes_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_written_bytes_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written {{device}}",
@@ -2399,18 +2420,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 108,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "seriesOverrides": [],
@@ -2419,7 +2441,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"ens4.*\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -2427,7 +2449,7 @@
           "refId": "B"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"ens4.*\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -2517,6 +2539,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -2528,14 +2551,14 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 132,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "sparkline": {
@@ -2547,7 +2570,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load5{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_load5{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -2608,6 +2631,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -2619,14 +2643,14 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 7,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "sparkline": {
@@ -2638,7 +2662,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_load15{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -2685,18 +2709,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": true,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 97,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "seriesOverrides": [],
@@ -2713,21 +2738,21 @@
           "refId": "B"
         },
         {
-          "expr": "node_memory_Buffers_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_Buffers_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Buffer",
           "refId": "A"
         },
         {
-          "expr": "node_memory_Active_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_Active_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Active",
           "refId": "C"
         },
         {
-          "expr": "node_memory_MemFree_bytes{node=\"k8s-platform-master-$master\"}",
+          "expr": "node_memory_MemFree_bytes{node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Free",
@@ -2803,18 +2828,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 111,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "seriesOverrides": [],
@@ -2823,7 +2849,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_io_time_seconds_total{node=\"k8s-platform-master-$master\"}[5m])",
+          "expr": "rate(node_disk_io_time_seconds_total{node=\"master-platform-cluster-$master\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{device}}",
@@ -2900,18 +2926,19 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 107,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "seriesOverrides": [],
@@ -2920,7 +2947,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"flannel.1\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -2928,7 +2955,7 @@
           "refId": "D"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=\"k8s-platform-master-$master\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"flannel.1\", node=\"master-platform-cluster-$master\"}[4m])",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -3019,6 +3046,7 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
+      "options": {},
       "postfix": "",
       "postfixFontSize": "80%",
       "prefix": "",
@@ -3031,14 +3059,14 @@
         }
       ],
       "repeat": null,
-      "repeatIteration": 1558032409900,
+      "repeatIteration": 1564687572433,
       "repeatPanelId": 18,
       "repeatedByRow": true,
       "scopedVars": {
         "master": {
           "selected": false,
-          "text": "us-west2-c",
-          "value": "us-west2-c"
+          "text": "us-east1-d",
+          "value": "us-east1-d"
         }
       },
       "sparkline": {
@@ -3050,7 +3078,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"} -\n    node_filesystem_free_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"k8s-platform-master-$master\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", fstype=\"ext4\", node=\"master-platform-cluster-$master\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
@@ -3059,7 +3087,6 @@
       ],
       "thresholds": "0.80,0.90",
       "title": "Root fs",
-      "transparent": false,
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -3072,25 +3099,25 @@
       "valueName": "current"
     }
   ],
-  "schemaVersion": 16,
+  "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": false,
-          "tags": [],
-          "text": "k8s platform (mlab-sandbox)",
-          "value": "k8s platform (mlab-sandbox)"
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
         },
         "hide": 0,
+        "includeAll": false,
         "label": "Datasource",
+        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "/^k8s platform/",
+        "regex": "/^Platform Cluster/",
         "skipUrlSync": false,
         "type": "datasource"
       },
@@ -3111,7 +3138,7 @@
         "options": [],
         "query": "label_values(node)",
         "refresh": 1,
-        "regex": "/k8s-platform-master-(.*)/",
+        "regex": "/master-platform-cluster-(.*)/",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
@@ -3154,5 +3181,5 @@
   "timezone": "",
   "title": "k8s: Master Cluster",
   "uid": "K8-zAIuik",
-  "version": 33
+  "version": 8
 }

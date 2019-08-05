@@ -2,7 +2,6 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:705",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -13,11 +12,10 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 48,
-  "iteration": 1539288858555,
+  "iteration": 1564682328114,
   "links": [],
   "panels": [
     {
@@ -31,6 +29,7 @@
       "id": 8,
       "links": [],
       "mode": "markdown",
+      "options": {},
       "title": "",
       "type": "text"
     },
@@ -76,6 +75,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -105,7 +105,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:261",
           "expr": "candidate_machine:inotify_extension_create_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -116,7 +115,6 @@
           "step": 300
         },
         {
-          "$$hashKey": "object:262",
           "expr": "candidate_site:uplink:98th_quantile_$interval{ifAlias=\"uplink\", speed=\"1g\"} / 1e9 > ($percent / 100) OR candidate_site:uplink:98th_quantile_$interval{ifAlias=\"uplink\", speed=\"10g\"} / 10e9 > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -127,7 +125,6 @@
           "step": 300
         },
         {
-          "$$hashKey": "object:263",
           "expr": "candidate_machine:node_disk_io_time_ratio:98th_quantile_$interval > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -138,8 +135,7 @@
           "step": 300
         },
         {
-          "$$hashKey": "object:264",
-          "expr": "candidate_ndt:vdlimit_used_12h_prediction:98th_quantile_$interval / 100e6 > ($percent / 100)",
+          "expr": "candidate_ndt:vdlimit_used_ratio_12h_prediction:98th_quantile_$interval > ($percent / 100)",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -147,10 +143,42 @@
           "legendFormat": "disk usage > $percent% {{machine}}",
           "refId": "H",
           "step": 300
+        },
+        {
+          "expr": "/* k8s */",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        },
+        {
+          "expr": "machine:ndt_test_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "ndt_tests  > $percent% - {{machine}}",
+          "refId": "B"
+        },
+        {
+          "expr": "machine:node_disk_io_time_seconds_max:98th_quantile_$interval > ($percent / 100)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "disk i/o > $percent% {{machine}}",
+          "refId": "C"
+        },
+        {
+          "expr": "machine:node_filesystem_used_ratio_12h_prediction:98th_quantile_$interval > ($percent/100)",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "disk usage > $percent% {{machine}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "$interval, 98th Percentiles that are over $percent% Capacity",
       "tooltip": {
@@ -233,6 +261,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -262,7 +291,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:518",
           "expr": "candidate_site:uplink:90th_quantile_6h{ifAlias=\"uplink\", speed=\"1g\"} / 1e9 > (40 / 100)",
           "format": "time_series",
           "hide": false,
@@ -275,6 +303,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "6h, 1G sites where 90th Percentile is over 40% Capacity",
       "tooltip": {
@@ -357,6 +386,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -392,7 +422,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:333",
           "expr": "quantile_over_time(0.9, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60",
           "format": "time_series",
           "hide": false,
@@ -403,7 +432,6 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:334",
           "expr": "quantile_over_time(0.98, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96",
           "format": "time_series",
           "interval": "1m",
@@ -412,7 +440,6 @@
           "refId": "D"
         },
         {
-          "$$hashKey": "object:335",
           "expr": "machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "hide": false,
@@ -423,7 +450,6 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:336",
           "expr": "quantile_over_time(0.90, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "instant": false,
@@ -433,7 +459,6 @@
           "refId": "C"
         },
         {
-          "$$hashKey": "object:337",
           "expr": "quantile_over_time(0.98, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "instant": false,
@@ -441,12 +466,62 @@
           "intervalFactor": 1,
           "legendFormat": "q98 - {{machine}}",
           "refId": "E"
+        },
+        {
+          "expr": "/* k8s */",
+          "format": "time_series",
+          "hide": true,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "F"
+        },
+        {
+          "expr": "quantile_over_time(0.9, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "warning - {{machine}}",
+          "refId": "G"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "error - {{machine}}",
+          "refId": "H"
+        },
+        {
+          "expr": "machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "raw - {{machine}}",
+          "refId": "I"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q90 - {{machine}}",
+          "refId": "J"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q98 - {{machine}}",
+          "refId": "K"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
-      "title": "inotify $machine.$site > 60 rpm",
+      "title": "NDT Test Count $machine.$site > 60 rpm",
       "tooltip": {
         "shared": false,
         "sort": 2,
@@ -526,6 +601,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -564,7 +640,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:592",
           "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 500e6",
           "format": "time_series",
           "hide": false,
@@ -574,7 +649,6 @@
           "refId": "E"
         },
         {
-          "$$hashKey": "object:593",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range]) > 600e6",
           "format": "time_series",
           "intervalFactor": 2,
@@ -582,7 +656,6 @@
           "refId": "F"
         },
         {
-          "$$hashKey": "object:594",
           "expr": "switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}",
           "format": "time_series",
           "hide": false,
@@ -592,7 +665,6 @@
           "refId": "C"
         },
         {
-          "$$hashKey": "object:595",
           "expr": "quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range])",
           "format": "time_series",
           "interval": "1m",
@@ -601,7 +673,6 @@
           "refId": "D"
         },
         {
-          "$$hashKey": "object:596",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"1g\"}[$range])",
           "format": "time_series",
           "hide": false,
@@ -611,7 +682,6 @@
           "refId": "A"
         },
         {
-          "$$hashKey": "object:597",
           "expr": "quantile_over_time(0.9, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 5e9",
           "format": "time_series",
           "interval": "1m",
@@ -620,7 +690,6 @@
           "refId": "B"
         },
         {
-          "$$hashKey": "object:598",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range]) > 6e9",
           "format": "time_series",
           "interval": "1m",
@@ -629,7 +698,6 @@
           "refId": "G"
         },
         {
-          "$$hashKey": "object:599",
           "expr": "switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}",
           "format": "time_series",
           "interval": "1m",
@@ -638,7 +706,6 @@
           "refId": "H"
         },
         {
-          "$$hashKey": "object:600",
           "expr": "quantile_over_time(0.90, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range])",
           "format": "time_series",
           "interval": "1m",
@@ -647,7 +714,6 @@
           "refId": "I"
         },
         {
-          "$$hashKey": "object:601",
           "expr": "quantile_over_time(0.98, switch:ifHCOutOctets:bps2m{ifAlias=\"uplink\", site=~\"$site.*\", speed=\"10g\"}[$range])",
           "format": "time_series",
           "interval": "1m",
@@ -658,6 +724,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "switch $site - > 500 Mbps",
       "tooltip": {
@@ -711,6 +778,7 @@
         "y": 22
       },
       "id": 14,
+      "interval": "",
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -726,6 +794,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -761,7 +830,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:436",
           "expr": "quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range]) > 0.5",
           "format": "time_series",
           "hide": false,
@@ -772,7 +840,6 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:437",
           "expr": "quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range]) > 0.8",
           "format": "time_series",
           "hide": false,
@@ -783,7 +850,6 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:438",
           "expr": "machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "hide": false,
@@ -794,7 +860,6 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:439",
           "expr": "quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
@@ -805,7 +870,6 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:440",
           "expr": "quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
@@ -814,10 +878,58 @@
           "legendFormat": "q98 - {{machine}}",
           "refId": "E",
           "step": 900
+        },
+        {
+          "expr": "/* k8s */",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "refId": "F"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range]) > 0.5",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "warning - {{machine}}",
+          "refId": "G"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range]) > 0.8",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "error - {{machine}}",
+          "refId": "H"
+        },
+        {
+          "expr": "machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "raw - {{machine}}",
+          "refId": "I"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q90 - {{machine}}",
+          "refId": "J"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q98 - {{machine}}",
+          "refId": "K"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Disk IO Utilization $machine.$site - > 50%",
       "tooltip": {
@@ -885,6 +997,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -920,8 +1033,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:724",
-          "expr": "quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > 50000000",
+          "expr": "quantile_over_time(0.90, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .5",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -930,8 +1042,7 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:725",
-          "expr": "quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > 80000000",
+          "expr": "quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .8",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -940,8 +1051,7 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:726",
-          "expr": "ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
+          "expr": "ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -951,8 +1061,7 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:727",
-          "expr": "quantile_over_time(0.90, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "expr": "quantile_over_time(0.90, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -962,8 +1071,7 @@
           "step": 900
         },
         {
-          "$$hashKey": "object:728",
-          "expr": "quantile_over_time(0.98, ndt:vdlimit_used:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "expr": "quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -971,10 +1079,59 @@
           "legendFormat": "q98 - {{machine}}",
           "refId": "A",
           "step": 900
+        },
+        {
+          "expr": "/* k8s */",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .5",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "warning - {{machine}}",
+          "refId": "C"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .8",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "error - {{machine}}",
+          "refId": "D"
+        },
+        {
+          "expr": "machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "raw - {{machine}}",
+          "refId": "I"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q90 - {{machine}}",
+          "refId": "J"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "format": "time_series",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q98 - {{machine}}",
+          "refId": "K"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Disk Usage - 12hour estimates - $machine.$site - > 50GB",
       "tooltip": {
@@ -992,7 +1149,7 @@
       },
       "yaxes": [
         {
-          "format": "deckbytes",
+          "format": "percentunit",
           "label": "Used Space",
           "logBase": 1,
           "max": null,
@@ -1015,32 +1172,34 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 16,
+  "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "tags": [],
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "selected": true,
+          "text": "Prometheus (mlab-sandbox)",
+          "value": "Prometheus (mlab-sandbox)"
         },
         "hide": 0,
+        "includeAll": false,
         "label": "Datasource",
+        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
         "regex": "Prometheus.*",
+        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "mlab1",
-          "value": "mlab1"
+          "text": "mlab.",
+          "value": "mlab."
         },
         "hide": 0,
         "includeAll": false,
@@ -1049,7 +1208,7 @@
         "name": "machine",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "mlab1",
             "value": "mlab1"
           },
@@ -1070,15 +1229,17 @@
           }
         ],
         "query": "mlab1,mlab2,mlab3,mlab4",
+        "skipUrlSync": false,
         "type": "custom"
       },
       {
         "allValue": null,
         "current": {
-          "text": "ord02",
-          "value": "ord02"
+          "text": "lga.t",
+          "value": "lga.t"
         },
         "datasource": null,
+        "definition": "",
         "hide": 0,
         "includeAll": false,
         "label": "Site",
@@ -1088,6 +1249,7 @@
         "query": "label_values(machine)",
         "refresh": 1,
         "regex": ".*mlab[1-4].([a-z]{3}..).*",
+        "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
         "tags": [],
@@ -1098,13 +1260,13 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "tags": [],
           "text": "2h",
           "value": "2h"
         },
         "hide": 0,
         "includeAll": false,
-        "label": "Interval",
+        "label": "Range",
         "multi": false,
         "name": "range",
         "options": [
@@ -1175,40 +1337,42 @@
           }
         ],
         "query": "5m,15m,30m,1h,2h,3h,4h,6h,8h,10h,12h,18h,24h",
+        "skipUrlSync": false,
         "type": "custom"
       },
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "6h",
-          "value": "6h"
+          "selected": true,
+          "tags": [],
+          "text": "2h",
+          "value": "2h"
         },
         "hide": 0,
         "includeAll": false,
-        "label": "98th % Range",
+        "label": "98th % Interval",
         "multi": false,
         "name": "interval",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "2h",
             "value": "2h"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "6h",
             "value": "6h"
           }
         ],
         "query": "2h,6h",
+        "skipUrlSync": false,
         "type": "custom"
       },
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "tags": [],
+          "selected": true,
           "text": "80",
           "value": "80"
         },
@@ -1235,12 +1399,13 @@
           }
         ],
         "query": "60,75,80",
+        "skipUrlSync": false,
         "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1271,5 +1436,5 @@
   "timezone": "utc",
   "title": "NDT: Early Warning",
   "uid": "UM67WeHmz",
-  "version": 52
+  "version": 141
 }
