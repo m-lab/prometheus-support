@@ -760,6 +760,7 @@ scrape_configs:
   # Scrape BMC targets every 5m.
   - job_name: 'bmc-targets'
     scrape_interval: 5m
+    scrape_timeout: 60s
     file_sd_configs:
       - files:
           - /bmc-targets/*.json
