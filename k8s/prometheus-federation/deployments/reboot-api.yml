@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: reboot-api
-        image: measurementlab/reboot-api:v0.2.1
+        image: measurementlab/reboot-api:latest
         args:
           - "-datastore.project={{GCLOUD_PROJECT}}"
           - "-reboot.key=/var/secrets/reboot-api-ssh.key"
@@ -31,7 +31,7 @@ spec:
             memory: 50Mi
           requests:
             cpu: 200m
-            memory: 50Mi
+            memory: 200Mi
         ports:
           - containerPort: 9990
       volumes:
