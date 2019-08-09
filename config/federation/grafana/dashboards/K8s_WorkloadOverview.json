@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1564758340532,
+  "iteration": 1565367035145,
   "links": [],
   "panels": [
     {
@@ -25,7 +25,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "Left Y: Aggregate container CPU usage expressed as a percentage of the entire cluster CPU capacity in cores.\nRight Y: Aggregate container CPU usage as an absolute number of cores.",
+      "description": "Left Y: Aggregate DaemonSet CPU usage expressed as a percentage of the entire cluster CPU capacity in cores.\nRight Y: Aggregate DaemonSet CPU usage as an absolute number of cores.",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -67,18 +67,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_name:container_cpu_usage_seconds:sum_rate5m /\n  ignoring(container_label_io_kubernetes_container_name) group_left sum(machine_cpu_cores)\n",
+          "expr": " daemonset:container_cpu_usage_seconds:ratio\n",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}}",
+          "legendFormat": "% Total: {{daemonset}}",
           "refId": "A"
         },
         {
-          "expr": "container_name:container_cpu_usage_seconds:sum_rate5m",
+          "expr": "daemonset:container_cpu_usage_seconds:sum_rate5m",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Cores {{container_label_io_kubernetes_container_name}}",
+          "legendFormat": "Cores: {{daemonset}}",
           "refId": "B"
         }
       ],
@@ -86,7 +86,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Aggregate container CPU usage",
+      "title": "Aggregate DaemonSet CPU usage",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -130,7 +130,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "Left Y: Aggregate container memory expressed as a percentage of the entire cluster's memory capacity.\nRight Y: Aggregate container memory usage expressed as an absolute number of bytes.",
+      "description": "Left Y: Aggregate DaemonSet memory expressed as a percentage of the entire cluster's memory capacity.\n\nRight Y: Aggregate DaemonSet memory usage expressed as an absolute number of bytes.",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -146,7 +146,7 @@
         "max": false,
         "min": false,
         "rightSide": true,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -170,18 +170,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_name:container_memory_working_set_bytes:sum_rate5m /\n  ignoring(container_label_io_kubernetes_container_name) group_left sum(machine_memory_bytes)",
+          "expr": "daemonset:container_memory_working_set_bytes:ratio",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}}",
+          "legendFormat": "% Total: {{daemonset}}",
           "refId": "A"
         },
         {
-          "expr": "container_name:container_memory_working_set_bytes:sum_rate5m",
+          "expr": "daemonset:container_memory_working_set_bytes:sum",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Memory {{container_label_io_kubernetes_container_name}}",
+          "legendFormat": "Memory: {{daemonset}}",
           "refId": "B"
         }
       ],
@@ -189,7 +189,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Aggregate container memory usage",
+      "title": "Aggregate DaemonSet memory usage",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -233,7 +233,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "Left Y: Aggregate container CPU usage expressed as a percentage of a node's total CPU cores.\nRight Y: Aggregate container CPU usage as an absolute number of cores.",
+      "description": "Left Y: Aggregate DaemonSet CPU usage expressed as a percentage of a node's total CPU cores.\n\nRight Y: Aggregate DaemonSet CPU usage as an absolute number of cores on a node.",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -251,7 +251,7 @@
         "max": false,
         "min": false,
         "rightSide": true,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -275,17 +275,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  node_container_name:container_cpu_usage_seconds:sum_rate5m / on(machine) group_left machine_cpu_cores\n)",
+          "expr": "topk(10, machine_daemonset:container_cpu_usage_seconds:ratio)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{machine}})",
+          "legendFormat": "% Total: {{daemonset}} ({{machine}})",
           "refId": "A"
         },
         {
-          "expr": "topk(10,\n  node_container_name:container_cpu_usage_seconds:sum_rate5m\n)",
+          "expr": "topk(10, machine_daemonset:container_cpu_usage_seconds:sum_rate5m)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Cores {{container_label_io_kubernetes_container_name}} ({{machine}})",
+          "legendFormat": "Cores: {{daemonset}} ({{machine}})",
           "refId": "B"
         }
       ],
@@ -293,7 +293,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Top 10: Container CPU usage by node",
+      "title": "Top 10: DaemonSet CPU usage by node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -337,7 +337,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "Left Y: Aggregate container memory expressed as a percentage of a node's total memory capacity.\nRight Y: Aggregate container memory usage on a node expressed as an absolute number of bytes.",
+      "description": "Left Y: Aggregate DaemonSet memory expressed as a percentage of a node's total memory capacity.\n\nRight Y: Aggregate DaemonSet memory usage on a node expressed as an absolute number of bytes.",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -353,7 +353,7 @@
         "max": false,
         "min": false,
         "rightSide": true,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -377,17 +377,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  node_container_name:container_memory_working_set_bytes:sum_rate5m / on(machine) group_left machine_memory_bytes\n)",
+          "expr": "topk(10, machine_daemonset:container_memory_working_set_bytes:ratio)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "% Total {{container_label_io_kubernetes_container_name}} ({{machine}})",
+          "legendFormat": "% Total: {{daemonset}} ({{machine}})",
           "refId": "A"
         },
         {
-          "expr": "topk(10,\n  node_container_name:container_memory_working_set_bytes:sum_rate5m\n)",
+          "expr": "topk(10, machine_daemonset:container_memory_working_set_bytes:sum)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Memory {{container_label_io_kubernetes_container_name}} ({{machine}})",
+          "legendFormat": "Memory: {{daemonset}} ({{machine}})",
           "refId": "B"
         }
       ],
@@ -395,7 +395,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Top10: Container memory usage by node",
+      "title": "Top10: DaemonSet memory usage by node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -472,17 +472,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (container_label_workload) (\n  rate (\n    container_network_transmit_bytes_total{\n      container_label_io_kubernetes_container_name = \"POD\",\n      container_label_workload != \"\",\n      interface =~ \"(eth0|net1)\"\n    }\n  [5m]) * 8\n)",
+          "expr": "daemonset:container_network_transmit_bytes_total:sum",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "{{container_label_workload}} tranmitted",
+          "legendFormat": "Tx: {{daemonset}}",
           "refId": "B"
         },
         {
-          "expr": "sum by (container_label_workload) (\n  - rate (\n    container_network_receive_bytes_total{\n      container_label_io_kubernetes_container_name = \"POD\",\n      container_label_workload != \"\",\n      interface =~ \"(eth0|net1)\"\n    }\n  [5m]) * 8\n)",
+          "expr": "- daemonset:container_network_receive_bytes_total:sum",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "{{container_label_workload}} received",
+          "legendFormat": "Rx: {{daemonset}}",
           "refId": "A"
         }
       ],
@@ -490,7 +490,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Aggregate container network usage (bits/s)",
+      "title": "Aggregate DaemonSet network usage (bits/s)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -535,7 +535,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "description": "",
-      "fill": 1,
+      "fill": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
@@ -569,17 +569,17 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,\n  sum by (machine, container_label_workload) (\n    rate (\n      container_network_transmit_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
+          "expr": "machine_daemonset:container_network_transmit_bytes_total:sum",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_workload}} tranmitted ({{machine}})",
+          "legendFormat": "Tx: {{daemonset}}  ({{machine}})",
           "refId": "B"
         },
         {
-          "expr": "topk(10,\n  sum by (machine, container_label_workload) (\n    - rate (\n      container_network_receive_bytes_total{\n        container_label_io_kubernetes_container_name = \"POD\",\n        container_label_workload != \"\"\n      }\n    [5m]) * 8\n  )\n)",
+          "expr": "- machine_daemonset:container_network_receive_bytes_total:sum",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_workload}} received ({{machine}})",
+          "legendFormat": "Rx: {{daemonset}} ({{machine}})",
           "refId": "A"
         }
       ],
@@ -587,7 +587,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Top 10: Container network usage by node (bits/s)",
+      "title": "Top 10: DaemonSet network usage by node (bits/s)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1300,6 +1300,7 @@
     "list": [
       {
         "current": {
+          "tags": [],
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -1318,7 +1319,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1349,5 +1350,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 84
+  "version": 87
 }
