@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1565367035145,
+  "iteration": 1565371951143,
   "links": [],
   "panels": [
     {
@@ -569,14 +569,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "machine_daemonset:container_network_transmit_bytes_total:sum",
+          "expr": "topk(10, machine_daemonset:container_network_transmit_bytes_total:sum)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Tx: {{daemonset}}  ({{machine}})",
           "refId": "B"
         },
         {
-          "expr": "- machine_daemonset:container_network_receive_bytes_total:sum",
+          "expr": "- topk(10, machine_daemonset:container_network_receive_bytes_total:sum)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Rx: {{daemonset}} ({{machine}})",
@@ -617,7 +617,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -1145,7 +1145,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kube_pod_container_status_restarts_total[5m])",
+          "expr": "increase(kube_pod_container_status_restarts_total[3m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{exported_pod}}",
@@ -1300,9 +1300,9 @@
     "list": [
       {
         "current": {
-          "tags": [],
-          "text": "Platform Cluster (mlab-oti)",
-          "value": "Platform Cluster (mlab-oti)"
+          "selected": false,
+          "text": "Platform Cluster (mlab-staging)",
+          "value": "Platform Cluster (mlab-staging)"
         },
         "hide": 0,
         "includeAll": false,
@@ -1350,5 +1350,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 87
+  "version": 88
 }
