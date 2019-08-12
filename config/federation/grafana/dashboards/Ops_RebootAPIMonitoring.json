@@ -423,10 +423,10 @@
       "reverseYBuckets": false,
       "targets": [
         {
-          "expr": "sum(rate(reboot_bmc_duration_seconds_bucket[10m])) by (le) * 600",
+          "expr": "sum(rate(reboot_bmc_duration_seconds_bucket[1h])) by (le) * 3600",
           "format": "heatmap",
           "instant": false,
-          "interval": "10m",
+          "interval": "1h",
           "intervalFactor": 1,
           "legendFormat": "{{le}}",
           "refId": "A"
@@ -592,8 +592,8 @@
     ]
   },
   "time": {
-    "from": "now/w",
-    "to": "now"
+    "from": "2019-08-08T06:12:51.525Z",
+    "to": "2019-08-08T19:18:13.940Z"
   },
   "timepicker": {
     "refresh_intervals": [
