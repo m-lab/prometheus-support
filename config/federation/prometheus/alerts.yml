@@ -436,7 +436,7 @@ groups:
   - alert: TooManyNdtIpv4ServersDown
     expr: |
       (
-        count(
+        sum(
           min by (experiment, machine) (
             probe_success{service="ndt_raw"} OR
             script_success{service="ndt_e2e"} OR
@@ -449,7 +449,7 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
-          )  == 1
+          )
         ) / count(probe_success{service="ndt_raw"})
       ) < 0.90
     for: 10m
@@ -467,7 +467,7 @@ groups:
   - alert: TooManyNdtIpv6ServersDown
     expr: |
       (
-        count(
+        sum(
           min by (experiment, machine) (
             probe_success{service="ndt_raw_ipv6"} OR
             script_success{service="ndt_e2e"} OR
@@ -480,7 +480,8 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
-          ) == 1) / count(probe_success{service="ndt_raw_raw"})
+          )
+        ) / count(probe_success{service="ndt_raw_ipv6"})
       ) < 0.75
     for: 10m
     labels:
@@ -497,7 +498,7 @@ groups:
   - alert: TooManyNdtSslIpv4ServersDown
     expr: |
       (
-        count(
+        sum(
           min by (experiment, machine) (
             probe_success{service="ndt_ssl"} OR
             script_success{service="ndt_e2e"} OR
@@ -510,7 +511,7 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
-          ) == 1
+          )
         ) / count(probe_success{service="ndt_ssl"})
       ) < 0.90
     for: 10m
@@ -527,7 +528,7 @@ groups:
   - alert: TooManyNdtSslIpv6ServersDown
     expr: |
       (
-        count(
+        sum(
           min by (experiment, machine) (
             probe_success{service="ndt_ssl_ipv6"} OR
             script_success{service="ndt_e2e"} OR
@@ -540,7 +541,7 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
-          ) == 1
+          )
         ) / count(probe_success{service="ndt_ssl_ipv6"})
       ) < 0.75
     for: 10m
