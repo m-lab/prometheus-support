@@ -425,40 +425,134 @@ groups:
         BBE container running in the VM. Domains for VMs are like
         blackbox-exporter-ipv6.<project>.measurementlab.net.
 
-# More than a certain percentage of NDT servers meet the criteria for being
-# down.
-  - alert: TooManyNdtServersDown
+
+## mlab-ns queries.
+#
+# The following alerts are based on the exact queries that mlab-ns runs to
+# determine the state of NDT services.
+# https://github.com/m-lab/mlab-ns/blob/master/server/mlabns/util/prometheus_status.py
+
+  # "ndt" mlab-ns query
+  - alert: TooManyNdtIpv4ServersDown
     expr: |
-      scalar(
+      (
         count(
-          probe_success{service="ndt_raw"} and on(machine)
-            up{service="nodeexporter"} == 1
-              unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
-          unless on(machine) (
-            probe_success{service="ndt_raw"} == 1 and on(machine)
-            probe_success{service="ndt_ssl"} == 1 and on(machine)
-            script_success{service="ndt_e2e"} == 1 and on(machine)
-            vdlimit_used{experiment="ndt.iupui"} /
-              vdlimit_total{experiment="ndt.iupui"} < 0.95
-          )
-        )
-      )
-      /
-      count(
-        probe_success{service="ndt_raw"} and on(machine)
-        up{service="nodeexporter"} == 1
-          unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
-      ) > 0.25
-    for: 30m
+          min by (experiment, machine) (
+            probe_success{service="ndt_raw"} OR
+            script_success{service="ndt_e2e"} OR
+            (vdlimit_used{experiment="ndt.iupui"} /
+              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
+            label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
+              node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
+                node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
+                "experiment", "ndt.iupui", "", "") < bool 0.95 OR
+            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
+            label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
+          )  == 1
+        ) / count(probe_success{service="ndt_raw"})
+      ) < 0.90
+    for: 10m
     labels:
       repo: ops-tracker
       severity: page
     annotations:
-      summary: Too large a percentage of NDT servers are down.
-      description: Make sure that the blackbox_exporter, script_exporter and
-        node_exporters are all working as expected. Was any update to the
-        platform just released?
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/JAq7W6Nmk/
+      summary: Less than 90% of ndt experiments are online according to mlab-ns.
+      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
+        consider that this could be a false positive because of bad or broken
+        monitoring.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  # "ndt_ipv6" mlab-ns query
+  - alert: TooManyNdtIpv6ServersDown
+    expr: |
+      (
+        count(
+          min by (experiment, machine) (
+            probe_success{service="ndt_raw_ipv6"} OR
+            script_success{service="ndt_e2e"} OR
+            (vdlimit_used{experiment="ndt.iupui"} /
+              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
+            label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
+              node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
+                node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
+                "experiment", "ndt.iupui", "", "") < bool 0.95 OR
+            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
+            label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
+          ) == 1) / count(probe_success{service="ndt_raw_raw"})
+      ) < 0.75
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: Less than 75% of ndt_ipv6 experiments are online according to mlab-ns.
+      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
+        consider that this could be a false positive because of bad or broken
+        monitoring.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  # "ndt_ssl" mlab-ns query
+  - alert: TooManyNdtSslIpv4ServersDown
+    expr: |
+      (
+        count(
+          min by (experiment, machine) (
+            probe_success{service="ndt_ssl"} OR
+            script_success{service="ndt_e2e"} OR
+            (vdlimit_used{experiment="ndt.iupui"} /
+              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
+            label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
+              node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
+                node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
+                "experiment", "ndt.iupui", "", "") < bool 0.95 OR
+            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
+            label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
+          ) == 1
+        ) / count(probe_success{service="ndt_ssl"})
+      ) < 0.90
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: Less than 90% of ndt_ssl experiments are online according to mlab-ns.
+      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
+        consider that this could be a false positive because of bad or broken
+        monitoring.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  - alert: TooManyNdtSslIpv6ServersDown
+    expr: |
+      (
+        count(
+          min by (experiment, machine) (
+            probe_success{service="ndt_ssl_ipv6"} OR
+            script_success{service="ndt_e2e"} OR
+            (vdlimit_used{experiment="ndt.iupui"} /
+              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
+            label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
+              node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
+                node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
+                "experiment", "ndt.iupui", "", "") < bool 0.95 OR
+            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
+            label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
+          ) == 1
+        ) / count(probe_success{service="ndt_ssl_ipv6"})
+      ) < 0.75
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: Less than 75% of ndt_ssl_ipv6 experiments are online according to mlab-ns.
+      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
+        consider that this could be a false positive because of bad or broken
+        monitoring.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
 # One or more NDT-specific metrics is missing. These are the NDT metrics that
 # mlab-ns relies on to determine whether NDT is up and running, so we need to
