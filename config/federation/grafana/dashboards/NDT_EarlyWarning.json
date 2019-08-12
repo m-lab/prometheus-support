@@ -152,7 +152,7 @@
           "refId": "A"
         },
         {
-          "expr": "machine:ndt_test_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
+          "expr": "machine:ndt5_client_test_results_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -477,7 +477,7 @@
           "refId": "F"
         },
         {
-          "expr": "quantile_over_time(0.9, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60",
+          "expr": "quantile_over_time(0.9, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -485,7 +485,7 @@
           "refId": "G"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96",
+          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -493,7 +493,7 @@
           "refId": "H"
         },
         {
-          "expr": "machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}",
+          "expr": "machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -501,7 +501,7 @@
           "refId": "I"
         },
         {
-          "expr": "quantile_over_time(0.90, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -509,7 +509,7 @@
           "refId": "J"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:ndt_test:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
