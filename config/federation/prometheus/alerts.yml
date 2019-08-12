@@ -431,6 +431,9 @@ groups:
 # The following alerts are based on the exact queries that mlab-ns runs to
 # determine the state of NDT services.
 # https://github.com/m-lab/mlab-ns/blob/master/server/mlabns/util/prometheus_status.py
+#
+# TODO(kinkade): The rewrite of mlab-ns should export these types of metrics
+# such that we con't have to duplicate the queries here in the alerts.
 
   # "ndt" mlab-ns query
   - alert: TooManyNdtIpv4ServersDown
