@@ -1254,6 +1254,8 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
 # BMC alerts
+# The Reboot API performs an E2E connection test on a BMC every time its
+# /v1/e2e endpoint is scraped, and reports failure via this metric.
   - alert: BMC_CredentialsNotFound
     expr: |
         reboot_e2e_result{status="credentials_not_found"} == 0
@@ -1265,7 +1267,7 @@ groups:
       summary: Credentials for {{ $labels.target }} not found on GCD.
       description: >
         The E2E test cannot run because credentials for this BMC are not
-        present on Google Cloud Datastore.
+        present on Google Cloud Datastore. Please add them.
 
   - alert: BMC_ConnectionFailed
     expr: |
