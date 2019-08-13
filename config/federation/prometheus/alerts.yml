@@ -1252,3 +1252,30 @@ groups:
         the mainboard. Login to the machine and double check the hardware
         and/or system messages.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
+# BMC alerts
+  - alert: BMC_CredentialsNotFound
+    expr: |
+        reboot_e2e_result{status="credentials_not_found"}
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Credentials for {{ $labels.target }} not found on GCD.
+      description: >
+        The E2E test cannot run because credentials for this BMC are not
+        present on Google Cloud Datastore.
+
+  - alert: BMC_ConnectionFailed
+    expr: |
+      reboot_e2e_result{status="connection_failed"}
+    for: 1d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Connection to {{ $labels.target }} has failed.
+      description: >
+        The E2E test failed because the Reboot API could't connect to this BMC.
+        Please check that the BMC is enabled and the credentials are correct.
