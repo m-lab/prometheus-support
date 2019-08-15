@@ -1308,7 +1308,7 @@ groups:
 
   - alert: PlatformHardware_RamBelowExpected
     expr: |
-      node_memory_MemTotal_bytes{machine=~"^mlab[1-4].[a-z]{3}[0-9tc]{2}.*"} / 2^20 < 16000
+      node_memory_MemTotal_bytes{machine=~"^mlab[1-4].[a-z]{3}[0-9]{2}.*"} / 2^20 < 16000
     for: 1d
     labels:
       repo: ops-tracker
