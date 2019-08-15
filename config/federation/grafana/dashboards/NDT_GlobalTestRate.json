@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 288,
-  "iteration": 1565888374564,
+  "iteration": 1565889514091,
   "links": [],
   "panels": [
     {
@@ -73,7 +72,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) + ((60 *sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\"}[5m]))) or vector(0)) + (60 * sum(rate(ndt_test_total{direction=~\"s2c\"}[5m])) or vector(0))",
+          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt_test_total{direction=~\"s2c\"}[5m])) or vector(0))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -82,7 +81,7 @@
           "step": 120
         },
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) + ((60 *sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\"}[5m]))) or vector(0)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s\"}[5m])) or vector(0))",
+          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt_test_total{direction=~\"c2s\"}[5m])) or vector(0))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -91,7 +90,7 @@
           "step": 120
         },
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m]))) or vector(0)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or vector(0))",
+          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or vector(0))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Total",
@@ -179,7 +178,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m]))) or vector(0)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or vector(0))",
+          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m]))) or absent(machine:ndt5_client_test_results:rpm2m)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or absent(ndt_test_total))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -188,7 +187,7 @@
           "step": 240
         },
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 7d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 7d)) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d))) or vector(0)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 7d)) or vector(0))",
+          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 7d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 7d)) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d))) or absent(machine:ndt5_client_test_results:rpm2m offset 7d)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 7d)) or absent(ndt_test_total offset 7d))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "One Week",
@@ -196,7 +195,7 @@
           "step": 240
         },
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 14d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 14d)) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d))) or vector(0))  + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 14d)) or vector(0))",
+          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 14d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 14d)) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d))) or absent(machine:ndt5_client_test_results:rpm2m offset 14d))  + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 14d)) or absent(ndt_test_total offset 14d))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Two Week",
@@ -303,5 +302,5 @@
   "timezone": "utc",
   "title": "NDT: Global Test Rate",
   "uid": "Cyq7WeNiz",
-  "version": 14
+  "version": 140
 }
