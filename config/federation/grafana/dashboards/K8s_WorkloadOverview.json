@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1565883403686,
+  "iteration": 1565900597479,
   "links": [],
   "panels": [
     {
@@ -277,7 +277,7 @@
         {
           "expr": "topk(10, machine_daemonset:container_cpu_usage_seconds:ratio)",
           "format": "time_series",
-          "hide": true,
+          "hide": false,
           "intervalFactor": 1,
           "legendFormat": "% Total: {{daemonset}} ({{machine}})",
           "refId": "A"
@@ -580,6 +580,7 @@
         {
           "expr": "- topk(10, machine_workload:container_network_receive_bytes_total:sum)",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 1,
           "legendFormat": "Rx: {{container_label_workload}} ({{machine}})",
           "refId": "A"
@@ -1088,6 +1089,7 @@
     "list": [
       {
         "current": {
+          "selected": true,
           "tags": [],
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
@@ -1138,5 +1140,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 94
+  "version": 95
 }
