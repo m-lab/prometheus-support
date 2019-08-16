@@ -748,6 +748,38 @@ groups:
         and run the check script manually to see what the specific error is
         (/usr/lib/nagios/plugins/check_collectd_mlab.py).
 
+# The collectd container should be present on the platform-cluster.
+  - alert: PlatformCluster_CoreServices_CollectdMlabMissing
+    expr: |
+      absent(collectd_mlab_success{cluster="platform-cluster"})
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: A collectd-mlab k8s pod is missing.
+      description: The collectd-mlab service runs in the 'utilization'
+        daemonset on the platform-cluster. Is it deployed?
+
+# A collectd service should always be running.
+  - alert: PlatformCluster_CoreServices_CollectdMlabDown
+    expr: |
+      collectd_mlab_success{cluster="platform-cluster"} == 0
+        unless on(node) label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)")
+        unless on(node) kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"}
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: A collectd-mlab k8s pod is down.
+      description: The collectd-mlab service in the 'utilization'
+        daemonset on the platform-cluster is failing. Use `kubectl exec` to
+        investigate the container environment on a failing pod.  Run the check
+        script manually to see what the specific error is
+        (/usr/lib/nagios/plugins/check_collectd_mlab.py). If it works, check
+        cron settings, environment, etc.
+
 # One or more of the backend services handled by the nginx proxy is down.
   - alert: Prometheus_NginxProxiedServiceDown
     expr: probe_success{job="nginx-proxied-services"} == 0
