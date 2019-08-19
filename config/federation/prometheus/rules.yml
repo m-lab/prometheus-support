@@ -83,7 +83,7 @@ groups:
 # Per-machine successful NDT5 tests counted by the server.
 # Units: requests per minute.
   - record: machine:ndt5_client_test_results:rpm2m
-    expr: 60 * sum without(direction) (irate(ndt5_client_test_results_total{result!="error-without-rate"}[4m]))
+    expr: 60 * sum by(machine) (irate(ndt5_client_test_results_total{result!="error-without-rate"}[4m]))
   # Per-machine maximum ratio of time spent performing I/O on all devices.
   # Units: none (sec/sec)
   - record: machine:node_disk_io_time_seconds:max2m
