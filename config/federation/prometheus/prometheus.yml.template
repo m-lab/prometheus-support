@@ -795,6 +795,14 @@ scrape_configs:
         target_label: __metrics_path__
         replacement: /v1/e2e
 
+    # This metric relabel config adds the "site" label on bmc-targets
+    # TODO: retire this in favor of adding the label at target generation time.
+    metric_relabel_configs:
+      - source_labels: [machine]
+        regex: mlab[1-4]\.([a-z]{3}[0-9tc]{2}).+
+        target_label: site
+        replacement: $1
+
   # Scrape config for legacy targets.
   #
   # Using an out-of-band process, generated configs can be copied into the
