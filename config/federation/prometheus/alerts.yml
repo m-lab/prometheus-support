@@ -1356,8 +1356,8 @@ groups:
 # /v1/e2e endpoint is scraped, and reports failure via this metric.
   - alert: BMC_CredentialsNotFound
     expr: |
-        label_replace(reboot_e2e_result{status="credentials_not_found"}, "site", "$1", "machine",
-        "mlab[1-4]\\.([a-z]{3}[0-9tc]{2}).+") == 0 unless on(site) gmx_site_maintenance == 1
+        reboot_e2e_result{status="credentials_not_found"}
+        unless on(site) gmx_site_maintenance == 1
         unless on(machine) gmx_machine_maintenance == 1
     for: 5m
     labels:
@@ -1371,8 +1371,8 @@ groups:
 
   - alert: BMC_ConnectionFailed
     expr: |
-      label_replace(reboot_e2e_result{status="connection_failed"}, "site", "$1", "machine",
-      "mlab[1-4]\\.([a-z]{3}[0-9tc]{2}).+") == 0 unless on(site) gmx_site_maintenance == 1
+      reboot_e2e_result{status="connection_failed"}
+      unless on(site) gmx_site_maintenance == 1
       unless on(machine) gmx_machine_maintenance == 1
     for: 1d
     labels:
