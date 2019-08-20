@@ -326,6 +326,8 @@ scrape_configs:
         # For recording rules for NDT Early Warning dashboard and Global Test Rates.
         - 'ndt5_client_test_results_total'
         - 'node_disk_io_time_seconds_total{deployment="node-exporter"}'
+        # Aggregate the collectd health status from node-exporter.
+        - 'collectd_mlab_success'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
