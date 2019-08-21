@@ -1236,7 +1236,7 @@ groups:
       summary: DaemonSet {{ $labels.daemonset }} has fewer pods scheduled than desired.
       description: DaemonSet {{ $labels.daemonset }} has fewer pods scheduled than desired.
         Check the status of the DaemonSet for clues with
-        `kubectl describe daemonset {{ $labels.daemonset }}`
+        `kubectl describe daemonset {{ $labels.daemonset }} -n {{ $labels.namespace }}`
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   # The desired number of replicas for a Deployment are not equal to the
