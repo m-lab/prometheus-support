@@ -581,11 +581,11 @@ groups:
 # Check 5xx errors for the rate-limiter deployment, too.
   - alert: RateLimiterTooManyServerSideErrors
     expr: |
-      sum(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
+      sum_over_time(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
         deployment="mlabns-stackdriver", module_id="rate-limiter", loading="false",
-        response_code=~"5.."}) /
-      sum(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
-        deployment="mlabns-stackdriver", module_id="rate-limiter",loading="false"}) > 0.01
+        response_code=~"5.."}[30m]) /
+      sum_over_time(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
+        deployment="mlabns-stackdriver", module_id="rate-limiter",loading="false"}[30m]) > 0.01
     for: 2m
     labels:
       repo: dev-tracker
