@@ -585,14 +585,14 @@ groups:
         deployment="mlabns-stackdriver", module_id="rate-limiter", loading="false",
         response_code=~"5.."}[30m]) /
       sum_over_time(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
-        deployment="mlabns-stackdriver", module_id="rate-limiter",loading="false"}[30m]) > 0.01
+        deployment="mlabns-stackdriver", module_id="rate-limiter",loading="false"}[30m]) > 0
     for: 2m
     labels:
       repo: dev-tracker
       severity: page
     annotations:
-      summary: Server-side errors rate for rate-limiter is over 1%.
-      description: Stackdriver reports more than 1% of the HTTP requests to
+      summary: Server-side errors rate for rate-limiter is not zero.
+      description: Stackdriver reports some of the HTTP requests to
         rate-limiter are returning a 5xx status code. Please check the
         rate-limiter logs to determine the cause.
 
