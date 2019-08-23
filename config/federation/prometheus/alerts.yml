@@ -355,6 +355,24 @@ groups:
         the IP of the snmp_exporter VM in GCE whitelisted on the switch?
       dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
 
+# More than 20% of the reachable switches are up but not providing SNMP metrics.
+  - alert: TooManySnmpMetricsMissing
+    expr: |
+      count(up{job="snmp-targets",site!~".*t$"} == 0 and on(site)
+      probe_success{instance=~"s1.*",module="icmp"} == 1) /
+      count(probe_success{instance=~"s1.*",module="icmp"} == 1) > 0.2
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: More than 20% of reachable switches are not providing SNMP metrics.
+      description: >
+        The switches are pingable but SNMP scraping is not working.
+        Is the snmp_exporter using the right community strings? Look in
+        switch-details.json in the m-lab/switch-config repo. Is the IP of the
+        snmp_exporter VM in GCE whitelisted on the switch?
+      dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz'
+
 # Prometheus is unable to get data from the script_exporter service.
   - alert: ScriptExporterDownOrMissing
     expr: up{job="script-exporter"} == 0 or absent(up{job="script-exporter"})
