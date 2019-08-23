@@ -360,7 +360,7 @@ groups:
     expr: |
       count(up{job="snmp-targets",site!~".*t$"} == 0 and on(site)
       probe_success{instance=~"s1.*",module="icmp"} == 1) /
-      count(probe_success{instance=~"s1.*",module="icmp"} == 1) > 0.2
+      count(up{job="snmp-targets",site!~".*t$"}) > 0.2
     labels:
       repo: ops-tracker
       severity: page
