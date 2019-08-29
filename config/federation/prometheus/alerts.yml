@@ -629,6 +629,25 @@ groups:
         means there is a persistent failure in the underlying service. Please
         check the GAE dashboard and logs to determine the cause.
 
+# If no ndt_ssl traffic has been redirected to the staging instance in the past
+# hour, an alert should fire.
+  - alert: MlabNSNdtSslReverseProxyNotWorking
+    expr: |
+      sum_over_time(stackdriver_gae_app_logging_googleapis_com_user_reverse_proxy_counter{
+        resource="ndt_ssl"}[1h]) == 0
+    for: 1m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: mlab-ns' reverse proxy is not redirecting any ndt_ssl traffic.
+      description: >
+        mlab-ns is supposed to send some of the ndt_ssl traffic to the
+        staging instance, and this has not been happening for the past hour.
+        Please check that the probability set on Google Cloud Datastore is
+        not zero for the ndt_ssl experiment and that there are no errors
+        related to reverse proxying in the mlab-ns logs.
+
 # One or more NDT-specific metrics is missing. These are the NDT metrics that
 # mlab-ns relies on to determine whether NDT is up and running, so we need to
 # make sure that the metrics are always present. NOTE: mlab-ns additionally
