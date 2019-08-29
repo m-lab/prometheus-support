@@ -604,6 +604,7 @@ groups:
         response_code=~"5.."}[24h]) /
       sum_over_time(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
         deployment="mlabns-stackdriver", module_id="rate-limiter",loading="false"}[24h]) > 0
+    for: 1m
     labels:
       repo: dev-tracker
       severity: page
