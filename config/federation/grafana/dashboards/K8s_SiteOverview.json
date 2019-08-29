@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 246,
-  "iteration": 1564586475947,
+  "iteration": 1566852896018,
   "links": [],
   "panels": [
     {
@@ -480,9 +480,9 @@
           "to": "1000"
         },
         {
-          "from": "null",
+          "from": "0",
           "text": "OK",
-          "to": "null"
+          "to": "0"
         }
       ],
       "scopedVars": {
@@ -501,11 +501,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud|update-agent)\"})",
+          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud)\"} > 0) OR vector(0)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "Running",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1830,7 +1830,7 @@
       "id": 48,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -1896,7 +1896,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1996,7 +1996,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2098,7 +2098,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2202,7 +2202,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2305,7 +2305,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2398,7 +2398,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2492,7 +2492,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2586,7 +2586,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2657,7 +2657,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2758,7 +2758,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2880,7 +2880,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2983,7 +2983,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3102,7 +3102,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3200,7 +3200,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3298,7 +3298,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3383,7 +3383,7 @@
       "id": 64,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -3449,7 +3449,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3549,7 +3549,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3651,7 +3651,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3755,7 +3755,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3858,7 +3858,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3951,7 +3951,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4045,7 +4045,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4139,7 +4139,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4210,7 +4210,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4311,7 +4311,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4433,7 +4433,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4536,7 +4536,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4655,7 +4655,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4753,7 +4753,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4851,7 +4851,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564586475947,
+      "repeatIteration": 1566852896018,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4953,7 +4953,6 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "den06",
           "value": "den06"
         },
@@ -4979,7 +4978,6 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -5005,7 +5003,6 @@
       {
         "allValue": ".*",
         "current": {
-          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -5062,5 +5059,5 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 17
+  "version": 23
 }
