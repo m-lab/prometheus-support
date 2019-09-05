@@ -1239,12 +1239,13 @@ groups:
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   # If any pod is down or otherwise broken, fire an alert, unless the node is
-  # in lame-duck mode, GMX maintenance mode, or the scrape job for the entire
-  # node is down.
+  # in lame-duck mode, the node is NotReady, GMX maintenance mode, or the
+  # scrape job for the entire node is down.
   - alert: PlatformCluster_PodDown
     expr: |
       kube_pod_info == 1 and on(exported_pod) kube_pod_status_ready{condition="true"} == 0 unless on(node) (
           kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
+          kube_node_status_condition{condition="Ready", status="false"} == 1 or
           label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
           up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
