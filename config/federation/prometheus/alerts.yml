@@ -1238,13 +1238,38 @@ groups:
         host`).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
+  # If any node is NotReady for too long, fire an alert, unless the node is in
+  # lame-duck mode, GMX maintenance mode, or the scrape job for the entire node
+  # is down.
+  - alert: PlatformCluster_NodeNotReady
+    expr: |
+      kube_node_status_condition{cluster="platform-cluster", condition="Ready", status="false"} == 1
+        unless on(node) (
+          kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
+          label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
+          up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
+        )
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: A node has had a NotReady condition for too long.
+      description: A node has had a NotReady condition for too long. Generally
+        this is caused when the kubelet on the node is unable to communicate
+        with the API. Is the machine booted? Does the machine have network
+        connectivity? Check the status of the kubelet on the machine. Look at
+        the kubelet logs (journalctl -u kubelet).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
   # If any pod is down or otherwise broken, fire an alert, unless the node is
-  # in lame-duck mode, GMX maintenance mode, or the scrape job for the entire
-  # node is down.
+  # in lame-duck mode, the node is NotReady, GMX maintenance mode, or the
+  # scrape job for the entire node is down.
   - alert: PlatformCluster_PodDown
     expr: |
       kube_pod_info == 1 and on(exported_pod) kube_pod_status_ready{condition="true"} == 0 unless on(node) (
           kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
+          kube_node_status_condition{condition="Ready", status="false"} == 1 or
           label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
           up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
