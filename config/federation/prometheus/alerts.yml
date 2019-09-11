@@ -633,8 +633,8 @@ groups:
 # hour, an alert should fire.
   - alert: MlabNSNdtSslReverseProxyNotWorking
     expr: |
-      sum_over_time(stackdriver_gae_app_logging_googleapis_com_user_reverse_proxy_counter{
-        resource="ndt_ssl"}[1h]) == 0
+      sum(sum_over_time(stackdriver_gae_app_logging_googleapis_com_user_reverse_proxy_counter{
+        resource="ndt_ssl"}[1h])) == 0
     for: 1m
     labels:
       repo: dev-tracker
