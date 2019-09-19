@@ -1295,12 +1295,11 @@ groups:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: A {{ $labels.daemonset }} DaemonSet rollout is going too slowly
-        or is stuck.
+      summary: A {{ $labels.daemonset }} DaemonSet rollout is going too slowly.
       description: Not enough pods were updated in the past hour for a
         {{ $labels.daemonset }} DaemonSet rollout, which indicates that the
-        rollout is stuck in some way. Usually this occurs when errors occur
-        when updating a pod on a node, and the number of nodes on which this
+        rollout is stuck in some way. Usually this happens when errors occur
+        updating a pod on a node, and the number of nodes on which this error
         happens exceeds the maxUnavailable setting for a RollingUpdate. Look
         for {{ $labels.daemonset }} pods with a status other than Running and
         inspect them to figure out why they are in that state.
