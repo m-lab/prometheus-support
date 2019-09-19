@@ -1284,6 +1284,28 @@ groups:
         pod is scheduled on. Check the status of the pod itself, if it exists.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
+  # A DaemonSet rollout is progressing too slowly.
+  - alert: PlatformClustser_RolloutTooSlowOrStuck
+    expr: |
+      delta(kube_daemonset_updated_number_scheduled[1h]) < 2 unless (
+        kube_daemonset_updated_number_scheduled == kube_daemonset_status_desired_number_scheduled
+      )
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: A {{ $labels.daemonset }} DaemonSet rollout is going too slowly
+        or is stuck.
+      description: Not enough pods were updated in the past hour for a
+        {{ $labels.daemonset }} DaemonSet rollout, which indicates that the
+        rollout is stuck in some way. Usually this occurs when errors occur
+        when updating a pod on a node, and the number of nodes on which this
+        happens exceeds the maxUnavailable setting for a RollingUpdate. Look
+        for {{ $labels.daemonset }} pods with a status other than Running and
+        inspect them to figure out why they are in that state.
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
   # The desired number of pods for a DaemonSet are not equal to the current
   # number scheduled.
   - alert: PlatformCluster_DaemonSetHasTooFewPods
