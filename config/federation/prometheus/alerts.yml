@@ -1288,7 +1288,7 @@ groups:
   - alert: PlatformClustser_RolloutTooSlowOrStuck
     expr: |
       delta(kube_daemonset_updated_number_scheduled[1h]) < 2 unless (
-        kube_daemonset_updated_number_scheduled == kube_daemonset_status_desired_number_scheduled
+        (kube_daemonset_status_desired_number_scheduled - kube_daemonset_updated_number_scheduled) < 4
       )
     for: 5m
     labels:
