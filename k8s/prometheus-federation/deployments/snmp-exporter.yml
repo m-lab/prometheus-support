@@ -25,17 +25,6 @@ spec:
                 values:
                 - snmp-exporter
             topologyKey: kubernetes.io/hostname
-      # Do an early fetch of the configuration so that snmp-exporter will start
-      initContainers:
-      - name: gcs-downloader-once
-        image: measurementlab/gcs-downloader:v0.1
-        args:
-        - -source=gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
-        - -output=/config
-        - -once
-        volumeMounts:
-        - mountPath: /config
-          name: snmp-exporter-storage
       containers:
       - name: snmp-exporter
         image: prom/snmp-exporter:v0.15.0
@@ -45,27 +34,7 @@ spec:
         - containerPort: 9116
         volumeMounts:
         - mountPath: /etc/snmp_exporter
-          name: snmp-exporter-storage
-      # Pull the snmp-exporter configuration from GCS every 5 minutes.
-      - name: gcs-downloader
-        image: measurementlab/gcs-downloader:v0.1
-        args:
-        - -source=gs://switch-config-{{GCLOUD_PROJECT}}/snmp_exporter_config.yaml
-        - -output=/config
-        - -period=5m
-        ports:
-        - containerPort: 9990
-        resources:
-          requests:
-            memory: "150Mi"
-            cpu: "50m"
-          limits:
-            memory: "150Mi"
-            cpu: "50m"
-        volumeMounts:
-        # Mount snmp-exporter-storage for write access to the snmp_exporter configuration.
-        - mountPath: /config
-          name: snmp-exporter-storage
+          name: snmp-exporter-config
       # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
       # stable version.
       - image: jimmidyson/configmap-reload:v0.2.2
@@ -82,7 +51,7 @@ spec:
         volumeMounts:
         # Mount the snmp-exporter config volume so we can watch it for changes.
         - mountPath: /config
-          name: snmp-exporter-storage
+          name: snmp-exporter-config
       # The snmp-exporter will only be scheduled onto nodes that we labeled
       # as having a static outbound IP.
       nodeSelector:
@@ -94,7 +63,7 @@ spec:
       - key: "outbound-ip"
         value: "static"
         effect: "NoSchedule"
-      # Use an emptyDir volume just to share config between containers.
       volumes:
-      - name: snmp-exporter-storage
-        emptyDir: {}
+      - name: snmp-exporter-config
+        configMap:
+          name: snmp-exporter-config
