@@ -1292,9 +1292,11 @@ groups:
   # case). 70m just gives us a safe window to cross that inversion.
   - alert: PlatformClustser_RolloutTooSlowOrStuck
     expr: |
-      kube_daemonset_updated_number_scheduled - (kube_daemonset_updated_number_scheduled offset 1h) <= 2 unless (
-        kube_daemonset_updated_number_scheduled / kube_daemonset_status_desired_number_scheduled > 0.95
-      )
+      kube_daemonset_updated_number_scheduled - (kube_daemonset_updated_number_scheduled offset 1h) <= 2
+        unless (
+          kube_daemonset_updated_number_scheduled / kube_daemonset_status_desired_number_scheduled > 0.95 or
+          kube_daemonset_status_desired_number_scheduled == 0
+        )
     for: 70m
     labels:
       repo: ops-tracker
