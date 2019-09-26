@@ -1285,13 +1285,17 @@ groups:
   # A DaemonSet rollout is progressing too slowly. Unless 95% of a DaemonSet's
   # pods are updated, then fire an alert if the rate of increase over the last
   # hour is less than or equal to 2. This is pretty conservative since NDT pods
-  # should update at something more like ~24 per hour.
+  # should update at something more like ~24 per hour. The somewhat unusual
+  # toleration of 70m is because once a rollout starts, comparing the current
+  # value of updated_scheduled to the value from an hour ago (all pods) will
+  # yield a negative number for roughly the period of the offset (1h in this
+  # case). 70m just gives us a safe window to cross that inversion.
   - alert: PlatformClustser_RolloutTooSlowOrStuck
     expr: |
       kube_daemonset_updated_number_scheduled - (kube_daemonset_updated_number_scheduled offset 1h) <= 2 unless (
         kube_daemonset_updated_number_scheduled / kube_daemonset_status_desired_number_scheduled > 0.95
       )
-    for: 1h
+    for: 70m
     labels:
       repo: ops-tracker
       severity: ticket
