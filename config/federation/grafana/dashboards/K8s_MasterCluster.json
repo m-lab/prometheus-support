@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 63,
-  "iteration": 1564687572433,
+  "id": 244,
+  "iteration": 1572284157610,
   "links": [],
   "panels": [
     {
@@ -138,6 +138,7 @@
       "datasource": "$datasource",
       "description": "Sum of metrics over all CPU cores.",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -158,7 +159,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -176,21 +179,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"iowait\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"iowait\"}[5m])) / count(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"iowait\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "iowait",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"user\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"user\"}[5m])) / count(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"user\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "user",
           "refId": "B"
         },
         {
-          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"system\"}[5m]))",
+          "expr": "sum(rate(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"system\"}[5m])) / count(node_cpu_seconds_total{node=~\"master-platform-cluster-$master\", mode=\"system\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "system",
@@ -245,6 +248,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -265,7 +269,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -345,6 +351,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -367,7 +374,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -627,6 +636,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -647,7 +657,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": true,
       "pointradius": 5,
       "points": false,
@@ -743,6 +755,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -763,7 +776,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -836,6 +851,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -858,7 +874,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1035,7 +1053,7 @@
       "id": 133,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 95,
       "scopedVars": {
         "master": {
@@ -1101,7 +1119,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 131,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1148,6 +1166,7 @@
       "datasource": "$datasource",
       "description": "Sum of metrics over all CPU cores.",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -1168,12 +1187,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 129,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1258,6 +1279,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -1278,12 +1300,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 110,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1361,6 +1385,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -1383,12 +1408,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 108,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1514,7 +1541,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 132,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1606,7 +1633,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 7,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1652,6 +1679,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -1672,12 +1700,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": true,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 97,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1771,6 +1801,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -1791,12 +1822,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 111,
       "repeatedByRow": true,
       "scopedVars": {
@@ -1867,6 +1900,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 7,
@@ -1889,12 +1923,14 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 107,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2022,7 +2058,7 @@
         }
       ],
       "repeat": null,
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 18,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2072,7 +2108,7 @@
       "id": 144,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 95,
       "scopedVars": {
         "master": {
@@ -2138,7 +2174,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 131,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2210,7 +2246,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 129,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2320,7 +2356,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 110,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2425,7 +2461,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 108,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2551,7 +2587,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 132,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2643,7 +2679,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 7,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2714,7 +2750,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 97,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2833,7 +2869,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 111,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2931,7 +2967,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 107,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3059,7 +3095,7 @@
         }
       ],
       "repeat": null,
-      "repeatIteration": 1564687572433,
+      "repeatIteration": 1572284157610,
       "repeatPanelId": 18,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3099,7 +3135,7 @@
       "valueName": "current"
     }
   ],
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -3124,7 +3160,6 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -3181,5 +3216,5 @@
   "timezone": "",
   "title": "k8s: Master Cluster",
   "uid": "K8-zAIuik",
-  "version": 8
+  "version": 40
 }
