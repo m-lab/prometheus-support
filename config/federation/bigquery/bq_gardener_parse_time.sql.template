@@ -1,34 +1,37 @@
 #standardSQL
--- bq_gardener_parse_time calculates the maximum difference of parse_times in
--- seconds for each gardener managed dataset.
+-- bq_gardener_parse_time calculates the maximum age of parse_times in
+-- seconds for each gardener managed datatype.
 --
 -- This query exports one metric:
 --
---   bq_gardener_parse_time_difference_days -- (MAX(parse_time) - MIN(parse_time))
---       in days, labeled with the dataset name.
+--   bq_gardener_parse_time_difference_days -- (CURRENT_TIMESTAMP() - MIN(parse_time))
+--       in days, labeled with the datatype name.
+--
+-- Each metric above also has a "datatype" label.
+--
+-- TODO(https://github.com/m-lab/dev-tracker/issues/496): once parsers write
+-- directly to canonical tables for k8s platform data, enumerate all supported
+-- datatypes.
 
 SELECT
-  TIMESTAMP_DIFF(max_parse_time, min_parse_time, SECOND) / 86400.0 AS value_difference_days,
-  dataset
+  TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, SECOND) / 86400.0 AS value_difference_days,
+  datatype
 FROM (
-    SELECT
-      "ndt" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
-    FROM
-      `{{PROJECT}}.base_tables.ndt`
+    SELECT "ndt/web100" AS datatype, MIN(parse_time) AS min_parse_time
+    FROM   `{{PROJECT}}.ndt.web100`
   UNION ALL
-    SELECT
-      "sidestream" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
-    FROM
-      `{{PROJECT}}.base_tables.sidestream`
--- TODO: enable once the traceroute parser is reenabled.
---  UNION ALL
---    SELECT
---      "traceroute" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
---    FROM
---      `{{PROJECT}}.base_tables.traceroute`
+    SELECT "sidestream/web100" AS datatype, MIN(parse_time) AS min_parse_time
+    FROM   `{{PROJECT}}.sidestream.web100`
   UNION ALL
-    SELECT
-      "switch" AS dataset, MAX(parse_time) AS max_parse_time, MIN(parse_time) AS min_parse_time
-    FROM
-      `{{PROJECT}}.base_tables.switch`
+    SELECT "utilization/switch" AS datatype, MIN(parse_time) AS min_parse_time
+    FROM   `{{PROJECT}}.utilization.switch`
+  UNION ALL
+    SELECT "ndt/traceroute" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
+    FROM   `{{PROJECT}}.ndt.traceroute`
+  UNION ALL
+    SELECT "ndt/tcpinfo" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
+    FROM   `{{PROJECT}}.ndt.tcpinfo`
+  UNION ALL
+    SELECT "ndt/ndt5" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
+    FROM   `{{PROJECT}}.ndt.ndt5`
 )
