@@ -4,7 +4,7 @@
 --
 -- This query exports one metric:
 --
---   bq_gardener_parse_time_difference_days -- (CURRENT_TIMESTAMP() - MIN(parse_time))
+--   bq_gardener_parse_time_age_days -- (CURRENT_TIMESTAMP() - MIN(parse_time))
 --       in days, labeled with the datatype name.
 --
 -- Each metric above also has a "datatype" label.
@@ -14,7 +14,7 @@
 -- datatypes.
 
 SELECT
-  TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, SECOND) / 86400.0 AS value_difference_days,
+  TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, SECOND) / 86400.0 AS value_age_days,
   datatype
 FROM (
     SELECT "ndt/web100" AS datatype, MIN(parse_time) AS min_parse_time

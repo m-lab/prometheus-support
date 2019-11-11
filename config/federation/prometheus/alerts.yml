@@ -1087,11 +1087,11 @@ groups:
 
 # Gardener_ParseTimeDifferenceTooOldOrMissing fires when the maximum and minimum
 # parse_time values for each data set are greater than 80 days or the
-# bq_gardener_parse_time_difference_days metrics disappear.
+# bq_gardener_parse_time_age_days metrics disappear.
   - alert: Gardener_ParseTimeDifferenceTooOldOrMissing
     expr: |
-      bq_gardener_parse_time_difference_days > 80
-        or absent(bq_gardener_parse_time_difference_days)
+      bq_gardener_parse_time_age_days > 80
+        or absent(bq_gardener_parse_time_age_days)
     for: 10m
     labels:
       repo: dev-tracker
