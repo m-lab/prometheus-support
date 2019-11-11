@@ -1058,8 +1058,8 @@ groups:
 # disappear.
   - alert: NDT_AsnAnnotationRatioTooLowOrMissing
     expr: |
-      bq_ndt_annotation_asn_success / bq_ndt_annotation_total < 0.98
-        or absent(bq_ndt_annotation_asn_success / bq_ndt_annotation_total)
+      bq_annotation_asn_success / bq_annotation_total < 0.98
+        or absent(bq_annotation_asn_success / bq_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
@@ -1070,12 +1070,12 @@ groups:
         deployments. The daily and batch parsers may also be affected.
 
 # NDT_GeoAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
-# tests appears to have too many failures or the bq_ndt_annotation_* metrics
+# tests appears to have too many failures or the bq_annotation_* metrics
 # disappear.
   - alert: NDT_GeoAnnotationRatioTooLowOrMissing
     expr: |
-      bq_ndt_annotation_geo_success / bq_ndt_annotation_total < 0.98
-        or absent(bq_ndt_annotation_geo_success / bq_ndt_annotation_total)
+      bq_annotation_geo_success / bq_annotation_total < 0.98
+        or absent(bq_annotation_geo_success / bq_annotation_total)
     for: 30m
     labels:
       repo: dev-tracker
