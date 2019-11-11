@@ -937,6 +937,34 @@ groups:
       description: Are machines online? Is data being collected? Is the parser working?
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/PKqnWeNmz/
 
+  - alert: PlatformCluster_PusherDailyDataVolumeTooLow
+    expr: |
+      datatype:pusher_bytes_per_tarfile:increase24h
+        < (0.7 * quantile by(datatype)(0.5,
+          label_replace(datatype:pusher_bytes_per_tarfile:increase24h offset 1d, "delay", "1d", "", ".*") or
+          label_replace(datatype:pusher_bytes_per_tarfile:increase24h offset 3d, "delay", "3d", "", ".*") or
+          label_replace(datatype:pusher_bytes_per_tarfile:increase24h offset 5d, "delay", "5d", "", ".*") or
+            label_replace(datatype:pusher_bytes_per_tarfile:increase24h offset 1w, "delay", "7d", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "datatype", "ndt5", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "datatype", "ndt5", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "datatype", "pcap", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "datatype", "pcap", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "datatype", "switch", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "datatype", "switch", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "datatype", "tcpinfo", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "datatype", "tcpinfo", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "datatype", "traceroute", "", ".*") or
+            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "datatype", "traceroute", "", ".*")
+            ))
+    for: 2h
+    labels:
+      repo: dev-tracker
+      severity: page
+    annotations:
+      summary: Test data volume today is less than 70% of nominal daily volume.
+      description: Are machines online? Is data being collected? Is pusher working?
+        Is mlab-ns working? A new rollout?
+
 # The node_exporter running on eb.measurementlab.net is down.
   - alert: NodeExporterOnEbDownOrMissing
     expr: |
