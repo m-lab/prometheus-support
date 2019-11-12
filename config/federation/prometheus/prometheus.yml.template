@@ -330,6 +330,8 @@ scrape_configs:
         - 'node_disk_io_time_seconds_total{deployment="node-exporter"}'
         # Aggregate the collectd health status from node-exporter.
         - 'collectd_mlab_success'
+        # Used by PlatformCluster_PusherDailyDataVolumeTooLow alert.
+        - 'datatype:pusher_bytes_per_tarfile:increase24h'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
