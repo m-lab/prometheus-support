@@ -145,24 +145,42 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --select "1.michigan.(${!pattern})" \
       --decoration "v6" > ${output}/blackbox-targets-ipv6/mobiperf_ipv6.json
 
-  # neubot on port 9773 over IPv4.
+  # neubot on port 80 over IPv4
   ./mlabconfig.py --format=prom-targets \
-      --template_target={{hostname}}:9773/sapi/state \
+      --template_target={{hostname}}:80 \
       --label service=neubot \
-      --label module=neubot_online_v4 \
-      --physical \
+      --label module=tcp_v4_online \
       --select "neubot.mlab.(${!pattern})" > \
           ${output}/blackbox-targets/neubot.json
 
-  # neubot on port 9773 over IPv6.
+  # neubot on port 80 over IPv6
   ./mlabconfig.py --format=prom-targets \
-      --template_target={{hostname}}:9773/sapi/state \
-      --label service=neubot_ipv6 \
-      --label module=neubot_online_v6 \
-      --label __blackbox_port=${!bbe_port} \
-      --physical \
-      --select "neubot.mlab.(${!pattern})" \
-      --decoration "v6" > ${output}/blackbox-targets-ipv6/neubot_ipv6.json
+      --template_target={{hostname}}:80 \
+      --label service=neubot \
+      --label module=tcp_v6_online \
+      --decoration "v6" \
+      --select "neubot.mlab.(${!pattern})" > \
+          ${output}/blackbox-targets/neubot_ipv6.json
+
+  # neubot TLS on port 443 over IPv4
+  ./mlabconfig.py --format=prom-targets \
+      --template_target={{hostname}}:443 \
+      --label service=neubot_tls \
+      --label module=tcp_v4_tls_online \
+      --use_flatnames \
+      --select "neubot.mlab.(${!pattern})" > \
+          ${output}/blackbox-targets/neubot_tls.json
+
+
+  # neubot TLS on port 443 over IPv6
+  ./mlabconfig.py --format=prom-targets \
+      --template_target={{hostname}}:443 \
+      --label service=neubot_tls \
+      --label module=tcp_v6_tls_online \
+      --use_flatnames \
+      --decoration "v6" \
+      --select "neubot.mlab.(${!pattern})" > \
+          ${output}/blackbox-targets/neubot_tls_ipv6.json
 
   # snmp_exporter on port 9116.
   ./mlabconfig.py --format=prom-targets-sites \
