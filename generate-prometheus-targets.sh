@@ -150,7 +150,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:80 \
       --label service=neubot \
       --label module=tcp_v4_online \
-      --use_flatnames \
       --select "neubot.mlab.(${!pattern})" > \
           ${output}/blackbox-targets/neubot.json
 
@@ -159,7 +158,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:80 \
       --label service=neubot \
       --label module=tcp_v6_online \
-      --use_flatnames \
       --decoration "v6" \
       --select "neubot.mlab.(${!pattern})" > \
           ${output}/blackbox-targets/neubot_ipv6.json
