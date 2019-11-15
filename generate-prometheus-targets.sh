@@ -156,7 +156,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   # neubot on port 80 over IPv6
   ./mlabconfig.py --format=prom-targets \
       --template_target={{hostname}}:80 \
-      --label service=neubot \
+      --label service=neubot_ipv6 \
       --label module=tcp_v6_online \
       --decoration "v6" \
       --select "neubot.mlab.(${!pattern})" > \
@@ -175,7 +175,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   # neubot TLS on port 443 over IPv6
   ./mlabconfig.py --format=prom-targets \
       --template_target={{hostname}}:443 \
-      --label service=neubot_tls \
+      --label service=neubot_tls_ipv6 \
       --label module=tcp_v6_tls_online \
       --use_flatnames \
       --decoration "v6" \
