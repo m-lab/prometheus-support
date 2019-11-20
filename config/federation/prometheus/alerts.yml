@@ -41,121 +41,6 @@ groups:
 ## SLOs
 ##
 #
-# MachineSLO
-#
-# CoreServices_SidestreamIsNotRunning: an M-Lab server is online, but the
-# sidestream exporter is not. Since sidestream is a core service, this must be
-# fixed. This alert checks for the existence of node_filesystem_size_bytes with
-# a label that is specific to the new k8s platform cluster. We don't want this
-# alert to fire for nodes that have been migrated to the platform cluster.
-  - alert: CoreServices_SidestreamIsNotRunning
-    expr: |
-      sum_over_time(up{service="sidestream"}[10m]) == 0
-        and on(machine)
-      sum_over_time(probe_success{service="ssh806"}[20m]) / 20 >= 0.9
-        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
-        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
-    for: 10m
-    labels:
-      repo: ops-tracker
-      severity: page
-    annotations:
-      summary: "An M-Lab machine is online, but the sidestream exporter is not."
-      description: "Since sidestream is a core service, this must be fixed."
-
-# ScraperSLO
-#
-# ScraperMostRecentArchivedFileTimeIsTooOld: scraper uploads archives for a
-# machine once a day. If the machine is online (for at least 30 hours), but
-# scraper has not uploaded an archive for that machine for more than two days
-# plus 8 hours, there is a problem.
-#
-# Note: we can wait two days because we expect that either a) few machines are
-# affected by this at once, or b) many machines are affected and the
-# ParserDailyVolumeTooLow will trigger first.
-#
-# Note: the delay threshold is set to 2h to prevent false positives. For
-# example, if a machine remains running while it is not network accessible,
-# then the machine will need time for scraper to catch up once it is network
-# accessible again.
-#
-# Note: this alert checks for the existence of node_filesystem_size_bytes{} with
-# a label that is specific to the new k8s platform cluster. We don't want this
-# alert to fire for nodes that have been migrated to the platform cluster.
-#
-# TODO(soltesz): remove the != 0 check when legacy records are removed.
-  - alert: ScraperMostRecentArchivedFileTimeIsTooOld
-    expr: |
-      (time() - (scraper_maxrawfiletimearchived{container="scraper-sync"} != 0)) > (56 * 60 * 60)
-        and on(machine)
-      (time() - process_start_time_seconds{service="sidestream"})> (30 * 60 * 60)
-        unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
-        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
-    for: 2h
-    labels:
-      repo: dev-tracker
-      severity: page
-    annotations:
-      summary: Scraper max file mtime is too old {{ $labels.rsync_url }}
-      description: Max file mtime for {{ $labels.rsync_url }} is older than 56 hours.
-
-# Scraper internal consistency.
-#
-# Verify that for every running scraper there is a corresponding metric from
-# scraper-sync indicating that a collection was attempted. These should always
-# be in sync with one another.
-#
-# We use scraper_lastcollectionattempt because scraper_maxrawfiletimearchived
-# is not updated until the first successful upload. This is not possible before
-# a machine comes online.
-  - alert: ScraperSyncPresentWithoutScraperCollector
-    expr: |
-      (scraper_lastcollectionattempt{container="scraper-sync"}
-        unless on(machine, experiment, rsync_module)
-          up{container="scraper"})
-    for: 3h
-    labels:
-      repo: dev-tracker
-      severity: page
-    annotations:
-      summary: "Scraper deployent is out of sync with scraper-sync"
-      description: ""
-
-  - alert: ScraperCollectorMissingFromScraperSync
-    expr: |
-      (up{container="scraper"}
-        unless on(machine, experiment, rsync_module)
-          scraper_lastcollectionattempt{container="scraper-sync"})
-    for: 3h
-    labels:
-      repo: dev-tracker
-      severity: page
-    annotations:
-      summary: "Scraper deployent is out of sync with scraper-sync"
-      description: >
-        Scraper-sync should only report on the last collection attempt of every
-        active Scraper deployment.
-
-# Scraper_InconsistentDeployment checks whether each machine has the same
-# number of deployments as all other machines. This is achived by counting the
-# number of deployments per machine, and then comparing that number to the
-# total number of rsync_module. Each machine should have one of each.
-  - alert: Scraper_InconsistentDeployment
-    expr: |
-      count by(machine) (up{container="scraper"})
-        != scalar(count(count by(rsync_module) (up{container="scraper"})))
-    for: 2h
-    labels:
-      repo: dev-tracker
-      severity: page
-    annotations:
-      summary: Scraper deployent is missing or inconsistent
-      description: >
-        The number of scraper deployments should be the same for every machine.
-        When this alert fires, some machine has more or less deployments than
-        expected. Check whether there have been recent changes to the machine
-        or to scraper.
-
 # SwitchSLO
 #
 # A switch at a site has been down for too long and we need to contact the site
@@ -177,104 +62,6 @@ groups:
         The SNMP exporter cannot scrape new metrics from the switch. The issue
         could be with the switch itself, or with the transit provider.
       dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
-
-##
-## Inventory.
-##
-  - alert: InventoryConfigurationIsMissing
-    expr: absent(up{service="ssh806"}) or absent(up{service="rsyncd"})
-    for: 30m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-    annotations:
-      summary: Inventory configuration is missing.
-      description: Machine or rsyncd service configuration has been missing for
-        too long. Check the behavior of the m-lab/operator/.travis.yml
-        deployment, the GCS buckets, and the gcp-service-discovery component of
-        prometheus-support.
-
-  - alert: InventoryMachinesWithoutRsyncd
-    expr: up{service="ssh806"} unless on(machine) up{service="rsyncd"}
-    for: 30m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-    annotations:
-      summary: Rsyncd configuration is missing from some machines.
-      description: ""
-
-  - alert: InventoryRsyncdWithoutMachines
-    expr: up{service="rsyncd"} unless on(machine) up{service="ssh806"}
-    for: 30m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-    annotations:
-      summary: Machine configuration is missing for some rsyncd services.
-      description: ""
-
-##
-## Services.
-##
-  - alert: SidestreamServicesAreMissing
-    expr: absent(up{service="sidestream"})
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: "All sidestream targets are missing."
-      description: ""
-
-  - alert: SidestreamRunningWithoutMachine
-    expr: up{service="sidestream"} unless on(machine) up{service="ssh806"}
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: "Sidestream is monitored on an unknown machine."
-      description: ""
-
-  - alert: MachineWithoutSidestreamRunning
-    expr: up{service="ssh806"} unless on(machine) up{service="sidestream"}
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: "Machines are missing sidestream monitoring."
-      description: ""
-
-# Scrapers are configured on machine "c", but machine "c" is not in the rsyncd
-# inventory. The metric node_filesystem_size_bytes is specific to the k8s
-# platform cluster, if the metric exists for a given machine then we don't care
-# about the status of any scraper container for that machine.
-  - alert: ScraperRunningWithoutRsyncd
-    expr: up{container="scraper"} unless on(machine, experiment) up{service="rsyncd"}
-      unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: "Scraper deployments are running without rsyncd monitoring"
-      description: ""
-
-# Rsync inventory includes machine "b" and rsyncd is actually running, but
-# machine "b" does not have a configured scraper.
-  - alert: RsyncRunningWithoutScraper
-    expr: |
-      up{service="rsyncd"} and on(machine, experiment) probe_success{service="rsyncd"} == 1
-        unless on(machine, experiment) up{container="scraper"}
-    for: 30m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-    annotations:
-      summary: "Rsync is monitored without a corresponding scraper deployment"
-      description: ""
 
 # DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in
 # at least 21 hours, meaning that at least the last two download attempts have failed.
@@ -461,14 +248,11 @@ groups:
           min by (experiment, machine) (
             probe_success{service="ndt_raw"} OR
             script_success{service="ndt_e2e"} OR
-            (vdlimit_used{experiment="ndt.iupui"} /
-              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
-            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) / count(probe_success{service="ndt_raw"})
@@ -492,14 +276,11 @@ groups:
           min by (experiment, machine) (
             probe_success{service="ndt_raw_ipv6"} OR
             script_success{service="ndt_e2e"} OR
-            (vdlimit_used{experiment="ndt.iupui"} /
-              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
-            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) / count(probe_success{service="ndt_raw_ipv6"})
@@ -523,14 +304,11 @@ groups:
           min by (experiment, machine) (
             probe_success{service="ndt_ssl"} OR
             script_success{service="ndt_e2e"} OR
-            (vdlimit_used{experiment="ndt.iupui"} /
-              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
-            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) / count(probe_success{service="ndt_ssl"})
@@ -553,14 +331,11 @@ groups:
           min by (experiment, machine) (
             probe_success{service="ndt_ssl_ipv6"} OR
             script_success{service="ndt_e2e"} OR
-            (vdlimit_used{experiment="ndt.iupui"} /
-              vdlimit_total{experiment="ndt.iupui"}) < bool 0.95 OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
-            lame_duck_experiment{experiment="ndt.iupui"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) / count(probe_success{service="ndt_ssl_ipv6"})
@@ -675,32 +450,6 @@ groups:
         status in Prometheus[1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
 
-# One or more legacy NDT-specific metrics is missing. These are NDT metrics that
-# mlab-ns relies on to determine whether NDT is up and running, so we need to
-# make sure that the metrics are always present. NOTE: mlab-ns additionally
-# relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
-# alerting for that metric is already handled by the
-# ScriptExporterMissingMetrics alert.
-#
-# TODO: This alert is only relevant for PLC-managed nodes. Once the migration
-# to the platform cluster is complete, this alert should be removed.
-  - alert: LegacyNdtMetricsMissing
-    expr: |
-      absent(vdlimit_used{experiment="ndt.iupui"})
-        or absent(vdlimit_total{experiment="ndt.iupui"})
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: page
-    annotations:
-      summary: A legacy metric for an NDT service is missing.
-      description: >
-        If the blackbox_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target
-        status in Prometheus[1]. vdlimit_* metrics are provided by node_exporter
-        on each node.
-        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
-
 # One or more Neubot-specific metrics is missing. These are the Neubot metrics that
 # mlab-ns relies on to determine whether Neubot is up and running, so we need to
 # make sure that the metrics are always present.
@@ -708,6 +457,8 @@ groups:
     expr: |
       absent(probe_success{service="neubot"})
         or absent(probe_success{service="neubot_ipv6"})
+        or absent(probe_success{service="neubot_tls"})
+        or absent(probe_success{service="neubot_tls_ipv6"})
     for: 30m
     labels:
       repo: ops-tracker
@@ -719,122 +470,6 @@ groups:
         configuration error. Check the target definitions in GCS and the target
         status in Prometheus[1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
-
-# One or more Mobiperf-specific metrics is missing. These are the Mobiperf
-# metrics that mlab-ns relies on to determine whether Mobiperf is up and
-# running, so we need to make sure that the metrics are always present.
-  - alert: MobiperfMetricsMissing
-    expr: |
-      absent(probe_success{service="mobiperf"})
-        or absent(probe_success{service="mobiperf_ipv6"})
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: A metric for a Mobiperf service is missing.
-      description: >
-        If the blackbox_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target
-        status in Prometheus[1].
-        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
-
-# Some number of nodes don't have a lame-duck status. Adding the
-# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
-# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
-  - alert: LameDuckMetricMissingForNode
-    expr: |
-      up{service="nodeexporter"} == 1
-        unless on(machine) lame_duck_node
-        unless on(machine) gmx_machine_maintenance == 1
-        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: Some number of nodes are missing lame-duck status metrics.
-      description: Check /var/spool/node_exporter/ on the node to see if the file
-        lame_duck.prom is missing. If it is, use the mlabops Ansible
-        lame-duck.yaml playbook to restore it.
-
-# vdlimit_used and/or vdlimit_free metrics are completely missing for a node.
-# There are other vdlimit_* metrics, but we care especially about these because
-# mlab-ns uses them to query Prometheus for node status. Adding the
-# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
-# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
-  - alert: VdlimitMetricsMissingForNode
-    expr: |
-      up{service="nodeexporter"} == 1
-        unless on(machine) (vdlimit_used and vdlimit_total)
-        unless on(machine) gmx_machine_maintenance == 1
-        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: Some vdlimit_* metrics are missing.
-      description: Check /var/spool/node_exporter/ on the node to see if the file
-        vdlimit.prom is missing. The file is created by
-        /etc/cron.d/prom_vdlimit_metrics.cron.
-      dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/JAq7W6Nmk/
-
-# VdlimitTooMuchUsedDisk checks if the disk usage for a vserver is higher
-# than 80% of the allowed quota.
-  - alert: VdlimitTooMuchUsedDisk
-    expr: vdlimit_used / vdlimit_total > 0.8
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: A vserver disk usage is much higher than normal.
-      description: Check /var/spool/<vserver>/ on the node to see if data is
-        being collected. If not, then check the health of scraper for this node
-        and slice. If so, then check or other sources of disk usage, like
-        /var/logs and /home/<vserver>.
-
-# A collectd-mlab service has a problem and is down. Adding the
-# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
-# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
-  - alert: CoreServices_CollectdMlabDown
-    expr: |
-      collectd_mlab_success == 0
-        unless on(machine) gmx_machine_maintenance == 1
-        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
-    for: 10m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: A collectd-mlab service is down.
-      description: The collectd-mlab service runs in the mlab_utility slice.
-        Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook
-        in the mlabops repository to configure collectd-mlab. Login to the node
-        and run the check script manually to see what the specific error is
-        (/usr/lib/nagios/plugins/check_collectd_mlab.py).
-
-# A collectd-mlab service metric is missing on some node. Adding the
-# node_filesystem_size_bytes metric as a criteria will exclude platform cluster
-# nodes from this legacy alert, as that metric only exists on platform cluster nodes.
-  - alert: CoreServices_CollectdMlabMissing
-    expr: |
-      up{service="nodeexporter"} == 1
-        unless on(machine) collectd_mlab_success
-        unless on(machine) gmx_machine_maintenance == 1
-        unless on(machine) node_filesystem_size_bytes{cluster="platform-cluster"}
-    for: 10m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: A collectd-mlab service metric is missing.
-      description: The collectd-mlab service runs in the mlab_utility slice.
-        Try running the ansible/disco/update-mlab-utility.yaml Ansible playbook
-        in the mlabops repository to configure collectd-mlab. Login to the node
-        and run the check script manually to see what the specific error is
-        (/usr/lib/nagios/plugins/check_collectd_mlab.py).
 
 # The collectd container should be present on the platform-cluster.
   - alert: PlatformCluster_CoreServices_CollectdMlabMissing
@@ -853,7 +488,7 @@ groups:
   - alert: PlatformCluster_CoreServices_CollectdMlabDown
     expr: |
       collectd_mlab_success{cluster="platform-cluster"} == 0
-        unless on(node) label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)")
+        unless on(node) gmx_machine_maintenance == 1
         unless on(node) kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"}
     for: 1h
     labels:
@@ -978,18 +613,6 @@ groups:
     annotations:
       summary: The node_exporter running on eb.measurementlab.net is down.
       description: Login to EB to see if it is in fact crashed. If so, look
-        through the logs.
-
-# The node_exporter running on mirror.measurementlab.net is down.
-  - alert: NodeExporterOnMirrorDownOrMissing
-    expr: up{job="mirror-node-exporter"} == 0 or absent(up{job="mirror-node-exporter"})
-    for: 10m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: The node_exporter running on mirror.measurementlab.net is down.
-      description: Login to to see if it is in fact crashed. If so, look
         through the logs.
 
 # The node_exporter running on dns.measurementlab.net is down.
@@ -1153,7 +776,13 @@ groups:
 # Boot_MachineFailedToBoot a machine has failed to boot for more than a day.
   - alert: Boot_MachineFailedToBoot
     expr: epoxy_last_success < epoxy_last_boot
-      unless on(machine) (lame_duck_node == 1 or gmx_machine_maintenance == 1)
+      unless on(machine) (
+        gmx_machine_maintenance == 1 or
+        label_replace(
+          kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"},
+          "machine", "$1", "node", "(.*)"
+        )
+      )
     for: 24h
     labels:
       repo: dev-tracker
@@ -1239,6 +868,18 @@ groups:
         the DaemonSet is healthy (`kubectl describe ds ndt`).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
+  - alert: PlatformCluster_NeubotMissing
+    expr: absent(up{deployment="neubot", cluster="platform-cluster"})
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The Neubot DaemonSet is missing or has no metrics.
+      description: The Neubot DaemonSet is missing or has no metrics. Verify that
+        the DaemonSet is healthy (`kubectl describe ds neubot`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
   - alert: PlatformCluster_NodeExporterMissing
     expr: absent(up{deployment="node-exporter", cluster="platform-cluster"})
     for: 5m
@@ -1273,7 +914,7 @@ groups:
       kube_node_status_condition{cluster="platform-cluster", condition="Ready", status="false"} == 1
         unless on(node) (
           kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
-          label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
+          gmx_machine_maintenance == 1 or
           up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
     for: 1h
@@ -1297,7 +938,7 @@ groups:
       kube_pod_info == 1 and on(exported_pod) kube_pod_status_ready{condition="true"} == 0 unless on(node) (
           kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
           kube_node_status_condition{condition="Ready", status="false"} == 1 or
-          label_replace(gmx_machine_maintenance == 1, "node", "$1", "machine", "(.*)") or
+          gmx_machine_maintenance == 1 or
           up{job="kubernetes-nodes", cluster="platform-cluster"} == 0
         )
     for: 1h
