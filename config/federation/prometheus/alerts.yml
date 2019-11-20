@@ -182,7 +182,6 @@ groups:
   - alert: ScriptExporterMissingMetrics
     expr: |
       absent(script_success{service="ndt_e2e"})
-        or absent(script_success{service="ndt_queue"})
     for: 30m
     labels:
       repo: ops-tracker

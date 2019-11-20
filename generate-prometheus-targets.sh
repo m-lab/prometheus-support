@@ -114,14 +114,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --select "ndt.iupui.(${!pattern})" > \
           ${output}/script-targets/ndt_e2e.json
 
-  # script_exporter for NDT queueing check
-  ./mlabconfig.py --format=prom-targets \
-      --template_target={{hostname}} \
-      --label service=ndt_queue \
-      --use_flatnames \
-      --select "ndt.iupui.(${!pattern})" > \
-          ${output}/script-targets/ndt_queue.json
-
   # neubot on port 80 over IPv4
   ./mlabconfig.py --format=prom-targets \
       --template_target={{hostname}}:80 \
