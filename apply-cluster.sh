@@ -6,7 +6,7 @@
 #
 # Example:
 #
-#   PROJECT=mlab-sandbox CLUSTER=scraper-cluster ./apply-cluster.sh
+#   PROJECT=mlab-sandbox CLUSTER=prometheus-federation ./apply-cluster.sh
 
 set -x
 set -e
