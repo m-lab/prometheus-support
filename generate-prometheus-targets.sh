@@ -114,37 +114,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --select "ndt.iupui.(${!pattern})" > \
           ${output}/script-targets/ndt_e2e.json
 
-  # script_exporter for NDT queueing check
-  ./mlabconfig.py --format=prom-targets \
-      --template_target={{hostname}} \
-      --label service=ndt_queue \
-      --use_flatnames \
-      --select "ndt.iupui.(${!pattern})" > \
-          ${output}/script-targets/ndt_queue.json
-
-  # Mobiperf on ports 6001, 6002, 6003 over IPv4.
-  ./mlabconfig.py --format=prom-targets \
-      --template_target={{hostname}}:6001 \
-      --template_target={{hostname}}:6002 \
-      --template_target={{hostname}}:6003 \
-      --label service=mobiperf \
-      --label module=tcp_v4_online \
-      --physical \
-      --select "1.michigan.(${!pattern})" > \
-          ${output}/blackbox-targets/mobiperf.json
-
-  # Mobiperf on ports 6001, 6002, 6003 over IPv6.
-  ./mlabconfig.py --format=prom-targets \
-      --template_target={{hostname}}:6001 \
-      --template_target={{hostname}}:6002 \
-      --template_target={{hostname}}:6003 \
-      --label service=mobiperf_ipv6 \
-      --label module=tcp_v6_online \
-      --label __blackbox_port=${!bbe_port} \
-      --physical \
-      --select "1.michigan.(${!pattern})" \
-      --decoration "v6" > ${output}/blackbox-targets-ipv6/mobiperf_ipv6.json
-
   # neubot on port 80 over IPv4
   ./mlabconfig.py --format=prom-targets \
       --template_target={{hostname}}:80 \
@@ -160,7 +129,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label module=tcp_v6_online \
       --decoration "v6" \
       --select "neubot.mlab.(${!pattern})" > \
-          ${output}/blackbox-targets/neubot_ipv6.json
+          ${output}/blackbox-targets-ipv6/neubot_ipv6.json
 
   # neubot TLS on port 443 over IPv4
   ./mlabconfig.py --format=prom-targets \
@@ -180,7 +149,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --use_flatnames \
       --decoration "v6" \
       --select "neubot.mlab.(${!pattern})" > \
-          ${output}/blackbox-targets/neubot_tls_ipv6.json
+          ${output}/blackbox-targets-ipv6/neubot_tls_ipv6.json
 
   # snmp_exporter on port 9116.
   ./mlabconfig.py --format=prom-targets-sites \
@@ -189,21 +158,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target=s1.{{sitename}}.measurement-lab.org \
       --label service=snmp > \
           ${output}/snmp-targets/snmpexporter.json
-
-  # inotify_exporter for NDT on port 9393.
-  ./mlabconfig.py --format=prom-targets \
-      --template_target={{hostname}}:9393 \
-      --label service=inotify \
-      --physical \
-      --select "ndt.iupui.(${!pattern})" > \
-          ${output}/legacy-targets/ndt_inotify.json
-
-  # node_exporter on port 9100.
-  ./mlabconfig.py --format=prom-targets-nodes \
-      --template_target={{hostname}}:9100 \
-      --label service=nodeexporter \
-      --select "${!pattern}" > \
-          ${output}/legacy-targets/nodeexporter.json
 
   # ICMP probe for platform switches
   ./mlabconfig.py --format=prom-targets-sites \
