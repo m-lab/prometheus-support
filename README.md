@@ -87,12 +87,12 @@ No special scopes are required for the prometheus cluster configuration.
 However, node labels can only be added to a new node group using the command
 line.
 
-For very large number of time series (e.g. production scraper) a highmem node
-pool is necessary.
+For very large number of time series (e.g. production prometheus-federation) a
+highmem node pool is necessary.
 
 ```
 gcloud --project=mlab-oti container node-pools create prometheus-pool \
-  --cluster=scraper-cluster \
+  --cluster=prometheus-federation \
   --num-nodes=2 \
   --zone=us-central1-a \
   --node-labels=prometheus-node=true \
@@ -306,19 +306,6 @@ Create a service using the public IP address that will send traffic to pods
 with the label "run=prometheus-server":
 
     kubectl create -f k8s/mlab-sandbox/<cluser-name>/services
-
-## Cluster deployment
-
-The cluster and federation deployments are mutually exclusive. Do not deploy
-both to the same cluster.
-
-Create the prometheus cluster deployment for scraper or other stand-alone
-cluster deployments. This step starts the actual prometheus server. The
-deployment will receive traffic from the service defined above and binds to the
-persistent volume claim. If a persistent volume does not already exist, this
-will create a new one. It will be automatically formatted.
-
-    kubectl create -f k8s/mlab-sandbox/scraper-cluster/deployments/prometheus.yml
 
 ## Federation deployment
 

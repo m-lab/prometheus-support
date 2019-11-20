@@ -24,8 +24,6 @@ groups:
   rules:
 # ClusterDown: when any of the federated prometheus k8s clusters is down for
 # three sample periods, then raise an alert.
-#
-# All scraper metrics come from federated targets, so this is critical.
   - alert: ClusterDown
     expr: up{job="federation-targets"} == 0
     for: 10m
