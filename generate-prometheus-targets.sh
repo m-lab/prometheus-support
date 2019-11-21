@@ -127,6 +127,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:80 \
       --label service=neubot_ipv6 \
       --label module=tcp_v6_online \
+      --label __blackbox_port=${!bbe_port} \
       --decoration "v6" \
       --select "neubot.mlab.(${!pattern})" > \
           ${output}/blackbox-targets-ipv6/neubot_ipv6.json
@@ -146,6 +147,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:443 \
       --label service=neubot_tls_ipv6 \
       --label module=tcp_v6_tls_online \
+      --label __blackbox_port=${!bbe_port} \
       --use_flatnames \
       --decoration "v6" \
       --select "neubot.mlab.(${!pattern})" > \
