@@ -54,6 +54,8 @@ kubectl create secret generic mlabns-credentials \
 # Generate the basic auth string for Prometheus.
 export PROM_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
 export PROM_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
+export PLATFORM_PROM_AUTH_USER=PLATFORM_PROMETHEUS_BASIC_AUTH_USER
+export PLATFORM_PROM_AUTH_PASS=PLATFORM_PROMETHEUS_BASIC_AUTH_PASS
 export AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
 
 # Evaluate the Prometheus configuration template.
@@ -108,6 +110,8 @@ for ds_tmpl in $ds_tmpls; do
   ds_file=${ds_tmpl%%.template}
   sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
       -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
+      -e 's|{{PLATFORM_PROM_AUTH_USER}}|'${!PLATFORM_PROM_AUTH_USER}'|g' \
+      -e 's|{{PLATFORM_PROM_AUTH_PASS}}|'${!PLATFORM_PROM_AUTH_PASS}'|g' \
       $ds_tmpl > $ds_file
   if [[ $(basename $ds_file) == prometheus-federation_${PROJECT}* ]]; then
     sed -i 's|{{IS_DEFAULT}}|true|g' $ds_file
