@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 281,
-  "iteration": 1574172930276,
+  "id": 286,
+  "iteration": 1574354353566,
   "links": [],
   "panels": [
     {
@@ -327,20 +327,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(2, 60 * sum(rate(ndt5_client_test_results_total{result=\"okay-with-rate\"}[10m])) by (machine))",
+          "expr": "topk($TopK, 60 * sum(rate(ndt5_client_test_results_total{result=\"okay-with-rate\"}[10m])) by (machine))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "legendFormat": "Tests per minute - worst machine  {{machine}}",
           "refId": "F"
-        },
-        {
-          "expr": "topk(1, 60 * avg(rate(ndt5_client_test_results_total{result=\"okay-with-rate\"}[10m])) by (machine))",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "Tests per minute - worst machine  {{machine}}",
-          "refId": "G"
         },
         {
           "expr": "quantile(0.5, 60*rate(ndt5_client_test_results_total{result=\"okay-with-rate\"}[10m]))",
@@ -1556,7 +1548,8 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
+          "tags": [],
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -1675,8 +1668,8 @@
         "current": {
           "selected": true,
           "tags": [],
-          "text": "3",
-          "value": "3"
+          "text": "2",
+          "value": "2"
         },
         "hide": 0,
         "includeAll": false,
@@ -1690,12 +1683,12 @@
             "value": "1"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "2",
             "value": "2"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "3",
             "value": "3"
           },
@@ -1745,6 +1738,6 @@
   },
   "timezone": "utc",
   "title": "k8s: TPCInfo",
-  "uid": "etiuHyDZz",
-  "version": 45
+  "uid": "1C1ypkdZk",
+  "version": 11
 }
