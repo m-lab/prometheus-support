@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1572288979434,
+  "iteration": 1574451020985,
   "links": [],
   "panels": [
     {
@@ -1020,6 +1020,7 @@
       "datasource": "$datasource",
       "description": "",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 5,
         "w": 7,
@@ -1042,7 +1043,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1100,6 +1103,95 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 17,
+        "x": 0,
+        "y": 31
+      },
+      "id": 35,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "count by (workload, container, commit, controller_revision_hash) (git_short_commit)",
+          "legendFormat": "{{commit}} - {{controller_revision_hash}} - {{workload}} - {{container}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Rollout Counts by (git, k8s revision, workload, and container)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": false,
@@ -1110,6 +1202,7 @@
     "list": [
       {
         "current": {
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -1159,5 +1252,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 99
+  "version": 104
 }
