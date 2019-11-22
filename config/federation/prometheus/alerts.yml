@@ -831,7 +831,7 @@ groups:
 # disk mounted on the Prometheus VM gets too full (less than 5% free).
   - alert: PlatformCluster_PrometheusPersistentDiskTooFull
     expr: |
-      node_filesystem_avail_bytes{job="platform-cluster", node="prometheus-platform-cluster", mountpoint="/mnt/local"}
+      node_filesystem_avail_bytes{cluster="platform-cluster", node="prometheus-platform-cluster", mountpoint="/mnt/local"}
         / node_filesystem_size_bytes < 0.05
     for: 1m
     labels:
