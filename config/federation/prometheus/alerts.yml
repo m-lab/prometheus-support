@@ -827,6 +827,28 @@ groups:
         using - `kubectl get pods`. Check pod logs.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
+# PlatformCluster_PrometheusPersistentDiskTooFull fires when the persistent
+# disk mounted on the Prometheus VM gets too full (less than 5% free).
+  - alert: PlatformCluster_PrometheusPersistentDiskTooFull
+    expr: |
+      node_filesystem_avail_bytes{cluster="platform-cluster", node="prometheus-platform-cluster", mountpoint="/mnt/local"}
+        / node_filesystem_size_bytes < 0.05
+    for: 1m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: The Prometheus persistent disk has less than 5% free space.
+      description: The Prometheus persistent disk has less than 5% free space.
+        Investigate filesystem usage on the VM, but most likely if this alert
+        fires it means that the size of the persistent disk is too small and
+        may need to be increased. GCE persistent disks can be resized, even on
+        a running VM. Increase the size of the disk as necessary, then unmount
+        the disk on the machine and run `resize2fs`, then mount it again. Don't
+        forget to increase the value in the bootstrap_prometheus.sh script in
+        the k8s-support repository.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=Platform%20Cluster%20(mlab-oti)
+
 # Check for missing workloads.
 
   - alert: PlatformCluster_CadvisorMissing

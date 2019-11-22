@@ -305,8 +305,8 @@ scrape_configs:
       'match[]':
         - 'up{job=~".+"}'
         - 'lame_duck_experiment{job!="node-exporter"}'
-        - 'node_filesystem_size_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
-        - 'node_filesystem_avail_bytes{deployment="node-exporter", mountpoint="/cache/data"}'
+        - 'node_filesystem_size_bytes{deployment="node-exporter"}'
+        - 'node_filesystem_avail_bytes{deployment="node-exporter"}'
         - 'node_memory_MemTotal_bytes'
         - 'node_edac_correctable_errors_total'
         - 'node_edac_uncorrectable_errors_total'
@@ -332,6 +332,9 @@ scrape_configs:
         - 'collectd_mlab_success'
         # Used by PlatformCluster_PusherDailyDataVolumeTooLow alert.
         - 'datatype:pusher_bytes_per_tarfile:increase24h'
+        # Systemd metrics
+        - 'node_systemd_units'
+        - 'node_systemd_unit_state'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
