@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 261,
-  "iteration": 1574381395510,
+  "iteration": 1574451020985,
   "links": [],
   "panels": [
     {
@@ -1113,8 +1113,8 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 7,
-        "w": 12,
+        "h": 8,
+        "w": 17,
         "x": 0,
         "y": 31
       },
@@ -1126,7 +1126,7 @@
         "max": false,
         "min": false,
         "rightSide": true,
-        "show": false,
+        "show": true,
         "total": false,
         "values": false
       },
@@ -1147,7 +1147,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "count by (workload, container, commit, controller_revision_hash) (git_short_commit{workload=~\"$workload\", container=~\".*($container)\"})",
+          "expr": "count by (workload, container, commit, controller_revision_hash) (git_short_commit)",
           "legendFormat": "{{commit}} - {{controller_revision_hash}} - {{workload}} {{container}}",
           "refId": "B"
         }
@@ -1156,7 +1156,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Rollout Counts :: $workload  { $container }",
+      "title": "Rollout Counts by (git, k8s revision, workload, and container)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1202,9 +1202,9 @@
     "list": [
       {
         "current": {
-          "tags": [],
-          "text": "Platform Cluster (mlab-staging)",
-          "value": "Platform Cluster (mlab-staging)"
+          "selected": false,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -1217,114 +1217,6 @@
         "regex": "/^Platform Cluster/",
         "skipUrlSync": false,
         "type": "datasource"
-      },
-      {
-        "allValue": null,
-        "current": {
-          "tags": [],
-          "text": "All",
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": "$datasource",
-        "definition": "label_values(git_short_commit, workload)",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "workload",
-        "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": false,
-            "text": "host",
-            "value": "host"
-          },
-          {
-            "selected": false,
-            "text": "ndt",
-            "value": "ndt"
-          },
-          {
-            "selected": false,
-            "text": "neubot",
-            "value": "neubot"
-          },
-          {
-            "selected": false,
-            "text": "utilization",
-            "value": "utilization"
-          }
-        ],
-        "query": "label_values(git_short_commit, workload)",
-        "refresh": 0,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "tags": [],
-          "text": "All",
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": "$datasource",
-        "definition": "label_values(git_short_commit, container)",
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "container",
-        "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": false,
-            "text": "tcpinfo",
-            "value": "tcpinfo"
-          },
-          {
-            "selected": false,
-            "text": "ndt-server",
-            "value": "ndt-server"
-          },
-          {
-            "selected": false,
-            "text": "traceroute",
-            "value": "traceroute"
-          },
-          {
-            "selected": false,
-            "text": "pusher",
-            "value": "pusher"
-          }
-        ],
-        "query": "label_values(git_short_commit, container)",
-        "refresh": 0,
-        "regex": "(tcpinfo|ndt-server|traceroute|pusher)",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
       }
     ]
   },
@@ -1360,5 +1252,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 100
+  "version": 104
 }
