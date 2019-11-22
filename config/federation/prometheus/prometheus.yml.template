@@ -332,6 +332,9 @@ scrape_configs:
         - 'collectd_mlab_success'
         # Used by PlatformCluster_PusherDailyDataVolumeTooLow alert.
         - 'datatype:pusher_bytes_per_tarfile:increase24h'
+        # Systemd metrics
+        - 'node_systemd_units'
+        - 'node_systemd_unit_state'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
