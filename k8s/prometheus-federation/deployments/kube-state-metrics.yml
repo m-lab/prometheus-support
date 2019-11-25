@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kube-state-metrics
@@ -17,7 +17,7 @@ spec:
       containers:
       - name: kube-state-metrics
         # image: gcr.io/google_containers/kube-state-metrics:v0.5.0
-        image: quay.io/coreos/kube-state-metrics:v1.3.1
+        image: quay.io/coreos/kube-state-metrics:v1.5.0
         args: [
           "--collectors=deployments,nodes,pods,services",
           "--port=8080",

@@ -1,7 +1,7 @@
 # A deployment of external-dns, which watches for new services that have a
 # hostname that falls within the domain-filter zone below, and automatically
 # adds a DNS entry to that zone which points to that service's Ingress IP.
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: external-dns
@@ -16,7 +16,7 @@ spec:
       serviceAccountName: external-dns
       containers:
       - name: external-dns
-        image: registry.opensource.zalan.do/teapot/external-dns:v0.5.0
+        image: registry.opensource.zalan.do/teapot/external-dns:v0.5.17
         # domain-filter is the zone we want to manage. txt-owner-id is an
         # arbitrary identifier used to track who created each entry (scoped
         # here to the cluster, in case we end up using more than one
