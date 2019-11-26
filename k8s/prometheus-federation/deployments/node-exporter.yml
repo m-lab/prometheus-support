@@ -1,8 +1,11 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: node-exporter
 spec:
+  selector:
+    matchLabels:
+      run: node-exporter
   template:
     metadata:
       name: node-exporter

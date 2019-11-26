@@ -8,7 +8,7 @@ metadata:
 # ClusterRole for nginx-ingress, which creates an instance of nginx which acts 
 # as an Ingress that forwards different vhosts and paths to different Service 
 # backends.
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: nginx-ingress-clusterrole
@@ -63,7 +63,7 @@ rules:
 # Role for nginx-ingress, which creates an instance of nginx which acts 
 # as an Ingress that forwards different vhosts and paths to different Service 
 # backends. This provides broader access within the nginx-ingress Namespace.
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: nginx-ingress-role
@@ -105,7 +105,7 @@ rules:
   - get
 ---
 # Bind the nginx-ingress ServiceAccount to the Role above.
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: nginx-ingress-role-nisa-binding
@@ -120,7 +120,7 @@ subjects:
   namespace: default
 ---
 # Bind the nginx-ingress ServiceAccount to the ClusterRole above.
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: nginx-ingress-clusterrole-nisa-binding
