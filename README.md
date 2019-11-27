@@ -467,7 +467,12 @@ API URL is prointing to the GCP project you intend. This command will flag the
 datasource as editable:
 
 ```
-curl --request PUT --header "Authorization: Bearer <api-key>" --header "Content-Type: application/json" --data '{"id": <datasource-id>, "name": "<datasource-name>", "type": "prometheus", "access": "server", "editable": "true"}' https://grafana.mlab-sandbox.measurementlab.net/api/datasources/<datasource-id>
+curl --request PUT --header "Authorization: Bearer <api-key>" \
+    --header "Content-Type: application/json" \
+    --data '{"id": <datasource-id>, "name": "<datasource-name>", \
+             "type": "prometheus", "access": "server", \
+             "editable": "true"}' \
+    https://grafana.mlab-sandbox.measurementlab.net/api/datasources/<datasource-id>
 ```
 
 Now you can delete the datasource with something like the following, replacing
@@ -475,7 +480,8 @@ Now you can delete the datasource with something like the following, replacing
 datasource you want to delete:
 
 ```
-curl --request DELETE --header "Authorization: Bearer <api-key>" https://grafana.mlab-sandbox.measurementlab.net/api/datasources/<datasource-id>
+curl --request DELETE --header "Authorization: Bearer <api-key>" \
+    https://grafana.mlab-sandbox.measurementlab.net/api/datasources/<datasource-id>
 ```
 
 ## Delete
