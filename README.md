@@ -445,24 +445,44 @@ step starts the grafana server.
 
 ## Setup
 
-For now, we must login to the Grafana web interface and add a datasource
-corresponding to the local prometheus server. It may be possible to automate
-this in the future. Either way, this step should not be necessary too many
-times since `/var/lib/grafana` is a persistent volume.
+### Deleting provisioned datasources
 
-The steps are:
+Datasources are provisioned through YAML files located in
+`config/federation/grafana/provisioning/datasources/`. Currently, Grafana does
+not support having a provisioned datasource deleted automatically from the
+database once its YAML file goes away.  The official way to delete a
+provisioned datasource is to [add a `deleteDatasources` section]
+(https://grafana.com/docs/administration/provisioning/#datasources) to the
+provisioning YAML. However, this is cumbersome and awkward and somewhat
+pollutes the git history. There is another way that is fairly manual, but not
+hard.
 
- * Login to grafana as 'admin' using the password chosen above.
- * Click "Add data source."
- * Name the source, e.g. "Prometheus"
- * Select the Type as "Prometheus"
- * Use a public URI corresponding to the service name, i.e.
-   http://status.mlab-sandbox.measurementlab.net:9090
-   The name provided must be a fully qualified URL. You may also use the public
-   IP.
- * Leave the Access as "proxy"
- * Click "Add"
+In the configuration section of the Grafana Web interface, there is a section
+for creating API keys. Create a temporary key that will expire after, say, 1d.
+Then use that key to run a manual API request like the following, being sure to
+replace `<api-key>` with your API key, `<datasource-id>` with the ID of the datasource,
+`<datasource-name>` with the name of the datasource, and `<datasource-id>` in
+the API URL to match the datasource ID. Don't forget to also make sure that the
+API URL is prointing to the GCP project you intend. This command will flag the
+datasource as editable:
 
+```
+curl --request PUT --header "Authorization: Bearer <api-key>" \
+    --header "Content-Type: application/json" \
+    --data '{"id": <datasource-id>, "name": "<datasource-name>", \
+             "type": "prometheus", "access": "server", \
+             "editable": "true"}' \
+    https://grafana.mlab-sandbox.measurementlab.net/api/datasources/<datasource-id>
+```
+
+Now you can delete the datasource with something like the following, replacing
+`<api-key>` with your API key, and changing the API URL to match the ID of the
+datasource you want to delete:
+
+```
+curl --request DELETE --header "Authorization: Bearer <api-key>" \
+    https://grafana.mlab-sandbox.measurementlab.net/api/datasources/<datasource-id>
+```
 
 ## Delete
 
