@@ -14,8 +14,8 @@
   },
   "editable": true,
   "gnetId": null,
-  "graphTooltip": 0,
-  "iteration": 1565889514091,
+  "graphTooltip": 1,
+  "iteration": 1574962384405,
   "links": [],
   "panels": [
     {
@@ -40,7 +40,8 @@
       "dashes": false,
       "datasource": "$datasource",
       "decimals": 1,
-      "fill": 1,
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 11,
         "w": 24,
@@ -61,12 +62,28 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Total",
+          "color": "#56A64B",
+          "linewidth": 2
+        },
+        {
+          "alias": "Download",
+          "color": "#5794F2"
+        },
+        {
+          "alias": "Upload",
+          "color": "#FADE2A"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -146,7 +163,8 @@
       "dashes": false,
       "datasource": "$datasource",
       "decimals": 1,
-      "fill": 1,
+      "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 12,
         "w": 24,
@@ -167,19 +185,36 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Current",
+          "color": "#37872D",
+          "linewidth": 2
+        },
+        {
+          "alias": "One Week",
+          "color": "rgba(117, 207, 105, 0.53)"
+        },
+        {
+          "alias": "Two Week",
+          "color": "rgba(135, 150, 132, 0.67)"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m]))) or absent(machine:ndt5_client_test_results:rpm2m)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or absent(ndt_test_total))",
+          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) or vector(0)) +\n(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) or vector(0)) +\n((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m]))) or absent(machine:ndt5_client_test_results:rpm2m)) +\n(60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or absent(ndt_test_total))",
           "format": "time_series",
+          "hide": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Current",
@@ -187,16 +222,18 @@
           "step": 240
         },
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 7d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 7d)) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d))) or absent(machine:ndt5_client_test_results:rpm2m offset 7d)) + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 7d)) or absent(ndt_test_total offset 7d))",
+          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 7d)) or vector(0)) + \n(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 7d)) or vector(0)) +\n((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d))) or absent(machine:ndt5_client_test_results:rpm2m offset 7d)) +\n(60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 7d)) or absent(ndt_test_total offset 7d))",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 2,
           "legendFormat": "One Week",
           "refId": "A",
           "step": 240
         },
         {
-          "expr": "60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 14d)) + 60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 14d)) + ((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d))) or absent(machine:ndt5_client_test_results:rpm2m offset 14d))  + (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 14d)) or absent(ndt_test_total offset 14d))",
+          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 14d)) or vector(0)) +\n(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 14d)) or vector(0)) +\n((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d))) or absent(machine:ndt5_client_test_results:rpm2m offset 14d)) +\n(60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 14d)) or absent(ndt_test_total offset 14d))",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 2,
           "legendFormat": "Two Week",
           "refId": "B",
@@ -246,7 +283,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -302,5 +339,5 @@
   "timezone": "utc",
   "title": "NDT: Global Test Rate",
   "uid": "Cyq7WeNiz",
-  "version": 140
+  "version": 142
 }
