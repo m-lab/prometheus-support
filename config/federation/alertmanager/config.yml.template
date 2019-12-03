@@ -71,6 +71,14 @@ inhibit_rules:
     alertname: 'SnmpExporterMissingMetrics|SnmpScrapingDownAtSite'
   equal: []
 
+# Don't alert about missing platform cluster DaemonSet metrics if the entire
+# platform cluster scrape job is down.
+- source_match:
+    alertname: 'PlatformCluster_FederationScrapeJobFailing'
+  taret_match_re:
+    alertname: 'PlatformCluster_.+Missing'
+  equal: ['cluster']
+
 receivers:
 # For M-Lab Slack, visit:
 #   https://measurementlab.slack.com/apps/manage/custom-integrations
