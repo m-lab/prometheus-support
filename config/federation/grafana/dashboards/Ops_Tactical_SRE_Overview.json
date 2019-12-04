@@ -16,7 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1571838575913,
+  "id": 266,
+  "iteration": 1575412480377,
   "links": [],
   "panels": [
     {
@@ -211,8 +212,18 @@
           "hide": false,
           "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "switch > 40% - {{site}}",
+          "legendFormat": "1g switch > 40% - {{site}}",
           "refId": "F",
+          "step": 300
+        },
+        {
+          "expr": "candidate_site:uplink:90th_quantile_6h{ifAlias=\"uplink\", speed=\"10g\"} / (9.4 * 1e9) > (50 / 100)",
+          "format": "time_series",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "10g switch > 50% - {{site}}",
+          "refId": "A",
           "step": 300
         }
       ],
@@ -220,7 +231,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "6h, 1G sites where 90th Percentile is over 40% Capacity",
+      "title": "Excessive 6h/90th Percentile of Switch Capacity",
       "tooltip": {
         "shared": false,
         "sort": 1,
@@ -596,7 +607,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -652,5 +663,5 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 21
+  "version": 22
 }
