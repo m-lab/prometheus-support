@@ -598,6 +598,21 @@ groups:
         Is mlab-ns working? A new rollout?
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/WnaxPZJZz
 
+# The number of go routine went too high.
+  - alert: NumGoRoutineTooHigh
+    expr: |
+      go_goroutines{container="etl-gardener"} > 1000
+      or go_goroutines{container="ndt-server"} > 2000
+    for: 5m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: The number of go routine is too high.
+      description: Check whether there is fd leak in go routine.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik
+
+
 # The node_exporter running on eb.measurementlab.net is down.
   - alert: NodeExporterOnEbDownOrMissing
     expr: |
