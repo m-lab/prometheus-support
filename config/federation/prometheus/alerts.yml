@@ -808,24 +808,43 @@ groups:
         Check the VM service logs from Stackdriver.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/t_juk39ik/boot-epoxy-server
 
-# PlatformCluster_DownOrMissing extends the ClusterDown alert to apply only to
-# the platform cluster instance of Prometheus.
-# TODO: retire this alert in favor of ClusterDown when possible.
-  - alert: PlatformCluster_DownOrMissing
-    expr: up{job="platform-cluster"} == 0 or absent(up{job="platform-cluster"})
-    for: 1h
+# PlatformCluster_FederationScrapeJobFailing indicates that scraping for the
+# k8s platform cluster is failing.  The threshold for being down is 4m, such
+# that this alert will fire slightly before the alerts for missing individual
+# DaemonSet metrics (and can inhibit those).  Also, ~4 scrape cycles is enough
+# time for this to be down before someone knows about it.
+  - alert: PlatformCluster_FederationScrapeJobFailing
+    expr: up{job="platform-cluster"} == 0
+    for: 4m
     labels:
       repo: ops-tracker
       severity: page
     annotations:
-      summary: Prometheus is down on the k8s platform cluster.
-      description: The Prometheus instance on the platform cluster appears to
-        be down. This makes investigation using Prometheus impossible. Verify
-        ithat the node where Prometheus should be running is healthy (`kubectl
-        get nodes --selector run=prometheus-server`). Verify that the node is
-        connected to the cluster. Verify the Prometheus deployment is running
-        using - `kubectl get pods`. Check pod logs.
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
+      summary: Federation scraping of the k8s platform cluster is down.
+      description: Scraping of Prometheus on the platform cluster is down.
+        This could be that Prometheus in the platform cluster is down, or it
+        could be that the prometheus-federation scrape job is failing for some
+        reason unrelated to the platform clustser. Verify that the node where
+        Prometheus should be running in the platform cluster is healthy
+        (`kubectl get nodes --selector run=prometheus-server`). Verify the
+        Prometheus deployment is running using - `kubectl get pods`.  Check pod
+        logs.  Check the GCP console for the VM for messages or status. Check
+        the status of the target in the prometheus-federation Web console.
+
+# PlatformCluster_FederationScrapeJobMissing indicates that the job for
+# scraping the k8s platform cluster does not exist.
+  - alert: PlatformCluster_FederationScrapeJobMissing
+    expr: absent(up{job="platform-cluster"})
+    for: 4m
+    labels:
+      repo: ops-tracker
+      severity: page
+    annotations:
+      summary: Federation scraping of the k8s platform cluster is missing.
+      description: A scrape job for the k8s platform cluster is missing. This
+        is almost surely the result of a misconfiguration of Prometheus. Check
+        the running prometheus configuration to be sure that there is actually
+        a job for scraping the k8s platform cluster.
 
 # PlatformCluster_PrometheusPersistentDiskTooFull fires when the persistent
 # disk mounted on the Prometheus VM gets too full (less than 5% free).

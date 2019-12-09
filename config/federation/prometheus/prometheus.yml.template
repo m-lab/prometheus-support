@@ -335,7 +335,7 @@ scrape_configs:
         - 'datatype:pusher_bytes_per_tarfile:increase24h'
         # Systemd metrics
         - 'node_systemd_units'
-        - 'node_systemd_unit_state'
+        - 'node_systemd_unit_state{state="failed"}'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
