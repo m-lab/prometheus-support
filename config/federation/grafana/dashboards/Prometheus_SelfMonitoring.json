@@ -15,7 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1575920507904,
+  "id": 297,
+  "iteration": 1575931594609,
   "links": [],
   "panels": [
     {
@@ -1058,43 +1059,25 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "deriv(node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}[1h]) * 86400",
+          "expr": "deriv(avg by(mountpoint, workload) (node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\", cluster!~\".+\"})[1d:10m]) * 86400",
           "format": "time_series",
+          "hide": false,
           "interval": "60s",
           "intervalFactor": 4,
-          "legendFormat": "{{pod}}",
+          "legendFormat": "",
           "metric": "",
           "refId": "A",
           "step": 240
         },
         {
-          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}",
+          "expr": "deriv(avg by(mountpoint) (node_filesystem_avail_bytes{mountpoint=\"/prometheus\", pod!~\".*srglv.*\"})[1d:10m]) * 86400",
           "format": "time_series",
+          "hide": false,
           "interval": "60s",
           "intervalFactor": 4,
-          "legendFormat": "{{pod}} - raw",
-          "metric": "",
-          "refId": "B",
-          "step": 240
-        },
-        {
-          "expr": "deriv(node_filesystem_avail{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}[1h]) * 86400",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 4,
-          "legendFormat": "{{pod}}",
+          "legendFormat": "",
           "metric": "",
           "refId": "C",
-          "step": 240
-        },
-        {
-          "expr": "node_filesystem_avail{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 4,
-          "legendFormat": "{{pod}} - raw",
-          "metric": "",
-          "refId": "D",
           "step": 240
         }
       ],
@@ -1145,7 +1128,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
@@ -1180,40 +1163,40 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "predict_linear(node_filesystem_avail{mountpoint=\"/prometheus\"}[30m], 600)",
+          "expr": "predict_linear(avg by(mountpoint) (node_filesystem_avail_bytes{mountpoint=\"/prometheus\"})[2d:10m], 10*86400)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
-          "legendFormat": "{{deployment}}",
-          "refId": "A",
-          "step": 120
-        },
-        {
-          "expr": "node_filesystem_avail{mountpoint=\"/prometheus\"}",
-          "format": "time_series",
-          "hide": false,
-          "interval": "60s",
-          "intervalFactor": 2,
-          "legendFormat": "{{deployment}} - raw",
-          "refId": "B",
-          "step": 120
-        },
-        {
-          "expr": "predict_linear(node_filesystem_avail_bytes{mountpoint=\"/mnt/local\"}[30m], 600)",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}} ",
+          "legendFormat": "{{deployment}} - 10 days",
           "refId": "C"
         },
         {
-          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/local\"}",
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/prometheus\"}",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 1,
+          "interval": "60s",
+          "intervalFactor": 2,
           "legendFormat": "{{deployment}} - raw",
           "refId": "D"
+        },
+        {
+          "expr": "predict_linear(avg by(mountpoint) (node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", cluster!~\".+\"})[2d:10m], 10*86400)",
+          "format": "time_series",
+          "hide": false,
+          "interval": "60s",
+          "intervalFactor": 2,
+          "legendFormat": "{{deployment}} - 10 days",
+          "refId": "E"
+        },
+        {
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", cluster!~\".+\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "60s",
+          "intervalFactor": 2,
+          "legendFormat": "{{deployment}} - raw",
+          "refId": "F"
         }
       ],
       "thresholds": [],
@@ -1236,11 +1219,12 @@
       },
       "yaxes": [
         {
+          "decimals": null,
           "format": "bytes",
           "label": "",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "-100000000000",
           "show": true
         },
         {
@@ -1266,7 +1250,6 @@
     "list": [
       {
         "current": {
-          "selected": false,
           "tags": [],
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
@@ -1318,4 +1301,5 @@
   "title": "Prometheus: Self-monitoring",
   "uid": "sVklmeHik",
   "version": 139
+
 }
