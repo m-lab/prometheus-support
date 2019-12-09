@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1575920046372,
+  "iteration": 1575920507904,
   "links": [],
   "panels": [
     {
@@ -1058,13 +1058,43 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "deriv(node_filesystem_avail{mountpoint=\"/prometheus\", pod!~\".*srglv.*\"}[1h]) * 86400",
+          "expr": "deriv(node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}[1h]) * 86400",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 4,
           "legendFormat": "{{pod}}",
           "metric": "",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 4,
+          "legendFormat": "{{pod}} - raw",
+          "metric": "",
           "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "deriv(node_filesystem_avail{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}[1h]) * 86400",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 4,
+          "legendFormat": "{{pod}}",
+          "metric": "",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "node_filesystem_avail{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\"}",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 4,
+          "legendFormat": "{{pod}} - raw",
+          "metric": "",
+          "refId": "D",
           "step": 240
         }
       ],
@@ -1150,32 +1180,40 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_filesystem_avail{mountpoint=\"/prometheus\"}",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{cluster}}",
-          "refId": "A",
-          "step": 120
-        },
-        {
           "expr": "predict_linear(node_filesystem_avail{mountpoint=\"/prometheus\"}[30m], 600)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
           "legendFormat": "{{deployment}}",
+          "refId": "A",
+          "step": 120
+        },
+        {
+          "expr": "node_filesystem_avail{mountpoint=\"/prometheus\"}",
+          "format": "time_series",
+          "hide": false,
+          "interval": "60s",
+          "intervalFactor": 2,
+          "legendFormat": "{{deployment}} - raw",
           "refId": "B",
           "step": 120
         },
         {
-          "expr": "predict_linear(node_filesystem_avail{mountpoint=\"/prometheus2\"}[30m], 600)",
+          "expr": "predict_linear(node_filesystem_avail_bytes{mountpoint=\"/mnt/local\"}[30m], 600)",
           "format": "time_series",
-          "hide": true,
+          "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "{{deployment}} ",
           "refId": "C"
+        },
+        {
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/local\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}} - raw",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -1228,8 +1266,10 @@
     "list": [
       {
         "current": {
-          "text": "default",
-          "value": "default"
+          "selected": false,
+          "tags": [],
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -1277,5 +1317,5 @@
   "timezone": "utc",
   "title": "Prometheus: Self-monitoring",
   "uid": "sVklmeHik",
-  "version": 138
+  "version": 139
 }
