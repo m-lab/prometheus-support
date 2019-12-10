@@ -598,6 +598,20 @@ groups:
         Is mlab-ns working? A new rollout?
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/WnaxPZJZz
 
+# Too many NDT S2C tests on a node are being impacted by switch discards.
+  - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
+    expr: (bq_ndt_s2c_with_discards / bq_ndt_s2c_total) > 0.05
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: More than 5% of NDT tests in a 24h period were affected by discards.
+      description: Too many NDT S2C tests in a 24h period (BQ partition_date)
+        were affected by switch discards on {{ $labels.node }}. The switch may
+        be overloaded, or TCP pacing may be misconfigured on the node.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/ops-switch-overview
+
 # The node_exporter running on eb.measurementlab.net is down.
   - alert: NodeExporterOnEbDownOrMissing
     expr: |
