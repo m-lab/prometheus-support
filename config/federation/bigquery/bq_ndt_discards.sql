@@ -13,6 +13,15 @@
 --     date(now() - 12h) - 1d
 DECLARE query_date DATE DEFAULT DATE(TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR));
 
+-- Takes ParseInfo.TaskFileName and returns an M-Lab hostname.
+CREATE TEMPORARY FUNCTION toNodeName(tfn STRING) AS (
+  CONCAT(
+    REGEXP_EXTRACT(tfn, r'(mlab[1-4])-[a-z]{3}[0-9]{2}.*'), ".",
+    REGEXP_EXTRACT(tfn, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*'),
+    ".measurement-lab.org"
+  )
+);
+
 WITH disco_intervals_with_discards AS (
   SELECT
     hostname AS node,
@@ -34,7 +43,7 @@ WITH disco_intervals_with_discards AS (
     discards > 0
 ), ndt_s2c_tests AS (
   SELECT
-    CONCAT(REGEXP_EXTRACT(ParseInfo.TaskFileName, r'(mlab[1-4])-[a-z]{3}[0-9]{2}.*'), ".", REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*'), ".measurement-lab.org") AS node,
+    toNodeName(ParseInfo.TaskFileName) AS node,
     result.S2C.UUID AS s2c_uuid,
     result.S2C.StartTime AS tstart,
     result.S2C.EndTime AS tend
@@ -77,7 +86,7 @@ FROM (
     result.S2C.UUID AS s2c_uuid,
     REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3})[0-9]{2}.*') AS metro,
     REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*') AS site,
-    CONCAT(REGEXP_EXTRACT(ParseInfo.TaskFileName, r'(mlab[1-4])-[a-z]{3}[0-9]{2}.*'), ".", REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*'), ".measurement-lab.org") AS node,
+    toNodeName(ParseInfo.TaskFileName) AS node,
     CASE
       WHEN result.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'non-zero'
       ELSE'zero'
