@@ -309,11 +309,11 @@ groups:
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) / count(probe_success{service="ndt_ssl"})
-      ) < 0.90
+      ) < 0.50
     for: 10m
     labels:
       repo: ops-tracker
-      severity: ticket
+      severity: page
     annotations:
       summary: Less than 90% of ndt_ssl experiments are online according to mlab-ns.
       description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
@@ -591,7 +591,7 @@ groups:
     for: 2h
     labels:
       repo: dev-tracker
-      severity: ticket
+      severity: page
     annotations:
       summary: Test data volume today is less than 70% of nominal daily volume.
       description: Are machines online? Is data being collected? Is pusher working?
@@ -899,7 +899,7 @@ groups:
     for: 5m
     labels:
       repo: ops-tracker
-      severity: ticket
+      severity: page
     annotations:
       summary: The NDT DaemonSet is missing or has no metrics.
       description: The NDT DaemonSet is missing or has no metrics. Verify that
