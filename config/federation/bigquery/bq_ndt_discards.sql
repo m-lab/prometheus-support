@@ -80,7 +80,8 @@ SELECT
   metro,
   site,
   node,
-  COUNTIF(discards = 'non-zero') / COUNT(*) AS value
+  COUNTIF(discards = 'true') AS value_with_discards,
+  COUNT(*) AS value_total
 FROM (
   SELECT
     result.S2C.UUID AS s2c_uuid,
@@ -88,8 +89,8 @@ FROM (
     REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*') AS site,
     toNodeName(ParseInfo.TaskFileName) AS node,
     CASE
-      WHEN result.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'non-zero'
-      ELSE 'zero'
+      WHEN result.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'true'
+      ELSE 'false'
     END AS discards
   FROM
     `measurement-lab.ndt.ndt5`
