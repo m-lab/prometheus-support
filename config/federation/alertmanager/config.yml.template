@@ -32,6 +32,11 @@ route:
   # When no other routes match, use the default receiver.
   receiver: slack-alerts-ticket
 
+  routes:
+  - receiver: 'pagerduty-pages'
+    continue: true
+    match:
+      severity: page
 
 # When two alerts are firing at the same time, we can "inhibit" one based on
 # the other. For example, a host is offline and a service on that host is not
@@ -134,3 +139,8 @@ receivers:
   # All alerts sent to slack are also sent to the github webhook receiver.
   webhook_configs:
   - url: '{{GITHUB_RECEIVER_URL}}'
+
+- name: 'pagerduty-pages'
+  pagerduty_configs:
+  - send_resolved: true
+    service_key: {{PAGERDUTY_SERVICE_KEY}}
