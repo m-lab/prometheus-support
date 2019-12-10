@@ -80,7 +80,7 @@ SELECT
   metro,
   site,
   node,
-  COUNT(*) AS value
+  COUNTIF(discards = 'non-zero') / COUNT(*) AS value
 FROM (
   SELECT
     result.S2C.UUID AS s2c_uuid,
@@ -89,7 +89,7 @@ FROM (
     toNodeName(ParseInfo.TaskFileName) AS node,
     CASE
       WHEN result.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'non-zero'
-      ELSE'zero'
+      ELSE 'zero'
     END AS discards
   FROM
     `measurement-lab.ndt.ndt5`
@@ -97,13 +97,10 @@ FROM (
     partition_date = query_date
     AND result.S2C.UUID IS NOT NULL
     AND result.S2C.UUID != "ERROR_DISCOVERING_UUID")
-WHERE
-  discards = 'non-zero'
 GROUP BY
   metro,
   site,
-  node,
-  discards
+  node
 ORDER BY
   metro,
   site,
