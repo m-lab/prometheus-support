@@ -17,7 +17,7 @@ spec:
       containers:
       - name: bigquery-exporter
         image: measurementlab/prometheus-bigquery-exporter:production-0.3
-        args: [ "-project={{GCLOUD_PROJECT}}",
+        args: [ "--project={{GCLOUD_PROJECT}}",
                 "--type=gauge", "--query=/queries/bq_mlabns_ratelimit.sql",
                 "--type=gauge", "--query=/queries/bq_mlabns_sixhour_requests.sql",
                 "--type=gauge", "--query=/queries/bq_annotation.sql",
