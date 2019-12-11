@@ -16,18 +16,16 @@ spec:
     spec:
       containers:
       - name: bigquery-exporter
-        image: measurementlab/prometheus-bigquery-exporter:production-0.3
-        args: [ "--project={{GCLOUD_PROJECT}}",
-                "--type=gauge", "--query=/queries/bq_mlabns_ratelimit.sql",
-                "--type=gauge", "--query=/queries/bq_mlabns_sixhour_requests.sql",
-                "--type=gauge", "--query=/queries/bq_ndt_tests.sql",
-                "--type=gauge", "--query=/queries/bq_annotation.sql",
-                "--type=gauge", "--query=/queries/bq_gardener_parse_time.sql",
-                "--type=gauge", "--query=/queries/bq_ndt_server.sql",
-                "--type=gauge", "--query=/queries/bq_ndt_s2c.sql",
+        image: measurementlab/prometheus-bigquery-exporter:v1.0.0
+        args: [ "-project={{GCLOUD_PROJECT}}",
+                "-gauge-query=/queries/bq_mlabns_ratelimit.sql",
+                "-gauge-query=/queries/bq_mlabns_sixhour_requests.sql",
+                "-gauge-query=/queries/bq_annotation.sql",
+                "-gauge-query=/queries/bq_gardener_parse_time.sql",
+                "-gauge-query=/queries/bq_ndt_s2c.sql",
               ]
         ports:
-        - containerPort: 9050
+        - containerPort: 9348
         volumeMounts:
         - mountPath: /queries
           name: bigquery-config
