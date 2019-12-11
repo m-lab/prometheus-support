@@ -11,7 +11,16 @@
 -- and parsed) we should wait 36 hours after start of a given day.
 -- The following is equivalent to the pseudo code:
 --     date(now() - 12h) - 1d
-DECLARE query_date DATE DEFAULT DATE(TIMESTAMP_SUB(TIMESTAMP_TRUNC(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR), DAY), INTERVAL 24 HOUR));
+CREATE TEMPORARY FUNCTION queryDate() AS (
+  DATE(
+    TIMESTAMP_SUB(
+      TIMESTAMP_TRUNC(
+        TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR),
+        DAY),
+      INTERVAL 24 HOUR
+    )
+  )
+);
 
 -- Takes ParseInfo.TaskFileName and returns an M-Lab hostname.
 CREATE TEMPORARY FUNCTION toNodeName(tfn STRING) AS (
@@ -32,7 +41,7 @@ WITH disco_intervals_with_discards AS (
     `measurement-lab.utilization.switch`,
     UNNEST(sample) AS sample
   WHERE
-    partition_date = query_date
+    partition_date = queryDate()
     AND metric = 'switch.discards.uplink.tx'
   GROUP BY
     hostname,
@@ -50,7 +59,7 @@ WITH disco_intervals_with_discards AS (
   FROM
     `measurement-lab.ndt.ndt5`
   WHERE
-    partition_date = query_date
+    partition_date = queryDate()
     AND result.S2C.UUID IS NOT NULL
     AND result.S2C.UUID != "ERROR_DISCOVERING_UUID"
   GROUP BY
@@ -95,7 +104,7 @@ FROM (
   FROM
     `measurement-lab.ndt.ndt5`
   WHERE
-    partition_date = query_date
+    partition_date = queryDate()
     AND result.S2C.UUID IS NOT NULL
     AND result.S2C.UUID != "ERROR_DISCOVERING_UUID")
 GROUP BY
@@ -106,4 +115,3 @@ ORDER BY
   metro,
   site,
   node
-
