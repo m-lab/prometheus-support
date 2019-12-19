@@ -601,8 +601,12 @@ groups:
 # The number of go routine went too high.
   - alert: NumGoRoutineTooHigh
     expr: |
-      go_goroutines{container="etl-gardener"} > 1000
-      or go_goroutines{container="ndt-server"} > 2000
+      go_goroutines{service="etl-batch-parser"} > 2000
+      or go_goroutines{service="etl-fast-ss-parser"} > 1000
+      or go_goroutines{service="etl-ndt-parser"} > 1000
+      or go_goroutines{service="etl-scamper-parser"} > 1000
+      or go_goroutines{service="etl-sidestream-parser"} > 1000
+      or go_goroutines{service="etl-traceroute-parser"} > 1000
     for: 5m
     labels:
       repo: dev-tracker
