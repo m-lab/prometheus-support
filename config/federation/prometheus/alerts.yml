@@ -68,7 +68,7 @@ groups:
     for: 5m
     labels:
       repo: dev-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Neither of the last two attempts to download the maxmind or
         routeviews feeds were successful.
@@ -110,7 +110,7 @@ groups:
     for: 30m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Expected SNMP metrics are missing from Prometheus!
       description: >
@@ -131,7 +131,7 @@ groups:
     for: 2h
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Prometheus is unable to scrape SNMP metrics from a switch.
       description: >
@@ -148,7 +148,7 @@ groups:
       count(up{job="snmp-targets",site!~".*t$"}) > 0.2
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: More than 20% of reachable switches are not providing SNMP metrics.
       description: >
@@ -185,7 +185,7 @@ groups:
     for: 30m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Expected script_exporter metrics are missing from Prometheus!
       description: >
@@ -257,7 +257,7 @@ groups:
     for: 10m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Less than 90% of ndt experiments are online according to mlab-ns.
       description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
@@ -285,7 +285,7 @@ groups:
     for: 10m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Less than 75% of ndt_ipv6 experiments are online according to mlab-ns.
       description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
@@ -309,7 +309,7 @@ groups:
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) / count(probe_success{service="ndt_ssl"})
-      ) < 0.90
+      ) < 0.50
     for: 10m
     labels:
       repo: ops-tracker
@@ -340,7 +340,7 @@ groups:
     for: 10m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Less than 75% of ndt_ssl_ipv6 experiments are online according to mlab-ns.
       description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
@@ -361,7 +361,7 @@ groups:
     for: 2m
     labels:
       repo: dev-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Server-side errors rate for mlab-ns is over 1%.
       description: Stackdriver reports more than 1% of the HTTP requests to mlab-ns are
@@ -377,7 +377,7 @@ groups:
     for: 1m
     labels:
       repo: dev-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Server-side errors rate for rate-limiter is not zero.
       description: Stackdriver reports some of the HTTP requests to
@@ -438,7 +438,7 @@ groups:
     for: 30m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: A metric for an NDT service is missing.
       description: >
@@ -563,7 +563,7 @@ groups:
     for: 2h
     labels:
       repo: dev-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Today's test volume is less than 70% of nominal daily volume.
       description: Are machines online? Is data being collected? Is the parser working?
@@ -591,7 +591,7 @@ groups:
     for: 2h
     labels:
       repo: dev-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Test data volume today is less than 70% of nominal daily volume.
       description: Are machines online? Is data being collected? Is pusher working?
@@ -612,6 +612,19 @@ groups:
       description: Check whether there is fd leak in go routine.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik
 
+# Too many NDT S2C tests on a node are being impacted by switch discards.
+  - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
+    expr: (bq_ndt_s2c_with_discards / bq_ndt_s2c_total) > 0.05
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: More than 5% of NDT tests in a 24h period were affected by discards.
+      description: Too many NDT S2C tests in a 24h period (BQ partition_date)
+        were affected by switch discards on {{ $labels.node }}. The switch may
+        be overloaded, or TCP pacing may be misconfigured on the node.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/ops-switch-overview
 
 # The node_exporter running on eb.measurementlab.net is down.
   - alert: NodeExporterOnEbDownOrMissing
@@ -833,7 +846,7 @@ groups:
     for: 4m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Federation scraping of the k8s platform cluster is down.
       description: Scraping of Prometheus on the platform cluster is down.
@@ -853,7 +866,7 @@ groups:
     for: 4m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: Federation scraping of the k8s platform cluster is missing.
       description: A scrape job for the k8s platform cluster is missing. This
@@ -870,7 +883,7 @@ groups:
     for: 1m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: The Prometheus persistent disk has less than 5% free space.
       description: The Prometheus persistent disk has less than 5% free space.
@@ -914,7 +927,7 @@ groups:
     for: 5m
     labels:
       repo: ops-tracker
-      severity: ticket
+      severity: page
     annotations:
       summary: The NDT DaemonSet is missing or has no metrics.
       description: The NDT DaemonSet is missing or has no metrics. Verify that
@@ -1117,7 +1130,7 @@ groups:
     for: 5m
     labels:
       repo: ops-tracker
-      severity: page
+      severity: ticket
     annotations:
       summary: At least one etcd cluster member has no leader.
       description: An etcd cluster member is reporting that it has no leader.
