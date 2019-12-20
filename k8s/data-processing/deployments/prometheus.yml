@@ -52,6 +52,7 @@ spec:
         # is derived from the Deployment.metadata.name. However, removing this
         # value results in a configuration error.
         name: prometheus
+
         # Note: Set retention time to 60 days. (default retention is 15d).
         args: ["--config.file=/etc/prometheus/prometheus.yml",
                "--storage.tsdb.retention.time=1440h",
@@ -81,7 +82,7 @@ spec:
 
       - image: busybox
         name: busybox
-        args: ['bash', '-c', 'sleep 1000']
+        args: ['sh', '-c', 'sleep 1000']
         volumeMounts:
         - mountPath: /prometheus
           name: prometheus-storage
