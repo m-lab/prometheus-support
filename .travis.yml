@@ -62,7 +62,7 @@ deploy:
     condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox data-processing-cluster ./apply-cluster.sh"
+  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox data-processing ./apply-cluster.sh"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
@@ -111,7 +111,7 @@ deploy:
     condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging data-processing-cluster ./apply-cluster.sh
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging data-processing ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
@@ -157,7 +157,7 @@ deploy:
     condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
 
 - provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti data-processing-cluster ./apply-cluster.sh
+  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti data-processing ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
