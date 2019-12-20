@@ -79,6 +79,13 @@ spec:
         - mountPath: /etc/prometheus
           name: prometheus-config
 
+      - image: busybox
+        name: busybox
+        args: ["sleep 1000"]
+        volumeMounts:
+        - mountPath: /prometheus
+          name: prometheus-storage
+
       # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
       # stable version.
       - image: jimmidyson/configmap-reload:v0.2.2
