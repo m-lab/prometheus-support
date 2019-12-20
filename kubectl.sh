@@ -32,20 +32,20 @@ gcloud config set core/disable_prompts true
 gcloud config set core/verbosity debug
 
 # Identify the cluster ZONE.
-ZONE=$( gcloud container clusters list \
-  --format='table[no-heading](locations[0])' \
+LOCATION=$( gcloud container clusters list \
+  --format='table[no-heading](location)' \
   --filter "name='$CLUSTER'" )
 
-if [[ -z "$ZONE" ]] ; then
+if [[ -z "$LOCATION" ]] ; then
   echo "ERROR: could not find zone for $CLUSTER"
   exit 1
 fi
 
-# Get credentials from the cluster.
-gcloud container clusters get-credentials $CLUSTER --zone $ZONE
+# Get credentials from the cluster. (Try zone and then region)
+gcloud container clusters get-credentials $CLUSTER --zone $LOCATION \
+  || gcloud container clusters get-credentials $CLUSTER --region $LOCATION
 
 # Make the project and cluster available to sub-commands.
-export ZONE
 export PROJECT
 export CLUSTER
 
