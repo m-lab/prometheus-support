@@ -26,6 +26,14 @@ spec:
         # within the prometheus-server pod.
         prometheus.io/scrape: 'true'
     spec:
+      # TODO: remove this directive after deployment to prod.
+      initContainers:
+      - name: reset-perms
+        image: busybox
+        command: ['chown', '-R', '65534:65534', '/work-dir/prometheus-data2', '/work-dir/legacy-targets']
+        volumeMounts:
+        - mountPath: /work-dir
+          name: prometheus-storage
       # References a service account with RBAC permissions for accessing node
       # metrics. This is required for k8s version 1.6+.
       serviceAccountName: prometheus
@@ -52,7 +60,6 @@ spec:
         # is derived from the Deployment.metadata.name. However, removing this
         # value results in a configuration error.
         name: prometheus
-
         # Note: Set retention time to 60 days. (default retention is 15d).
         args: ["--config.file=/etc/prometheus/prometheus.yml",
                "--storage.tsdb.retention.time=1440h",
@@ -79,13 +86,6 @@ spec:
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
-
-      - image: busybox
-        name: busybox
-        args: ['sh', '-c', 'sleep 1000']
-        volumeMounts:
-        - mountPath: /prometheus
-          name: prometheus-storage
 
       # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
       # stable version.
