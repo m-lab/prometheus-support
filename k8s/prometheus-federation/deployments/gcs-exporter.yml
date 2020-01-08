@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gcs-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: gcs-exporter
+  template:
+    metadata:
+      labels:
+        run: gcs-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9990'
+    spec:
+      containers:
+      - name: gcs-exporter
+        image: measurementlab/gcs-exporter:latest
+        args:
+        - -source pusher-{{GCLOUD_PROJECT}}
+        - -source archive-{{GCLOUD_PROJECT}}
+        - -source archive-measurement-lab
+        ports:
+        - containerPort: 9990
+          name: metrics
