@@ -19,9 +19,9 @@ spec:
       - name: gcs-exporter
         image: measurementlab/gcs-exporter:latest
         args:
-        - -source pusher-{{GCLOUD_PROJECT}}
-        - -source archive-{{GCLOUD_PROJECT}}
-        - -source archive-measurement-lab
+        - -source=pusher-{{GCLOUD_PROJECT}}
+        - -source=archive-{{GCLOUD_PROJECT}}
+        - -source=archive-measurement-lab
         ports:
         - containerPort: 9990
           name: metrics
