@@ -17,8 +17,9 @@ spec:
     spec:
       containers:
       - name: gcs-exporter
-        image: measurementlab/gcs-exporter:latest
+        image: measurementlab/gcs-exporter:v0.1
         args:
+        - -time=4h30m
         - -source=pusher-{{GCLOUD_PROJECT}}
         - -source=archive-{{GCLOUD_PROJECT}}
         - -source=archive-measurement-lab
