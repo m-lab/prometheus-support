@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gcs-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: gcs-exporter
+  template:
+    metadata:
+      labels:
+        run: gcs-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9990'
+    spec:
+      containers:
+      - name: gcs-exporter
+        image: measurementlab/gcs-exporter:v0.1
+        args:
+        # NOTE: -time must not be less than the scheduled transfer times from:
+        # https://github.com/m-lab/gcp-config/blob/master/daily-archive-transfers.yaml
+        - -time=4h30m
+        - -source=pusher-{{GCLOUD_PROJECT}}
+        - -source=archive-{{GCLOUD_PROJECT}}
+        - -source=archive-measurement-lab
+        ports:
+        - containerPort: 9990
+          name: metrics
