@@ -349,7 +349,7 @@ scrape_configs:
       # favor of some native k8s one (e.g., 'deployment'), or to at the very
       # least shorten the name to just 'ndt'
       - source_labels: [deployment]
-        regex: ^ndt.*
+        regex: ndt.*
         target_label: experiment
         replacement: ndt.iupui
 
@@ -365,6 +365,7 @@ scrape_configs:
       # possible. Overwriting "machine" here with "node" helps to ensure that
       # _if_ a "node" label exists the "machine" label will always be the same.
       - source_labels: [node]
+        regex: (mlab[1-4]\.[a-z]{3}[0-9tc]{2}\.measurement-lab\.org)
         action: replace
         target_label: machine
 
