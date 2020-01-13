@@ -351,7 +351,7 @@ groups:
 # HTTP per-status response count is exported by stackdriver. By querying
 # stackdriver metrics, we can alert if the server-side errors rate for mlab-ns
 # is too high or if the service is unavailable.
-  - alert: MlabNSTooManyServerSideErrors
+  - alert: MlabNS_TooManyServerSideErrors
     expr: |
       sum(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
         deployment="mlabns-stackdriver", module_id="default", loading="false",
@@ -386,7 +386,7 @@ groups:
 
 # If any of the deployments in the mlab-ns GAE project is unavailable, an alert
 # should fire immediately.
-  - alert: MlabNSServiceUnavailable
+  - alert: MlabNS_ServiceUnavailable
     expr: sum(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
       deployment="mlabns-stackdriver", response_code=~"503"}) > 0
     labels:
@@ -401,7 +401,7 @@ groups:
 
 # If no ndt_ssl traffic has been redirected to the staging instance in the past
 # hour, an alert should fire.
-  - alert: MlabNSNdtSslReverseProxyNotWorking
+  - alert: MlabNS_NdtSslReverseProxyNotWorking
     expr: |
       sum(sum_over_time(stackdriver_gae_app_logging_googleapis_com_user_reverse_proxy_counter{
         resource="ndt_ssl"}[1h])) == 0
@@ -418,23 +418,44 @@ groups:
         not zero for the ndt_ssl experiment and that there are no errors
         related to reverse proxying in the mlab-ns logs.
 
+# One or more generic (non-experiment specific) mlab-ns metrics is missing.
+# These are metrics that mlab-ns relies on to determine whether an experiment
+# should receive production traffic, so we need to make sure that the metrics
+# are always present.
+  - alert: MlabNS_GenericMetricsMissing
+    expr: |
+      absent(node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
+        or absent(node_filesystem_avail_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
+        or absent(kube_node_spec_taint{cluster="platform-cluster"})
+        or absent(lame_duck_experiment{cluster="platform-cluster"})
+        or absent(gmx_machine_maintenance)
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: A generic (non-experiment specific) mlab-ns metric is missing.
+      description: >
+        One of the metrics that mlab-ns relies on to determine if an experiment
+        should receive production traffic is missing. Most of these metrics are
+        scraped from the platform-cluster. Be sure that the fedrated scrape job
+        for the platform-cluster is healthy[1]. If the GMX metric is missing,
+        then make sure that gmx-server deployment healthy in the
+        prometheus-federation cluster.
+        [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-platform-cluster
+
 # One or more NDT-specific metrics is missing. These are the NDT metrics that
 # mlab-ns relies on to determine whether NDT is up and running, so we need to
 # make sure that the metrics are always present. NOTE: mlab-ns additionally
 # relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
 # alerting for that metric is already handled by the
 # ScriptExporterMissingMetrics alert.
-#
-# NOTE: The metric node_filesystem_size_bytes{} is not technically an NDT
-# metric, but we add it here because we use it to decide whether production
-# traffic should go to a node.
-  - alert: NdtMetricsMissing
+  - alert: MlabNS_NdtMetricsMissing
     expr: |
       absent(probe_success{service="ndt_raw"})
         or absent(probe_success{service="ndt_raw_ipv6"})
         or absent(probe_success{service="ndt_ssl"})
         or absent(probe_success{service="ndt_ssl_ipv6"})
-        or absent(node_filesystem_size_bytes)
     for: 30m
     labels:
       repo: ops-tracker
@@ -450,7 +471,7 @@ groups:
 # One or more Neubot-specific metrics is missing. These are the Neubot metrics that
 # mlab-ns relies on to determine whether Neubot is up and running, so we need to
 # make sure that the metrics are always present.
-  - alert: NeubotMetricsMissing
+  - alert: MlabNS_NeubotMetricsMissing
     expr: |
       absent(probe_success{service="neubot"})
         or absent(probe_success{service="neubot_ipv6"})
