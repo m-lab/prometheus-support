@@ -349,9 +349,25 @@ scrape_configs:
       # favor of some native k8s one (e.g., 'deployment'), or to at the very
       # least shorten the name to just 'ndt'
       - source_labels: [deployment]
-        regex: ^ndt.*
+        regex: ndt.*
         target_label: experiment
         replacement: ndt.iupui
+
+      # Rewrite the machine label to make it easier to join these metrics with
+      # existing metrics that use machine instead of the node label.
+      #
+      # NOTE: Relabeling that happens in the Prometheus instance in the
+      # platform cluster automatically creates a "machine" label from the value
+      # of "__meta_kubernetes_pod_node_name". In some cases, the value of that
+      # label is not representative of the "node" we have in mind, but instead
+      # will be, for example, "prometheus-platform-cluster".  We want the
+      # "machine" and "node" labels to always be the same, to the extent
+      # possible. Overwriting "machine" here with "node" helps to ensure that
+      # _if_ a "node" label exists the "machine" label will always be the same.
+      - source_labels: [node]
+        regex: (mlab[1-4]\.[a-z]{3}[0-9tc]{2}\.measurement-lab\.org)
+        action: replace
+        target_label: machine
 
   # Scrape config for the node_exporter on eb.measurementlab.net.
   - job_name: 'eb-node-exporter'
