@@ -227,20 +227,22 @@ groups:
         BBE container running in the VM. Domains for VMs are like
         blackbox-exporter-ipv6.<project>.measurementlab.net.
 
-# Unable to scrape the Github Maintenance exporter.
-  - alert: GithubMaintenanceExporterDown
-    expr: up{job="nginx-proxied-services", service="gmx"} == 0
+# Unable to scrape the Github Maintenance exporter or the job is missing.
+  - alert: GithubMaintenanceExporterDownOrMissing
+    expr: |
+      up{job="nginx-proxied-services", service="gmx"} == 0
+        or absent(up{job="nginx-proxied-services", service="gmx"})
     for: 10m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: Scraping of the Github Maintenance Exporter is failing.
+      summary: Scraping of the Github Maintenance Exporter is failing or missing.
       description: >
-        Scraping of the Github Maintenance Exporter is failing. Check that the
-        gmx-server deployment is healthy and that a pod for it exists. Check
-        the status of the pod for errors. Check the logs of the pod for errors.
-        Check the reason that the scrape failed[1].
+        Scraping of the Github Maintenance Exporter is failing or missing.
+        Check that the gmx-server deployment is healthy and that a pod for it
+        exists. Check the status of the pod for errors. Check the logs of the
+        pod for errors.  Check the reason that the scrape failed[1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-nginx-proxied-services
 
 ## mlab-ns queries.
