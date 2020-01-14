@@ -426,9 +426,7 @@ groups:
     expr: |
       absent(node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
         or absent(node_filesystem_avail_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
-        or absent(kube_node_spec_taint{cluster="platform-cluster"})
         or absent(lame_duck_experiment{cluster="platform-cluster"})
-        or absent(gmx_machine_maintenance)
     for: 30m
     labels:
       repo: ops-tracker
