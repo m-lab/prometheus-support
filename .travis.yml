@@ -70,14 +70,6 @@ deploy:
     condition: "$TRAVIS_EVENT_TYPE == push"
 
 - provider: script
-  script: "$TRAVIS_BUILD_DIR/kubectl.sh mlab-sandbox downloader ./apply-cluster.sh"
-  skip_cleanup: true
-  on:
-    repo: m-lab/prometheus-support
-    branch: sandbox-*
-    condition: "$TRAVIS_EVENT_TYPE == push"
-
-- provider: script
   script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-sandbox LINODE_PRIVATE_KEY_ipv6_monitoring"
   skip_cleanup: true
   on:
@@ -112,14 +104,6 @@ deploy:
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging data-processing ./apply-cluster.sh
-  skip_cleanup: true
-  on:
-    repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
-
-- provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging downloader ./apply-cluster.sh
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
@@ -164,14 +148,6 @@ deploy:
 #    repo: m-lab/prometheus-support
 #    all_branches: true
 #    condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
-
-- provider: script
-  script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-oti downloader ./apply-cluster.sh
-  skip_cleanup: true
-  on:
-    repo: m-lab/prometheus-support
-    all_branches: true
-    condition: $TRAVIS_TAG == production* || $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+
 
 - provider: script
   script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-oti LINODE_PRIVATE_KEY_ipv6_monitoring"
