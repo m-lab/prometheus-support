@@ -107,12 +107,15 @@ for ds_tmpl in $ds_tmpls; do
       fi
       ;;
   esac
-  ds_file=${ds_tmpl%%.template}
-  sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
-      -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
-      -e 's|{{PLATFORM_PROM_AUTH_USER}}|'${!PLATFORM_PROM_AUTH_USER}'|g' \
-      -e 's|{{PLATFORM_PROM_AUTH_PASS}}|'${!PLATFORM_PROM_AUTH_PASS}'|g' \
-      $ds_tmpl > $ds_file
+  ds_file=$ds_tmpl
+  if [[ $ds_tmpl == *.template ]] ; then
+    ds_file=${ds_tmpl%%.template}
+    sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+        -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
+        -e 's|{{PLATFORM_PROM_AUTH_USER}}|'${!PLATFORM_PROM_AUTH_USER}'|g' \
+        -e 's|{{PLATFORM_PROM_AUTH_PASS}}|'${!PLATFORM_PROM_AUTH_PASS}'|g' \
+        $ds_tmpl > $ds_file
+  fi
   if [[ $(basename $ds_file) == prometheus-federation_${PROJECT}* ]]; then
     sed -i 's|{{IS_DEFAULT}}|true|g' $ds_file
   else
