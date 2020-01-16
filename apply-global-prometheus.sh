@@ -115,13 +115,13 @@ for ds_tmpl in $ds_tmpls; do
         -e 's|{{PLATFORM_PROM_AUTH_USER}}|'${!PLATFORM_PROM_AUTH_USER}'|g' \
         -e 's|{{PLATFORM_PROM_AUTH_PASS}}|'${!PLATFORM_PROM_AUTH_PASS}'|g' \
         $ds_tmpl > $ds_file
+    if [[ $(basename $ds_file) == prometheus-federation_${PROJECT}* ]]; then
+      sed -i 's|{{IS_DEFAULT}}|true|g' $ds_file
+    else
+      sed -i 's|{{IS_DEFAULT}}|false|g' $ds_file
+    fi
+    rm $ds_tmpl
   fi
-  if [[ $(basename $ds_file) == prometheus-federation_${PROJECT}* ]]; then
-    sed -i 's|{{IS_DEFAULT}}|true|g' $ds_file
-  else
-    sed -i 's|{{IS_DEFAULT}}|false|g' $ds_file
-  fi
-  rm $ds_tmpl
 done
 
 ## Grafana "provisioning" configs
