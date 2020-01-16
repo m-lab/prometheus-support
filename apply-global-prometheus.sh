@@ -107,6 +107,10 @@ for ds_tmpl in $ds_tmpls; do
       fi
       ;;
   esac
+  if [[ $ds_tmpl != *.template ]] ; then
+    # Leave file as-is.
+    continue
+  fi
   ds_file=${ds_tmpl%%.template}
   sed -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
       -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
