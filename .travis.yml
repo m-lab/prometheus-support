@@ -1,7 +1,7 @@
 language: go
 
 go:
- - 1.10.x
+ - 1.13
 
 
 # Unconditionally place the repo at GOPATH/src/${go_import_path} to support
@@ -10,11 +10,11 @@ go:
 go_import_path: github.com/m-lab/prometheus-support
 
 install:
-  # Install promtool and pin it at the latest stable version, currently 2.3.2
+  # Install promtool and pin it at the latest stable version.
 - PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
-  PROMTOOL_VERSION=2.3.2;
+  PROMTOOL_VERSION=v2.14.0;
   go get -d $PROMTOOL_URI;
-  git -C $GOPATH/src/$PROMTOOL_URI checkout -b $PROMTOOL_VERSION tags/v$PROMTOOL_VERSION;
+  git -C $GOPATH/src/$PROMTOOL_URI checkout -b $PROMTOOL_VERSION tags/$PROMTOOL_VERSION;
   go install $PROMTOOL_URI
   # Install kexpand templating tool. Only works from HEAD.
 - go get github.com/kopeio/kexpand
@@ -23,9 +23,6 @@ install:
 - npm install jsonlint -g
 
 script:
-# Run query "unit tests".
-- go test -v github.com/m-lab/prometheus-support/cmd/query_tester -args
-
 # Validate all json
 - which jsonlint
 - git ls-files | grep '\.json$' | xargs jsonlint -q
