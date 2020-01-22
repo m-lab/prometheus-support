@@ -17,14 +17,16 @@ spec:
     spec:
       containers:
       - name: gcs-exporter
-        image: measurementlab/gcs-exporter:v0.1
+        image: measurementlab/gcs-exporter:v0.2
         args:
         # NOTE: -time must not be less than the scheduled transfer times from:
         # https://github.com/m-lab/gcp-config/blob/master/daily-archive-transfers.yaml
-        - -time=4h30m
         - -source=pusher-{{GCLOUD_PROJECT}}
+        - -time=2h30m
         - -source=archive-{{GCLOUD_PROJECT}}
+        - -time=3h30m
         - -source=archive-measurement-lab
+        - -time=4h30m
         ports:
         - containerPort: 9990
           name: metrics

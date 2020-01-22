@@ -634,6 +634,30 @@ groups:
         Is mlab-ns working? A new rollout?
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/WnaxPZJZz
 
+# PusherSLO
+#
+# Pusher uploads archives for a machine every few hours. After every boot, a
+# machine starts with a "lower bound" mtime equal to the current time. As data
+# is written to disk, we expect the "lower bound" to gradually move forward in
+# time. If it does not, then data is not being successfully uploaded and
+# removed. That is a problem.
+#
+# The alert excludes nodes in maintenance or lame-duck.
+  - alert: PusherFinderMtimeLowerBoundIsTooOld
+    expr: |
+      (time() - pusher_finder_mtime_lower_bound) > (12 * 60 * 60)
+        unless on(machine) gmx_machine_maintenance == 1
+        unless on(machine) kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"}
+    for: 5m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: Pusher max file mtime is too old.
+      description: Max file mtime is older than 12 hours. If uploads are failing
+        then data will be lost if the node reboots.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/WnaxPZJZz
+
 # Too many NDT S2C tests on a node are being impacted by switch discards.
   - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
     expr: (bq_ndt_s2c_with_discards / bq_ndt_s2c_total) > 0.05

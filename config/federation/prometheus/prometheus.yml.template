@@ -336,6 +336,8 @@ scrape_configs:
         # Systemd metrics
         - 'node_systemd_units'
         - 'node_systemd_unit_state{state="failed"}'
+        # PusherSLO
+        - 'pusher_finder_mtime_lower_bound'
     static_configs:
       - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
         labels:
