@@ -648,7 +648,7 @@ groups:
       (time() - pusher_finder_mtime_lower_bound) > (12 * 60 * 60)
         unless on(machine) gmx_machine_maintenance == 1
         unless on(machine) kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"}
-    for: 5m
+    for: 3h
     labels:
       repo: dev-tracker
       severity: ticket
