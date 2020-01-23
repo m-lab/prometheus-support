@@ -664,7 +664,7 @@ groups:
 # See: https://github.com/m-lab/gcp-config/blob/master/daily-archive-transfers.yaml
 #
 # This alert enforces that daily transfers are working for all datatypes.
-  - alert: GCSTransfersArchiveFilesDoNotMatchOrMissing
+  - alert: GCSTransfers_ArchiveFilesDoNotMatchOrMissing
     expr: |
       increase(gcs_archive_files_total{bucket="archive-mlab-oti"}[1d]) - ignoring(bucket)
          increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d]) != 0
@@ -677,7 +677,7 @@ groups:
     annotations:
       summary: GCS Transfers may not include all files.
       description: Daily transfers should include all archive files for each day.
-        This alert is firing becuase over the last two days, the archive file
+        This alert is firing because over the last two days, the archive file
         counts did not match.
 
 # Too many NDT S2C tests on a node are being impacted by switch discards.
