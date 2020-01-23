@@ -648,7 +648,7 @@ groups:
       (time() - pusher_finder_mtime_lower_bound) > (12 * 60 * 60)
         unless on(machine) gmx_machine_maintenance == 1
         unless on(machine) kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"}
-    for: 5m
+    for: 3h
     labels:
       repo: dev-tracker
       severity: ticket
@@ -657,6 +657,28 @@ groups:
       description: Max file mtime is older than 12 hours. If uploads are failing
         then data will be lost if the node reboots.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/WnaxPZJZz
+
+# GCS Transfer SLO
+#
+# We run daily GCS transfers between project buckets and to the public archive.
+# See: https://github.com/m-lab/gcp-config/blob/master/daily-archive-transfers.yaml
+#
+# This alert enforces that daily transfers are working for all datatypes.
+  - alert: GCSTransfers_ArchiveFilesDoNotMatchOrMissing
+    expr: |
+      increase(gcs_archive_files_total{bucket="archive-mlab-oti"}[1d]) - ignoring(bucket)
+         increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d]) != 0
+      OR
+      absent(gcs_archive_files_total)
+    for: 1d
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: GCS Transfers may not include all files.
+      description: Daily transfers should include all archive files for each day.
+        This alert is firing because over the last two days, the archive file
+        counts did not match.
 
 # Too many NDT S2C tests on a node are being impacted by switch discards.
   - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
