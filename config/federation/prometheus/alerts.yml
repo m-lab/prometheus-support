@@ -1094,7 +1094,7 @@ groups:
   # value of updated_scheduled to the value from an hour ago (all pods) will
   # yield a negative number for roughly the period of the offset (1h in this
   # case). 70m just gives us a safe window to cross that inversion.
-  - alert: PlatformClustser_RolloutTooSlowOrStuck
+  - alert: PlatformCluster_RolloutTooSlowOrStuck
     expr: |
       kube_daemonset_updated_number_scheduled - (kube_daemonset_updated_number_scheduled offset 1h) <= 2
         unless (
