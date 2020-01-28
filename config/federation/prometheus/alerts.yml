@@ -665,17 +665,18 @@ groups:
 # The alert excludes nodes in maintenance or lame-duck.
   - alert: PusherFinderMtimeLowerBoundIsTooOld
     expr: |
-      (time() - pusher_finder_mtime_lower_bound) > (12 * 60 * 60)
+      (time() - pusher_finder_mtime_lower_bound) > (16 * 60 * 60)
         unless on(machine) gmx_machine_maintenance == 1
         unless on(machine) kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"}
-    for: 3h
+    for: 8h
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
-      summary: Pusher max file mtime is too old.
-      description: Max file mtime is older than 12 hours. If uploads are failing
-        then data will be lost if the node reboots.
+      summary: Data on disk are too old and should have been uploaded already
+      description: The min file mtime seen by pusher has been older than 16
+        hours for at least 8 hours. If uploads are failing then data will be lost
+        if the node reboots.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/WnaxPZJZz
 
 # GCS Transfer SLO
