@@ -287,6 +287,10 @@ scrape_configs:
   - job_name: 'platform-cluster'
     honor_labels: true
     metrics_path: '/federate'
+    scheme: https
+    basic_auth:
+      username: {{PLATFORM_PROMETHEUS_BASIC_AUTH_USER}}
+      password: {{PLATFORM_PROMETHEUS_BASIC_AUTH_PASS}}
     params:
       # Scrape the status of all jobs. This should allow us determine
       # whether, for example, node_exporter is failing to be scraped
@@ -339,7 +343,7 @@ scrape_configs:
         # PusherSLO
         - 'pusher_finder_mtime_lower_bound'
     static_configs:
-      - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:9090']
+      - targets: ['prometheus-platform-cluster.{{PROJECT}}.measurementlab.net:443']
         labels:
           cluster: "platform-cluster"
 
