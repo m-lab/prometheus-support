@@ -1137,6 +1137,40 @@ groups:
         inspect them to figure out why they are in that state.
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
+  # Too many kubelet or kernel versions on the platform for too long. This is
+  # an indication that a rolling reboot has stalled.
+  - alert: PlatformCluster_TooManyKubeletOrKernelVersions
+    expr: |
+      count(
+        count by (kubelet_version) (
+          kube_node_info and on(node) kube_node_labels{label_mlab_type="platform"}
+        )
+      ) > 1
+      or
+      count(
+        count by (kernel_version) (
+          kube_node_info and on(node) kube_node_labels{label_mlab_type="platform"}
+        )
+      ) > 1
+    for: 7d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Too many kubelet or kernel versions in the cluster for too long.
+      description: >
+        There has been more than one kubelet or kernel version running in the
+        platform cluster for too long. Probably the only reason there should be
+        more than one version in the cluster is when kubernetes and/or CoreOS
+        has been upgraded in epoxy-images and a rolling reboot has not
+        completed to apply those changes. Since CLUO will only reboot a single
+        node at a time, stalls of rolling reboots can be easily caused by a
+        node in a NotReady state.  Check for nodes in a NotReady state, and if
+        necessary delete them from the cluster so the rolling reboot can
+        continue. Looks at the log of the update-operator pod in the
+        reboot-coordinator namespace to see which node it may be stuck on.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
   # The desired number of pods for a DaemonSet are not equal to the current
   # number scheduled.
   - alert: PlatformCluster_DaemonSetHasTooFewPods
