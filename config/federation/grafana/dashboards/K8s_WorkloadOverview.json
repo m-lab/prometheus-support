@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 261,
-  "iteration": 1579130753447,
+  "iteration": 1581458614947,
   "links": [],
   "panels": [
     {
@@ -1046,14 +1045,24 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "count by (kubelet_version) (kube_node_info)",
-          "legendFormat": "k8s: {{kubelet_version}}",
+          "expr": "count by (kubelet_version) (kube_node_info{node=~\".*measurement-lab.org\"})",
+          "legendFormat": "k8s - physical: {{kubelet_version}}",
           "refId": "B"
         },
         {
-          "expr": "count by (kernel_version) (kube_node_info)",
-          "legendFormat": "kernel: {{kernel_version}}",
+          "expr": "count by (kubelet_version) (kube_node_info{node!~\".*measurement-lab.org\"})",
+          "legendFormat": "k8s - virtual: {{kubelet_version}}",
+          "refId": "C"
+        },
+        {
+          "expr": "count by (kernel_version) (kube_node_info{node=~\".*measurement-lab.org\"})",
+          "legendFormat": "kernel - physical: {{kernel_version}}",
           "refId": "A"
+        },
+        {
+          "expr": "count by (kernel_version) (kube_node_info{node!~\".*measurement-lab.org\"})",
+          "legendFormat": "kernel - virtual: {{kernel_version}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -1098,7 +1107,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "5m",
   "schemaVersion": 20,
   "style": "dark",
   "tags": [],
@@ -1156,5 +1165,5 @@
   "timezone": "",
   "title": "K8s: Workload Overview",
   "uid": "tZHLFQRZk",
-  "version": 106
+  "version": 107
 }
