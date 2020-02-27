@@ -12,11 +12,10 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 21,
-  "iteration": 1539211263063,
+  "iteration": 1582832633879,
   "links": [
     {
       "icon": "external link",
@@ -479,7 +478,7 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 0,
+      "fill": 1,
       "fillGradient": 1,
       "gridPos": {
         "h": 8,
@@ -515,12 +514,12 @@
       "seriesOverrides": [
         {
           "alias": "/workers/",
-          "color": "rgba(41, 111, 217, 0.24)"
+          "color": "rgba(53, 66, 194, 0.14)"
         },
         {
           "alias": "/Average/",
-          "linewidth": 4,
-          "zindex": 1
+          "color": "#3274D9",
+          "linewidth": 3
         }
       ],
       "spaceLength": 10,
@@ -528,20 +527,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(sum(etl_worker_count{service=\"etl-batch-parser\"}) by (instance)) by (version)",
-          "format": "time_series",
-          "interval": "60s",
-          "intervalFactor": 1,
-          "legendFormat": "Average {{version}}",
-          "refId": "A",
-          "step": 60
-        },
-        {
           "expr": "sum(etl_worker_count{service=\"etl-batch-parser\"}) by (instance)",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
           "legendFormat": "workers {{instance}}",
+          "refId": "A",
+          "step": 60
+        },
+        {
+          "expr": "avg(sum(etl_worker_count{service=\"etl-batch-parser\"}) by (instance)) by (version)",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "Average",
           "refId": "B",
           "step": 60
         }
@@ -553,7 +552,7 @@
       "title": "Worker Count By Instance",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -592,7 +591,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -870,7 +869,7 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 0,
+      "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
@@ -879,7 +878,6 @@
         "y": 15
       },
       "id": 13,
-      "interval": "",
       "isNew": false,
       "legend": {
         "alignAsTable": false,
@@ -904,12 +902,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/tasks/",
-          "color": "rgba(60, 120, 51, 0.25)"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -919,7 +912,7 @@
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "tasks/min {{instance}}",
+          "legendFormat": "{{instance}}",
           "refId": "A",
           "step": 60
         }
@@ -1250,7 +1243,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1275,27 +1267,18 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/Failure/",
-          "color": "#C4162A",
-          "fill": 2,
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.99 {{status}}",
@@ -1303,7 +1286,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.95 {{status}}",
@@ -1311,7 +1294,7 @@
           "step": 10
         },
         {
-          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\",status!=\"fail\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
+          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "average",
@@ -1319,7 +1302,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.5 {{status}}",
@@ -1327,7 +1310,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.25 {{status}}",
@@ -1335,41 +1318,16 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.05 {{status}}",
           "refId": "E",
           "step": 10
-        },
-        {
-          "expr": "(sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\",status!=\"succeed\"}[5m]))) / (sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Failure Rate",
-          "refId": "G",
-          "step": 10
         }
       ],
-      "thresholds": [
-        {
-          "colorMode": "warning",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 10,
-          "yaxis": "left"
-        },
-        {
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "yaxis": "left"
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Approximate Insertion Time Percentiles",
       "tooltip": {
@@ -1395,10 +1353,8 @@
           "show": true
         },
         {
-          "format": "percentunit",
+          "format": "short",
           "logBase": 1,
-          "max": ".01",
-          "min": null,
           "show": true
         }
       ],
@@ -1416,7 +1372,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1441,9 +1396,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1498,7 +1451,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Approximate Snaplog Size Percentiles",
       "tooltip": {
@@ -1542,7 +1494,6 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1563,9 +1514,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1602,7 +1551,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Annotation time",
       "tooltip": {
@@ -1650,7 +1598,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1675,9 +1622,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1699,7 +1644,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Process Resident Memory",
       "tooltip": {
@@ -1742,8 +1686,7 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 0,
-      "fillGradient": 1,
+      "fill": 1,
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1768,9 +1711,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1783,7 +1724,9 @@
         },
         {
           "alias": "/etl/",
-          "color": "rgba(148, 78, 78, 0.19)"
+          "color": "rgba(146, 83, 83, 0.13)",
+          "dashLength": 1,
+          "spaceLength": 2
         }
       ],
       "spaceLength": 10,
@@ -1791,7 +1734,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/etl_num_cpu{service=\"etl-batch-parser\"}",
+          "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1800,7 +1743,7 @@
           "step": 60
         },
         {
-          "expr": "avg(rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/etl_num_cpu{service=\"etl-batch-parser\"}) by (version)",
+          "expr": "avg(rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2) by (version)",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1811,7 +1754,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Per instance cpu utilization",
       "tooltip": {
@@ -1856,7 +1798,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1881,9 +1822,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1912,7 +1851,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Total Insertion Calls [$interval]",
       "tooltip": {
@@ -1956,7 +1894,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1981,9 +1918,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2014,7 +1949,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Insertions per Instance",
       "tooltip": {
@@ -2058,7 +1992,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -2083,9 +2016,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2154,7 +2085,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Json sizes of largest (5%) of snaplog records",
       "tooltip": {
@@ -2199,7 +2129,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -2224,9 +2153,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2279,7 +2206,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Total Field Count",
       "tooltip": {
@@ -2324,7 +2250,6 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -2349,9 +2274,7 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2450,7 +2373,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Snapshot Field Count",
       "tooltip": {
@@ -2494,7 +2416,6 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -2515,9 +2436,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2560,7 +2479,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Annotator request latency",
       "tooltip": {
@@ -2606,7 +2524,6 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 24,
@@ -2627,9 +2544,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
+      "options": {},
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2650,7 +2565,6 @@
       ],
       "thresholds": [],
       "timeFrom": null,
-      "timeRegions": [],
       "timeShift": null,
       "title": "Backend Failures",
       "tooltip": {
@@ -2698,7 +2612,6 @@
     "list": [
       {
         "current": {
-          "selected": true,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -2719,6 +2632,7 @@
         "allValue": null,
         "current": {
           "selected": true,
+          "tags": [],
           "text": "1h",
           "value": "1h"
         },
@@ -2800,7 +2714,7 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
