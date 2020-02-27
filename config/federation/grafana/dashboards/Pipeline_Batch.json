@@ -1286,7 +1286,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.99 {{status}}",
@@ -1294,7 +1294,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.95 {{status}}",
@@ -1302,7 +1302,7 @@
           "step": 10
         },
         {
-          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\",status!=\"fail\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "average",
@@ -1310,7 +1310,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.5 {{status}}",
@@ -1318,7 +1318,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.25 {{status}}",
@@ -1326,7 +1326,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\",status!=\"fail\"}[5m])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.05 {{status}}",
@@ -1334,7 +1334,16 @@
           "step": 10
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 10,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
