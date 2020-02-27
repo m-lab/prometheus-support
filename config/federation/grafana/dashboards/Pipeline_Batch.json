@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1582832633881,
+  "iteration": 1582835553547,
   "links": [
     {
       "icon": "external link",
@@ -1293,6 +1293,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "description": "",
       "editable": false,
       "error": false,
       "fill": 1,
@@ -1341,7 +1342,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.99 {{status}}",
@@ -1349,7 +1350,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.95 {{status}}",
@@ -1357,7 +1358,7 @@
           "step": 10
         },
         {
-          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\", status!=\"fail\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status!=\"fail\"}[5m])))",
+          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\", status!=\"fail\"}[$interval]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "average",
@@ -1365,7 +1366,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.5 {{status}}",
@@ -1373,7 +1374,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.25 {{status}}",
@@ -1381,7 +1382,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[5m])))",
+          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.05 {{status}}",
@@ -1389,7 +1390,7 @@
           "step": 10
         },
         {
-          "expr": "(sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status=\"fail\"}[5m]))) / (sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "(sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status=\"fail\"}[$interval]))) / (sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Failure Rate",
@@ -1401,7 +1402,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Approximate Insertion Time Percentiles",
+      "title": "Approximate Insertion Time Percentiles ($interval)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2730,6 +2731,8 @@
     "list": [
       {
         "current": {
+          "selected": false,
+          "tags": [],
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -2750,7 +2753,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": "1h",
           "value": "1h"
         },
@@ -2863,5 +2865,5 @@
   "timezone": "utc",
   "title": "Pipeline: Batch (in progress)",
   "uid": "000000021",
-  "version": 65
+  "version": 66
 }
