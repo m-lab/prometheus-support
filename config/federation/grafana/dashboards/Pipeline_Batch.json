@@ -1280,7 +1280,14 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Failure/",
+          "color": "#C4162A",
+          "fill": 2,
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -1332,6 +1339,14 @@
           "legendFormat": "0.05 {{status}}",
           "refId": "E",
           "step": 10
+        },
+        {
+          "expr": "(sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\",status!=\"succeed\"}[5m]))) / (sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Failure Rate",
+          "refId": "G",
+          "step": 10
         }
       ],
       "thresholds": [
@@ -1341,6 +1356,13 @@
           "line": true,
           "op": "gt",
           "value": 10,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
           "yaxis": "left"
         }
       ],
@@ -1371,8 +1393,10 @@
           "show": true
         },
         {
-          "format": "short",
+          "format": "percentunit",
           "logBase": 1,
+          "max": ".01",
+          "min": null,
           "show": true
         }
       ],
