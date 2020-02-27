@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1582832633879,
+  "iteration": 1582832633881,
   "links": [
     {
       "icon": "external link",
@@ -189,7 +189,12 @@
       ],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "dataLinks": [
+          {
+            "title": "",
+            "url": ""
+          }
+        ]
       },
       "percentage": false,
       "pointradius": 5,
@@ -209,9 +214,27 @@
           "step": 10
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 10000,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
-      "timeRegions": [],
+      "timeRegions": [
+        {
+          "colorMode": "background6",
+          "fill": true,
+          "fillColor": "rgba(234, 112, 112, 0.12)",
+          "line": false,
+          "lineColor": "rgba(237, 46, 24, 0.60)",
+          "op": "time"
+        }
+      ],
       "timeShift": null,
       "title": "Test Error Count by Type/Status [$interval]",
       "tooltip": {
@@ -365,10 +388,11 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "description": "",
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 1,
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -413,7 +437,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"})",
+          "expr": "topk(2,sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"}))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{instance}}",
@@ -427,16 +451,24 @@
           "legendFormat": "instance count",
           "refId": "B",
           "step": 20
+        },
+        {
+          "expr": "bottomk(10,sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"}))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{instance}}",
+          "refId": "C",
+          "step": 20
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Per Instance Uptime",
+      "title": "Oldest and Newest Uptime",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -545,7 +577,23 @@
           "step": 60
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "ok",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 10,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -777,7 +825,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 1,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -869,8 +917,8 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 1,
-      "fillGradient": 0,
+      "fill": 0,
+      "fillGradient": 1,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -902,7 +950,12 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/.*/",
+          "color": "rgba(67, 149, 21, 0.27)"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -1719,8 +1772,8 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 1,
-      "fillGradient": 0,
+      "fill": 0,
+      "fillGradient": 1,
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1760,7 +1813,7 @@
         },
         {
           "alias": "/etl/",
-          "color": "rgba(146, 83, 83, 0.13)",
+          "color": "rgba(146, 83, 83, 0.19)",
           "dashLength": 1,
           "spaceLength": 2
         }
@@ -1770,7 +1823,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2",
+          "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/etl_num_cpu",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1779,7 +1832,7 @@
           "step": 60
         },
         {
-          "expr": "avg(rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2) by (version)",
+          "expr": "avg(rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/etl_num_cpu) by (version)",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -2779,7 +2832,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -2810,5 +2863,5 @@
   "timezone": "utc",
   "title": "Pipeline: Batch (in progress)",
   "uid": "000000021",
-  "version": 64
+  "version": 65
 }
