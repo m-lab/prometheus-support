@@ -715,6 +715,23 @@ groups:
         be overloaded, or TCP pacing may be misconfigured on the node.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/ops-switch-overview
 
+# Too many ifInErrors are occuring each day on a switch uplink for too may days in a row.
+  - alert: DataQuality_TooManySwitchIfInErrors
+    expr: increase(ifInErrors{ifAlias="uplink"}[1d]) > 100
+    for: 7d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: There have been more than 100 ifInErrors per day for more than 7d.
+      description: ifInErrors are generally very low level, physical layer
+        errors. Some amount of errors is normal (e.g., even solar activity can
+        cause them), but over a certain threshold they should be investigated.
+        In the past, we have found that eleveated levels of errors is resolved
+        by having a tech visit the rack and clean and reseat the uplink optic
+        and fiber patch cable.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/ops-switch-overview
+
 # The node_exporter running on eb.measurementlab.net is down.
   - alert: NodeExporterOnEbDownOrMissing
     expr: |
