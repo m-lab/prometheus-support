@@ -16,8 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 266,
-  "iteration": 1575412480377,
+  "iteration": 1583768763383,
   "links": [],
   "panels": [
     {
@@ -591,7 +590,7 @@
       ],
       "targets": [
         {
-          "expr": "sum(githubreceiver_alerts_total) by (alertname, status)",
+          "expr": "sum by (alertname, status) (increase(githubreceiver_alerts_total[7d])) > 0",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -663,5 +662,5 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 22
+  "version": 29
 }
