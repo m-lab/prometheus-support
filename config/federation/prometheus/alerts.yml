@@ -949,7 +949,7 @@ groups:
 # time for this to be down before someone knows about it.
   - alert: PlatformCluster_FederationScrapeJobFailing
     expr: up{job="platform-cluster"} == 0
-    for: 4m
+    for: 10m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -969,7 +969,7 @@ groups:
 # scraping the k8s platform cluster does not exist.
   - alert: PlatformCluster_FederationScrapeJobMissing
     expr: absent(up{job="platform-cluster"})
-    for: 4m
+    for: 10m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1006,7 +1006,7 @@ groups:
 
   - alert: PlatformCluster_CadvisorMissing
     expr: absent(up{deployment="cadvisor", cluster="platform-cluster"})
-    for: 5m
+    for: 15m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1018,7 +1018,7 @@ groups:
 
   - alert: PlatformCluster_FluentdMissing
     expr: absent(up{deployment="fluentd", cluster="platform-cluster"})
-    for: 5m
+    for: 15m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1030,7 +1030,7 @@ groups:
 
   - alert: PlatformCluster_NdtMissing
     expr: absent(up{deployment="ndt", cluster="platform-cluster"})
-    for: 5m
+    for: 15m
     labels:
       repo: ops-tracker
       severity: page
@@ -1042,7 +1042,7 @@ groups:
 
   - alert: PlatformCluster_NeubotMissing
     expr: absent(up{deployment="neubot", cluster="platform-cluster"})
-    for: 5m
+    for: 15m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1054,7 +1054,7 @@ groups:
 
   - alert: PlatformCluster_NodeExporterMissing
     expr: absent(up{deployment="node-exporter", cluster="platform-cluster"})
-    for: 5m
+    for: 15m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1067,7 +1067,7 @@ groups:
 
   - alert: PlatformCluster_HostExperimentMissing
     expr: absent(up{deployment="host", cluster="platform-cluster"})
-    for: 5m
+    for: 15m
     labels:
       repo: ops-tracker
       severity: ticket
@@ -1076,6 +1076,18 @@ groups:
       description: The host DaemonSet is missing or has no metrics.
         Verify that the DaemonSet is healthy (`kubectl describe ds
         host`).
+      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+
+  - alert: PlatformCluster_WeheMissing
+    expr: absent(up{deployment="wehe", cluster="platform-cluster"})
+    for: 15m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The Wehe DaemonSet is missing or has no metrics.
+      description: The Wehe DaemonSet is missing or has no metrics. Verify that
+        the DaemonSet is healthy (`kubectl describe ds wehe`).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   # If any node is NotReady for too long, fire an alert, unless the node is in
