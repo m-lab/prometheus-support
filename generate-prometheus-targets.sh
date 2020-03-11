@@ -10,15 +10,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets,bmc-targets}
 done
 
-# All testing sites and machines.
-SELECT_mlab_sandbox=$( cat ${BASEDIR}/testing_patterns.txt | xargs | sed -e 's/ /|/g' )
-
-# All staging sites and machines.
-SELECT_mlab_staging=$( cat ${BASEDIR}/staging_patterns.txt | xargs | sed -e 's/ /|/g' )
-
-# All sites *excluding* test sites.
-SELECT_mlab_oti=$( cat ${BASEDIR}/production_patterns.txt | xargs | sed -e 's/ /|/g' )
-
 # GCP doesn't support IPv6, so we have a Linode VM running three instances of
 # the blackbox_exporter, on three separate ports... one port/instance for each
 # project. These variables map projects to ports, and will be transmitted to
@@ -37,25 +28,17 @@ chmod +x ./mlabconfig.py
 for project in mlab-sandbox mlab-staging mlab-oti ; do
   output=${BASEDIR}/gen/${project}/prometheus
 
-  # Construct the per-project SELECT variable name to use below.
-  pattern=SELECT_${project/-/_}
-
   # Construct the per-project blackbox_exporter port variable to use below.
   # blackbox_exporter on for IPv6 targets.
   bbe_port=BBE_IPV6_PORT_${project/-/_}
-
-  ########################################################################
-  # Note: The following configs select all servers. This allows us to
-  # experiment with monitoring many sites in sandbox or staging before
-  # production.
-  ########################################################################
 
   # ndt7 SSL on port 443 over IPv4
   ./mlabconfig.py --format=prom-targets \
       --template_target={{hostname}}:443 \
       --label service=ndt7 \
       --label module=tcp_v4_online \
-      --select "ndt.iupui.(${!pattern})" > \
+      --project "${project}" \
+      --select "ndt.iupui" > \
           ${output}/blackbox-targets/ndt7.json
 
   # ndt7 SSL on port 443 over IPv6
@@ -64,7 +47,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ndt7_ipv6 \
       --label module=tcp_v6_online \
       --label __blackbox_port=${!bbe_port} \
-      --select "ndt.iupui.(${!pattern})" \
+      --project "${project}" \
+      --select "ndt.iupui" \
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt7_ipv6.json
 
@@ -73,7 +57,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:3001 \
       --label service=ndt_raw \
       --label module=tcp_v4_online \
-      --select "ndt.iupui.(${!pattern})" > \
+      --project "${project}" \
+      --select "ndt.iupui" > \
           ${output}/blackbox-targets/ndt_raw.json
 
   # NDT "raw" on port 3001 over IPv6
@@ -82,7 +67,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ndt_raw_ipv6 \
       --label module=tcp_v6_online \
       --label __blackbox_port=${!bbe_port} \
-      --select "ndt.iupui.(${!pattern})" \
+      --project "${project}" \
+      --select "ndt.iupui" \
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt_raw_ipv6.json
 
@@ -92,7 +78,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ndt_ssl \
       --label module=tcp_v4_tls_online \
       --use_flatnames \
-      --select "ndt.iupui.(${!pattern})" > \
+      --project "${project}" \
+      --select "ndt.iupui" > \
           ${output}/blackbox-targets/ndt_ssl.json
 
   # NDT SSL on port 3010 over IPv6
@@ -102,7 +89,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
       --use_flatnames \
-      --select "ndt.iupui.(${!pattern})" \
+      --project "${project}" \
+      --select "ndt.iupui" \
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt_ssl_ipv6.json
 
@@ -111,7 +99,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}} \
       --label service=ndt_e2e \
       --use_flatnames \
-      --select "ndt.iupui.(${!pattern})" > \
+      --project "${project}" \
+      --select "ndt.iupui" > \
           ${output}/script-targets/ndt_e2e.json
 
   # neubot on port 80 over IPv4
@@ -119,7 +108,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:80 \
       --label service=neubot \
       --label module=tcp_v4_online \
-      --select "neubot.mlab.(${!pattern})" > \
+      --project "${project}" \
+      --select "neubot.mlab" > \
           ${output}/blackbox-targets/neubot.json
 
   # neubot on port 80 over IPv6
@@ -129,7 +119,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label module=tcp_v6_online \
       --label __blackbox_port=${!bbe_port} \
       --decoration "v6" \
-      --select "neubot.mlab.(${!pattern})" > \
+      --project "${project}" \
+      --select "neubot.mlab" > \
           ${output}/blackbox-targets-ipv6/neubot_ipv6.json
 
   # neubot TLS on port 443 over IPv4
@@ -138,9 +129,9 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=neubot_tls \
       --label module=tcp_v4_tls_online \
       --use_flatnames \
-      --select "neubot.mlab.(${!pattern})" > \
+      --project "${project}" \
+      --select "neubot.mlab" > \
           ${output}/blackbox-targets/neubot_tls.json
-
 
   # neubot TLS on port 443 over IPv6
   ./mlabconfig.py --format=prom-targets \
@@ -150,7 +141,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label __blackbox_port=${!bbe_port} \
       --use_flatnames \
       --decoration "v6" \
-      --select "neubot.mlab.(${!pattern})" > \
+      --project "${project}" \
+      --select "neubot.mlab" > \
           ${output}/blackbox-targets-ipv6/neubot_tls_ipv6.json
 
   # snmp_exporter on port 9116.
@@ -175,7 +167,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ssh \
       --label module=ssh_v4_online \
       --physical \
-      --select "${!pattern}" > ${output}/blackbox-targets/ssh.json
+      --project "${project}" > ${output}/blackbox-targets/ssh.json
 
   # SSH on port 22 over IPv6
   ./mlabconfig.py --format=prom-targets-nodes \
@@ -184,7 +176,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label module=ssh_v6_online \
       --label __blackbox_port=${!bbe_port} \
       --physical \
-      --select "${!pattern}" \
+      --project "${project}" \
       --decoration "v6" > ${output}/blackbox-targets-ipv6/ssh_ipv6.json
 
   # BMC monitoring via the Reboot API
@@ -192,7 +184,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}} \
       --label service=bmc_e2e \
       --physical \
-      --select "${!pattern}" \
+      --project "${project}" \
       --decoration "d" > ${output}/bmc-targets/bmc_e2e.json
 
 done
