@@ -26,6 +26,19 @@ chmod +x ./mlabconfig.py
 
 
 for project in mlab-sandbox mlab-staging mlab-oti ; do
+  # Production uses v1 sites.json, everything else v2. And if an mlabconfig.py
+  # command previously used the flag --use_flatnames, then only keep that in
+  # place in production, since in v2 siteinfo output all names are flat by
+  # default.
+
+  if [[ "${project}" != "mlab-oti" ]]; then
+    sites="https://siteinfo.${project}.measurementlab.net/v2/sites/sites.json"
+    use_flatnames=""
+  else
+    sites="https://siteinfo.${project}.measurementlab.net/v1/sites/sites.json"
+    use_flatnames="--use_flatnames"
+  fi
+
   output=${BASEDIR}/gen/${project}/prometheus
 
   # Construct the per-project blackbox_exporter port variable to use below.
@@ -34,6 +47,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # ndt7 SSL on port 443 over IPv4
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=ndt7 \
       --label module=tcp_v4_online \
@@ -43,6 +57,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # ndt7 SSL on port 443 over IPv6
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=ndt7_ipv6 \
       --label module=tcp_v6_online \
@@ -54,6 +69,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # NDT "raw" on port 3001 over IPv4
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:3001 \
       --label service=ndt_raw \
       --label module=tcp_v4_online \
@@ -63,6 +79,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # NDT "raw" on port 3001 over IPv6
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:3001 \
       --label service=ndt_raw_ipv6 \
       --label module=tcp_v6_online \
@@ -74,21 +91,23 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # NDT SSL on port 3010 over IPv4
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:3010 \
       --label service=ndt_ssl \
       --label module=tcp_v4_tls_online \
-      --use_flatnames \
+      "${use_flatnames}" \
       --project "${project}" \
       --select "ndt.iupui" > \
           ${output}/blackbox-targets/ndt_ssl.json
 
   # NDT SSL on port 3010 over IPv6
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:3010 \
       --label service=ndt_ssl_ipv6 \
       --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
-      --use_flatnames \
+      "${use_flatnames}" \
       --project "${project}" \
       --select "ndt.iupui" \
       --decoration "v6" > \
@@ -96,15 +115,17 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # script_exporter for NDT end-to-end monitoring
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}} \
       --label service=ndt_e2e \
-      --use_flatnames \
+      "${use_flatnames}" \
       --project "${project}" \
       --select "ndt.iupui" > \
           ${output}/script-targets/ndt_e2e.json
 
   # neubot on port 80 over IPv4
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:80 \
       --label service=neubot \
       --label module=tcp_v4_online \
@@ -114,6 +135,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # neubot on port 80 over IPv6
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:80 \
       --label service=neubot_ipv6 \
       --label module=tcp_v6_online \
@@ -125,21 +147,23 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # neubot TLS on port 443 over IPv4
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=neubot_tls \
       --label module=tcp_v4_tls_online \
-      --use_flatnames \
+      "${use_flatnames}" \
       --project "${project}" \
       --select "neubot.mlab" > \
           ${output}/blackbox-targets/neubot_tls.json
 
   # neubot TLS on port 443 over IPv6
   ./mlabconfig.py --format=prom-targets \
+      --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=neubot_tls_ipv6 \
       --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
-      --use_flatnames \
+      "${use_flatnames}" \
       --decoration "v6" \
       --project "${project}" \
       --select "neubot.mlab" > \
@@ -147,6 +171,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # snmp_exporter on port 9116.
   ./mlabconfig.py --format=prom-targets-sites \
+      --sites "${sites}" \
       --physical \
       --template_target=s1.{{sitename}}.measurement-lab.org \
       --label service=snmp > \
@@ -154,6 +179,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # ICMP probe for platform switches
   ./mlabconfig.py --format=prom-targets-sites \
+      --sites "${sites}" \
       --physical \
       --template_target=s1.{{sitename}}.measurement-lab.org \
       --label module=icmp > \
@@ -161,6 +187,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # SSH on port 22 over IPv4
   ./mlabconfig.py --format=prom-targets-nodes \
+      --sites "${sites}" \
       --template_target={{hostname}}:22 \
       --label service=ssh \
       --label module=ssh_v4_online \
@@ -169,6 +196,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # SSH on port 22 over IPv6
   ./mlabconfig.py --format=prom-targets-nodes \
+      --sites "${sites}" \
       --template_target={{hostname}}:22 \
       --label service=ssh \
       --label module=ssh_v6_online \
@@ -179,6 +207,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   # BMC monitoring via the Reboot API
   ./mlabconfig.py --format=prom-targets-nodes \
+      --sites "${sites}" \
       --template_target={{hostname}} \
       --label service=bmc_e2e \
       --physical \
