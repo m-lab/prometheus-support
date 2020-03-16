@@ -176,6 +176,7 @@ kubectl create configmap grafana-env \
 SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
 GITHUB_RECEIVER_URL=
 GITHUB_ISSUE_QUERY=
+FAKE_PROJECT_LABEL=
 SHORT_PROJECT=${PROJECT/mlab-/}
 
 if [[ ${PROJECT} = "mlab-oti" ]] ; then
@@ -187,6 +188,11 @@ if [[ ${PROJECT} = "mlab-oti" ]] ; then
 else
   # For other projects, use a fake auth token string.
   AUTH_TOKEN=fake-auth-token
+  # For projects other than mlab-oti, insert a fake project "match" selector
+  # for the PageDuty receiver, which should effectively prevent alerts being
+  # sent to PagerDuty for any project other than mlab-oti, since this match
+  # requirement will never match anything.
+  FAKE_PROJECT_LABEL="project: fake-project"
 fi
 kubectl create secret generic github-secrets \
     "--from-literal=auth-token=${AUTH_TOKEN}" \
