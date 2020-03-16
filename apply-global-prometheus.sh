@@ -207,6 +207,7 @@ sed -e 's|{{SLACK_CHANNEL_URL}}|'${!SLACK_CHANNEL_URL_NAME}'|g' \
     -e 's|{{SHORT_PROJECT}}|'$SHORT_PROJECT'|g' \
     -e 's|{{GITHUB_ISSUE_QUERY}}|'$GITHUB_ISSUE_QUERY'|g' \
     -e 's|{{PAGERDUTY_SERVICE_KEY}}|'$PAGERDUTY_SERVICE_KEY'|g' \
+    -e 's|{{FAKE_PROJECT_LABEL}}|'$FAKE_PROJECT_LABEL'|g' \
     config/federation/alertmanager/config.yml.template > \
     config/federation/alertmanager/config.yml
 
