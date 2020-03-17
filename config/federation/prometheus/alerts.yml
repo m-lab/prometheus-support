@@ -30,6 +30,7 @@ groups:
     labels:
       repo: dev-tracker
       severity: page
+      page_project: mlab-oti
     annotations:
       summary: Instance {{ $labels.instance }} down
       description: '{{ $labels.instance }} of job {{ $labels.job }} has been down
@@ -351,6 +352,7 @@ groups:
     labels:
       repo: ops-tracker
       severity: page
+      page_project: mlab-oti
     annotations:
       summary: Less than 90% of ndt_ssl experiments are online according to mlab-ns.
       description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
@@ -429,6 +431,7 @@ groups:
     labels:
       repo: dev-tracker
       severity: page
+      page_project: mlab-oti
     annotations:
       summary: Service {{ $labels.module }} in the mlab-ns project is unavailable.
       description: Stackdriver reports some requests to the {{ $labels.module }}
@@ -1034,6 +1037,7 @@ groups:
     labels:
       repo: ops-tracker
       severity: page
+      page_project: mlab-oti
     annotations:
       summary: The NDT DaemonSet is missing or has no metrics.
       description: The NDT DaemonSet is missing or has no metrics. Verify that
