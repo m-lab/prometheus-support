@@ -176,7 +176,6 @@ kubectl create configmap grafana-env \
 SLACK_CHANNEL_URL_NAME=AM_SLACK_CHANNEL_URL_${PROJECT/-/_}
 GITHUB_RECEIVER_URL=
 GITHUB_ISSUE_QUERY=
-FAKE_PROJECT_LABEL=
 SHORT_PROJECT=${PROJECT/mlab-/}
 
 if [[ ${PROJECT} = "mlab-oti" ]] ; then
@@ -188,11 +187,6 @@ if [[ ${PROJECT} = "mlab-oti" ]] ; then
 else
   # For other projects, use a fake auth token string.
   AUTH_TOKEN=fake-auth-token
-  # For projects other than mlab-oti, insert a fake project "match" selector
-  # for the PageDuty receiver, which should effectively prevent alerts being
-  # sent to PagerDuty for any project other than mlab-oti, since this match
-  # requirement will never match anything.
-  FAKE_PROJECT_LABEL="project: fake-project"
 fi
 kubectl create secret generic github-secrets \
     "--from-literal=auth-token=${AUTH_TOKEN}" \
@@ -207,7 +201,6 @@ sed -e 's|{{SLACK_CHANNEL_URL}}|'${!SLACK_CHANNEL_URL_NAME}'|g' \
     -e 's|{{SHORT_PROJECT}}|'$SHORT_PROJECT'|g' \
     -e 's|{{GITHUB_ISSUE_QUERY}}|'$GITHUB_ISSUE_QUERY'|g' \
     -e 's|{{PAGERDUTY_SERVICE_KEY}}|'$PAGERDUTY_SERVICE_KEY'|g' \
-    -e 's|{{FAKE_PROJECT_LABEL}}|'$FAKE_PROJECT_LABEL'|g' \
     config/federation/alertmanager/config.yml.template > \
     config/federation/alertmanager/config.yml
 
