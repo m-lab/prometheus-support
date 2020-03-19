@@ -578,7 +578,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\", deployment!~\".*-universal\"}",
+          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\", deployment!~\".*universal\"}",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -676,7 +676,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\"}[1h])) by (deployment, state, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h])) by (deployment, state, le))",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -685,7 +685,7 @@
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\"}[1h])) by (deployment, state, le))",
+          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h])) by (deployment, state, le))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -694,7 +694,7 @@
           "refId": "C"
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\"}[1h])) by (state, datatype, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*universal\"}[1h])) by (deployment, state, datatype, le))",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -703,7 +703,7 @@
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\"}[1h])) by (state, datatype, le))",
+          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*universal\"}[1h])) by (deployment, state, datatype, le))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -979,7 +979,7 @@
           "refId": "B"
         },
         {
-          "expr": "sum by(deployment, datatype) (4*increase(gardener_completed_total{deployment=~\".*-universal\"}[6h]))",
+          "expr": "sum by(deployment, datatype) (4*increase(gardener_completed_total{deployment=~\"$deployment\", deployment=~\".*universal\"}[6h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1179,7 +1179,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!~\".*-universal\"}[20m])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!=\"etl-gardener-universal\"}[20m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1191,11 +1191,11 @@
           "format": "time_series",
           "hide": true,
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}}  {{state}}",
+          "legendFormat": "{{deployment}} {{type}} {{state}}",
           "refId": "B"
         },
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[20m])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=\"etl-gardener-universal\", datatype!=\"\"}[20m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1536,7 +1536,7 @@
       }
     }
   ],
-  "refresh": "1m",
+  "refresh": "5m",
   "schemaVersion": 20,
   "style": "dark",
   "tags": [],
