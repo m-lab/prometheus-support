@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 240,
-  "iteration": 1551295457250,
+  "iteration": 1584541181401,
   "links": [
     {
       "icon": "external link",
@@ -52,6 +51,7 @@
       "dashes": false,
       "datasource": "$prometheusDatasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 6,
@@ -72,6 +72,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -143,6 +146,7 @@
       "dashes": false,
       "datasource": "$pipelineDatasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 6,
@@ -163,6 +167,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -262,6 +269,7 @@
       "dashes": false,
       "datasource": "$pipelineDatasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 4,
@@ -282,6 +290,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -347,6 +358,7 @@
       "dashes": false,
       "datasource": "$pipelineDatasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 4,
@@ -367,6 +379,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -439,6 +454,7 @@
       "dashes": false,
       "datasource": "$pipelineDatasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 4,
@@ -459,6 +475,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -525,6 +544,7 @@
       "dashes": false,
       "datasource": "$pipelineDatasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 12,
@@ -545,6 +565,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -555,11 +578,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\"}",
+          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\", deployment!~\".*universal\"}",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 1,
           "legendFormat": "{{deployment}}",
           "refId": "A"
+        },
+        {
+          "expr": "gardener_tasks_in_flight{deployment=~\".*universal\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{datatype}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -611,6 +642,7 @@
       "datasource": "$pipelineDatasource",
       "description": "How long each date spends in each processing state.\nIf Processing exceeds 12 hours, then there will likely be data loss from expiration in the task queue.",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 12,
         "w": 12,
@@ -631,6 +663,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 0.5,
       "points": true,
@@ -641,7 +676,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\"}[1h])) by (deployment, state, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h])) by (deployment, state, le))",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -650,13 +685,31 @@
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\"}[1h])) by (deployment, state, le))",
+          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h])) by (deployment, state, le))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{state}} {{deployment}}",
           "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*universal\"}[1h])) by (deployment, state, datatype, le))",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{state}} {{datatype}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*universal\"}[1h])) by (deployment, state, datatype, le))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{state}} {{datatype}}",
+          "refId": "D"
         }
       ],
       "thresholds": [
@@ -718,6 +771,7 @@
       "datasource": "$pipelineDatasource",
       "description": "Number of tasks started and completed, per hour.",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 12,
@@ -738,6 +792,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -773,7 +830,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\"}[1h]))",
+          "expr": "sum by(deployment) (increase(gardener_started_total{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -781,12 +838,28 @@
           "refId": "A"
         },
         {
-          "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\"}[1h]))",
+          "expr": "sum by(deployment) (-increase(gardener_completed_total{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "legendFormat": "Completed {{deployment}}",
           "refId": "B"
+        },
+        {
+          "expr": "sum by(datatype) (increase(gardener_started_total{deployment=~\"$deployment\", deployment=~\".*universal\"}[1h]))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "Started {{datatype}}",
+          "refId": "C"
+        },
+        {
+          "expr": "sum by(datatype) (-increase(gardener_completed_total{deployment=~\"$deployment\", deployment=~\".*universal\"}[1h]))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "Completed {{datatype}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -839,6 +912,7 @@
       "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 8,
@@ -859,6 +933,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -894,12 +971,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(deployment) (increase(gardener_completed_total{deployment=~\"$deployment\"}[24h]))",
+          "expr": "sum by(deployment) (4*increase(gardener_completed_total{deployment=~\"$deployment\", deployment!~\".*universal\"}[6h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "legendFormat": "Completed {{deployment}}",
           "refId": "B"
+        },
+        {
+          "expr": "sum by(deployment, datatype) (4*increase(gardener_completed_total{deployment=~\"$deployment\", deployment=~\".*universal\"}[6h]))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "Completed {{datatype}}",
+          "refId": "A"
         }
       ],
       "thresholds": [
@@ -961,6 +1046,7 @@
       "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 8,
@@ -982,6 +1068,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1056,6 +1145,7 @@
       "datasource": "$pipelineDatasource",
       "description": "Task dates of the most recent updates to each task state.\n\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 8,
@@ -1076,6 +1166,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1086,7 +1179,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\"}[20m])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!=\"etl-gardener-universal\"}[20m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1098,8 +1191,16 @@
           "format": "time_series",
           "hide": true,
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}} {{state}}",
+          "legendFormat": "{{deployment}} {{type}} {{state}}",
           "refId": "B"
+        },
+        {
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=\"etl-gardener-universal\", datatype!=\"\"}[20m])",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{datatype}} {{state}}",
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -1152,6 +1253,7 @@
       "datasource": "$pipelineDatasource",
       "description": "This measures the bytes submitted for processing. \n It reflects the ETL throughput, which is governed by the task queue rate and concurrency settings.\n\nThe rate is governed by how fast the ETL pipeline drains the task queues.  The balance across types is governed by the rate/concurrency settings on the queues.\n\nThis is fundamentally rather lumpy at the 10 minute level, so we average over an hour or more.  Aside from the fine-grained lumpiness, this should be the most stable of the throughput metrics, because it reflects the quantity of data, rather than the number or size of files.",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 8,
@@ -1172,6 +1274,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1240,6 +1345,7 @@
       "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 8,
@@ -1261,6 +1367,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1335,6 +1444,7 @@
       "datasource": "$pipelineDatasource",
       "description": "",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 8,
@@ -1356,6 +1466,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1424,7 +1537,7 @@
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 16,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1434,8 +1547,8 @@
         "current": {
           "selected": false,
           "tags": [],
-          "text": "mlab-staging",
-          "value": "mlab-staging"
+          "text": "mlab-sandbox",
+          "value": "mlab-sandbox"
         },
         "hide": 0,
         "includeAll": false,
@@ -1444,12 +1557,12 @@
         "name": "project",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "mlab-sandbox",
             "value": "mlab-sandbox"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "mlab-staging",
             "value": "mlab-staging"
           },
@@ -1465,11 +1578,14 @@
       },
       {
         "current": {
-          "text": "Data Proc (mlab-staging)",
-          "value": "Data Proc (mlab-staging)"
+          "tags": [],
+          "text": "Data Processing (mlab-sandbox)",
+          "value": "Data Processing (mlab-sandbox)"
         },
-        "hide": 2,
+        "hide": 0,
+        "includeAll": false,
         "label": "Data Processing",
+        "multi": false,
         "name": "pipelineDatasource",
         "options": [],
         "query": "prometheus",
@@ -1480,11 +1596,13 @@
       },
       {
         "current": {
-          "text": "Prometheus (mlab-staging)",
-          "value": "Prometheus (mlab-staging)"
+          "text": "Prometheus (mlab-sandbox)",
+          "value": "Prometheus (mlab-sandbox)"
         },
         "hide": 2,
+        "includeAll": false,
         "label": "Prometheus",
+        "multi": false,
         "name": "prometheusDatasource",
         "options": [],
         "query": "prometheus",
@@ -1552,5 +1670,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 58
+  "version":59
 }
