@@ -1547,8 +1547,8 @@
         "current": {
           "selected": false,
           "tags": [],
-          "text": "mlab-sandbox",
-          "value": "mlab-sandbox"
+          "text": "mlab-oti",
+          "value": "mlab-oti"
         },
         "hide": 0,
         "includeAll": false,
@@ -1557,7 +1557,7 @@
         "name": "project",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "mlab-sandbox",
             "value": "mlab-sandbox"
           },
@@ -1567,7 +1567,7 @@
             "value": "mlab-staging"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "mlab-oti",
             "value": "mlab-oti"
           }
@@ -1578,9 +1578,8 @@
       },
       {
         "current": {
-          "tags": [],
-          "text": "Data Processing (mlab-sandbox)",
-          "value": "Data Processing (mlab-sandbox)"
+          "text": "Data Proc (mlab-oti)",
+          "value": "Data Proc (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -1596,8 +1595,8 @@
       },
       {
         "current": {
-          "text": "Prometheus (mlab-sandbox)",
-          "value": "Prometheus (mlab-sandbox)"
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
         },
         "hide": 2,
         "includeAll": false,
@@ -1612,16 +1611,16 @@
         "type": "datasource"
       },
       {
-        "allValue": ".*",
+        "allValue": "etl-gardener-.*",
         "current": {
           "text": "All",
           "value": "$__all"
         },
         "datasource": "$pipelineDatasource",
-        "definition": "",
+        "definition": "label_values(up{deployment=~\"etl-gardener-.*\"}, deployment)",
         "hide": 0,
         "includeAll": true,
-        "label": "Gardener Deployment",
+        "label": "Deployments",
         "multi": false,
         "name": "deployment",
         "options": [],
@@ -1635,11 +1634,38 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "$pipelineDatasource",
+        "definition": "label_values(gardener_tasks_in_flight{deployment=~\"$deployment\"}, datatype)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Datatypes",
+        "multi": true,
+        "name": "datatypes",
+        "options": [],
+        "query": "label_values(gardener_tasks_in_flight{deployment=~\"$deployment\"}, datatype)",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1670,5 +1696,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version":59
+  "version":61
 }
