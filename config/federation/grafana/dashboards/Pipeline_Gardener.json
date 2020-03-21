@@ -1179,7 +1179,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!=\"etl-gardener-universal\"}[20m])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!=\".*universal\"}[20m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1191,11 +1191,11 @@
           "format": "time_series",
           "hide": true,
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}} {{type}} {{state}}",
+          "legendFormat": "{{deployment}}  {{state}}",
           "refId": "B"
         },
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=\"etl-gardener-universal\", datatype!=\"\"}[20m])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\".*universal\", datatype=~\"$datatypes\"}[20m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1536,7 +1536,7 @@
       }
     }
   ],
-  "refresh": "5m",
+  "refresh": "1m",
   "schemaVersion": 20,
   "style": "dark",
   "tags": [],
