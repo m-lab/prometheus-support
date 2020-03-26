@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 322,
-  "iteration": 1583879740687,
+  "iteration": 1583979023179,
   "links": [],
   "panels": [
     {
@@ -256,7 +255,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": " sum(increase(ndt_test_rate_mbps_count{direction=\"s2c\", machine=~\".*($site).*\"}[$interval])) by (protocol)",
+          "expr": " sum(3600*rate(ndt_test_rate_mbps_count{direction=\"s2c\", machine=~\".*($site).*\"}[$interval])) by (protocol)",
           "legendFormat": "{{protocol}}",
           "refId": "A"
         }
@@ -417,13 +416,14 @@
       {
         "allValue": null,
         "current": {
-          "text": "sea02 + sea03 + sea04 + sea07 + sea08",
+          "tags": [],
+          "text": "lga03 + lga04 + lga05 + lga06 + lga08",
           "value": [
-            "sea02",
-            "sea03",
-            "sea04",
-            "sea07",
-            "sea08"
+            "lga03",
+            "lga04",
+            "lga05",
+            "lga06",
+            "lga08"
           ]
         },
         "datasource": "Platform Cluster (mlab-oti)",
@@ -760,27 +760,27 @@
             "value": "lax06"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "lga03",
             "value": "lga03"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "lga04",
             "value": "lga04"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "lga05",
             "value": "lga05"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "lga06",
             "value": "lga06"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "lga08",
             "value": "lga08"
           },
@@ -1005,27 +1005,27 @@
             "value": "prg05"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "sea02",
             "value": "sea02"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "sea03",
             "value": "sea03"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "sea04",
             "value": "sea04"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "sea07",
             "value": "sea07"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "sea08",
             "value": "sea08"
           },
@@ -1129,7 +1129,8 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
+          "tags": [],
           "text": "1h",
           "value": "1h"
         },
@@ -1208,6 +1209,7 @@
         "allValue": null,
         "current": {
           "selected": true,
+          "tags": [],
           "text": "WSS",
           "value": "WSS"
         },
@@ -1260,5 +1262,5 @@
   "timezone": "",
   "title": "NDT: Download Speeds",
   "uid": "U1I90mXZz",
-  "version": 15
+  "version": 16
 }
