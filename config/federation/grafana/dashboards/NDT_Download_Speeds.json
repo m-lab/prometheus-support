@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1583979023179,
+  "iteration": 1585226565617,
   "links": [],
   "panels": [
     {
@@ -68,7 +68,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Median test bandwidth (Mb/sec) by protocol [$site]",
+      "title": "Median Download Bandwidth (Mbps) by protocol [$site]",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -86,7 +86,7 @@
         {
           "decimals": 0,
           "format": "short",
-          "label": "Mb/sec",
+          "label": "Mbps",
           "logBase": 10,
           "max": "1000",
           "min": "1",
@@ -176,7 +176,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$protocol Download BW Quartiles  (MB/sec) [$site]",
+      "title": "$protocol - Download Bandwidth Quartiles  (Mbps) [$site]",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -194,7 +194,7 @@
         {
           "decimals": 0,
           "format": "short",
-          "label": "Mb/sec",
+          "label": "Mbps",
           "logBase": 10,
           "max": null,
           "min": "1",
@@ -255,7 +255,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": " sum(3600*rate(ndt_test_rate_mbps_count{direction=\"s2c\", machine=~\".*($site).*\"}[$interval])) by (protocol)",
+          "expr": "60* sum(rate(ndt_test_rate_mbps_count{direction=\"s2c\", machine=~\".*($site).*\"}[$interval])) by (protocol)",
           "legendFormat": "{{protocol}}",
           "refId": "A"
         }
@@ -264,7 +264,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Tests per hour [$site]",
+      "title": "Rate of Downloads (Tests/Min) [$site]",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -282,7 +282,7 @@
         {
           "decimals": 0,
           "format": "short",
-          "label": "Tests/Hour",
+          "label": "Tests/Min",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -368,7 +368,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Median $protocol Download BW (Mb/sec) week/week [$site]",
+      "title": "Week-over-week Median $protocol - Download Bandwidth (Mbps) [$site]",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -386,7 +386,7 @@
         {
           "decimals": 0,
           "format": "short",
-          "label": "Mb/sec",
+          "label": "Mbps",
           "logBase": 10,
           "max": null,
           "min": "1",
@@ -1129,7 +1129,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "tags": [],
           "text": "1h",
           "value": "1h"
@@ -1242,7 +1242,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {
