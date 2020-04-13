@@ -46,7 +46,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   bbe_port=BBE_IPV6_PORT_${project/-/_}
 
   # ndt7 SSL on port 443 over IPv4
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=ndt7 \
@@ -56,7 +56,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets/ndt7.json
 
   # ndt7 SSL on port 443 over IPv6
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=ndt7_ipv6 \
@@ -68,7 +68,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets-ipv6/ndt7_ipv6.json
 
   # NDT "raw" on port 3001 over IPv4
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:3001 \
       --label service=ndt_raw \
@@ -78,7 +78,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets/ndt_raw.json
 
   # NDT "raw" on port 3001 over IPv6
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:3001 \
       --label service=ndt_raw_ipv6 \
@@ -90,7 +90,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets-ipv6/ndt_raw_ipv6.json
 
   # NDT SSL on port 3010 over IPv4
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:3010 \
       --label service=ndt_ssl \
@@ -101,7 +101,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets/ndt_ssl.json
 
   # NDT SSL on port 3010 over IPv6
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:3010 \
       --label service=ndt_ssl_ipv6 \
@@ -114,7 +114,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets-ipv6/ndt_ssl_ipv6.json
 
   # script_exporter for NDT end-to-end monitoring
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}} \
       --label service=ndt_e2e \
@@ -124,7 +124,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/script-targets/ndt_e2e.json
 
   # neubot on port 80 over IPv4
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:80 \
       --label service=neubot \
@@ -134,7 +134,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets/neubot.json
 
   # neubot on port 80 over IPv6
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:80 \
       --label service=neubot_ipv6 \
@@ -146,7 +146,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets-ipv6/neubot_ipv6.json
 
   # neubot TLS on port 443 over IPv4
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=neubot_tls \
@@ -157,7 +157,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets/neubot_tls.json
 
   # neubot TLS on port 443 over IPv6
-  python3 ./mlabconfig.py --format=prom-targets \
+  ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=neubot_tls_ipv6 \
@@ -170,7 +170,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets-ipv6/neubot_tls_ipv6.json
 
   # snmp_exporter on port 9116.
-  python3 ./mlabconfig.py --format=prom-targets-sites \
+  ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
       --template_target=s1.{{sitename}}.measurement-lab.org \
@@ -178,7 +178,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/snmp-targets/snmpexporter.json
 
   # ICMP probe for platform switches
-  python3 ./mlabconfig.py --format=prom-targets-sites \
+  ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
       --template_target=s1.{{sitename}}.measurement-lab.org \
@@ -186,7 +186,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
           ${output}/blackbox-targets/switches_ping.json
 
   # SSH on port 22 over IPv4
-  python3 ./mlabconfig.py --format=prom-targets-nodes \
+  ./mlabconfig.py --format=prom-targets-nodes \
       --sites "${sites}" \
       --template_target={{hostname}}:22 \
       --label service=ssh \
@@ -195,7 +195,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --project "${project}" > ${output}/blackbox-targets/ssh.json
 
   # SSH on port 22 over IPv6
-  python3 ./mlabconfig.py --format=prom-targets-nodes \
+  ./mlabconfig.py --format=prom-targets-nodes \
       --sites "${sites}" \
       --template_target={{hostname}}:22 \
       --label service=ssh \
@@ -206,7 +206,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --decoration "v6" > ${output}/blackbox-targets-ipv6/ssh_ipv6.json
 
   # BMC monitoring via the Reboot API
-  python3 ./mlabconfig.py --format=prom-targets-nodes \
+  ./mlabconfig.py --format=prom-targets-nodes \
       --sites "${sites}" \
       --template_target={{hostname}} \
       --label service=bmc_e2e \
