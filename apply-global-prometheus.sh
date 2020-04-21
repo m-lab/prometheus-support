@@ -274,7 +274,7 @@ fi
   > /tmp/switch-monitoring.key )
 
 kubectl create secret generic switch-monitoring-credentials\
-  "--from-file=/tmp/reboot-api-ssh.key" \
+  "--from-file=/tmp/switch-monitoring.key" \
   --dry-run -o json | kubectl apply -f -
 
 # Apply templates
