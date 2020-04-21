@@ -266,6 +266,17 @@ if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
   exit 0
 fi
 
+## Switch Monitoring
+
+# Create credentials as Kubernetes secrets.
+### Write keys to a file to prevent printing key in travis logs.
+( set +x; echo "${SWITCH_MONITORING_SSH_KEY}" | base64 -d \
+  > /tmp/switch-monitoring.key )
+
+kubectl create secret generic switch-monitoring-credentials\
+  "--from-file=/tmp/reboot-api-ssh.key" \
+  --dry-run -o json | kubectl apply -f -
+
 # Apply templates
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
 kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
