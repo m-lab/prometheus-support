@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: switch-monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: switch-monitoring
+  template:
+    metadata:
+      labels:
+        run: switch-monitoring
+    spec:
+      containers:
+      - name: switch-monitoring
+        image: measurementlab/switch-monitoring:v0.1.0
+        args:
+          - "-project={{GCLOUD_PROJECT}}"
+          - "-ssh.username=switch-monitoring"
+          - "-ssh.key=/var/secrets/switch-monitoring.key"
+          - "-listenaddr=$(PRIVATE_IP):8080"
+        env:
+          - name: PRIVATE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath:
+                  status.podIP
+        volumeMounts:
+          - name: credentials
+            mountPath: /var/secrets/
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 200m
+            memory: 50Mi
+        ports:
+          - containerPort: 9990
+      volumes:
+        # SSH key to log into the switches is provided as a K8s secret.
+        - name: credentials
+          secret:
+            secretName: switch-monitoring-credentials
