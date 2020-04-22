@@ -21,7 +21,7 @@ spec:
           - "-project={{GCLOUD_PROJECT}}"
           - "-ssh.username=switch-monitoring"
           - "-ssh.key=/var/secrets/switch-monitoring.key"
-          - "-listenaddr=${PRIVATE_IP}:8080"
+          - "-listenaddr=$(PRIVATE_IP):8080"
         env:
           - name: PRIVATE_IP
             valueFrom:
