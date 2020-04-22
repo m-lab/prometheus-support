@@ -66,7 +66,7 @@ groups:
 # at least 21 hours, meaning that at least the last two download attempts have failed.
   - alert: DownloaderIsFailingToUpdate
     expr: time() - downloader_last_success_time_seconds > (21 * 60 * 60)
-    for: 5m
+    for: 1h
     labels:
       repo: dev-tracker
       severity: ticket
