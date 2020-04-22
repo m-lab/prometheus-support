@@ -19,7 +19,15 @@ spec:
         image: measurementlab/switch-monitoring:latest
         args:
           - "-project={{GCLOUD_PROJECT}}"
+          - "-ssh.username=switch-monitoring"
           - "-ssh.key=/var/secrets/switch-monitoring.key"
+          - "-listenaddr=${PRIVATE_IP}:8080"
+        env:
+          - name: PRIVATE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath:
+                  status.podIP
         volumeMounts:
           - name: credentials
             mountPath: /var/secrets/
