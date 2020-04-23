@@ -167,6 +167,20 @@ kubectl create configmap grafana-env \
     "--from-literal=gf_auth_google_client_id=${!GF_CLIENT_ID_NAME}" \
     --dry-run -o json | kubectl apply -f -
 
+# Script exporter.
+# TODO: enable deployment to production once locate is in production.
+# Until then, temporarily disable deployment in production.
+if [[ "${PROJECT}" != "mlab-oti" ]] ; then
+  kubectl create configmap script-exporter-config \
+    --from-file=config/federation/script-exporter/script_exporter.yml \
+    --dry-run -o json | kubectl apply -f -
+
+  ( set +x; echo "${MONITORING_SIGNER_KEY}" > /tmp/monitoring-signer-key.json )
+  kubectl create secret generic script-exporter-secret \
+    "--from-file=/tmp/monitoring-signer-key.json" \
+    --dry-run -o json | kubectl apply -f -
+fi
+
 
 ## Alertmanager
 
