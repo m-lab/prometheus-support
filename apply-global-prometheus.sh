@@ -175,7 +175,8 @@ if [[ "${PROJECT}" != "mlab-oti" ]] ; then
     --from-file=config/federation/script-exporter/script_exporter.yml \
     --dry-run -o json | kubectl apply -f -
 
-  ( set +x; echo "${MONITORING_SIGNER_KEY}" > /tmp/monitoring-signer-key.json )
+  ( set +x; echo "${MONITORING_SIGNER_KEY}" | base64 -d \
+      > /tmp/monitoring-signer-key.json )
   kubectl create secret generic script-exporter-secret \
     "--from-file=/tmp/monitoring-signer-key.json" \
     --dry-run -o json | kubectl apply -f -
