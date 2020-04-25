@@ -33,10 +33,7 @@ spec:
         - -config.file=/etc/script_exporter/script_exporter.yml
         env:
         - name: MONITORING_SIGNER_KEY
-          valueFrom:
-            secretKeyRef:
-              name: script-exporter-secrets
-              key: monitoring-signer-key.json
+          value: /keys/monitoring-signer-key.json
         - name: LOCATE_URL
           value: https://locate-dot-{{GCLOUD_PROJECT}}.appspot.com/v2/monitoring/
         ports:
@@ -44,6 +41,8 @@ spec:
         volumeMounts:
         - mountPath: /etc/script_exporter
           name: script-exporter-config
+        - mountPath: /keys
+          name: script-exporter-keys
 
       # The script-exporter will only be scheduled onto nodes that we labeled
       # as having a static outbound IP.
@@ -61,3 +60,6 @@ spec:
       - name: script-exporter-config
         configMap:
           name: script-exporter-config
+      - name: script-exporter-keys
+        secret:
+          secretName: script-exporter-secrets
