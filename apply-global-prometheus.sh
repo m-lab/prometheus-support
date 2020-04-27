@@ -180,6 +180,11 @@ if [[ "${PROJECT}" != "mlab-oti" ]] ; then
   kubectl create secret generic script-exporter-secret \
     "--from-file=/tmp/monitoring-signer-key.json" \
     --dry-run -o json | kubectl apply -f -
+
+else
+  # NOTE: disable for mlab-oti until we're deploying there also.
+  mv k8s/prometheus-federation/deployments/script-exporter.yml \
+     k8s/prometheus-federation/deployments/script-exporter.yml.disabled
 fi
 
 
