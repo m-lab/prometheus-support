@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 329,
-  "iteration": 1587767857018,
+  "id": 330,
+  "iteration": 1588009007897,
   "links": [],
   "panels": [
     {
@@ -93,7 +93,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "Written ({{device}}) - {{node}}",
+          "legendFormat": "{{device}} - {{node}}",
           "refId": "D"
         }
       ],
@@ -101,7 +101,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Disk I/O $node",
+      "title": "Disk Bytes Written (5m) $node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -176,7 +176,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 134,
       "scopedVars": {
         "node": {
@@ -283,7 +283,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 134,
       "scopedVars": {
         "node": {
@@ -495,7 +495,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 136,
       "scopedVars": {
         "node": {
@@ -602,7 +602,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 136,
       "scopedVars": {
         "node": {
@@ -727,11 +727,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, node_memory_Active_bytes{node=~\"($node).$site.*\"})",
+          "expr": "topk(10, node_memory_MemTotal_bytes{node=~\"($node).$site.*\"} - node_memory_MemAvailable_bytes{node=~\"($node).$site.*\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{node}}",
-          "refId": "C"
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -813,7 +813,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 69,
       "scopedVars": {
         "node": {
@@ -919,7 +919,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 69,
       "scopedVars": {
         "node": {
@@ -1054,7 +1054,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Connections $node -> $pod",
+      "title": "Connections (2m) $node -> $pod",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1132,7 +1132,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 122,
       "scopedVars": {
         "node": {
@@ -1239,7 +1239,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 122,
       "scopedVars": {
         "node": {
@@ -1366,7 +1366,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} {{machine}}",
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} - {{machine}}",
           "refId": "C"
         }
       ],
@@ -1374,10 +1374,10 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pod CPU Usage $node -> $pod",
+      "title": "Pod CPU Usage (5m) $node -> $pod",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1449,7 +1449,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 138,
       "scopedVars": {
         "node": {
@@ -1556,7 +1556,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 138,
       "scopedVars": {
         "node": {
@@ -1688,7 +1688,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} {{machine}}",
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} - {{machine}}",
           "refId": "C"
         }
       ],
@@ -1774,7 +1774,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 17,
       "scopedVars": {
         "node": {
@@ -1884,7 +1884,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 17,
       "scopedVars": {
         "node": {
@@ -2016,7 +2016,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{interface}} {{machine}}",
+          "legendFormat": "{{interface}} - {{container_label_io_kubernetes_pod_name}} {{machine}}",
           "refId": "E"
         },
         {
@@ -2025,7 +2025,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{interface}} {{machine}}",
+          "legendFormat": "{{interface}} - {{container_label_io_kubernetes_pod_name}} {{machine}}",
           "refId": "F"
         }
       ],
@@ -2033,7 +2033,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pod Network $node -> $pod",
+      "title": "Pod Network (5m) $node -> $pod",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2110,7 +2110,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 156,
       "scopedVars": {
         "node": {
@@ -2229,7 +2229,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 156,
       "scopedVars": {
         "node": {
@@ -2372,7 +2372,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container}} {{machine}}",
+          "legendFormat": "{{container}} - {{machine}}",
           "refId": "B"
         }
       ],
@@ -2460,7 +2460,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 51,
       "scopedVars": {
         "node": {
@@ -2572,7 +2572,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 51,
       "scopedVars": {
         "node": {
@@ -2705,7 +2705,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{container}} {{machine}}",
+          "legendFormat": "{{container}} - {{machine}}",
           "refId": "B"
         }
       ],
@@ -2791,7 +2791,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 85,
       "scopedVars": {
         "node": {
@@ -2902,7 +2902,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1587767857018,
+      "repeatIteration": 1588009007897,
       "repeatPanelId": 85,
       "scopedVars": {
         "node": {
@@ -2982,6 +2982,7 @@
     "list": [
       {
         "current": {
+          "selected": true,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -3391,7 +3392,7 @@
             "value": "lga06"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "lga08",
             "value": "lga08"
           },
@@ -3740,6 +3741,7 @@
       {
         "allValue": ".*",
         "current": {
+          "selected": true,
           "text": "ndt",
           "value": "ndt"
         },
@@ -3823,5 +3825,5 @@
   "timezone": "utc",
   "title": "K8s: Topk Machine & Pod Resources",
   "uid": "VR-UNzrAl",
-  "version": 25
+  "version": 27
 }
