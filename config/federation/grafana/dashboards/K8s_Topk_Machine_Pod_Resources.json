@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 330,
-  "iteration": 1588009007897,
+  "iteration": 1588014620754,
   "links": [],
   "panels": [
     {
@@ -176,7 +176,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 134,
       "scopedVars": {
         "node": {
@@ -200,7 +200,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "Written ({{device}}) - {{node}}",
+          "legendFormat": "{{device}} - {{node}}",
           "refId": "D"
         }
       ],
@@ -208,7 +208,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Disk I/O $node",
+      "title": "Disk Bytes Written (5m) $node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -283,7 +283,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 134,
       "scopedVars": {
         "node": {
@@ -307,7 +307,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "Written ({{device}}) - {{node}}",
+          "legendFormat": "{{device}} - {{node}}",
           "refId": "D"
         }
       ],
@@ -315,7 +315,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Disk I/O $node",
+      "title": "Disk Bytes Written (5m) $node",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -495,7 +495,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 136,
       "scopedVars": {
         "node": {
@@ -602,7 +602,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 136,
       "scopedVars": {
         "node": {
@@ -813,7 +813,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 69,
       "scopedVars": {
         "node": {
@@ -833,11 +833,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, node_memory_Active_bytes{node=~\"($node).$site.*\"})",
+          "expr": "topk(10, node_memory_MemTotal_bytes{node=~\"($node).$site.*\"} - node_memory_MemAvailable_bytes{node=~\"($node).$site.*\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{node}}",
-          "refId": "C"
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -919,7 +919,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 69,
       "scopedVars": {
         "node": {
@@ -939,11 +939,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, node_memory_Active_bytes{node=~\"($node).$site.*\"})",
+          "expr": "topk(10, node_memory_MemTotal_bytes{node=~\"($node).$site.*\"} - node_memory_MemAvailable_bytes{node=~\"($node).$site.*\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{node}}",
-          "refId": "C"
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -1132,7 +1132,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 122,
       "scopedVars": {
         "node": {
@@ -1161,7 +1161,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Connections $node -> $pod",
+      "title": "Connections (2m) $node -> $pod",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1239,7 +1239,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 122,
       "scopedVars": {
         "node": {
@@ -1268,7 +1268,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Connections $node -> $pod",
+      "title": "Connections (2m) $node -> $pod",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1449,7 +1449,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 138,
       "scopedVars": {
         "node": {
@@ -1473,7 +1473,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} {{machine}}",
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} - {{machine}}",
           "refId": "C"
         }
       ],
@@ -1481,10 +1481,10 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pod CPU Usage $node -> $pod",
+      "title": "Pod CPU Usage (5m) $node -> $pod",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1556,7 +1556,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 138,
       "scopedVars": {
         "node": {
@@ -1580,7 +1580,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} {{machine}}",
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} - {{machine}}",
           "refId": "C"
         }
       ],
@@ -1588,10 +1588,10 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pod CPU Usage $node -> $pod",
+      "title": "Pod CPU Usage (5m) $node -> $pod",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1774,7 +1774,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 17,
       "scopedVars": {
         "node": {
@@ -1798,7 +1798,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} {{machine}}",
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} - {{machine}}",
           "refId": "C"
         }
       ],
@@ -1884,7 +1884,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 17,
       "scopedVars": {
         "node": {
@@ -1908,7 +1908,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container_label_io_kubernetes_container_name}} {{machine}}",
+          "legendFormat": "{{container_label_io_kubernetes_container_name}} - {{machine}}",
           "refId": "C"
         }
       ],
@@ -2011,7 +2011,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2020,7 +2020,7 @@
           "refId": "E"
         },
         {
-          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2110,7 +2110,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 156,
       "scopedVars": {
         "node": {
@@ -2135,7 +2135,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{interface}} {{machine}}",
+          "legendFormat": "{{interface}} - {{container_label_io_kubernetes_pod_name}} {{machine}}",
           "refId": "E"
         },
         {
@@ -2144,7 +2144,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{interface}} {{machine}}",
+          "legendFormat": "{{interface}} - {{container_label_io_kubernetes_pod_name}} {{machine}}",
           "refId": "F"
         }
       ],
@@ -2152,7 +2152,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pod Network $node -> $pod",
+      "title": "Pod Network (5m) $node -> $pod",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2229,7 +2229,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 156,
       "scopedVars": {
         "node": {
@@ -2254,7 +2254,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{interface}} {{machine}}",
+          "legendFormat": "{{interface}} - {{container_label_io_kubernetes_pod_name}} {{machine}}",
           "refId": "E"
         },
         {
@@ -2263,7 +2263,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{interface}} {{machine}}",
+          "legendFormat": "{{interface}} - {{container_label_io_kubernetes_pod_name}} {{machine}}",
           "refId": "F"
         }
       ],
@@ -2271,7 +2271,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pod Network $node -> $pod",
+      "title": "Pod Network (5m) $node -> $pod",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2460,7 +2460,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 51,
       "scopedVars": {
         "node": {
@@ -2484,7 +2484,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container}} {{machine}}",
+          "legendFormat": "{{container}} - {{machine}}",
           "refId": "B"
         }
       ],
@@ -2572,7 +2572,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 51,
       "scopedVars": {
         "node": {
@@ -2596,7 +2596,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{container}} {{machine}}",
+          "legendFormat": "{{container}} - {{machine}}",
           "refId": "B"
         }
       ],
@@ -2791,7 +2791,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 85,
       "scopedVars": {
         "node": {
@@ -2816,7 +2816,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{container}} {{machine}}",
+          "legendFormat": "{{container}} - {{machine}}",
           "refId": "B"
         }
       ],
@@ -2902,7 +2902,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588009007897,
+      "repeatIteration": 1588014620754,
       "repeatPanelId": 85,
       "scopedVars": {
         "node": {
@@ -2927,7 +2927,7 @@
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{container}} {{machine}}",
+          "legendFormat": "{{container}} - {{machine}}",
           "refId": "B"
         }
       ],
@@ -3042,7 +3042,7 @@
         "name": "site",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "akl01",
             "value": "akl01"
           },
@@ -3741,19 +3741,18 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": true,
           "text": "ndt",
           "value": "ndt"
         },
         "datasource": "$datasource",
-        "definition": "label_values(kube_pod_labels{exported_namespace=\"default\"}, label_workload)",
+        "definition": "label_values(label_workload)",
         "hide": 0,
         "includeAll": false,
         "label": "Pod",
         "multi": false,
         "name": "pod",
         "options": [],
-        "query": "label_values(kube_pod_labels{exported_namespace=\"default\"}, label_workload)",
+        "query": "label_values(label_workload)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -3825,5 +3824,5 @@
   "timezone": "utc",
   "title": "K8s: Topk Machine & Pod Resources",
   "uid": "VR-UNzrAl",
-  "version": 28
+  "version": 29
 }
