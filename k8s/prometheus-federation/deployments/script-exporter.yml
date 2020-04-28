@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: script-exporter
+spec:
+  # Run two so that we can make sure we have failover.
+  replicas: 2
+  selector:
+    matchLabels:
+      run: script-exporter
+  template:
+    metadata:
+      labels:
+        run: script-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - script-exporter
+            topologyKey: kubernetes.io/hostname
+
+      containers:
+      - name: script-exporter
+        image: measurementlab/script-exporter-support:v0.0.5
+        args:
+        - -config.file=/etc/script_exporter/script_exporter.yml
+        env:
+        - name: LOGX_DEBUG
+          value: 'true'
+        - name: MONITORING_SIGNER_KEY
+          value: /keys/monitoring-signer-key.json
+        - name: LOCATE_URL
+          value: https://locate-dot-{{GCLOUD_PROJECT}}.appspot.com/v2/monitoring/
+        ports:
+        - containerPort: 9172
+        volumeMounts:
+        - mountPath: /etc/script_exporter
+          name: script-exporter-config
+        - mountPath: /keys
+          name: script-exporter-keys
+
+      # The script-exporter will only be scheduled onto nodes that we labeled
+      # as having a static outbound IP.
+      nodeSelector:
+        outbound-ip: static
+
+      # We can also taint nodes with static outbound IPs so that services that
+      # do not require a static IP aren't scheduled to that node. This
+      # deployment, however, will tolerate that taint.
+      tolerations:
+      # TODO: something about this prevents the pods from updating.
+      - key: "outbound-ip"
+        value: "static"
+        effect: "NoSchedule"
+      volumes:
+      - name: script-exporter-config
+        configMap:
+          name: script-exporter-config
+      - name: script-exporter-keys
+        secret:
+          secretName: script-exporter-secret
