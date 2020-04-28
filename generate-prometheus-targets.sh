@@ -123,14 +123,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --select "ndt.iupui" > \
           ${output}/script-targets/ndt_e2e.json
 
-  # script-exporter for e2e monitoring with access tokens.
-  ./mlabconfig.py --format=prom-targets-nodes \
-      --sites="${sites}" \
-      --template_target={{hostname}} \
-      --label service=ndt5_client \
-      --project "${project}" > \
-          ${output}/script-targets/ndt5_client.json
-
   # neubot on port 80 over IPv4
   ./mlabconfig.py --format=prom-targets \
       --sites "${sites}" \
