@@ -55,10 +55,10 @@ spec:
       # do not require a static IP aren't scheduled to that node. This
       # deployment, however, will tolerate that taint.
       tolerations:
+      # TODO: something about this prevents the pods from updating.
       - key: "outbound-ip"
         value: "static"
-        effect: "NoExecute"
-        tolerationSeconds: 60
+        effect: "NoSchedule"
       volumes:
       - name: script-exporter-config
         configMap:
