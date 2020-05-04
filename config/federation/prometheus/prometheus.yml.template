@@ -902,18 +902,7 @@ scrape_configs:
         target_label: __address__
         replacement: switch-monitoring-service.default.svc.cluster.local:8080
 
-      - source_labels: []
-        regex: .*
-        target_label: __metrics_path__
-        replacement: /v1/check
-
-    # This metric relabel config adds the "site" label on
-    # switch-monitoring-targets.
-    metric_relabel_configs:
-      - source_labels: [target]
-        regex: s1\.([a-z]{3}[0-9tc]{2}).+
-        target_label: site
-        replacement: $1
+      - metrics_path: "/v1/check"
 
   # Scrape config for legacy targets.
   #
