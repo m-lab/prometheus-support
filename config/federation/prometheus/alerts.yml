@@ -1458,6 +1458,7 @@ groups:
   - alert: SwitchMonitoring_ConfigMismatch
     expr: |
       switch_monitoring_config_match{status="config_mismatch"} == 1
+      unless on(site) gmx_site_maintenance == 1
     for: 2m
     labels:
       repo: ops-tracker
@@ -1474,6 +1475,7 @@ groups:
   - alert: SwitchMonitoring_ConfigNotFoundGCS
     expr: |
       switch_monitoring_config_match{status="config_not_found_gcs"} == 1
+      unless on(site) gmx_site_maintenance == 1
     for: 2m
     labels:
       repo: ops-tracker
@@ -1489,6 +1491,7 @@ groups:
   - alert: SwitchMonitoring_ConfigNotFoundSwitch
     expr: |
       switch_monitoring_config_match{status="config_not_found_switch"} == 1
+      unless on(site) gmx_site_maintenance == 1
     for: 2m
     labels:
       repo: ops-tracker
