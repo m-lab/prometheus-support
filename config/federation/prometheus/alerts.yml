@@ -1451,3 +1451,52 @@ groups:
         The E2E test is failing because the Reboot API could't connect to this
         BMC. Please check that the BMC is enabled on this machine and the
         credentials in Datastore are correct.
+
+# switch-monitoring alerts.
+# The switch-monitoring tool checks that the switch configurations match
+# what is currently stored in a GCS bucket and warns us if that's not the case.
+- alert: SwitchMonitoring_ConfigMismatch
+  expr: |
+    switch_monitoring_config_match{status="config_mismatch"} == 1
+  for: 2m
+  labels:
+    repo: ops-tracker
+    severity: ticket
+  annotations:
+    summary: The configuration for {{ $labels.target }} does not match.
+    description: >
+      The configuration on this switch does not match the version that's
+      currently stored in the switch-config GCS bucket. Please inspect
+      switch-monitoring's logs for a full diff and re-apply the standard
+      configuration by using genconfig.py and ansible.
+
+
+- alert: SwitchMonitoring_ConfigNotFoundGCS
+  expr: |
+    switch_monitoring_config_match{status="config_not_found_gcs"} == 1
+  for: 2m
+  labels:
+    repo: ops-tracker
+    severity: ticket
+  annotations:
+    summary: The config file for {{ $labels.target }} does not exist on GCS.
+    description: >
+      There is no configuration file for this switch on GCS. It should be
+      generated when deploying the switch-config repository, provided that
+      this site existed on siteinfo at deployment time. Please check that the
+      site has been added to siteinfo and trigger a switch-config deployment.
+
+- alert: SwitchMonitoring_ConnectionFailed
+  expr: |
+    switch_monitoring_config_match{status="config_not_found_switch"} == 1
+  for: 2m
+  labels:
+    repo: ops-tracker
+    severity: ticket
+  annotations:
+    summary: Could not retrieve the configuration for {{ $labels.target }}.
+    description: >
+      Connection to this switch failed, or the configuration could not be
+      retrieved due to permission issues. Please check that the switch is
+      currently reachable and the switch-monitoring user exists and has the
+      right privileges.
