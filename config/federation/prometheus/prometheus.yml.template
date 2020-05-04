@@ -872,6 +872,49 @@ scrape_configs:
         target_label: site
         replacement: $1
 
+  # Scrape switch-monitoring targets every minute.
+  - job_name: 'switch-monitoring-targets'
+    scrape_timeout: 40s
+    file_sd_configs:
+      - files:
+          - /snmp-targets/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+    scheme: http
+
+    # This relabel config is necessary. The relabel config redefines the address
+    # to scrape and sets the correct parameters to pass to the scrape target.
+    relabel_configs:
+
+      # The default __address__ value is a target host from the config file.
+      # Here, we set (i.e. "replace") a request parameter "target" equal to the
+      # host value.
+      - source_labels: [__address__]
+        regex: (.*)
+        target_label: __param_target
+        replacement: ${1}
+
+      # Since __address__ is the target that prometheus will contact,
+      # unconditionally reset the __address__ label to the script_exporter
+      # address.
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: switch-monitoring-service.default.svc.cluster.local:8080
+
+      - source_labels: []
+        regex: .*
+        target_label: __metrics_path__
+        replacement: /v1/check
+
+    # This metric relabel config adds the "site" label on
+    # switch-monitoring-targets.
+    metric_relabel_configs:
+      - source_labels: [target]
+        regex: s1\.([a-z]{3}[0-9tc]{2}).+
+        target_label: site
+        replacement: $1
+
   # Scrape config for legacy targets.
   #
   # Using an out-of-band process, generated configs can be copied into the
