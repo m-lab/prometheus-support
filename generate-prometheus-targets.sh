@@ -7,7 +7,7 @@ BASEDIR=${PWD}
 
 # Create all output directories.
 for project in mlab-sandbox mlab-staging mlab-oti ; do
-  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets,bmc-targets}
+  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets,bmc-targets,switch-monitoring-targets}
 done
 
 # GCP doesn't support IPv6, so we have a Linode VM running three instances of
@@ -221,5 +221,13 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --physical \
       --project "${project}" \
       --decoration "d" > ${output}/bmc-targets/bmc_e2e.json
+
+  # switch configuration monitoring via switch-monitoring.
+  ./mlabconfig.py --format=prom-targets-sites \
+      --sites "${sites}" \
+      --physical \
+      --template_target=s1.{{sitename}}.measurement-lab.org \
+      --label service=switch-monitoring > \
+          ${output}/switch-monitoring-targets/switch-monitoring.json
 
 done

@@ -110,6 +110,9 @@ spec:
         - mountPath: /bmc-targets
           name: prometheus-storage
           subPath: bmc-targets
+        - mountPath: /switch-monitoring-targets
+          name: prometheus-storage
+          subPath: switch-monitoring-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
@@ -205,6 +208,8 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/switches_ping.json",
                 "--http-target=/targets/bmc-targets/bmc_e2e.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/bmc-targets/bmc_e2e.json",
+                "--http-target=/targets/switch-monitoring-targets/switch-monitoring.json",
+                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/switch-monitoring-targets/switch-monitoring.json",
                 "--project={{GCLOUD_PROJECT}}"]
         ports:
           - containerPort: 9373
