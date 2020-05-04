@@ -1455,6 +1455,18 @@ groups:
 # switch-monitoring alerts.
 # The switch-monitoring tool checks that the switch configurations match
 # what is currently stored in a GCS bucket and warns us if that's not the case.
+  - alert: SwitchMonitoring_DownOrMissing
+    expr: up{job="switch-monitoring"} == 0 or absent(up{job="switch-monitoring"})
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: The switch-monitoring service is down or missing.
+      description: Check the status of the switch-monitoring deployment on GKE.
+        Make sure the switch-monitoring service is reachable and /v1/check is
+        returning 200.
+
   - alert: SwitchMonitoring_ConfigMismatch
     expr: |
       switch_monitoring_config_match{status="config_mismatch"} == 1
@@ -1469,8 +1481,7 @@ groups:
         The configuration on this switch does not match the version that's
         currently stored in the switch-config GCS bucket. Please inspect
         switch-monitoring's logs for a full diff and re-apply the standard
-        configuration by using genconfig.py and ansible.
-
+        configuration by using genconfig.py and ansible
 
   - alert: SwitchMonitoring_ConfigNotFoundGCS
     expr: |
