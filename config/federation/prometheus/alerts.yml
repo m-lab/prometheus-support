@@ -1486,7 +1486,7 @@ groups:
       this site existed on siteinfo at deployment time. Please check that the
       site has been added to siteinfo and trigger a switch-config deployment.
 
-- alert: SwitchMonitoring_ConnectionFailed
+- alert: SwitchMonitoring_ConfigNotFoundSwitch
   expr: |
     switch_monitoring_config_match{status="config_not_found_switch"} == 1
   for: 2m
