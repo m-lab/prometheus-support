@@ -875,6 +875,7 @@ scrape_configs:
   # Scrape switch-monitoring targets every minute.
   - job_name: 'switch-monitoring-targets'
     scrape_timeout: 40s
+    metrics_path: "/v1/check"
     file_sd_configs:
       - files:
           - /switch-monitoring-targets/*.json
@@ -901,8 +902,6 @@ scrape_configs:
         regex: .*
         target_label: __address__
         replacement: switch-monitoring-service.default.svc.cluster.local:8080
-
-      - metrics_path: "/v1/check"
 
   # Scrape config for legacy targets.
   #
