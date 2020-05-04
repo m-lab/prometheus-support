@@ -1421,6 +1421,19 @@ groups:
 # BMC alerts
 # The Reboot API performs an E2E connection test on a BMC every time its
 # /v1/e2e endpoint is scraped, and reports failure via this metric.
+  - alert: BMC_E2ETestDownOrMissing
+    expr: up{job="bmc-targets"} == 0 or absent(up{job="bmc-targets"})
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: reboot-service is down on missing.
+      description: >
+        Metrics from the e2e test are missing. Please check the reboot-service
+        deployment on GKE, and that the /v1/e2e endpoint is returning a status
+        code = 200.
+
   - alert: BMC_CredentialsNotFound
     expr: |
         reboot_e2e_result{status="credentials_not_found"}
