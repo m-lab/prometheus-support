@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/scrape: 'false'
+  name: switch-monitoring-service
+  namespace: default
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    # Pods with labels matching this key/value pair will be accessible
+    # through the service IP and port.
+    run: switch-monitoring
+  sessionAffinity: None
+  type: ClusterIP
