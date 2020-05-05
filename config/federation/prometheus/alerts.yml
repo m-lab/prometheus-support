@@ -1469,7 +1469,7 @@ groups:
 # The switch-monitoring tool checks that the switch configurations match
 # what is currently stored in a GCS bucket and warns us if that's not the case.
   - alert: SwitchMonitoring_DownOrMissing
-    expr: up{job="switch-monitoring"} == 0 or absent(up{job="switch-monitoring"})
+    expr: up{job="switch-monitoring-targets"} == 0 or absent(up{job="switch-monitoring-targets"})
     for: 10m
     labels:
       repo: ops-tracker
