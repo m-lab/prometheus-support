@@ -26,18 +26,7 @@ chmod +x ./mlabconfig.py
 
 
 for project in mlab-sandbox mlab-staging mlab-oti ; do
-  # Production uses v1 sites.json, everything else v2. And if an mlabconfig.py
-  # command previously used the flag --use_flatnames, then only keep that in
-  # place in production, since in v2 siteinfo output all names are flat by
-  # default.
-
-  if [[ "${project}" != "mlab-oti" ]]; then
-    sites="https://siteinfo.${project}.measurementlab.net/v2/sites/sites.json"
-    use_flatnames=""
-  else
-    sites="https://siteinfo.${project}.measurementlab.net/v1/sites/sites.json"
-    use_flatnames="--use_flatnames"
-  fi
+  sites="https://siteinfo.${project}.measurementlab.net/v2/sites/sites.json"
 
   output=${BASEDIR}/gen/${project}/prometheus
 
@@ -95,7 +84,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:3010 \
       --label service=ndt_ssl \
       --label module=tcp_v4_tls_online \
-      "${use_flatnames}" \
       --project "${project}" \
       --select "ndt.iupui" > \
           ${output}/blackbox-targets/ndt_ssl.json
@@ -107,7 +95,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ndt_ssl_ipv6 \
       --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
-      "${use_flatnames}" \
       --project "${project}" \
       --select "ndt.iupui" \
       --decoration "v6" > \
@@ -118,7 +105,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --sites "${sites}" \
       --template_target={{hostname}} \
       --label service=ndt_e2e \
-      "${use_flatnames}" \
       --project "${project}" \
       --select "ndt.iupui" > \
           ${output}/script-targets/ndt_e2e.json
@@ -159,7 +145,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:443 \
       --label service=neubot_tls \
       --label module=tcp_v4_tls_online \
-      "${use_flatnames}" \
       --project "${project}" \
       --select "neubot.mlab" > \
           ${output}/blackbox-targets/neubot_tls.json
@@ -171,7 +156,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=neubot_tls_ipv6 \
       --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
-      "${use_flatnames}" \
       --decoration "v6" \
       --project "${project}" \
       --select "neubot.mlab" > \
