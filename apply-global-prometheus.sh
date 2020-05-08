@@ -168,24 +168,15 @@ kubectl create configmap grafana-env \
     --dry-run -o json | kubectl apply -f -
 
 # Script exporter.
-# TODO: enable deployment to production once locate is in production.
-# Until then, temporarily disable deployment in production.
-if [[ "${PROJECT}" != "mlab-oti" ]] ; then
-  kubectl create configmap script-exporter-config \
-    --from-file=config/federation/script-exporter/script_exporter.yml \
-    --dry-run -o json | kubectl apply -f -
+kubectl create configmap script-exporter-config \
+  --from-file=config/federation/script-exporter/script_exporter.yml \
+  --dry-run -o json | kubectl apply -f -
 
-  ( set +x; echo "${MONITORING_SIGNER_KEY}" | base64 -d \
-      > /tmp/monitoring-signer-key.json )
-  kubectl create secret generic script-exporter-secret \
-    "--from-file=/tmp/monitoring-signer-key.json" \
-    --dry-run -o json | kubectl apply -f -
-
-else
-  # NOTE: disable for mlab-oti until we're deploying there also.
-  mv k8s/prometheus-federation/deployments/script-exporter.yml \
-     k8s/prometheus-federation/deployments/script-exporter.yml.disabled
-fi
+( set +x; echo "${MONITORING_SIGNER_KEY}" | base64 -d \
+    > /tmp/monitoring-signer-key.json )
+kubectl create secret generic script-exporter-secret \
+  "--from-file=/tmp/monitoring-signer-key.json" \
+  --dry-run -o json | kubectl apply -f -
 
 
 ## Alertmanager
