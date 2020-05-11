@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 330,
-  "iteration": 1588014620754,
+  "iteration": 1589164413137,
   "links": [],
   "panels": [
     {
@@ -176,7 +175,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 134,
       "scopedVars": {
         "node": {
@@ -283,7 +282,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 134,
       "scopedVars": {
         "node": {
@@ -495,7 +494,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 136,
       "scopedVars": {
         "node": {
@@ -602,7 +601,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 136,
       "scopedVars": {
         "node": {
@@ -813,7 +812,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 69,
       "scopedVars": {
         "node": {
@@ -919,7 +918,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 69,
       "scopedVars": {
         "node": {
@@ -1132,7 +1131,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 122,
       "scopedVars": {
         "node": {
@@ -1239,7 +1238,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 122,
       "scopedVars": {
         "node": {
@@ -1449,7 +1448,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 138,
       "scopedVars": {
         "node": {
@@ -1556,7 +1555,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 138,
       "scopedVars": {
         "node": {
@@ -1774,7 +1773,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 17,
       "scopedVars": {
         "node": {
@@ -1884,7 +1883,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 17,
       "scopedVars": {
         "node": {
@@ -2011,7 +2010,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2020,7 +2019,7 @@
           "refId": "E"
         },
         {
-          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2110,7 +2109,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 156,
       "scopedVars": {
         "node": {
@@ -2130,7 +2129,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2139,7 +2138,7 @@
           "refId": "E"
         },
         {
-          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2229,7 +2228,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 156,
       "scopedVars": {
         "node": {
@@ -2249,7 +2248,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "-topk(10, 8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2258,7 +2257,7 @@
           "refId": "E"
         },
         {
-          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
+          "expr": "topk(10, 8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"($node).$site.*\"\n  }\n[5m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2368,7 +2367,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, process_resident_memory_bytes{\n    container=~\"$container\",\n    machine=~\"($node).$site.*\",\n    pod=~\".*$pod.*\",\n})",
+          "expr": "topk(10, process_resident_memory_bytes{\n    container=~\".*$container\",\n    machine=~\"($node).$site.*\",\n    pod=~\".*$pod.*\",\n})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -2460,7 +2459,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 51,
       "scopedVars": {
         "node": {
@@ -2480,7 +2479,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, process_resident_memory_bytes{\n    container=~\"$container\",\n    machine=~\"($node).$site.*\",\n    pod=~\".*$pod.*\",\n})",
+          "expr": "topk(10, process_resident_memory_bytes{\n    container=~\".*$container\",\n    machine=~\"($node).$site.*\",\n    pod=~\".*$pod.*\",\n})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -2572,7 +2571,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 51,
       "scopedVars": {
         "node": {
@@ -2592,7 +2591,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, process_resident_memory_bytes{\n    container=~\"$container\",\n    machine=~\"($node).$site.*\",\n    pod=~\".*$pod.*\",\n})",
+          "expr": "topk(10, process_resident_memory_bytes{\n    container=~\".*$container\",\n    machine=~\"($node).$site.*\",\n    pod=~\".*$pod.*\",\n})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -2700,7 +2699,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk (10, go_goroutines{machine=~\"($node).$site.*\", workload=~\"$pod\", container=~\"$container\"})",
+          "expr": "topk (10, go_goroutines{machine=~\"($node).$site.*\", workload=~\"$pod\", container=~\".*$container\"})",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2791,7 +2790,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 85,
       "scopedVars": {
         "node": {
@@ -2811,7 +2810,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk (10, go_goroutines{machine=~\"($node).$site.*\", workload=~\"$pod\", container=~\"$container\"})",
+          "expr": "topk (10, go_goroutines{machine=~\"($node).$site.*\", workload=~\"$pod\", container=~\".*$container\"})",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2902,7 +2901,7 @@
       "renderer": "flot",
       "repeat": null,
       "repeatDirection": "h",
-      "repeatIteration": 1588014620754,
+      "repeatIteration": 1589164413137,
       "repeatPanelId": 85,
       "scopedVars": {
         "node": {
@@ -2922,7 +2921,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk (10, go_goroutines{machine=~\"($node).$site.*\", workload=~\"$pod\", container=~\"$container\"})",
+          "expr": "topk (10, go_goroutines{machine=~\"($node).$site.*\", workload=~\"$pod\", container=~\".*$container\"})",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2982,7 +2981,6 @@
     "list": [
       {
         "current": {
-          "selected": true,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -3001,6 +2999,7 @@
       {
         "allValue": null,
         "current": {
+          "tags": [],
           "text": "mlab1 + mlab2 + mlab3",
           "value": [
             "mlab1",
@@ -3741,6 +3740,7 @@
       {
         "allValue": ".*",
         "current": {
+          "tags": [],
           "text": "ndt",
           "value": "ndt"
         },
@@ -3766,6 +3766,7 @@
       {
         "allValue": null,
         "current": {
+          "tags": [],
           "text": "ndt-server",
           "value": [
             "ndt-server"
@@ -3824,5 +3825,5 @@
   "timezone": "utc",
   "title": "K8s: Topk Machine & Pod Resources",
   "uid": "VR-UNzrAl",
-  "version": 29
+  "version": 30
 }
