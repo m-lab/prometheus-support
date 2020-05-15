@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 246,
-  "iteration": 1585668142159,
+  "iteration": 1589577080434,
   "links": [],
   "panels": [
     {
@@ -299,7 +299,7 @@
       "valueMaps": [
         {
           "op": "=",
-          "text": "No data!",
+          "text": "No data",
           "value": "null"
         },
         {
@@ -407,7 +407,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"$node.$site.measurement-lab.org\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=~\"$node.$site.*\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -603,7 +603,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "gmx_machine_maintenance{machine=\"$node.$site.measurement-lab.org\"}",
+          "expr": "gmx_machine_maintenance{machine=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -617,7 +617,7 @@
       "valueMaps": [
         {
           "op": "=",
-          "text": "N/A",
+          "text": "No data",
           "value": "null"
         },
         {
@@ -704,7 +704,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -804,7 +804,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "node_load15{node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -894,7 +894,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -985,7 +985,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"} -\n  node_filesystem_avail_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"})\n  / node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"} -\n  node_filesystem_avail_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"})\n  / node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1076,7 +1076,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "avg(node_hwmon_temp_celsius{node=\"$node.$site.measurement-lab.org\", chip=\"platform_coretemp_0\"})",
+          "expr": "avg(node_hwmon_temp_celsius{node=~\"$node.$site.*\", chip=\"platform_coretemp_0\"})",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1149,7 +1149,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_load1{node=~\"mlab[1-4].$site.*\"}",
+          "expr": "node_load1{node=~\"$node.$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Load1",
@@ -2162,7 +2162,7 @@
       "id": 156,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -2228,7 +2228,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2247,7 +2247,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"$node.$site.measurement-lab.org\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=~\"$node.$site.*\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2328,7 +2328,7 @@
           "to": "0"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2347,7 +2347,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud)\"} > 0) OR vector(0)",
+          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-virtual)\"} > 0) OR vector(0)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2430,7 +2430,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2449,7 +2449,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "gmx_machine_maintenance{machine=\"$node.$site.measurement-lab.org\"}",
+          "expr": "gmx_machine_maintenance{machine=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2463,7 +2463,7 @@
       "valueMaps": [
         {
           "op": "=",
-          "text": "N/A",
+          "text": "No data",
           "value": "null"
         },
         {
@@ -2534,7 +2534,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2553,7 +2553,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2637,7 +2637,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2656,7 +2656,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "node_load15{node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2730,7 +2730,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2749,7 +2749,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2824,7 +2824,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2843,7 +2843,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"} -\n  node_filesystem_avail_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"})\n  / node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"} -\n  node_filesystem_avail_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"})\n  / node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2918,7 +2918,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2937,7 +2937,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "avg(node_hwmon_temp_celsius{node=\"$node.$site.measurement-lab.org\", chip=\"platform_coretemp_0\"})",
+          "expr": "avg(node_hwmon_temp_celsius{node=~\"$node.$site.*\", chip=\"platform_coretemp_0\"})",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -2992,7 +2992,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3013,7 +3013,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_load1{node=~\"mlab[1-4].$site.*\"}",
+          "expr": "node_load1{node=~\"$node.$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Load1",
@@ -3096,7 +3096,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3221,7 +3221,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3327,7 +3327,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3449,7 +3449,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3550,7 +3550,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3651,7 +3651,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3761,7 +3761,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 81,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3869,7 +3869,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 117,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3975,7 +3975,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 155,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4053,7 +4053,7 @@
       "id": 175,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -4119,7 +4119,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4138,7 +4138,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(time() - node_boot_time_seconds{node=\"$node.$site.measurement-lab.org\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{node=~\"$node.$site.*\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4219,7 +4219,7 @@
           "to": "0"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4238,7 +4238,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-cloud)\"} > 0) OR vector(0)",
+          "expr": "count(kube_pod_info{node=\"$node.$site.measurement-lab.org\"} == 1 and on(exported_pod) kube_pod_status_ready{condition=\"true\"}) != \n  count(kube_daemonset_status_desired_number_scheduled{daemonset!~\"(kube-flannel-ds-virtual)\"} > 0) OR vector(0)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4321,7 +4321,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4340,7 +4340,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "gmx_machine_maintenance{machine=\"$node.$site.measurement-lab.org\"}",
+          "expr": "gmx_machine_maintenance{machine=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4354,7 +4354,7 @@
       "valueMaps": [
         {
           "op": "=",
-          "text": "N/A",
+          "text": "No data",
           "value": "null"
         },
         {
@@ -4425,7 +4425,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4444,7 +4444,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4528,7 +4528,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4547,7 +4547,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "node_load15{node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "node_load15{node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4621,7 +4621,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4640,7 +4640,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4715,7 +4715,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4734,7 +4734,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"} -\n  node_filesystem_avail_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"})\n  / node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=\"$node.$site.measurement-lab.org\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"} -\n  node_filesystem_avail_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"})\n  / node_filesystem_size_bytes{mountpoint=\"/cache/data\", node=~\"$node.$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4809,7 +4809,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4828,7 +4828,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "avg(node_hwmon_temp_celsius{node=\"$node.$site.measurement-lab.org\", chip=\"platform_coretemp_0\"})",
+          "expr": "avg(node_hwmon_temp_celsius{node=~\"$node.$site.*\", chip=\"platform_coretemp_0\"})",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -4883,7 +4883,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4904,7 +4904,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_load1{node=~\"mlab[1-4].$site.*\"}",
+          "expr": "node_load1{node=~\"$node.$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Load1",
@@ -4987,7 +4987,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5112,7 +5112,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5218,7 +5218,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5340,7 +5340,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5441,7 +5441,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5542,7 +5542,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5652,7 +5652,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 81,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5760,7 +5760,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 117,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5866,7 +5866,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1585668142159,
+      "repeatIteration": 1589577080434,
       "repeatPanelId": 155,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5959,7 +5959,6 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "akl01",
           "value": "akl01"
         },
@@ -5985,6 +5984,7 @@
       {
         "allValue": null,
         "current": {
+          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -6066,5 +6066,5 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 36
+  "version": 37
 }
