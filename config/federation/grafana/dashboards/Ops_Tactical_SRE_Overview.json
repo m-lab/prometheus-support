@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1583768763383,
+  "iteration": 1589817861176,
   "links": [],
   "panels": [
     {
@@ -439,7 +439,7 @@
       ],
       "targets": [
         {
-          "expr": "label_replace(gmx_machine_maintenance == 1, \"site\", \"$1\", \"machine\", \".+?\\\\.(.+?)\\\\..+\") unless on(site) gmx_site_maintenance == 1",
+          "expr": "label_replace(gmx_machine_maintenance == 1, \"site\", \"$1\", \"machine\", \"mlab[1-4]-([a-z]{3}[0-9ct]{2}).+\") unless on(site) gmx_site_maintenance == 1",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -662,5 +662,5 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 29
+  "version": 31
 }
