@@ -114,6 +114,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --sites="${sites}" \
       --template_target={{hostname}} \
       --label service=ndt5_client \
+      --label experiment=ndt.iupui \
       --project "${project}" > \
           ${output}/script-targets/ndt5_client.json
 
