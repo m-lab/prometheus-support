@@ -361,13 +361,6 @@ scrape_configs:
         target_label: experiment
         replacement: ndt.iupui
 
-      # If the node label is a v1 M-Lab node name, force it to a v2 name.
-      - source_labels: [node]
-        regex: (mlab[1-4])\.([a-z]{3}[0-9tc]{2}).measurement-lab.org
-        action: replace
-        replacement: ${1}-${2}.{{PROJECT}}.measurement-lab.org
-        target_label: node
-
       # Rewrite the machine label to make it easier to join these metrics with
       # existing metrics that use machine instead of the node label.
       #
@@ -380,7 +373,7 @@ scrape_configs:
       # possible. Overwriting "machine" here with "node" helps to ensure that
       # _if_ a "node" label exists the "machine" label will always be the same.
       - source_labels: [node]
-        regex: (mlab[1-4][.-][a-z]{3}[0-9tc]{2}.*)
+        regex: (mlab[1-4]-[a-z]{3}[0-9tc]{2}.*)
         action: replace
         target_label: machine
 
