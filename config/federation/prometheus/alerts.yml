@@ -159,9 +159,9 @@ groups:
         snmp_exporter VM in GCE whitelisted on the switch?
       dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz'
 
-# Prometheus is unable to get data from the script_exporter service.
+# Prometheus is unable to get data from the script_exporter deployment.
   - alert: ScriptExporterDownOrMissing
-    expr: up{job="script-exporter"} == 0 or absent(up{job="script-exporter"})
+    expr: up{deployment="script-exporter"} == 0 or absent(up{deployment="script-exporter"})
     for: 10m
     labels:
       repo: ops-tracker
@@ -169,20 +169,20 @@ groups:
     annotations:
       summary: The script_exporter service is down on missing.
       description: >
-        The script_exporter service runs in a Docker container on a GCE VM
-        named 'script-exporter' in each M-Lab GCP project. For deployment
-        details and troubleshooting, you can usually figure out the issue by
-        looking through the Travis-CI build logs[1]. You can also look for
-        hints in the GCP console for the GCE instance, or by SSHing to the
-        instance itself.
-        [1]: https://travis-ci.org/m-lab/script-exporter-support
+        The script_exporter service runs in the prometheus-federation GKE
+        cluster in each M-Lab GCP project. For deployment details and
+        troubleshooting, you can usually figure out the issue by looking
+        through the Travis-CI build logs[1]. You can also look for hints
+        in the Kubernetes logs for the pod, or by kexec'ing into the pod
+        itself.
+        [1]: https://travis-ci.org/m-lab/prometheus-support
 
 # Some script_exporter metrics are missing from Prometheus. These should always
 # be present. The wait period should be longer than that for the
 # ScriptExporterDownOrMissing alert.
   - alert: ScriptExporterMissingMetrics
     expr: |
-      absent(script_success{service="ndt_e2e"})
+      absent(script_success{service="ndt5_client"})
     for: 30m
     labels:
       repo: ops-tracker
@@ -195,8 +195,8 @@ groups:
         status in Prometheus[2].
 
         [1]: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets
-        [2]: http://prometheus.mlab-oti.measurementlab.net:9090/targets
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
+        [2]: https://prometheus.mlab-oti.measurementlab.net/targets
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/coR-U9gMx
 
 # Prometheus is unable to get data from the blackbox_exporter service for IPv4
 # probes. The service is down, or the metric is missing.
