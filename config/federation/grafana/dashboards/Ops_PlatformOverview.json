@@ -141,7 +141,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1 AND ON(machine)\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt_e2e\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.95\n)\n/\ncount(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1\n)",
+          "expr": "count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1 AND ON(machine)\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt5_client\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.95\n)\n/\ncount(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1\n)",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -225,7 +225,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1 AND ON(machine)\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt_e2e\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.95\n)",
+          "expr": "count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1 AND ON(machine)\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt5_client\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.95\n)",
           "format": "time_series",
           "intervalFactor": 2,
           "refId": "A"
@@ -307,7 +307,7 @@
       "tableColumn": "Value",
       "targets": [
         {
-          "expr": "scalar(count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1\n  UNLESS ON(machine) (\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt_e2e\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.95\n  )\n))",
+          "expr": "scalar(count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1\n  UNLESS ON(machine) (\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt5_client\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.95\n  )\n))",
           "format": "time_series",
           "instant": false,
           "interval": "1m",
@@ -834,7 +834,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "scalar(count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n      up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n      lame_duck_node{} == 1\n    UNLESS ON(machine) (\n      probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n      probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n      script_success{service=\"ndt_e2e\"} == 1 AND ON(machine)\n      vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.8\n    )\n))",
+          "expr": "scalar(count(\n  probe_success{service=\"ndt_ssl\"} AND ON(machine)\n      up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n      lame_duck_node{} == 1\n    UNLESS ON(machine) (\n      probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n      probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n      script_success{service=\"ndt5_client\"} == 1 AND ON(machine)\n      vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.8\n    )\n))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
@@ -843,7 +843,7 @@
           "step": 240
         },
         {
-          "expr": "probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1\n  UNLESS ON(machine) (\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt_e2e\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.8\n  )",
+          "expr": "probe_success{service=\"ndt_ssl\"} AND ON(machine)\n    up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n    lame_duck_node{} == 1\n  UNLESS ON(machine) (\n    probe_success{service=\"ndt_ssl\"} == 1 AND ON(machine)\n    probe_success{service=\"ndt_raw\"} == 1 AND ON(machine)\n    script_success{service=\"ndt5_client\"} == 1 AND ON(machine)\n    vdlimit_used{experiment=\"ndt.iupui\"} / vdlimit_total{experiment=\"ndt.iupui\"} < 0.8\n  )",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -866,10 +866,10 @@
           "refId": "F"
         },
         {
-          "expr": "scalar(count(\n  script_success{service=\"ndt_e2e\"} == 0 AND ON(machine)\n      up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n      lame_duck_node{} == 1\n))",
+          "expr": "scalar(count(\n  script_success{service=\"ndt5_client\"} == 0 AND ON(machine)\n      up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n      lame_duck_node{} == 1\n))",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "Down ndt_e2e",
+          "legendFormat": "Down ndt5_client",
           "refId": "G"
         },
         {
@@ -1114,7 +1114,7 @@
           "refId": "B"
         },
         {
-          "expr": "script_success{service=\"ndt_e2e\", machine=~\".*$site.*\"} AND ON(machine)\n  up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n  lame_duck_node{} == 1",
+          "expr": "script_success{service=\"ndt5_client\", machine=~\".*$site.*\"} AND ON(machine)\n  up{service=\"nodeexporter\"} == 1 UNLESS ON(machine)\n  lame_duck_node{} == 1",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 2,
