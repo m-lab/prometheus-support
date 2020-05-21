@@ -91,10 +91,6 @@ spec:
         - mountPath: /snmp-targets
           name: prometheus-storage
           subPath: snmp-targets
-        # /script-targets should contain script_exporter target config files.
-        - mountPath: /script-targets
-          name: prometheus-storage
-          subPath: script-targets
         - mountPath: /script-targets-federation
           name: prometheus-storage
           subPath: script-targets-federation
@@ -170,10 +166,7 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets-ipv6/ssh_ipv6.json",
                 "--http-target=/targets/snmp-targets/snmpexporter.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/snmp-targets/snmpexporter.json",
-                "--http-target=/targets/script-targets/ndt_e2e.json",
-                "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/script-targets/ndt_e2e.json",
                 # NOTE: the output directory is different to use different target service.
-                # TODO: once the federation scriptx replaces the gce VM, remove ndt_e2e and rename directory.
                 "--http-target=/targets/script-targets-federation/ndt5_client.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/script-targets/ndt5_client.json",
                 "--http-target=/targets/blackbox-targets/ndt_raw.json",

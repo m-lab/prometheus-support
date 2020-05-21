@@ -282,7 +282,7 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_raw"} OR
-            script_success{service="ndt_e2e"} OR
+            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
@@ -310,7 +310,7 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_raw_ipv6"} OR
-            script_success{service="ndt_e2e"} OR
+            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
@@ -338,7 +338,7 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_ssl"} OR
-            script_success{service="ndt_e2e"} OR
+            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
@@ -366,7 +366,7 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_ssl_ipv6"} OR
-            script_success{service="ndt_e2e"} OR
+            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
@@ -485,7 +485,7 @@ groups:
 # One or more NDT-specific metrics is missing. These are the NDT metrics that
 # mlab-ns relies on to determine whether NDT is up and running, so we need to
 # make sure that the metrics are always present. NOTE: mlab-ns additionally
-# relies on the script_exporter metric 'script_success{service="ndt_e2e"}', but
+# relies on the script_exporter metric 'script_success{service="ndt5_client"}', but
 # alerting for that metric is already handled by the
 # ScriptExporterMissingMetrics alert.
   - alert: MlabNS_NdtMetricsMissing

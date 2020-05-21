@@ -100,15 +100,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt_ssl_ipv6.json
 
-  # script_exporter for NDT end-to-end monitoring
-  ./mlabconfig.py --format=prom-targets \
-      --sites "${sites}" \
-      --template_target={{hostname}} \
-      --label service=ndt_e2e \
-      --project "${project}" \
-      --select "ndt.iupui" > \
-          ${output}/script-targets/ndt_e2e.json
-
   # script-exporter for e2e monitoring with access tokens.
   ./mlabconfig.py --format=prom-targets-nodes \
       --sites="${sites}" \
