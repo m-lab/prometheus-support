@@ -272,8 +272,13 @@ groups:
 # determine the state of NDT services.
 # https://github.com/m-lab/mlab-ns/blob/master/server/mlabns/util/prometheus_status.py
 #
+# The expression in the denominator of the queries can be read as:
+# count `probe_success`es _unless_ the node is in GMX _and_ the node does not
+# exist in the cluster. We want nodes in GMX in the denominator, but not for
+# sites that don't even exist yet.
+#
 # TODO(kinkade): The rewrite of mlab-ns should export these types of metrics
-# such that we con't have to duplicate the queries here in the alerts.
+# such that we don't have to duplicate the queries here in the alerts.
 
   # "ndt" mlab-ns query
   - alert: TooManyNdtIpv4ServersDown
@@ -290,7 +295,11 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
-        ) / count(probe_success{service="ndt_raw"})
+        ) /
+        count(
+          probe_success{service="ndt_raw"} unless on(machine)
+            (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)
+        )
       ) < 0.90
     for: 10m
     labels:
@@ -318,7 +327,11 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
-        ) / count(probe_success{service="ndt_raw_ipv6"})
+        ) /
+        count(
+          probe_success{service="ndt_raw_ipv6"} unless on(machine)
+            (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)
+        )
       ) < 0.75
     for: 10m
     labels:
@@ -346,8 +359,12 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
-        ) / count(probe_success{service="ndt_ssl"})
-      ) < 0.50
+        ) /
+        count(
+          probe_success{service="ndt_ssl"} unless on(machine)
+            (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)
+        )
+      ) < 0.90
     for: 10m
     labels:
       repo: ops-tracker
@@ -374,7 +391,11 @@ groups:
             kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
-        ) / count(probe_success{service="ndt_ssl_ipv6"})
+        ) /
+        count(
+          probe_success{service="ndt_ssl_ipv6"} unless on(machine)
+            (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)
+        )
       ) < 0.75
     for: 10m
     labels:
