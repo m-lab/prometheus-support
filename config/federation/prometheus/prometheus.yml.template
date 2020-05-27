@@ -616,9 +616,14 @@ scrape_configs:
 
 
   # SNMP configurations.
+  #
+  # The snmp_exporter is configured to timeout a scrape after 11s and to retry
+  # 5 times, for a total timeout of 55s. Below we set the scrape timeout to be
+  # one second longer than the snmp_exporter timeout, so that the scrape job
+  # doesn't time out before snmp_exporter otherwise would.
   - job_name: 'snmp-targets'
     metrics_path: /snmp
-    scrape_timeout: 45s
+    scrape_timeout: 56s
 
     file_sd_configs:
       - files:
