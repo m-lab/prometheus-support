@@ -129,7 +129,7 @@ groups:
       up{job="snmp-targets",site!~".*t$"} == 0
         and on(site) probe_success{instance=~"s1.*",module="icmp"} == 1
         unless on(site) gmx_site_maintenance == 1
-    for: 2h
+    for: 12h
     labels:
       repo: ops-tracker
       severity: ticket
