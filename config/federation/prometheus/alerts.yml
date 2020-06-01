@@ -1533,11 +1533,15 @@ groups:
         this site existed on siteinfo at deployment time. Please check that the
         site has been added to siteinfo and trigger a switch-config deployment.
 
+  # A switch can be offline for 24hrs before a corresponding SwitchDownAtSite
+  # alert fires. This sets a lower bound for how long the switch can be unreachable
+  # before we care about being notified. This alert's "for" value should always be
+  # longer than that.
   - alert: SwitchMonitoring_ConfigNotFoundSwitch
     expr: |
       switch_monitoring_config_match{status="config_not_found_switch"} == 1
       unless on(site) gmx_site_maintenance == 1
-    for: 2m
+    for: 2d
     labels:
       repo: ops-tracker
       severity: ticket
