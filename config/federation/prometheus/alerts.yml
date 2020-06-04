@@ -1396,7 +1396,7 @@ groups:
 
   - alert: PlatformHardware_RamBelowExpected
     expr: |
-      node_memory_MemTotal_bytes{machine=~"^mlab[1-4].[a-z]{3}[0-9]{2}.*"} / 2^20 < 16000
+      node_memory_MemTotal_bytes{machine=~"^mlab[1-4].[a-z]{3}[0-9]{2}.*"} / 2^20 < 15000
     for: 1d
     labels:
       repo: ops-tracker
@@ -1404,7 +1404,7 @@ groups:
     annotations:
       summary: System RAM is below the expected minimum value.
       description: All M-Lab machines have at least 16GB of RAM. The quantity
-        of RAM on one or more machines has gone below 16GB, which may indicate
+        of RAM on one or more machines has gone below 15GB, which may indicate
         a failed RAM module. Login to the machine and double check
         the hardware and/or system messages.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
