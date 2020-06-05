@@ -165,7 +165,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
-      --template_target=s1.{{sitename}}.measurement-lab.org \
+      --template_target=s1-{{sitename}}.measurement-lab.org \
       --label module=icmp > \
           ${output}/blackbox-targets/switches_ping.json
 
