@@ -1458,7 +1458,6 @@ groups:
   - alert: BMC_CredentialsNotFound
     expr: |
         reboot_e2e_result{status="credentials_not_found"}
-        unless on(site) gmx_site_maintenance == 1
         unless on(machine) gmx_machine_maintenance == 1
     for: 5m
     labels:
@@ -1473,7 +1472,6 @@ groups:
   - alert: BMC_ConnectionFailed
     expr: |
       reboot_e2e_result{status="connection_failed"}
-      unless on(site) gmx_site_maintenance == 1
       unless on(machine) gmx_machine_maintenance == 1
     for: 1d
     labels:

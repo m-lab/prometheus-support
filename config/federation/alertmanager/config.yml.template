@@ -86,6 +86,13 @@ inhibit_rules:
     alertname: 'PlatformCluster_.+Missing'
   equal: ['cluster']
 
+# Don't alert on BMC connection failures if the switch is down.
+- source_match:
+    alertname: 'SwitchDownAtSite'
+  target_match_re:
+    alertname: 'BMC_ConnectionFailed'
+  equal: []
+
 receivers:
 # For M-Lab Slack, visit:
 #   https://measurementlab.slack.com/apps/manage/custom-integrations
