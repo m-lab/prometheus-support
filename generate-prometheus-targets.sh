@@ -199,6 +199,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --decoration "d" > ${output}/bmc-targets/bmc_e2e.json
 
   # switch configuration monitoring via switch-monitoring.
+  # Sites ending in 't' are explicitly ignored because test sites'
+  # configurations are expected to change and we don't want to monitor those.
   ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
