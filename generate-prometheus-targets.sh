@@ -202,6 +202,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
+      --select="[a-z]{3}[0-9]{2}" \
       --template_target=s1-{{sitename}}.measurement-lab.org \
       --label service=switch-monitoring > \
           ${output}/switch-monitoring-targets/switch-monitoring.json
