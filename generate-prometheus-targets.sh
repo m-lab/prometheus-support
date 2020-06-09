@@ -18,12 +18,19 @@ BBE_IPV6_PORT_mlab_oti="9115"
 BBE_IPV6_PORT_mlab_staging="8115"
 BBE_IPV6_PORT_mlab_sandbox="7115"
 
+# Switches are not project-specific in siteinfo. To avoid monitoring every
+# switch from every Prometheus instance needlessly, we filter the targets list
+# with these regexes.
+# TODO: make switches project-specific in siteinfo so these can be removed.
+SWITCH_REGEX_mlab_oti="[a-z]{3}[0-9]{2}"
+SWITCH_REGEX_mlab_staging="[a-z]{3}[0-9]{2}"
+SWITCH_REGEX_mlab_sandbox="[a-z]{3}[0-9]t"
+
 # Fetch mlabconfig.py from the siteinfo repo.
 # TODO: Replace curl with a native go-get once mlabconfig is rewritten in Go.
 curl --location "https://raw.githubusercontent.com/m-lab/siteinfo/master/cmd/mlabconfig.py" > \
     ./mlabconfig.py
 chmod +x ./mlabconfig.py
-
 
 for project in mlab-sandbox mlab-staging mlab-oti ; do
   sites="https://siteinfo.${project}.measurementlab.net/v2/sites/sites.json"
@@ -33,6 +40,8 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   # Construct the per-project blackbox_exporter port variable to use below.
   # blackbox_exporter on for IPv6 targets.
   bbe_port=BBE_IPV6_PORT_${project/-/_}
+
+  switch_regex=SWITCH_REGEX_${project/-/_}
 
   # ndt7 SSL on port 443 over IPv4
   ./mlabconfig.py --format=prom-targets \
@@ -157,6 +166,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
+      --select "${!switch_regex}" \
       --template_target=s1-{{sitename}}.measurement-lab.org \
       --label service=snmp > \
           ${output}/snmp-targets/snmpexporter.json
@@ -165,6 +175,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
+      --select "${!switch_regex}" \
       --template_target=s1-{{sitename}}.measurement-lab.org \
       --label module=icmp > \
           ${output}/blackbox-targets/switches_ping.json
@@ -202,6 +213,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
+      --select "${!switch_regex}" \
       --template_target=s1-{{sitename}}.measurement-lab.org \
       --label service=switch-monitoring > \
           ${output}/switch-monitoring-targets/switch-monitoring.json
