@@ -18,6 +18,9 @@ BBE_IPV6_PORT_mlab_oti="9115"
 BBE_IPV6_PORT_mlab_staging="8115"
 BBE_IPV6_PORT_mlab_sandbox="7115"
 
+# Switches are not project-specific in siteinfo. To avoid monitoring every
+# switch from every Prometheus instance needlessly, we filter the targets list
+# with these regexes.
 SWITCH_REGEX_mlab_oti="[a-z]{3}[0-9]{2}"
 SWITCH_REGEX_mlab_staging="[a-z]{3}[0-9]{2}"
 SWITCH_REGEX_mlab_sandbox="[a-z]{3}[0-9]t"
@@ -206,8 +209,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --decoration "d" > ${output}/bmc-targets/bmc_e2e.json
 
   # switch configuration monitoring via switch-monitoring.
-  # Sites ending in 't' are explicitly ignored because test sites'
-  # configurations are expected to change and we don't want to monitor those.
   ./mlabconfig.py --format=prom-targets-sites \
       --sites "${sites}" \
       --physical \
