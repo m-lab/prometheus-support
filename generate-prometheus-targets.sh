@@ -21,6 +21,7 @@ BBE_IPV6_PORT_mlab_sandbox="7115"
 # Switches are not project-specific in siteinfo. To avoid monitoring every
 # switch from every Prometheus instance needlessly, we filter the targets list
 # with these regexes.
+# TODO: make switches project-specific in siteinfo so these can be removed.
 SWITCH_REGEX_mlab_oti="[a-z]{3}[0-9]{2}"
 SWITCH_REGEX_mlab_staging="[a-z]{3}[0-9]{2}"
 SWITCH_REGEX_mlab_sandbox="[a-z]{3}[0-9]t"
