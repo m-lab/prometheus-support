@@ -29,7 +29,7 @@ WITH recent_billing AS (
 , net_hourly_billing AS (
   SELECT
     CONCAT(service.description, ":", sku.description) AS service,
-    SUBSTR(CAST(SHA1(billing_account_id) AS STRING), 0, 8) AS billing, -- obscure the actual ids.
+    SUBSTR(TO_BASE64(md5(billing_account_id)), 0, 8) AS billing, -- obscure the actual ids.
     project.id AS project,
     location.location AS location,
     invoice.month AS month,
