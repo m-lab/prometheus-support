@@ -28,7 +28,8 @@ WITH recent_billing AS (
 
 , net_hourly_billing AS (
   SELECT
-    CONCAT(service.description, ":", sku.description) AS service,
+    service.description AS service,
+    sku.description AS product,
     SUBSTR(TO_BASE64(md5(billing_account_id)), 0, 8) AS billing, -- obscure the actual ids.
     project.id AS project,
     location.location AS location,
@@ -43,18 +44,18 @@ WITH recent_billing AS (
     -- Select only rows from "recent_billing" that match the current usage hour from 2 days ago.
     start_hour_minus_2d = usage_start_time
   GROUP BY
-    service, billing, project, location, month, cost
+    service, product, billing, project, location, month, cost
 )
 
 SELECT
   -- metric labels.
-  service, billing, project, location, month,
+  service, product, billing, project, location, month,
   -- metric values.
   SUM(net_credits) AS value_credits,
   SUM(cost) AS value_costs
 FROM
   net_hourly_billing
 GROUP BY
-  service, billing, project, location, month
+  service, product, billing, project, location, month
 ORDER BY
   value_costs DESC
