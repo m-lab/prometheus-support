@@ -27,6 +27,11 @@
 #  * Do not overwrite a metric name with itself.
 #  * Do not use 'label_replace' to overwrite a metric name.
 #  * Do not use rate with a range less than 4x the scrape_interval.
+#
+##############################################################################
+# TODO: remove rules that are not actively used.
+##############################################################################
+
 groups:
 - name: rules.yml
   rules:
@@ -53,10 +58,14 @@ groups:
 
 ## NDT Early Warning aggregation rules for Kubernetes platform.
 #
-# Per-machine successful NDT5 tests counted by the server.
-# Units: requests per minute.
+  # Per-machine successful NDT5 tests counted by the server.
+  # Units: requests per minute.
   - record: machine:ndt5_client_test_results:rpm2m
     expr: 60 * sum by(machine) (irate(ndt5_client_test_results_total{result!="error-without-rate"}[4m]))
+  # Per-machine successful NDT7 tests counted by the server.
+  # Units: requests per minute.
+  - record: machine:ndt7_client_test_results:rpm2m
+    expr: 60 * sum by(machine) (irate(ndt7_client_test_results_total{result!="error-without-rate"}[4m]))
   # Per-machine maximum ratio of time spent performing I/O on all devices.
   # Units: none (sec/sec)
   - record: machine:node_disk_io_time_seconds:max2m
@@ -83,14 +92,7 @@ groups:
     expr: irate(ifOutDiscards{ifAlias="uplink"}[4m]) > 0
   - record: switch:ifOutDiscards:irate4m
     expr: irate(ifOutDiscards{ifAlias="uplink"}[4m])
-##############################################################################
-# Candidate recording rules.
-##############################################################################
-# TODO: remove rules that are not actively used.
-#
-# Do not build dependencies on these rules until they have been moved out of
-# this candidate rule area.
-#
+
 ## NDT Early Warning 2x site capacity thresholds.
 #
 # Shorter time ranges are chosen to favor higher sensitivity and longer time
@@ -102,6 +104,8 @@ groups:
   # k8s
   - record: machine:ndt5_client_test_results_rpm:90th_quantile_30m
     expr: quantile_over_time(0.9, machine:ndt5_client_test_results:rpm2m[30m])
+  - record: machine:ndt7_client_test_results_rpm:90th_quantile_30m
+    expr: quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m[30m])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_30m
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[30m])
   - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_30m
@@ -113,6 +117,8 @@ groups:
   # k8s
   - record: machine:ndt5_client_test_results_rpm:90th_quantile_1h
     expr: quantile_over_time(0.9, machine:ndt5_client_test_results:rpm2m[1h])
+  - record: machine:ndt7_client_test_results_rpm:90th_quantile_1h
+    expr: quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m[1h])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_1h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[1h])
   - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_1h
@@ -124,6 +130,8 @@ groups:
   # k8s
   - record: machine:ndt5_client_test_results_rpm:90th_quantile_2h
     expr: quantile_over_time(0.9, machine:ndt5_client_test_results:rpm2m[2h])
+  - record: machine:ndt7_client_test_results_rpm:90th_quantile_2h
+    expr: quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m[2h])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_2h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[2h])
   - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_2h
@@ -135,6 +143,8 @@ groups:
   # k8s
   - record: machine:ndt5_client_test_results_rpm:90th_quantile_6h
     expr: quantile_over_time(0.9, machine:ndt5_client_test_results:rpm2m[6h])
+  - record: machine:ndt7_client_test_results_rpm:90th_quantile_6h
+    expr: quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m[6h])
   - record: machine:node_disk_io_time_seconds_max:90th_quantile_6h
     expr: quantile_over_time(0.9, machine:node_disk_io_time_seconds:max2m[6h])
   - record: machine:node_filesystem_used_ratio_12h_prediction:90th_quantile_6h
@@ -147,6 +157,8 @@ groups:
   # k8s
   - record: machine:ndt5_client_test_results_rpm:98th_quantile_2h
     expr: quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m[2h])
+  - record: machine:ndt7_client_test_results_rpm:98th_quantile_2h
+    expr: quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m[2h])
   - record: machine:node_disk_io_time_seconds_max:98th_quantile_2h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m[2h])
   - record: machine:node_filesystem_used_ratio_12h_prediction:98th_quantile_2h
@@ -158,6 +170,8 @@ groups:
   # k8s
   - record: machine:ndt5_client_test_results_rpm:98th_quantile_6h
     expr: quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m[6h])
+  - record: machine:ndt7_client_test_results_rpm:98th_quantile_6h
+    expr: quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m[6h])
   - record: machine:node_disk_io_time_seconds_max:98th_quantile_6h
     expr: quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m[6h])
   - record: machine:node_filesystem_used_ratio_12h_prediction:98th_quantile_6h
