@@ -266,19 +266,19 @@ groups:
         a zombie node, possibly continuing to upload data to GCS and serve
         experiment tests. The simple fix is to reboot the zombie node.
 
-  # A TLS certificate in use by an ndt-server is about to expire.
-  - alert: NdtTlsCertificateAboutToExpire
+  # A TLS certificate in use by an experiment is about to expire.
+  - alert: TlsCertificateAboutToExpire
     expr: min by (experiment) ((probe_ssl_earliest_cert_expiry{experiment!=""} - time()) / 86400) < 5
     for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: A TLS certificate in use by an NDT pod will expire in less than
-        5 days. Did cert-manager update the certificate in the cluster? Check
-        with `kubectl describe cert mlab-oti-measurement-lab-org`. If the
+      summary: A TLS certificate in use by an experiment will expire in less
+        than 5 days. Did cert-manager update the certificate in the cluster?
+        Check with `kubectl describe cert mlab-oti-measurement-lab-org`. If the
         certificate in the cluster looks good, check to be sure that the
-        ndt-server container picked up the updated certificate from its mount
+        experiment container picked up the updated certificate from its mount
         of the certificate Secret.
 
 ## mlab-ns queries.
