@@ -268,7 +268,7 @@ groups:
 
   # A TLS certificate in use by an ndt-server is about to expire.
   - alert: NdtTlsCertificateAboutToExpire
-    expr: ((probe_ssl_earliest_cert_expiry{experiment="ndt.iupui", service="ndt_ssl"} - time()) / 86400) < 5
+    expr: min by (experiment, module) ((probe_ssl_earliest_cert_expiry{experiment!=""} - time()) / 86400) < 5
     for: 1h
     labels:
       repo: ops-tracker
