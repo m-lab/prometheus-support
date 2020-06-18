@@ -15,11 +15,12 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1574962384405,
+  "iteration": 1592444440456,
   "links": [],
   "panels": [
     {
       "content": "# Real time",
+      "datasource": null,
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -89,7 +90,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt_test_total{direction=~\"s2c\"}[5m])) or vector(0))",
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"download\", result!=\"error-without-rate\"}[5m])) or vector(0))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -98,7 +99,7 @@
           "step": 120
         },
         {
-          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt_test_total{direction=~\"c2s\"}[5m])) or vector(0))",
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"upload\", result!=\"error-without-rate\"}[5m])) or vector(0))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -107,8 +108,9 @@
           "step": 120
         },
         {
-          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or vector(0))",
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 2,
           "legendFormat": "Total",
           "refId": "C",
@@ -212,7 +214,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m])) or vector(0)) +\n(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m])) or vector(0)) +\n((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m]))) or absent(machine:ndt5_client_test_results:rpm2m)) +\n(60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m])) or absent(ndt_test_total))",
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -222,7 +224,7 @@
           "step": 240
         },
         {
-          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 7d)) or vector(0)) + \n(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 7d)) or vector(0)) +\n((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d))) or absent(machine:ndt5_client_test_results:rpm2m offset 7d)) +\n(60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 7d)) or absent(ndt_test_total offset 7d))",
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
@@ -231,7 +233,7 @@
           "step": 240
         },
         {
-          "expr": "(60 * sum(rate(inotify_extension_create_total{ext=\".s2c_snaplog\"}[5m] offset 14d)) or vector(0)) +\n(60 * sum(rate(inotify_extension_create_total{ext=\".c2s_snaplog\"}[5m] offset 14d)) or vector(0)) +\n((60 *sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d))) or absent(machine:ndt5_client_test_results:rpm2m offset 14d)) +\n(60 * sum(rate(ndt_test_total{direction=~\"c2s|s2c\"}[5m] offset 14d)) or absent(ndt_test_total offset 14d))",
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 2,
@@ -283,15 +285,16 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "tags": [],
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -301,14 +304,14 @@
         "options": [],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "/Prometheus/",
+        "regex": "/Platform/",
         "skipUrlSync": false,
         "type": "datasource"
       }
     ]
   },
   "time": {
-    "from": "now-20d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
@@ -339,5 +342,5 @@
   "timezone": "utc",
   "title": "NDT: Global Test Rate",
   "uid": "Cyq7WeNiz",
-  "version": 142
+  "version": 147
 }
