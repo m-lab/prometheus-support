@@ -15,11 +15,13 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1564682328114,
+  "id": 338,
+  "iteration": 1592574816804,
   "links": [],
   "panels": [
     {
       "content": "# Real time",
+      "datasource": null,
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -53,6 +55,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -75,7 +78,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -105,16 +110,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "candidate_machine:inotify_extension_create_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "inotify > $percent% - {{machine}}",
-          "refId": "E",
-          "step": 300
-        },
-        {
           "expr": "candidate_site:uplink:98th_quantile_$interval{ifAlias=\"uplink\", speed=\"1g\"} / 1e9 > ($percent / 100) OR candidate_site:uplink:98th_quantile_$interval{ifAlias=\"uplink\", speed=\"10g\"} / 10e9 > ($percent / 100)",
           "format": "time_series",
           "hide": false,
@@ -135,16 +130,6 @@
           "step": 300
         },
         {
-          "expr": "candidate_ndt:vdlimit_used_ratio_12h_prediction:98th_quantile_$interval > ($percent / 100)",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "disk usage > $percent% {{machine}}",
-          "refId": "H",
-          "step": 300
-        },
-        {
           "expr": "/* k8s */",
           "format": "time_series",
           "hide": true,
@@ -152,7 +137,7 @@
           "refId": "A"
         },
         {
-          "expr": "machine:ndt5_client_test_results_rpm:98th_quantile_$interval / 120 > ($percent / 100)",
+          "expr": "machine:ndt5_client_test_results_rpm:98th_quantile_$interval / 120 > ($percent / 100)\nor \n   (machine:ndt5_client_test_results_rpm:98th_quantile_$interval\n    + machine:ndt7_client_test_results_rpm:98th_quantile_$interval) / 120 > ($percent / 100)",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -239,6 +224,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -261,7 +247,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -364,6 +352,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
@@ -386,7 +375,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -422,95 +413,45 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(0.9, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60",
+          "expr": "((quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n  + quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 60)\nor\n   (quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60)",
           "format": "time_series",
           "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "warning - {{machine}}",
-          "refId": "A",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.98, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "error - {{machine}}",
-          "refId": "D"
-        },
-        {
-          "expr": "machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "raw - {{machine}}",
-          "refId": "B",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.90, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "q90 - {{machine}}",
-          "refId": "C"
-        },
-        {
-          "expr": "quantile_over_time(0.98, machine:inotify_extension_create:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
-          "format": "time_series",
-          "instant": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "q98 - {{machine}}",
-          "refId": "E"
-        },
-        {
-          "expr": "/* k8s */",
-          "format": "time_series",
-          "hide": true,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "F"
-        },
-        {
-          "expr": "quantile_over_time(0.9, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60",
-          "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "warning - {{machine}}",
           "refId": "G"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96",
+          "expr": "((quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n   + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 96)\nor\n  (quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96)",
           "format": "time_series",
+          "hide": false,
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "error - {{machine}}",
           "refId": "H"
         },
         {
-          "expr": "machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}",
+          "expr": "(machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"})\nor\n   machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n",
           "format": "time_series",
+          "hide": false,
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "raw - {{machine}}",
           "refId": "I"
         },
         {
-          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "(quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]))\nor\n quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
+          "hide": false,
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "q90 - {{machine}}",
           "refId": "J"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]))\nor \n  quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
+          "hide": false,
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "q98 - {{machine}}",
@@ -579,6 +520,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 12,
@@ -601,7 +543,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -771,6 +715,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -794,7 +739,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -975,6 +922,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -997,7 +945,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1172,16 +1122,15 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 18,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
-          "text": "Prometheus (mlab-sandbox)",
-          "value": "Prometheus (mlab-sandbox)"
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -1235,11 +1184,11 @@
       {
         "allValue": null,
         "current": {
-          "text": "lga.t",
-          "value": "lga.t"
+          "text": "lga04",
+          "value": "lga04"
         },
-        "datasource": null,
-        "definition": "",
+        "datasource": "$datasource",
+        "definition": "label_values(machine)",
         "hide": 0,
         "includeAll": false,
         "label": "Site",
@@ -1261,8 +1210,8 @@
         "allValue": null,
         "current": {
           "tags": [],
-          "text": "2h",
-          "value": "2h"
+          "text": "1h",
+          "value": "1h"
         },
         "hide": 0,
         "includeAll": false,
@@ -1286,12 +1235,12 @@
             "value": "30m"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "1h",
             "value": "1h"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "2h",
             "value": "2h"
           },
@@ -1345,8 +1294,8 @@
         "current": {
           "selected": true,
           "tags": [],
-          "text": "2h",
-          "value": "2h"
+          "text": "6h",
+          "value": "6h"
         },
         "hide": 0,
         "includeAll": false,
@@ -1355,12 +1304,12 @@
         "name": "interval",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "2h",
             "value": "2h"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "6h",
             "value": "6h"
           }
@@ -1436,5 +1385,5 @@
   "timezone": "utc",
   "title": "NDT: Early Warning",
   "uid": "UM67WeHmz",
-  "version": 141
+  "version": 142
 }
