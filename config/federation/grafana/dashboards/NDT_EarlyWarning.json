@@ -137,12 +137,13 @@
           "refId": "A"
         },
         {
-          "expr": "machine:ndt5_client_test_results_rpm:98th_quantile_$interval / 120 > ($percent / 100)\nor \n   (machine:ndt5_client_test_results_rpm:98th_quantile_$interval\n    + machine:ndt7_client_test_results_rpm:98th_quantile_$interval) / 120 > ($percent / 100)",
+          "expr": "(machine:ndt5_client_test_results_rpm:98th_quantile_$interval\n + machine:ndt7_client_test_results_rpm:98th_quantile_$interval) / 120 > ($percent / 100)",
           "format": "time_series",
+          "hide": false,
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "ndt_tests  > $percent% - {{machine}}",
-          "refId": "B"
+          "refId": "E"
         },
         {
           "expr": "machine:node_disk_io_time_seconds_max:98th_quantile_$interval > ($percent / 100)",
@@ -159,6 +160,20 @@
           "intervalFactor": 1,
           "legendFormat": "disk usage > $percent% {{machine}}",
           "refId": "D"
+        },
+        {
+          "expr": "/* NOTE: It will be safe to delete the \"unless\" clause below after 2020-10-01 */",
+          "hide": true,
+          "refId": "H"
+        },
+        {
+          "expr": "(machine:ndt5_client_test_results_rpm:98th_quantile_$interval unless machine:ndt7_client_test_results_rpm:98th_quantile_$interval) / 120 > ($percent / 100)\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "ndt_tests  > $percent% - {{machine}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -413,7 +428,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "((quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n  + quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 60)\nor\n   (quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60)",
+          "expr": "((quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n  + quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 60)",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -422,7 +437,7 @@
           "refId": "G"
         },
         {
-          "expr": "((quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n   + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 96)\nor\n  (quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96)",
+          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 96",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -431,7 +446,7 @@
           "refId": "H"
         },
         {
-          "expr": "(machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"})\nor\n   machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n",
+          "expr": "(machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"})\n",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -440,7 +455,7 @@
           "refId": "I"
         },
         {
-          "expr": "(quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]))\nor\n quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -449,13 +464,63 @@
           "refId": "J"
         },
         {
-          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]))\nor \n  quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "q98 - {{machine}}",
           "refId": "K"
+        },
+        {
+          "expr": "/* NOTE: it should be safe to delete queries below after 2020-10-01 */",
+          "hide": true,
+          "refId": "F"
+        },
+        {
+          "expr": "(quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60)\nunless (quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "warning - {{machine}}",
+          "refId": "A"
+        },
+        {
+          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96)\nunless quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "error - {{machine}}",
+          "refId": "B"
+        },
+        {
+          "expr": "machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\nunless machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n",
+          "format": "time_series",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "raw - {{machine}}",
+          "refId": "C"
+        },
+        {
+          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\nunless quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q90 - {{machine}}",
+          "refId": "D"
+        },
+        {
+          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\nunless quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "q98 - {{machine}}",
+          "refId": "E"
         }
       ],
       "thresholds": [],
@@ -1385,5 +1450,5 @@
   "timezone": "utc",
   "title": "NDT: Early Warning",
   "uid": "UM67WeHmz",
-  "version": 142
+  "version": 143
 }
