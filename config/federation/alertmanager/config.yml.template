@@ -83,7 +83,7 @@ inhibit_rules:
 - source_match:
     alertname: 'PlatformCluster_FederationScrapeJobFailing'
   target_match_re:
-    alertname: 'PlatformCluster_.+Missing'
+    alertname: 'PlatformCluster_.+Missing|MachineRunningWithoutK8sNode'
   equal: ['cluster']
 
 # Don't alert on BMC connection failures if the switch is down.
