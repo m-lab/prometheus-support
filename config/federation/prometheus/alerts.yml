@@ -738,7 +738,12 @@ groups:
       summary: GCS Transfers may not include all files.
       description: Daily transfers should include all archive files for each day.
         This alert is firing because over the last two days, the archive file
-        counts did not match.
+        counts did not match. Check the historical transfer history of "STCTL"
+        managed "daily" transfer configs in mlab-oti and measurement-lab projects.
+        The m-lab/gcp-config/daily-archive-transfers.yaml are scheduled sequentially,
+        so if one takes longer than expected, the next will miss files from the first.
+        This could be caused by increases in the number of files, size of files,
+        changes in configuration, or underlying system delays.
 
 # Too many NDT S2C tests on a node are being impacted by switch discards.
   - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
