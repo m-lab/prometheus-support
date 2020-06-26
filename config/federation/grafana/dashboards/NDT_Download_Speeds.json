@@ -15,7 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1585226565617,
+  "id": 331,
+  "iteration": 1593202404091,
   "links": [],
   "panels": [
     {
@@ -23,7 +24,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Platform Cluster (mlab-oti)",
+      "datasource": "$datasource",
       "description": "",
       "fill": 1,
       "fillGradient": 0,
@@ -59,7 +60,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\"}[$interval])) by (le, protocol))",
+          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\",  monitoring=\"false\", machine=~\".*($site).*\"}[$interval])) by (le, protocol))",
           "legendFormat": " {{protocol}}",
           "refId": "A"
         }
@@ -111,7 +112,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Platform Cluster (mlab-oti)",
+      "datasource": "$datasource",
       "description": "NB:  The diurnal drop is likely because we have bandwidth limited internal monitoring in WS, that dominates when there is less organic traffic.",
       "fill": 1,
       "fillGradient": 2,
@@ -152,22 +153,22 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile (.95, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
+          "expr": "histogram_quantile (.95, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
           "legendFormat": "95th",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile (0.75, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
+          "expr": "histogram_quantile (0.75, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
           "legendFormat": "75th",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
+          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\",  monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
           "legendFormat": "50th",
           "refId": "C"
         },
         {
-          "expr": "histogram_quantile (0.25, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
+          "expr": "histogram_quantile (0.25, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
           "legendFormat": "25th",
           "refId": "D"
         }
@@ -219,7 +220,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Platform Cluster (mlab-oti)",
+      "datasource": "$datasource",
       "description": "",
       "fill": 1,
       "fillGradient": 0,
@@ -255,7 +256,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "60* sum(rate(ndt_test_rate_mbps_count{direction=\"s2c\", machine=~\".*($site).*\"}[$interval])) by (protocol)",
+          "expr": "60* sum(rate(ndt_test_rate_mbps_count{direction=~\"s2c|download\",  monitoring=\"false\", machine=~\".*($site).*\"}[$interval])) by (protocol)",
           "legendFormat": "{{protocol}}",
           "refId": "A"
         }
@@ -280,12 +281,12 @@
       },
       "yaxes": [
         {
-          "decimals": 0,
+          "decimals": null,
           "format": "short",
           "label": "Tests/Min",
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -307,7 +308,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Platform Cluster (mlab-oti)",
+      "datasource": "$datasource",
       "description": "Overlay of the past 3 weeks of median download performance, Mb/sec.\nNB: The diurnal drop is likely because we have bandwidth limited internal monitoring in WS, that dominates when there is less organic traffic.",
       "fill": 1,
       "fillGradient": 1,
@@ -348,18 +349,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
+          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, protocol))",
           "legendFormat": "now",
           "refId": "C"
         },
         {
-          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval] offset 7d)) by (le, protocol))",
+          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval] offset 7d)) by (le, protocol))",
           "format": "heatmap",
           "legendFormat": "last week",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=\"s2c\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval] offset 14d)) by (le, protocol))",
+          "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval] offset 14d)) by (le, protocol))",
           "legendFormat": "two weeks",
           "refId": "B"
         }
@@ -414,9 +415,25 @@
   "templating": {
     "list": [
       {
+        "current": {
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Platform Cluster/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "lga03 + lga04 + lga05 + lga06 + lga08",
           "value": [
             "lga03",
@@ -426,7 +443,7 @@
             "lga08"
           ]
         },
-        "datasource": "Platform Cluster (mlab-oti)",
+        "datasource": "$datasource",
         "definition": "label_values(machine)",
         "hide": 0,
         "includeAll": true,
@@ -1129,10 +1146,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
           "tags": [],
-          "text": "1h",
-          "value": "1h"
+          "text": "3h",
+          "value": "3h"
         },
         "hide": 0,
         "includeAll": false,
@@ -1141,12 +1157,12 @@
         "name": "interval",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "10m",
             "value": "10m"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "1h",
             "value": "1h"
           },
@@ -1208,10 +1224,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
           "tags": [],
-          "text": "WSS",
-          "value": "WSS"
+          "text": "ndt5+wss",
+          "value": "ndt5+wss"
         },
         "hide": 0,
         "includeAll": false,
@@ -1221,28 +1236,38 @@
         "options": [
           {
             "selected": false,
-            "text": "WS",
-            "value": "WS"
+            "text": "ndt5+ws",
+            "value": "ndt5+ws"
           },
           {
             "selected": true,
-            "text": "WSS",
-            "value": "WSS"
+            "text": "ndt5+wss",
+            "value": "ndt5+wss"
           },
           {
             "selected": false,
-            "text": "PLAIN",
-            "value": "PLAIN"
+            "text": "ndt5+plain",
+            "value": "ndt5+plain"
+          },
+          {
+            "selected": false,
+            "text": "ndt7+ws",
+            "value": "ndt7+ws"
+          },
+          {
+            "selected": false,
+            "text": "ndt7+wss",
+            "value": "ndt7+wss"
           }
         ],
-        "query": "WS, WSS, PLAIN",
+        "query": "ndt5+ws,ndt5+wss,ndt5+plain,ndt7+ws,ndt7+wss",
         "skipUrlSync": false,
         "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-21d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
@@ -1262,5 +1287,5 @@
   "timezone": "",
   "title": "NDT: Download Speeds",
   "uid": "U1I90mXZz",
-  "version": 17
+  "version": 19
 }
