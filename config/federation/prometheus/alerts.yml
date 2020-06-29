@@ -307,7 +307,8 @@ groups:
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
-            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            label_replace(kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"},
+              "experiment", "ndt.iupui", "", "") != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) /
@@ -339,7 +340,8 @@ groups:
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
-            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            label_replace(kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"},
+              "experiment", "ndt.iupui", "", "") != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) /
@@ -360,7 +362,7 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   # "ndt_ssl" mlab-ns query
-  - alert: TooManyNdtSslIpv4ServersDown
+  - alert: TooManyNdtTlsIpv4ServersDown
     expr: |
       (
         sum(
@@ -371,7 +373,8 @@ groups:
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
-            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            label_replace(kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"},
+              "experiment", "ndt.iupui", "", "") != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) /
@@ -392,7 +395,7 @@ groups:
         monitoring.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
-  - alert: TooManyNdtSslIpv6ServersDown
+  - alert: TooManyNdtTlsIpv6ServersDown
     expr: |
       (
         sum(
@@ -403,7 +406,8 @@ groups:
               node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
                 "experiment", "ndt.iupui", "", "") < bool 0.95 OR
-            kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} != bool 1 OR
+            label_replace(kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"},
+              "experiment", "ndt.iupui", "", "") != bool 1 OR
             label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
           )
         ) /
