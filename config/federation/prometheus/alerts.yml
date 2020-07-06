@@ -794,18 +794,6 @@ groups:
       description: Login to EB to see if it is in fact crashed. If so, look
         through the logs.
 
-# The node_exporter running on dns.measurementlab.net is down.
-  - alert: NodeExporterOnDnsDownOrMissing
-    expr: up{job="dns-node-exporter"} == 0 or absent(up{job="dns-node-exporter"})
-    for: 10m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: The node_exporter running on dns.measurementlab.net is down.
-      description: Login to to see if it is in fact crashed. If so, look
-        through the logs.
-
 # GardenerDownOrMissing fires when the etl-gardener is down or absent.
 # TODO: enable annotations to ignore some container ports, and simplify this query.
 # https://github.com/m-lab/prometheus-support/issues/48
