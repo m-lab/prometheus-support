@@ -25,15 +25,14 @@ CREATE TEMPORARY FUNCTION queryDate() AS (
 -- Takes ParseInfo.TaskFileName and returns an M-Lab hostname.
 CREATE TEMPORARY FUNCTION toNodeName(tfn STRING) AS (
   CONCAT(
-    REGEXP_EXTRACT(tfn, r'(mlab[1-4])-[a-z]{3}[0-9]{2}.*'), ".",
-    REGEXP_EXTRACT(tfn, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*'),
-    ".measurement-lab.org"
+    REGEXP_EXTRACT(tfn, r'(mlab[1-4])-[a-z]{3}[0-9]{2}.*'), "-",
+    REGEXP_EXTRACT(tfn, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*')
   )
 );
 
 WITH disco_intervals_with_discards AS (
   SELECT
-    hostname AS node,
+    toNodeName(hostname) AS node,
     TIMESTAMP_SUB(sample.timestamp, INTERVAL 10 SECOND) AS tstart,
     sample.timestamp AS tend,
     sample.value AS discards
