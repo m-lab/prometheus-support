@@ -8,14 +8,14 @@
 -- NDT S2C start or end time that falls within the SNMP polling interval.
 -- For faster queries we use `partition_date` boundaries. And, to
 -- guarantee the partition_date data is "complete" (all data collected
--- and parsed) we should wait 36 hours after start of a given day.
+-- and parsed) we should wait 42 hours after start of a given day.
 -- The following is equivalent to the pseudo code:
---     date(now() - 12h) - 1d
+--     date(now() - 18h) - 1d
 CREATE TEMPORARY FUNCTION queryDate() AS (
   DATE(
     TIMESTAMP_SUB(
       TIMESTAMP_TRUNC(
-        TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 12 HOUR),
+        TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 18 HOUR),
         DAY),
       INTERVAL 24 HOUR
     )
