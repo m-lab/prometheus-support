@@ -16,7 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1589818752052,
+  "id": 266,
+  "iteration": 1595267852263,
   "links": [],
   "panels": [
     {
@@ -698,7 +699,7 @@
       "fontSize": "100%",
       "gridPos": {
         "h": 9,
-        "w": 24,
+        "w": 18,
         "x": 0,
         "y": 18
       },
@@ -787,6 +788,98 @@
       "title": "Alerts",
       "transform": "table",
       "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$cluster",
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 18
+      },
+      "id": 20,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "reloader_reload_executed_total{success=\"true\"}",
+          "legendFormat": "Successes",
+          "refId": "A"
+        },
+        {
+          "expr": "reloader_reload_executed_total{success=\"false\"}",
+          "legendFormat": "Failures",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Rolling updates triggered by Reloader",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": false,
@@ -797,6 +890,7 @@
     "list": [
       {
         "current": {
+          "tags": [],
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -863,5 +957,5 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 32
+  "version": 35
 }
