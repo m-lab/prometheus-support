@@ -730,8 +730,8 @@ groups:
 # This alert enforces that daily transfers are working for all datatypes.
   - alert: GCSTransfers_ArchiveFilesDoNotMatchOrMissing
     expr: |
-      increase(gcs_archive_files_total{bucket="archive-mlab-oti"}[1d]) - ignoring(bucket)
-         increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d]) != 0
+      sum(increase(gcs_archive_files_total{bucket="archive-mlab-oti"}[1d]) - ignoring(bucket)
+         increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d]) != 0)
       OR
       absent(gcs_archive_files_total)
     for: 1d
