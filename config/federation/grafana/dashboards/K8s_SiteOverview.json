@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 246,
-  "iteration": 1589577080434,
+  "iteration": 1595352181147,
   "links": [],
   "panels": [
     {
@@ -95,7 +95,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "probe_success{module=\"icmp\", instance=\"s1.$site.measurement-lab.org\"}",
+          "expr": "probe_success{module=\"icmp\", instance=\"s1-$site.measurement-lab.org\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -334,7 +334,7 @@
           "value": "mlab1"
         }
       },
-      "title": "$node.$site",
+      "title": "$node-$site",
       "type": "row"
     },
     {
@@ -603,7 +603,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "gmx_machine_maintenance{machine=~\"$node.$site.*\"}",
+          "expr": "gmx_machine_maintenance{machine=~\"$node-$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -704,7 +704,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=~\"$node.$site.*\"}",
+          "expr": "kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\", exported_node=~\"$node-$site.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1149,7 +1149,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_load1{node=~\"$node.$site.*\"}",
+          "expr": "node_load1{node=~\"$node-$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Load1",
@@ -1250,28 +1250,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_memory_Cached_bytes{node=~\"$node.$site.*\"}",
+          "expr": "node_memory_Cached_bytes{node=~\"$node-$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Cache",
           "refId": "A"
         },
         {
-          "expr": "node_memory_Buffers_bytes{node=~\"$node.$site.*\"}",
+          "expr": "node_memory_Buffers_bytes{node=~\"$node-$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Buffers",
           "refId": "B"
         },
         {
-          "expr": "node_memory_Active_bytes{node=~\"$node.$site.*\"}",
+          "expr": "node_memory_Active_bytes{node=~\"$node-$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Active",
           "refId": "D"
         },
         {
-          "expr": "node_memory_MemFree_bytes{node=~\"$node.$site.*\"}",
+          "expr": "node_memory_MemFree_bytes{node=~\"$node-$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Free",
@@ -1367,14 +1367,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"eth0\", node=~\"$node.$site.*\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=\"eth0\", node=~\"$node-$site.*\"}[4m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "TX eth0",
           "refId": "A"
         },
         {
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"eth0\", node=~\"$node.$site.*\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=\"eth0\", node=~\"$node-$site.*\"}[4m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "RX eth0",
@@ -1479,21 +1479,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(node_disk_read_bytes_total{node=~\"$node.$site.*\"}[5m])",
+          "expr": "rate(node_disk_read_bytes_total{node=~\"$node-$site.*\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read ({{device}})",
           "refId": "A"
         },
         {
-          "expr": "rate(node_disk_written_bytes_total{node=~\"$node.$site.*\"}[5m])",
+          "expr": "rate(node_disk_written_bytes_total{node=~\"$node-$site.*\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written ({{device}})",
           "refId": "B"
         },
         {
-          "expr": "rate(node_disk_io_time_seconds_total{node=~\"$node.$site.*\"}[5m])",
+          "expr": "rate(node_disk_io_time_seconds_total{node=~\"$node-$site.*\"}[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "% sec/sec ({{device}})",
@@ -1589,7 +1589,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(\n  container_cpu_usage_seconds_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    container_label_io_kubernetes_pod_namespace=~\"default\",\n    machine=~\"$node.$site.*\"\n  }\n[5m])",
+          "expr": "rate(\n  container_cpu_usage_seconds_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    container_label_io_kubernetes_pod_namespace=~\"default\",\n    machine=~\"$node-$site.*\"\n  }\n[5m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{container_label_io_kubernetes_container_name}} ({{container_label_io_kubernetes_pod_name}})",
@@ -1687,7 +1687,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    machine=~\"$node.$site.*\"\n}",
+          "expr": "container_memory_working_set_bytes{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    machine=~\"$node-$site.*\"\n}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{container_label_io_kubernetes_container_name}} ({{container_label_io_kubernetes_pod_name}})",
@@ -1785,7 +1785,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node.$site.*\"\n  }\n[5m])",
+          "expr": "-8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node-$site.*\"\n  }\n[5m])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1794,7 +1794,7 @@
           "refId": "A"
         },
         {
-          "expr": "8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node.$site.*\"\n  }\n[5m])",
+          "expr": "8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node-$site.*\"\n  }\n[5m])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1892,14 +1892,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_procs_running{machine=~\"$node.$site.*\"}",
+          "expr": "node_procs_running{machine=~\"$node-$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Running Process",
           "refId": "B"
         },
         {
-          "expr": "node_processes_pids{machine=~\"$node.$site.*\"}",
+          "expr": "node_processes_pids{machine=~\"$node-$site.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Total Procs",
@@ -1997,7 +1997,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "go_goroutines{machine=~\"$node.$site.*\", workload=~\"$pod\"}",
+          "expr": "go_goroutines{machine=~\"$node-$site.*\", workload=~\"$pod\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2100,7 +2100,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(container) (process_resident_memory_bytes{\n    machine=~\"$node.$site.*\",\n    pod=~\".*$pod.*\",\n})",
+          "expr": "sum by(container) (process_resident_memory_bytes{\n    machine=~\"$node-$site.*\",\n    pod=~\".*$pod.*\",\n})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -2162,7 +2162,7 @@
       "id": 156,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -2171,7 +2171,7 @@
           "value": "mlab2"
         }
       },
-      "title": "$node.$site",
+      "title": "$node-$site",
       "type": "row"
     },
     {
@@ -2228,7 +2228,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2328,7 +2328,7 @@
           "to": "0"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2430,7 +2430,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2534,7 +2534,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2637,7 +2637,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2730,7 +2730,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2824,7 +2824,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2918,7 +2918,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -2992,7 +2992,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3096,7 +3096,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3221,7 +3221,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3327,7 +3327,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3449,7 +3449,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3550,7 +3550,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3651,7 +3651,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3761,7 +3761,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 81,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3869,7 +3869,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 117,
       "repeatedByRow": true,
       "scopedVars": {
@@ -3975,7 +3975,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 155,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4053,7 +4053,7 @@
       "id": 175,
       "panels": [],
       "repeat": null,
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 34,
       "scopedVars": {
         "node": {
@@ -4062,7 +4062,7 @@
           "value": "mlab3"
         }
       },
-      "title": "$node.$site",
+      "title": "$node-$site",
       "type": "row"
     },
     {
@@ -4119,7 +4119,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 26,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4219,7 +4219,7 @@
           "to": "0"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 44,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4321,7 +4321,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 43,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4425,7 +4425,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 47,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4528,7 +4528,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 36,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4621,7 +4621,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 21,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4715,7 +4715,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 35,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4809,7 +4809,7 @@
           "to": "null"
         }
       ],
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 38,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4883,7 +4883,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 32,
       "repeatedByRow": true,
       "scopedVars": {
@@ -4987,7 +4987,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 31,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5112,7 +5112,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 28,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5218,7 +5218,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 30,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5340,7 +5340,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 15,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5441,7 +5441,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 17,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5542,7 +5542,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 19,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5652,7 +5652,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 81,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5760,7 +5760,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 117,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5866,7 +5866,7 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "repeatIteration": 1589577080434,
+      "repeatIteration": 1595352181147,
       "repeatPanelId": 155,
       "repeatedByRow": true,
       "scopedVars": {
@@ -5984,7 +5984,6 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -6066,5 +6065,5 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 37
+  "version": 38
 }
