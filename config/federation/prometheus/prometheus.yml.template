@@ -319,6 +319,7 @@ scrape_configs:
         - 'kube_node_labels'
         - 'kube_node_spec_taint{key="lame-duck"}'
         - 'kube_node_status_condition'
+        - 'kube_pod_container_info{exported_namespace="kube-system", exported_container=~"(kube-apiserver|kube-controller-manager|kube-scheduler)"}'
         - 'etcd_server_has_leader'
         - 'etcd_server_leader_changes_seen_total'
         - 'etcd_server_proposals_failed_total'
