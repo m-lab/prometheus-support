@@ -1237,6 +1237,36 @@ groups:
         reboot-coordinator namespace to see which node it may be stuck on.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
+  # There is version skew among the core k8s components on one or more API
+  # cluster servers.
+  - alert: PlatformCluster_ApiClusterComponentVersionSkew
+    expr: |
+      count(
+        count by (version) (
+          label_replace(kube_pod_container_info{exported_namespace="kube-system",
+            exported_container=~"(kube-apiserver|kube-controller-manager|kube-scheduler)"},
+            "version", "$1", "image", ".*:(v[0-9.]+$)")
+          or
+          label_replace(kube_node_info{node=~"master-platform-cluster.*"},
+            "version", "$1", "kubelet_version", "(.*)")
+        )
+      ) > 1
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: There is version skew between core k8s components in the API cluster.
+      description: >
+        There are 4 primary Kubernetes components on each API cluster server -
+        kubelet, kube-apiserver, kube-controller-manager, kube-scheduler. The
+        version of all these components should always be the same, since when
+        upgrading the API cluster all these components are supposed to be
+        updated at the same time. Was the upgrade_master_platform_script.sh in
+        the k8s-support repo run recently? Did something go wrong with the
+        upgrade? Perhaps an API server node was incorrectly upgraded _not_
+        using the ugprade script and not all components got updated?
+
   # The desired number of pods for a DaemonSet are not equal to the current
   # number scheduled.
   - alert: PlatformCluster_DaemonSetHasTooFewPods
