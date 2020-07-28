@@ -1434,6 +1434,24 @@ groups:
         bottleneck.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/K8-zAIuik/k8s-master-cluster
 
+  - alert: PlatformCluster_TokenServerClusterDownOrMissing
+    expr: |
+      up{cluster="platform-cluster", job="token-server"} == 0 OR
+        absent(up{cluster="platform-cluster", job="token-server"})
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: token-server metrics cannot be scraped or are missing.
+      description: The token-server is run as a Docker container on each API
+        server. The instsances sit behind a GCP internal load balancer.
+        Scraping the load balancer is failing, which means that something is
+        wrong with the load balancer, or possibly all three instances of the
+        token-server are down.  Login to one or all of the API servers to
+        discover why the token-server container is not running. Check the
+        status of the load balancer in the GCP console.
+
 # Platform Hardware alerts
 
   - alert: PlatformHardware_RamBelowExpected
