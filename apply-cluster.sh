@@ -29,16 +29,7 @@ if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
   exit 0
 fi
 
-# Make sure RBAC configs are applied first.
-kubectl apply -f k8s/${CLUSTER}/roles/*.yml
-
-# Apply deployments.
-DEPLOYMENTS=/tmp/${CLUSTER}-${PROJECT}-deployments.yml
-kexpand expand --ignore-missing-keys k8s/${CLUSTER}/deployments/*.yml \
-    -f k8s/${CLUSTER}/${PROJECT}.yml > ${DEPLOYMENTS}
-kubectl apply -f ${DEPLOYMENTS}
-
-# Apply everything else.
+# Apply templates
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
 kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
     -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
