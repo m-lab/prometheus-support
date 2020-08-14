@@ -2,6 +2,11 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/version: 0.34.1
+    app.kubernetes.io/component: controller
   name: nginx-ingress
   namespace: default
 ---
@@ -11,6 +16,10 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/version: 0.34.1
   name: ingress-nginx
   namespace: default
 rules:
@@ -75,6 +84,10 @@ rules:
 # Bind the nginx-ingress ServiceAccount to the ClusterRole above.
 kind: ClusterRoleBinding
 metadata:
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/version: 0.34.1
   name: ingress-nginx
   namespace: default
 roleRef:
@@ -91,6 +104,11 @@ subjects:
 # backends. This provides broader access within the nginx-ingress Namespace.
 kind: Role
 metadata:
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/version: 0.34.1
+    app.kubernetes.io/component: controller
   name: ingress-nginx
   namespace: default
 rules:
@@ -178,6 +196,11 @@ rules:
 # Bind the nginx-ingress ServiceAccount to the Role above.
 kind: RoleBinding
 metadata:
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/version: 0.34.1
+    app.kubernetes.io/component: controller
   name: ingress-nginx
   namespace: default
 roleRef:
