@@ -25,6 +25,10 @@ CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
 export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
 
+# Version numbers for Helm and Helm charts.
+K8S_HELM_VERSION="v3.3.0"
+K8S_INGRESS_NGINX_VERSION="2.11.2"
+
 # GCP doesn't support IPv6, so we have a Linode VM running three instances of
 # the blackbox_exporter, on three separate ports... one port/instance for each
 # project. These variables map projects to ports.
@@ -300,3 +304,19 @@ kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
 # updated and it becomes available to the container. So, this reload may fail
 # since the configmap is not yet up to date.
 # curl -X POST https://prometheus.${PROJECT}.measurementlab.net/-/reload || :
+
+#
+# Additional k8s resources installed via Helm
+#
+# Download Helm
+curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
+tar -zxvf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
+
+# Install the NGINX ingress controller in the ingress-nginx namespace.
+kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
+./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+./linux-amd64/helm repo update
+./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  -n ingress-nginx \
+  --version ${K8S_INGRESS_NGINX_VERSION} \
+  --values config/federation/ingress-nginx/helm-values-${PROJECT}.yml
