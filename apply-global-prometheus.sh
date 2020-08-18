@@ -319,4 +319,4 @@ kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
 ./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
   -n ingress-nginx \
   --version ${K8S_INGRESS_NGINX_VERSION} \
-  --values config/federation/ingress-nginx/helm-values-${PROJECT}.yml
+  --values helm/prometheus-federation/ingress-nginx/${PROJECT}.yml
