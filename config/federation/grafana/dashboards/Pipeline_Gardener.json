@@ -607,7 +607,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(gardener_tasks_in_flight{deployment=~\"$deployment\", deployment!~\".*-universal\"})",
+          "expr": "sum by (deployment)(gardener_tasks_in_flight{deployment=~\"$deployment\", deployment!~\".*-universal\"}) # Legacy",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
