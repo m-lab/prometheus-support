@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1584728989304,
+  "iteration": 1597337881964,
   "links": [
     {
       "icon": "external link",
@@ -41,6 +41,14 @@
       "title": "Production Instances",
       "type": "link",
       "url": "https://console.cloud.google.com/kubernetes/workload?project=mlab-oti&organizationId=433637338589&workload_list_tablesize=50&workload_list_tablequery=%255B%257B_22k_22_3A_22is_system_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22false_5C_22_22_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22metadata%252Fname_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22gardener_5C_22_22%257D%255D"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Production Status Page",
+      "type": "link",
+      "url": "http://104.154.225.50:8081/"
     }
   ],
   "panels": [
@@ -50,6 +58,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$prometheusDatasource",
+      "description": "This is currently missing data for paris traceroute, ndt7, annotation.",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -98,7 +107,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Reprocessing Period",
+      "title": "Oldest Bigquery Parse Time",
       "tooltip": {
         "shared": false,
         "sort": 0,
@@ -209,14 +218,14 @@
           "expr": "3600 * rate(gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Warning: {{status}}",
+          "legendFormat": "Warning: {{datatype}} {{status}}",
           "refId": "C"
         },
         {
           "expr": "3600 * rate(gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Failure: {{status}}",
+          "legendFormat": "Failure: {{datatype}} {{status}}",
           "refId": "D"
         }
       ],
@@ -543,7 +552,8 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
-      "fill": 1,
+      "description": "There should generally be about 4 to 5 tasks in flight for each etl parser instance.  Currently (April 2020) there are only two instances.  \n\nWe might also want to use this internally in Gardener to determine when we should suspend operations automatically.",
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
@@ -553,13 +563,15 @@
       },
       "id": 7,
       "legend": {
+        "alignAsTable": false,
         "avg": false,
-        "current": false,
+        "current": true,
         "max": false,
         "min": false,
+        "rightSide": true,
         "show": false,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -572,13 +584,30 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/ndt7-/",
+          "fill": 1,
+          "stack": "A"
+        },
+        {
+          "alias": "/annotation-/",
+          "fill": 1,
+          "stack": "B"
+        },
+        {
+          "alias": "/Stuck|failed/",
+          "color": "rgb(255, 49, 49)",
+          "linewidth": 5,
+          "zindex": -3
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "gardener_tasks_in_flight{deployment=~\"$deployment\", deployment!~\".*universal\"}",
+          "expr": "sum(gardener_tasks_in_flight{deployment=~\"$deployment\", deployment!~\".*-universal\"})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -586,21 +615,47 @@
           "refId": "A"
         },
         {
-          "expr": "gardener_tasks_in_flight{deployment=~\".*universal\"}",
+          "expr": "sum by (datatype, state)(gardener_tasks_in_flight{deployment=~\".*universal\", datatype=~\"$datatypes\", state!~\"complete|init\"}) > 0",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{datatype}}",
-          "refId": "B"
+          "legendFormat": "{{datatype}}-{{state}}",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(gardener_tasks_in_flight{deployment=~\".*universal\", datatype=~\"$datatypes\", state=\"init\"} > 0) # sum merges across restarts",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{datatype}} Init (from restart?)",
+          "refId": "D"
+        },
+        {
+          "expr": "sum by(datatype, state) (gardener_tasks_in_flight{deployment=~\".*universal\", datatype=~\"$datatypes\", state!~\"init|.*Failed|complete\"} > 5) # sum merges across restarts",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "Stuck {{datatype}} {{state}} ",
+          "refId": "E"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 10,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
       "title": "Tasks In Flight",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -613,11 +668,12 @@
       },
       "yaxes": [
         {
+          "decimals": -1,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
-          "min": "0",
+          "min": "-2",
           "show": true
         },
         {
@@ -676,7 +732,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h])) by (deployment, state, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (deployment, state, le))",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -685,7 +741,7 @@
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*universal\"}[1h])) by (deployment, state, le))",
+          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (deployment, state, le))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -694,21 +750,21 @@
           "refId": "C"
         },
         {
-          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*universal\"}[1h])) by (deployment, state, datatype, le))",
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (state, datatype, le))",
           "format": "time_series",
           "hide": true,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{state}} {{datatype}}",
+          "legendFormat": "{{datatype}}: {{state}}",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*universal\"}[1h])) by (deployment, state, datatype, le))",
+          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[1h])) by (state, datatype, le))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{state}} {{datatype}}",
+          "legendFormat": "{{datatype}}: {{state}}",
           "refId": "D"
         }
       ],
@@ -718,14 +774,14 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 43200,
+          "value": 28800,
           "yaxis": "left"
         }
       ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Time in State (95th Percentile)",
+      "title": "Time in State (90th Percentile)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -741,12 +797,12 @@
       },
       "yaxes": [
         {
-          "decimals": null,
+          "decimals": -3,
           "format": "s",
           "label": null,
           "logBase": 10,
-          "max": "50000",
-          "min": "0.1",
+          "max": "36000",
+          "min": "1",
           "show": true
         },
         {
@@ -971,7 +1027,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(deployment) (4*increase(gardener_completed_total{deployment=~\"$deployment\", deployment!~\".*universal\"}[6h]))",
+          "expr": "sum by(deployment) (4*increase(gardener_completed_total{deployment=~\"$deployment\", deployment!~\".*universal\", datatype=~\"$datatypes\"}[6h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -979,7 +1035,7 @@
           "refId": "B"
         },
         {
-          "expr": "sum by(deployment, datatype) (4*increase(gardener_completed_total{deployment=~\"$deployment\", deployment=~\".*universal\"}[6h]))",
+          "expr": "sum by(deployment, datatype) (4*increase(gardener_completed_total{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[6h]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1044,7 +1100,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
-      "description": "",
+      "description": "We may want to monitor this from the Gardener instance, and suspend operation if the cost exceeds some threshold.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -1055,6 +1111,7 @@
       },
       "id": 21,
       "legend": {
+        "alignAsTable": false,
         "avg": false,
         "current": false,
         "max": false,
@@ -1077,7 +1134,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "/Avg Bytes.*/",
+          "alias": "/Cumulative/",
           "yaxis": 2
         }
       ],
@@ -1086,20 +1143,38 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, avg(gardener_empty_stats_recovery_sec) by (version, status, le))",
+          "expr": "sum  by(version, datatype, query)(rate(query_cost_seconds_sum{datatype=~\"$datatypes\"}[10m])/rate(query_cost_seconds_count{datatype=~\"$datatypes\"}[10m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{status}} {{version}}",
+          "legendFormat": "Slot Time per Query {{datatype}} {{query}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by(version, datatype, query)(increase(query_cost_seconds_sum{datatype=~\"$datatypes\"}[24h]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Cumulative per Day {{datatype}} {{query}}",
           "refId": "B"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 432000,
+          "yaxis": "right"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Empty TQ Stats Resolution Time",
+      "title": "Bigquery Costs",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1116,20 +1191,21 @@
       "yaxes": [
         {
           "decimals": null,
-          "format": "decbytes",
-          "label": "Bytes / File",
-          "logBase": 10,
-          "max": null,
-          "min": null,
+          "format": "s",
+          "label": "Slot Time per Query",
+          "logBase": 1,
+          "max": "7200",
+          "min": "0",
           "show": true
         },
         {
-          "format": "decbytes",
-          "label": "Bytes / File",
-          "logBase": 10,
+          "decimals": null,
+          "format": "s",
+          "label": "Avg Slot Time per Day",
+          "logBase": 1,
           "max": null,
-          "min": null,
-          "show": false
+          "min": "0",
+          "show": true
         }
       ],
       "yaxis": {
@@ -1179,7 +1255,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!=\".*universal\"}[20m])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[20m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1187,7 +1263,7 @@
           "refId": "A"
         },
         {
-          "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\"}[10m])",
+          "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\", datatype=~\"$datatypes\"}[10m])",
           "format": "time_series",
           "hide": true,
           "intervalFactor": 1,
@@ -1195,7 +1271,7 @@
           "refId": "B"
         },
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\".*universal\", datatype=~\"$datatypes\"}[20m])",
+          "expr": "1000*quantile_over_time(0.8, gardener_state_date{deployment=~\".*-universal\", datatype=~\"$datatypes\", state=~\"parsing|loading|complete\"}[5m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1246,6 +1322,20 @@
       }
     },
     {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 24,
+      "panels": [],
+      "title": "JSON file stats from BQ Load",
+      "type": "row"
+    },
+    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -1258,9 +1348,10 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 16,
+      "interval": "",
       "legend": {
         "avg": false,
         "current": false,
@@ -1287,11 +1378,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(deployment, year)(rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h])*3600)",
+          "expr": "sum by(deployment, datatype, year)(rate(gardener_bytes_sum{deployment=~\"$deployment\", datatype=~\"$datatypes\"}[1h])*3600)",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}} {{year}}",
+          "legendFormat": "{{datatype}} {{year}}",
           "refId": "A"
         }
       ],
@@ -1350,7 +1441,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 24
+        "y": 25
       },
       "id": 17,
       "legend": {
@@ -1385,12 +1476,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(deployment, year)(rate(gardener_files_sum{deployment=~\"$deployment\"}[1h])*3600)",
+          "expr": "sum by(datatype, year)(rate(gardener_files_sum{deployment=~\"$deployment\", datatype=~\"$datatypes\"}[1h])*3600)",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}} {{year}}",
+          "legendFormat": "{{year}} {{datatype}}",
           "refId": "A"
         }
       ],
@@ -1449,9 +1540,10 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 24
+        "y": 25
       },
       "id": 20,
+      "interval": "",
       "legend": {
         "avg": false,
         "current": false,
@@ -1484,12 +1576,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg by(deployment, year) (\n    rate(gardener_bytes_sum{deployment=~\"$deployment\"}[1h]) /\n    rate(gardener_files_sum{deployment=~\"$deployment\"}[1h]))",
+          "expr": "avg by(datatype, year) (\n    rate(gardener_bytes_sum{deployment=~\"$deployment\", datatype=~\"$datatypes\"}[1h]) /\n    rate(gardener_files_sum{deployment=~\"$deployment\", datatype=~\"$datatypes\"}[1h]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}} {{year}}",
+          "legendFormat": "{{year}} {{datatype}}",
           "refId": "B"
         }
       ],
@@ -1536,7 +1628,7 @@
       }
     }
   ],
-  "refresh": "1m",
+  "refresh": "5m",
   "schemaVersion": 20,
   "style": "dark",
   "tags": [],
