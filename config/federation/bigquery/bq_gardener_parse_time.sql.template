@@ -34,4 +34,10 @@ FROM (
   UNION ALL
     SELECT "ndt/ndt5" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
     FROM   `{{PROJECT}}.ndt.ndt5`
+  UNION ALL
+    SELECT "ndt/ndt7" AS datatype, MIN(Parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_ndt.ndt7`
+  UNION ALL
+    SELECT "ndt/annotation" AS datatype, MIN(Parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_ndt.annotation`
 )
