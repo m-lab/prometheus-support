@@ -33,7 +33,7 @@ FROM (
         MIN(parser.Time) AS min_parse_time,
         MAX(parser.Time) AS max_parse_time,
     FROM
-       `mlab-oti.raw_ndt.ndt7`
+       `mlab-{{PROJECT}}.raw_ndt.ndt7`
     GROUP BY date
     UNION ALL
     SELECT
@@ -43,7 +43,7 @@ FROM (
         MIN(parser.Time) AS min_parse_time,
         MAX(parser.Time) AS max_parse_time,
     FROM
-       `mlab-oti.raw_ndt.annotation`
+       `mlab-{{PROJECT}}.raw_ndt.annotation`
     GROUP BY date
 
 )
