@@ -13,7 +13,7 @@
 --   bq_gardener_oldest_less_than_90_days
 
 SELECT
-    datatype, 
+    datatype,
     COUNTIF(true) AS value_partitions,
     CAST(SAFE_DIVIDE(SUM(IF(DATE_DIFF(CURRENT_DATE(), date, DAY) < 4, records, 0)),
                      COUNTIF(DATE_DIFF(CURRENT_DATE(), date, DAY) < 4)) AS INT64) AS value_rows_per_date_recent,
@@ -33,17 +33,17 @@ FROM (
         MIN(parser.Time) AS min_parse_time,
         MAX(parser.Time) AS max_parse_time,
     FROM
-       `mlab-{{PROJECT}}.raw_ndt.ndt7`
+       `{{PROJECT}}.raw_ndt.ndt7`
     GROUP BY date
     UNION ALL
     SELECT
-        "ndt/annotation" AS datatype,        
+        "ndt/annotation" AS datatype,
         date,
         COUNT(id) AS records,
         MIN(parser.Time) AS min_parse_time,
         MAX(parser.Time) AS max_parse_time,
     FROM
-       `mlab-{{PROJECT}}.raw_ndt.annotation`
+       `{{PROJECT}}.raw_ndt.annotation`
     GROUP BY date
 
 )
