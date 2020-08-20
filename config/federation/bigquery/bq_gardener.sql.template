@@ -2,50 +2,82 @@
 -- bq_gardener calculates ...
 --
 -- Note: this query returns multiple values. So, resulting metrics will be:
---   bq_gardener_partitions
---   bq_gardener_rows_per_date_recent
---   bq_gardener_rows_per_date_last_month
---   bq_gardener_daily_done_last_3_days
---   bq_gardener_updated_within_3_days
---   bq_gardener_oldest_less_than_3_days
---   bq_gardener_oldest_less_than_7_days
---   bq_gardener_oldest_less_than_30_days
---   bq_gardener_oldest_less_than_90_days
+--   bq_gardener_total_dates
 
-SELECT
-    datatype,
-    COUNTIF(true) AS value_partitions,
-    CAST(SAFE_DIVIDE(SUM(IF(DATE_DIFF(CURRENT_DATE(), date, DAY) < 4, records, 0)),
-                     COUNTIF(DATE_DIFF(CURRENT_DATE(), date, DAY) < 4)) AS INT64) AS value_rows_per_date_recent,
-    CAST(SAFE_DIVIDE(SUM(IF(DATE_DIFF(CURRENT_DATE(), date, DAY) < 30, records, 0)),
-                     COUNTIF(DATE_DIFF(CURRENT_DATE(), date, DAY) < 30)) AS INT64) AS value_rows_per_date_last_month,
-    COUNTIF(TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), max_parse_time, HOUR) < 72 AND DATE_DIFF(CURRENT_DATE(), date, DAY) < 4) AS value_daily_done_last_3_days,
-    COUNTIF(TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), max_parse_time, HOUR) < 72) AS value_updated_within_3_days,
-    COUNTIF(TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, HOUR) < 72) AS value_oldest_less_than_3_days,
-    COUNTIF(TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, HOUR) < 168) AS value_oldest_less_than_7_days,
-    COUNTIF(TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, DAY) < 30) AS value_oldest_less_than_30_days,
-    COUNTIF(TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, DAY) < 90) AS value_oldest_less_than_90_days,
-FROM (
+--   bq_gardener_rows_per_date_last_4_days,
+--   bq_gardener_rows_per_date_last_30_days,
+
+--   bq_gardener_daily_done_last_4_days,
+
+--   bq_gardener_dates_partially_parsed,
+--   bq_gardener_dates_partially_parsed_last_day,
+--   bq_gardener_dates_partially_parsed_last_7_days,
+--   bq_gardener_dates_partially_parsed_last_30_days,
+--   bq_gardener_dates_partially_parsed_last_90_days,
+
+--   bq_gardener_dates_fully_parsed_last_day,
+--   bq_gardener_dates_fully_parsed_last_7_days,
+--   bq_gardener_dates_fully_parsed_last_30_days,
+--   bq_gardener_dates_fully_parsed_last_90_days,
+
+WITH all_types AS (
     SELECT
         "ndt/ndt7" AS datatype,
+        id,
         date,
-        COUNT(id) AS records,
-        MIN(parser.Time) AS min_parse_time,
-        MAX(parser.Time) AS max_parse_time,
+        parser.Time as parseTime,
     FROM
        `{{PROJECT}}.raw_ndt.ndt7`
-    GROUP BY date
     UNION ALL
     SELECT
         "ndt/annotation" AS datatype,
+        id,
         date,
-        COUNT(id) AS records,
-        MIN(parser.Time) AS min_parse_time,
-        MAX(parser.Time) AS max_parse_time,
+        parser.Time as parseTime,
     FROM
        `{{PROJECT}}.raw_ndt.annotation`
-    GROUP BY date
+),
 
+basic_stats AS (
+  SELECT
+    datatype,
+    date,
+    COUNT(id) AS rowCount,
+    MAX(parseTime) AS max_parse_time,
+    MIN(parseTime) AS min_parse_time,
+    TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MAX(parseTime), HOUR) AS latest_age_hours,
+    TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MIN(parseTime), HOUR) AS earliest_age_hours,
+    TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) AS parse_span_hours,
+    TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) > 48 AS stale_archives,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) < 4 AS last_4_days,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) < 4 AS last_30_days,
+  FROM
+    all_types
+  GROUP BY datatype, date
 )
+
+SELECT
+    datatype,
+    COUNT(date) AS value_total_dates,
+
+    CAST(SAFE_DIVIDE(SUM(IF(last_4_days, rowCount, 0)),
+                     COUNTIF(last_4_days)) AS INT64) AS value_rows_per_date_last_4_days,
+    CAST(SAFE_DIVIDE(SUM(IF(last_30_days, rowCount, 0)),
+                     COUNTIF(last_30_days)) AS INT64) AS value_rows_per_date_last_30_days,
+
+    COUNTIF(latest_age_hours < 96 AND last_4_days) AS value_daily_done_last_4_days,
+
+    COUNTIF(parse_span_hours > 48) AS value_dates_partially_parsed,
+    COUNTIF(stale_archives AND earliest_age_hours < 24) AS value_dates_partially_parsed_last_day,
+    COUNTIF(stale_archives AND earliest_age_hours < 7*24) AS value_dates_partially_parsed_last_7_days,
+    COUNTIF(stale_archives AND earliest_age_hours < 30*24) AS value_dates_partially_parsed_last_30_days,
+    COUNTIF(stale_archives AND earliest_age_hours < 90*24) AS value_dates_partially_parsed_last_90_days,
+
+    COUNTIF(NOT stale_archives AND earliest_age_hours < 24) AS value_dates_fully_parsed_last_day,
+    COUNTIF(NOT stale_archives AND earliest_age_hours < 7*24) AS value_dates_fully_parsed_last_7_days,
+    COUNTIF(NOT stale_archives AND earliest_age_hours < 30*24) AS value_dates_fully_parsed_last_30_days,
+    COUNTIF(NOT stale_archives AND earliest_age_hours < 90*24) AS value_dates_fully_parsed_last_90_days,
+FROM
+  basic_stats
 GROUP BY datatype
 ORDER BY datatype
