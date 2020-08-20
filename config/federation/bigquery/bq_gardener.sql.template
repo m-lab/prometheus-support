@@ -49,8 +49,8 @@ basic_stats AS (
     TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MIN(parseTime), HOUR) AS earliest_age_hours,
     TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) AS parse_span_hours,
     TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) > 48 AS stale_archives,
-    DATE_DIFF(CURRENT_DATE(), date, DAY) < 4 AS last_4_days,
-    DATE_DIFF(CURRENT_DATE(), date, DAY) < 4 AS last_30_days,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 4 AS last_4_days,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 30 AS last_30_days,
   FROM
     all_types
   GROUP BY datatype, date
@@ -59,6 +59,8 @@ basic_stats AS (
 SELECT
     datatype,
     COUNT(date) AS value_total_dates,
+    MAX(latest_age_hours) AS value_max_parse_age,
+    MAX(earliest_age_hours) AS value_max_stale_age,
 
     CAST(SAFE_DIVIDE(SUM(IF(last_4_days, rowCount, 0)),
                      COUNTIF(last_4_days)) AS INT64) AS value_rows_per_date_last_4_days,
