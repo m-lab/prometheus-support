@@ -806,9 +806,70 @@ groups:
       repo: dev-tracker
       severity: ticket
     annotations:
-      summary: The ETL Gardener instance is down or missing.
+      summary: The Universal Gardener instance is down or missing.
       description: Gardener runs in the data-processing-cluster.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Proc%20(mlab-oti)
+
+# UniversalGardenerDownOrMissing fires when the etl-gardener-universal is down or absent.
+# TODO: enable annotations to ignore some container ports, and simplify this query.
+# https://github.com/m-lab/prometheus-support/issues/48
+  - alert: UniversalGardenerDownOrMissing
+    expr: |
+      up{container="etl-gardener-universal",instance=~".*:9090"} == 0
+        or absent(up{container="etl-gardener-universal",instance=~".*:9090"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: The Universal Gardener instance is down or missing.
+      description: Gardener runs in the "data-processing" cluster.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+
+# NDT7DailyIsLate fires when NDT7 daily processing has fallen behind
+# There should always be either 3 or 4 of the past four dates available.
+  - alert: NDT7SlowProgress
+    expr: |
+      bq_gardener_daily_done_last_4_days{datatype="ndt/ndt7"} < 3
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: NDT7 daily processing has fallen behind.
+      description: Gardener runs in the "data-processing" cluster.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+
+# NDT7SlowProgress fires when reprocessing is stalled for NDT7
+# The expected rate is actually much higher than 24, but this is a conservative SLO.
+  - alert: NDT7SlowProgress
+    expr: |
+      bq_gardener_dates_fully_parsed_last_day{datatype="ndt/ndt7"} < 24
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: NDT7 reprocessing has fallen behind.
+      description: Gardener runs in the "data-processing" cluster.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+
+# UniversalParserDownOrMissing fires when the k8s etl-parser is down or absent.
+# TODO: enable annotations to ignore some container ports, and simplify this query.
+# https://github.com/m-lab/prometheus-support/issues/48
+  - alert: UniversalParserDownOrMissing
+    expr: |
+      up{container="etl-parser",instance=~".*:9090"} == 0
+        or absent(up{container="etl-parser",instance=~".*:9090"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: The ETL Gardener instance is down or missing.
+      description: Gardener runs in the "data-processing" cluster.
+      # TODO #736 - update this when k8s dashboard is deployed to production.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
 
 # ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
 # may increase due to a transient issue or a short-lived trigger for a parser
