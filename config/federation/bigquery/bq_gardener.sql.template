@@ -1,24 +1,25 @@
 #standardSQL
--- bq_gardener calculates ...
+-- bq_gardener calculates various metrics related to parser.Time.
+-- Generally, "day" is used to refer to parse times, and "date" is used to refer to partitions.
 --
 -- Note: this query returns multiple values. So, resulting metrics will be:
---   bq_gardener_total_dates
-
---   bq_gardener_rows_per_date_last_4_days,
---   bq_gardener_rows_per_date_last_30_days,
-
---   bq_gardener_daily_done_last_4_days,
-
---   bq_gardener_dates_partially_parsed,
---   bq_gardener_dates_partially_parsed_last_day,
---   bq_gardener_dates_partially_parsed_last_7_days,
---   bq_gardener_dates_partially_parsed_last_30_days,
---   bq_gardener_dates_partially_parsed_last_90_days,
-
---   bq_gardener_dates_fully_parsed_last_day,
---   bq_gardener_dates_fully_parsed_last_7_days,
---   bq_gardener_dates_fully_parsed_last_30_days,
---   bq_gardener_dates_fully_parsed_last_90_days,
+--   bq_gardener_total_dates                         -- total number of date partitions in the table
+--
+--   bq_gardener_rows_per_date_last_4_dates          -- Average rows per date, last 3 or 4 dates
+--   bq_gardener_rows_per_date_last_30_dates         -- Average rows per date, last 29 or 30 dates
+--
+--   bq_gardener_daily_done_last_4_days              -- Count of most recent daily dates.  Should be 3 or 4.
+--
+--   bq_gardener_dates_partially_parsed              -- Total dates with parsing span > 48 hours.
+--   bq_gardener_dates_partially_parsed_last_day,    -- Dates with parsing span > 48 hours, parsed within past day.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_7_days  -- Dates with parsing span > 48 hours, parsed within past 7 days.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_30_days -- Dates with parsing span > 48 hours, parsed within past 30 days.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_90_days -- Dates with parsing span > 48 hours, parsed within past 90 days.  Should be 0.
+--
+--   bq_gardener_dates_fully_parsed_last_day         -- Number of dates fully parsed within last day.
+--   bq_gardener_dates_fully_parsed_last_7_days      -- Number of dates fully parsed within last 7 days.
+--   bq_gardener_dates_fully_parsed_last_30_days     -- Number of dates fully parsed within last 30 days.
+--   bq_gardener_dates_fully_parsed_last_90_days     -- Number of dates fully parsed within last 90 days.
 
 WITH all_types AS (
     SELECT
@@ -49,8 +50,8 @@ basic_stats AS (
     TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MIN(parseTime), HOUR) AS earliest_age_hours,
     TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) AS parse_span_hours,
     TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) > 48 AS stale_archives,
-    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 4 AS last_4_days,
-    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 30 AS last_30_days,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 4 AS last_4_dates,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 30 AS last_30_dates,
   FROM
     all_types
   GROUP BY datatype, date
@@ -62,12 +63,12 @@ SELECT
     MAX(latest_age_hours) AS value_max_parse_age,
     MAX(earliest_age_hours) AS value_max_stale_age,
 
-    CAST(SAFE_DIVIDE(SUM(IF(last_4_days, rowCount, 0)),
-                     COUNTIF(last_4_days)) AS INT64) AS value_rows_per_date_last_4_days,
-    CAST(SAFE_DIVIDE(SUM(IF(last_30_days, rowCount, 0)),
-                     COUNTIF(last_30_days)) AS INT64) AS value_rows_per_date_last_30_days,
+    CAST(SAFE_DIVIDE(SUM(IF(last_4_dates, rowCount, 0)),
+                     COUNTIF(last_4_dates)) AS INT64) AS value_rows_per_date_last_4_dates,
+    CAST(SAFE_DIVIDE(SUM(IF(last_30_dates, rowCount, 0)),
+                     COUNTIF(last_30_dates)) AS INT64) AS value_rows_per_date_last_30_dates,
 
-    COUNTIF(latest_age_hours < 96 AND last_4_days) AS value_daily_done_last_4_days,
+    COUNTIF(latest_age_hours < 96 AND last_4_dates) AS value_daily_done_last_4_days,
 
     COUNTIF(parse_span_hours > 48) AS value_dates_partially_parsed,
     COUNTIF(stale_archives AND earliest_age_hours < 24) AS value_dates_partially_parsed_last_day,
