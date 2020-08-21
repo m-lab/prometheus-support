@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1597337881964,
+  "iteration": 1597881690121,
   "links": [
     {
       "icon": "external link",
@@ -63,7 +63,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 0
       },
@@ -153,16 +153,131 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$pipelineDatasource",
+      "datasource": "$prometheusDatasource",
+      "description": "",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 6,
+        "w": 8,
+        "x": 8,
         "y": 0
       },
-      "id": 2,
+      "id": 26,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/Rows Per Date/",
+          "linewidth": 2,
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "bq_gardener_daily_done_last_4_days",
+          "legendFormat": "Daily {{datatype}}",
+          "refId": "A"
+        },
+        {
+          "expr": "bq_gardener_dates_partially_parsed > 0",
+          "legendFormat": "Partially Parsed {{datatype}}",
+          "refId": "B"
+        },
+        {
+          "expr": "bq_gardener_dates_fully_parsed_last_7_days/7",
+          "legendFormat": "Fully Parsed Per Day {{datatype}}",
+          "refId": "C"
+        },
+        {
+          "expr": "bq_gardener_rows_per_date_last_4_dates",
+          "hide": false,
+          "legendFormat": "Rows Per Date (4 days) {{datatype}}",
+          "refId": "D"
+        },
+        {
+          "expr": "bq_gardener_rows_per_date_last_30_dates",
+          "legendFormat": "Rows Per Date (30 days) {{datatype}}",
+          "refId": "E"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Overall Reprocessing Stats",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "description": "Task dates of the most recent updates to each task state.\n\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 15,
       "legend": {
         "avg": false,
         "current": false,
@@ -183,57 +298,41 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/Warning:/",
-          "color": "#e5ac0e"
-        },
-        {
-          "alias": "/Failure:/",
-          "color": "#bf1b00"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(gardener_warning_total{container=\"etl-gardener\"}[12h])",
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[20m])",
           "format": "time_series",
-          "hide": true,
+          "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{status}}",
+          "legendFormat": "{{deployment}} {{state}}",
           "refId": "A"
         },
         {
-          "expr": "irate(gardener_fail_total{container=\"etl-gardener\"}[12h])",
+          "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\", datatype=~\"$datatypes\"}[10m])",
           "format": "time_series",
           "hide": true,
-          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{status}}",
+          "legendFormat": "{{deployment}}  {{state}}",
           "refId": "B"
         },
         {
-          "expr": "3600 * rate(gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
+          "expr": "1000*quantile_over_time(0.8, gardener_state_date{deployment=~\".*-universal\", datatype=~\"$datatypes\", state=~\"parsing|loading|complete\"}[5m])",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "Warning: {{datatype}} {{status}}",
+          "legendFormat": "{{datatype}} {{state}}",
           "refId": "C"
-        },
-        {
-          "expr": "3600 * rate(gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Failure: {{datatype}} {{status}}",
-          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Hourly Warning and Failure Rates",
+      "title": "Task Date of Recent State Updates",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -250,286 +349,11 @@
       "yaxes": [
         {
           "decimals": null,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
+          "format": "dateTimeAsIso",
+          "label": "State update for task date",
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$pipelineDatasource",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 12,
-        "y": 0
-      },
-      "id": 4,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(process_cpu_seconds_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[5m])",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "CPU Utilization",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "percentunit",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$pipelineDatasource",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 16,
-        "y": 0
-      },
-      "id": 12,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "go_goroutines{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        },
-        {
-          "expr": "",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "GoRoutine Count",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$pipelineDatasource",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 5,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "process_virtual_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Virtual Memory",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 0,
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
           "show": true
         },
         {
@@ -557,7 +381,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 6
       },
@@ -671,138 +495,9 @@
           "decimals": -1,
           "format": "short",
           "label": "",
-          "logBase": 1,
+          "logBase": 10,
           "max": null,
           "min": "-2",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$pipelineDatasource",
-      "description": "How long each date spends in each processing state.\nIf Processing exceeds 12 hours, then there will likely be data loss from expiration in the task queue.",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 6
-      },
-      "id": 10,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "connected",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 0.5,
-      "points": true,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (deployment, state, le))",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{state}} {{deployment}}",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (deployment, state, le))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{state}} {{deployment}}",
-          "refId": "C"
-        },
-        {
-          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (state, datatype, le))",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{datatype}}: {{state}}",
-          "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[1h])) by (state, datatype, le))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{datatype}}: {{state}}",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [
-        {
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 28800,
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Time in State (90th Percentile)",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": -3,
-          "format": "s",
-          "label": null,
-          "logBase": 10,
-          "max": "36000",
-          "min": "1",
           "show": true
         },
         {
@@ -830,9 +525,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 12,
-        "x": 0,
-        "y": 12
+        "w": 8,
+        "x": 8,
+        "y": 6
       },
       "id": 9,
       "legend": {
@@ -972,8 +667,8 @@
       "gridPos": {
         "h": 6,
         "w": 8,
-        "x": 0,
-        "y": 18
+        "x": 16,
+        "y": 6
       },
       "id": 13,
       "legend": {
@@ -1105,9 +800,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 8,
-        "y": 18
+        "w": 6,
+        "x": 0,
+        "y": 12
       },
       "id": 21,
       "legend": {
@@ -1219,16 +914,267 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
-      "description": "Task dates of the most recent updates to each task state.\n\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.",
-      "fill": 0,
+      "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 6,
+        "y": 12
+      },
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/Warning:/",
+          "color": "#e5ac0e"
+        },
+        {
+          "alias": "/Failure:/",
+          "color": "#bf1b00"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "irate(gardener_warning_total{container=\"etl-gardener\"}[12h])",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 1,
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        },
+        {
+          "expr": "irate(gardener_fail_total{container=\"etl-gardener\"}[12h])",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{status}}",
+          "refId": "B"
+        },
+        {
+          "expr": "3600 * rate(gardener_warning_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Warning: {{datatype}} {{status}}",
+          "refId": "C"
+        },
+        {
+          "expr": "3600 * rate(gardener_fail_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[1h])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Failure: {{datatype}} {{status}}",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Hourly Warning and Failure Rates",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "description": "How long each date spends in each processing state.\nIf Processing exceeds 12 hours, then there will likely be data loss from expiration in the task queue.",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 10,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (deployment, state, le))",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{state}} {{deployment}}",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (deployment, state, le))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{state}} {{deployment}}",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.5, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (state, datatype, le))",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{datatype}}: {{state}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[1h])) by (state, datatype, le))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{datatype}}: {{state}}",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 28800,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Time in State (90th Percentile)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": -3,
+          "format": "s",
+          "label": null,
+          "logBase": 10,
+          "max": "36000",
+          "min": "1",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
         "y": 18
       },
-      "id": 15,
+      "id": 4,
       "legend": {
         "avg": false,
         "current": false,
@@ -1255,38 +1201,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "1000*quantile_over_time(0.2, gardener_state_date{deployment=~\"$deployment\", deployment!~\".*-universal\", datatype=~\"$datatypes\"}[20m])",
+          "expr": "rate(process_cpu_seconds_total{container=\"etl-gardener\", deployment=~\"$deployment\"}[5m])",
           "format": "time_series",
-          "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{deployment}} {{state}}",
+          "legendFormat": "{{deployment}}",
           "refId": "A"
-        },
-        {
-          "expr": "1000*quantile_over_time(0.7, gardener_state_date{deployment=~\"$deployment\", datatype=~\"$datatypes\"}[10m])",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{deployment}}  {{state}}",
-          "refId": "B"
-        },
-        {
-          "expr": "1000*quantile_over_time(0.8, gardener_state_date{deployment=~\".*-universal\", datatype=~\"$datatypes\", state=~\"parsing|loading|complete\"}[5m])",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "{{datatype}} {{state}}",
-          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Task Date of Recent State Updates",
+      "title": "CPU Utilization",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1299,12 +1228,197 @@
       },
       "yaxes": [
         {
-          "decimals": null,
-          "format": "dateTimeAsIso",
-          "label": "State update for task date",
+          "format": "percentunit",
+          "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 4,
+        "y": 18
+      },
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "go_goroutines{container=\"etl-gardener\", deployment=~\"$deployment\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}}",
+          "refId": "A"
+        },
+        {
+          "expr": "",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "GoRoutine Count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 8,
+        "y": 18
+      },
+      "id": 5,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "process_virtual_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Virtual Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
           "show": true
         },
         {
@@ -1757,7 +1871,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {
@@ -1788,5 +1902,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 63
+  "version": 120
 }
