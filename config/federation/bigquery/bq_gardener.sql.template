@@ -1,0 +1,88 @@
+#standardSQL
+-- bq_gardener calculates various metrics related to parser.Time.
+-- Generally, "day" is used to refer to parse times, and "date" is used to refer to partitions.
+--
+-- Note: this query returns multiple values. So, resulting metrics will be:
+--   bq_gardener_total_dates                         -- total number of date partitions in the table
+--
+--   bq_gardener_rows_per_date_last_4_dates          -- Average rows per date, last 3 or 4 dates
+--   bq_gardener_rows_per_date_last_30_dates         -- Average rows per date, last 29 or 30 dates
+--
+--   bq_gardener_daily_done_last_4_days              -- Count of most recent daily dates.  Should be 3 or 4.
+--
+--   Dates with stale rows:
+--   bq_gardener_dates_partially_parsed              -- Total
+--   bq_gardener_dates_partially_parsed_last_day,    -- Parsed within past day.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_7_days  -- Parsed within past 7 days.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_30_days -- Parsed within past 30 days.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_90_days -- Parsed within past 90 days.  Should be 0.
+--
+--   Dates without rows:
+--   bq_gardener_dates_fully_parsed_last_day         -- Parsed within last day.
+--   bq_gardener_dates_fully_parsed_last_7_days      -- Parsed within last 7 days.
+--   bq_gardener_dates_fully_parsed_last_30_days     -- Parsed within last 30 days.
+--   bq_gardener_dates_fully_parsed_last_90_days     -- Parsed within last 90 days.
+
+WITH all_types AS (
+  SELECT
+    "ndt/ndt7" AS datatype,
+    id,
+    date,
+    parser.Time as parseTime,
+  FROM
+    `{{PROJECT}}.raw_ndt.ndt7`
+  UNION ALL
+  SELECT
+    "ndt/annotation" AS datatype,
+    id,
+    date,
+    parser.Time as parseTime,
+  FROM
+    `{{PROJECT}}.raw_ndt.annotation`
+),
+
+basic_stats AS (
+  SELECT
+    datatype,
+    date,
+    COUNT(id) AS rowCount,
+    MAX(parseTime) AS max_parse_time,
+    MIN(parseTime) AS min_parse_time,
+    TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MAX(parseTime), HOUR) AS age_of_latest_parse,
+    # Worst case for parsing a single date (for tcpinfo) is currently about 5 hours.
+    # As a general policy, we should work to keep this below 24 hours.  Then the maximum
+    # span of parse dates observed in a date partition should be 24 hours.  If more than
+    # this, there are most likely stale rows from a previous reprocessing pass.
+    TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) > 24 AS has_stale_rows,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 4 AS last_4_dates,
+    DATE_DIFF(CURRENT_DATE(), date, DAY) <= 30 AS last_30_dates,
+  FROM
+    all_types
+  GROUP BY datatype, date
+)
+
+SELECT
+  datatype,
+  COUNT(date) AS value_total_dates,
+
+  CAST(SAFE_DIVIDE(SUM(IF(last_4_dates, rowCount, 0)),
+                   COUNTIF(last_4_dates)) AS INT64) AS value_rows_per_date_last_4_dates,
+  CAST(SAFE_DIVIDE(SUM(IF(last_30_dates, rowCount, 0)),
+                   COUNTIF(last_30_dates)) AS INT64) AS value_rows_per_date_last_30_dates,
+
+  COUNTIF(age_of_latest_parse < 4*24 AND last_4_dates) AS value_daily_done_last_4_days,
+
+  COUNTIF(has_stale_rows) AS value_dates_partially_parsed,
+  COUNTIF(has_stale_rows AND age_of_latest_parse < 24) AS value_dates_partially_parsed_last_day,
+  COUNTIF(has_stale_rows AND age_of_latest_parse < 7*24) AS value_dates_partially_parsed_last_7_days,
+  COUNTIF(has_stale_rows AND age_of_latest_parse < 30*24) AS value_dates_partially_parsed_last_30_days,
+  COUNTIF(has_stale_rows AND age_of_latest_parse < 90*24) AS value_dates_partially_parsed_last_90_days,
+
+  COUNTIF(NOT has_stale_rows AND age_of_latest_parse < 24) AS value_dates_fully_parsed_last_day,
+  COUNTIF(NOT has_stale_rows AND age_of_latest_parse < 7*24) AS value_dates_fully_parsed_last_7_days,
+  COUNTIF(NOT has_stale_rows AND age_of_latest_parse < 30*24) AS value_dates_fully_parsed_last_30_days,
+  COUNTIF(NOT has_stale_rows AND age_of_latest_parse < 90*24) AS value_dates_fully_parsed_last_90_days,
+FROM
+  basic_stats
+GROUP BY datatype
+ORDER BY datatype
