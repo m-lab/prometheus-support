@@ -10,16 +10,18 @@
 --
 --   bq_gardener_daily_done_last_4_days              -- Count of most recent daily dates.  Should be 3 or 4.
 --
---   bq_gardener_dates_partially_parsed              -- Total dates with parsing span > 48 hours.
---   bq_gardener_dates_partially_parsed_last_day,    -- Dates with parsing span > 48 hours, parsed within past day.  Should be 0.
---   bq_gardener_dates_partially_parsed_last_7_days  -- Dates with parsing span > 48 hours, parsed within past 7 days.  Should be 0.
---   bq_gardener_dates_partially_parsed_last_30_days -- Dates with parsing span > 48 hours, parsed within past 30 days.  Should be 0.
---   bq_gardener_dates_partially_parsed_last_90_days -- Dates with parsing span > 48 hours, parsed within past 90 days.  Should be 0.
+--   Dates with stale rows:
+--   bq_gardener_dates_partially_parsed              -- Total
+--   bq_gardener_dates_partially_parsed_last_day,    -- Parsed within past day.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_7_days  -- Parsed within past 7 days.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_30_days -- Parsed within past 30 days.  Should be 0.
+--   bq_gardener_dates_partially_parsed_last_90_days -- Parsed within past 90 days.  Should be 0.
 --
---   bq_gardener_dates_fully_parsed_last_day         -- Number of dates fully parsed within last day.
---   bq_gardener_dates_fully_parsed_last_7_days      -- Number of dates fully parsed within last 7 days.
---   bq_gardener_dates_fully_parsed_last_30_days     -- Number of dates fully parsed within last 30 days.
---   bq_gardener_dates_fully_parsed_last_90_days     -- Number of dates fully parsed within last 90 days.
+--   Dates without rows:
+--   bq_gardener_dates_fully_parsed_last_day         -- Parsed within last day.
+--   bq_gardener_dates_fully_parsed_last_7_days      -- Parsed within last 7 days.
+--   bq_gardener_dates_fully_parsed_last_30_days     -- Parsed within last 30 days.
+--   bq_gardener_dates_fully_parsed_last_90_days     -- Parsed within last 90 days.
 
 WITH all_types AS (
   SELECT
@@ -47,8 +49,11 @@ basic_stats AS (
     MAX(parseTime) AS max_parse_time,
     MIN(parseTime) AS min_parse_time,
     TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), MAX(parseTime), HOUR) AS age_of_latest_parse,
-    # Rows parsed more than 2 days earlier than the last parse are considered stale.
-    TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) > 48 AS has_stale_rows,
+    # Worst case for parsing a single date (for tcpinfo) is currently about 5 hours.
+    # As a general policy, we should work to keep this below 24 hours.  Then the maximum
+    # span of parse dates observed in a date partition should be 24 hours.  If more than
+    # this, there are most likely stale rows from a previous reprocessing pass.
+    TIMESTAMP_DIFF(MAX(parseTime), MIN(parseTime), HOUR) > 24 AS has_stale_rows,
     DATE_DIFF(CURRENT_DATE(), date, DAY) <= 4 AS last_4_dates,
     DATE_DIFF(CURRENT_DATE(), date, DAY) <= 30 AS last_30_dates,
   FROM
