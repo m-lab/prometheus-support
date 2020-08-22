@@ -817,7 +817,8 @@ groups:
     expr: |
       up{container="etl-gardener-universal",instance=~".*:9090"} == 0
         or absent(up{container="etl-gardener-universal",instance=~".*:9090"})
-    for: 10m
+    # TODO restore this when gcp-service-discovery#33 is resolved.
+    for: 10000h # 10m
     labels:
       repo: dev-tracker
       severity: ticket
@@ -833,12 +834,13 @@ groups:
     expr: |
       up{container="etl-parser",instance=~".*:9090"} == 0
         or absent(up{container="etl-parser",instance=~".*:9090"})
-    for: 10m
+    # TODO restore this when gcp-service-discovery#33 is resolved.
+    for: 10000h # 10m
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
-      summary: The ETL Gardener instance is down or missing {{ $labels.instance }}.
+      summary: ETL Parser instance is down or missing {{ $labels.instance }}.
       description: These parsers run in the "data-processing" cluster.
       # TODO #736 - update this when k8s dashboard is deployed to production.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
