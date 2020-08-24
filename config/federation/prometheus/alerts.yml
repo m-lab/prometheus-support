@@ -817,8 +817,7 @@ groups:
     expr: |
       up{cluster="data-processing", container="etl-gardener",instance=~".*:9090"} == 0
         or absent(up{cluster="data-processing", container="etl-gardener",instance=~".*:9090"})
-    # TODO restore this when gcp-service-discovery#33 is resolved.
-    for: 10000h # 10m
+    for: 10m
     labels:
       repo: dev-tracker
       severity: ticket
@@ -834,8 +833,7 @@ groups:
     expr: |
       up{cluster="data-processing", container="etl-parser",instance=~".*:9090"} == 0
         or absent(up{cluster="data-processing", container="etl-parser",instance=~".*:9090"})
-    # TODO restore this when gcp-service-discovery#33 is resolved.
-    for: 10000h # 10m
+    for: 10m
     labels:
       repo: dev-tracker
       severity: ticket
