@@ -799,8 +799,8 @@ groups:
 # https://github.com/m-lab/prometheus-support/issues/48
   - alert: DataProcessingCluster_GardenerDownOrMissing
     expr: |
-      up{container="etl-gardener",instance=~".*:9090"} == 0
-        or absent(up{container="etl-gardener",instance=~".*:9090"})
+      up{container="etl-gardener", deployment!="etl-gardener-universal", instance=~".*:9090"} == 0
+        or absent(up{container="etl-gardener", deployment!="etl-gardener-universal", instance=~".*:9090"})
     for: 10m
     labels:
       repo: dev-tracker
@@ -815,8 +815,8 @@ groups:
 # https://github.com/m-lab/prometheus-support/issues/48
   - alert: DataProcessing_GardenerDownOrMissing
     expr: |
-      up{container="etl-gardener-universal",instance=~".*:9090"} == 0
-        or absent(up{container="etl-gardener-universal",instance=~".*:9090"})
+      up{cluster="data-processing", container="etl-gardener",instance=~".*:9090"} == 0
+        or absent(up{cluster="data-processing", container="etl-gardener",instance=~".*:9090"})
     # TODO restore this when gcp-service-discovery#33 is resolved.
     for: 10000h # 10m
     labels:
@@ -832,8 +832,8 @@ groups:
 # https://github.com/m-lab/prometheus-support/issues/48
   - alert: UniversalParserDownOrMissing
     expr: |
-      up{container="etl-parser",instance=~".*:9090"} == 0
-        or absent(up{container="etl-parser",instance=~".*:9090"})
+      up{cluster="data-processing", container="etl-parser",instance=~".*:9090"} == 0
+        or absent(up{cluster="data-processing", container="etl-parser",instance=~".*:9090"})
     # TODO restore this when gcp-service-discovery#33 is resolved.
     for: 10000h # 10m
     labels:
