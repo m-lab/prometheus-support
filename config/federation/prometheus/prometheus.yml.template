@@ -405,8 +405,8 @@ scrape_configs:
     scrape_timeout: 50s
     params:
       'match[]':
-        - 'up{container="etl-gardener"}'
-        - 'up{container="etl-parser"}'
+        - 'up{container="etl-gardener",instance=~".*:9090"}'
+        - 'up{container="etl-parser",instance=~".*:9090"}'
     static_configs:
       - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
 
