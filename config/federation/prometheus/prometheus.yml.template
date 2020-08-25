@@ -206,7 +206,13 @@ scrape_configs:
         action: replace
         regex: gke-(.*)(-[^-]+){2}
         replacement: $1
+        target_label: nodepool
+
+      # Add explicit cluster label to pod metrics.
+      - source_labels: []
+        regex: .*
         target_label: cluster
+        replacement: prometheus-federation
 
       # Identify the deployment name for replica set or daemon set.  Pods
       # created by deployments or daemon sets are processed here. The
