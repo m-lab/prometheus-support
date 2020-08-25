@@ -8,8 +8,8 @@ global:
   # These labels are attached to any time series or alert sent to external
   # systems (federation, remote storage, Alertmanager).
   # TODO(soltesz): use this when M-Lab adds federation or alertmanager.
-  # external_labels:
-  #   monitor: 'mlab1'
+  external_labels:
+    cluster: {{CLUSTER}}
 
 
 # Load rules once and periodically evaluate them according to the global
@@ -177,7 +177,7 @@ scrape_configs:
         action: replace
         regex: gke-(.*)(-[^-]+){2}
         replacement: $1
-        target_label: cluster
+        target_label: nodepool
 
       # Identify the deployment name for replica set or daemon set.  Pods
       # created by deployments or daemon sets are processed here. The
