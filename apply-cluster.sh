@@ -16,11 +16,15 @@ USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
+# Replace the template variables.
+sed -e 's|{{CLUSTER}}|'${CLUSTER}'|g' \
+    config/cluster/prometheus/prometheus.yml.template > \
+    config/cluster/prometheus/prometheus.yml
+
 # Prometheus config map.
 kubectl create configmap prometheus-cluster-config \
     --from-file=config/cluster/prometheus \
     --dry-run -o json | kubectl apply -f -
-
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
