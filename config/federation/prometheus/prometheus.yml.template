@@ -206,7 +206,13 @@ scrape_configs:
         action: replace
         regex: gke-(.*)(-[^-]+){2}
         replacement: $1
+        target_label: nodepool
+
+      # Add explicit cluster label to pod metrics.
+      - source_labels: []
+        regex: .*
         target_label: cluster
+        replacement: prometheus-federation
 
       # Identify the deployment name for replica set or daemon set.  Pods
       # created by deployments or daemon sets are processed here. The
@@ -394,6 +400,21 @@ scrape_configs:
   - job_name: 'ipv6-node-exporter'
     static_configs:
       - targets: ['blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:9100']
+
+  # Scrape config for services running in data-processing cluster, which is
+  # region based, so m-lab/gcp-service-discovery#33 causes problems.  These
+  # metrics are needed by the alerts like up{container="etl-gardener",instance=~".*:9090"} == 0
+  - job_name: 'federation-data-processing'
+    honor_labels: true
+    metrics_path: '/federate'
+    # Allow more time, since the number of metrics may be large.
+    scrape_timeout: 50s
+    params:
+      'match[]':
+        - 'up{container="etl-gardener",instance=~".*:9090"}'
+        - 'up{container="etl-parser",instance=~".*:9090"}'
+    static_configs:
+      - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
 
   # Scrape config for federation.
   #

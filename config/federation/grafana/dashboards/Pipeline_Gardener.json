@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1597881690121,
+  "iteration": 1598146184322,
   "links": [
     {
       "icon": "external link",
@@ -205,7 +205,7 @@
           "refId": "B"
         },
         {
-          "expr": "bq_gardener_dates_fully_parsed_last_7_days/7",
+          "expr": "bq_gardener_dates_fully_parsed_last_day",
           "legendFormat": "Fully Parsed Per Day {{datatype}}",
           "refId": "C"
         },
@@ -376,13 +376,167 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
+      "description": "Uptime for each workload.\nLinks to parser dashboard and gardener workload console.",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 6
+      },
+      "id": 28,
+      "interval": "",
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "K8S Parser dashboard",
+          "url": "https://grafana.mlab-sandbox.measurementlab.net/d/U2iBdRPZk/k8s-parsers?$var-datasource=${pipelineDatasource}&${__url_time_range}"
+        },
+        {
+          "targetBlank": true,
+          "title": "Gardener Workload Console",
+          "url": "https://console.cloud.google.com/kubernetes/workload?project=${project}&workload_list_tablequery=%255B%257B_22k_22_3A_22is_system_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22false_5C_22_22_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22metadata%252Fname_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22gardener-universal_5C_22_22%257D%255D"
+        }
+      ],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/instance count/",
+          "fill": 0,
+          "yaxis": 2
+        },
+        {
+          "alias": "/Gardener/",
+          "linewidth": 2,
+          "steppedLine": false
+        },
+        {
+          "alias": "/Git Commit/",
+          "fill": 0,
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "expr": "sum by(container, pod_template_hash, instance)(time()-process_start_time_seconds{container=~\"etl-gardener\"})",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Gardener {{container}} {{pod_template_hash}}",
+          "refId": "A",
+          "step": 20
+        },
+        {
+          "expr": "count by(container, pod_template_hash) (process_start_time_seconds{container=~\"etl-parser\"})",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "instance count ({{container}} {{pod_template_hash}})",
+          "refId": "B",
+          "step": 20
+        },
+        {
+          "expr": "sum by(container, pod_template_hash, instance)(time()-process_start_time_seconds{container=~\"etl-parser\"})",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Parsers {{pod_template_hash}} {{instance}}",
+          "refId": "C",
+          "step": 20
+        },
+        {
+          "expr": "sum by(container, value)(etl_commit_hash{container=~\"etl-parser\"})",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Git Commit {{value}}",
+          "refId": "D",
+          "step": 20
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Gardener and Parser Uptime",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "dtdurations",
+          "logBase": 10,
+          "min": 60,
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "short",
+          "logBase": 1,
+          "max": "20",
+          "min": 0,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
       "description": "There should generally be about 4 to 5 tasks in flight for each etl parser instance.  Currently (April 2020) there are only two instances.  \n\nWe might also want to use this internally in Gardener to determine when we should suspend operations automatically.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 0,
+        "w": 6,
+        "x": 6,
         "y": 6
       },
       "id": 7,
@@ -525,8 +679,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 6
       },
       "id": 9,
@@ -666,8 +820,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 6
       },
       "id": 13,
@@ -795,13 +949,138 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$pipelineDatasource",
+      "description": "",
+      "editable": false,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 0,
+        "y": 12
+      },
+      "id": 30,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Parser Dashboard",
+          "url": "https://grafana.mlab-sandbox.measurementlab.net/d/U2iBdRPZk/k8s-parsers?$var-pipelineDatasource=${pipelineDatasource}&${__url_time_range}"
+        }
+      ],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/Average/",
+          "color": "#65c5db",
+          "linewidth": 3
+        },
+        {
+          "alias": "/etl/",
+          "color": "rgba(146, 83, 83, 0.13)",
+          "dashLength": 1,
+          "spaceLength": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{container=\"etl-parser\"}[2m])/etl_num_cpu",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "refId": "A",
+          "step": 60
+        },
+        {
+          "expr": "avg(rate(process_cpu_seconds_total{container=\"etl-parser\"}[2m])/etl_num_cpu) by (version)",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "Average {{version}}",
+          "refId": "B",
+          "step": 60
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Parser CPU Utilization",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "logBase": 1,
+          "max": 1,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$pipelineDatasource",
       "description": "We may want to monitor this from the Gardener instance, and suspend operation if the cost exceeds some threshold.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 0,
+        "w": 5,
+        "x": 5,
         "y": 12
       },
       "id": 21,
@@ -918,8 +1197,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 6,
+        "w": 5,
+        "x": 10,
         "y": 12
       },
       "id": 2,
@@ -1042,8 +1321,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
-        "w": 12,
-        "x": 12,
+        "w": 9,
+        "x": 15,
         "y": 12
       },
       "id": 10,
@@ -1100,7 +1379,7 @@
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[1h])) by (state, datatype, le))",
+          "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{deployment=~\".*-universal\", datatype=~\"$datatypes\"}[6h])) by (state, datatype, le))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1170,7 +1449,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 4,
+        "w": 5,
         "x": 0,
         "y": 18
       },
@@ -1259,8 +1538,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 4,
+        "w": 5,
+        "x": 5,
         "y": 18
       },
       "id": 12,
@@ -1355,8 +1634,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 8,
+        "w": 5,
+        "x": 10,
         "y": 18
       },
       "id": 5,
@@ -1386,21 +1665,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "process_virtual_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
+          "expr": "process_resident_memory_bytes{container=\"etl-gardener\", deployment=~\"$deployment\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{deployment}}",
           "refId": "A"
+        },
+        {
+          "expr": "max by (container)(process_resident_memory_bytes{container=\"etl-parser\"})",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Max {{container}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Virtual Memory",
+      "title": "Resident Memory",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1414,11 +1700,11 @@
       "yaxes": [
         {
           "decimals": 0,
-          "format": "decbytes",
+          "format": "bytes",
           "label": null,
-          "logBase": 1,
+          "logBase": 32,
           "max": null,
-          "min": "0",
+          "min": null,
           "show": true
         },
         {
@@ -1784,8 +2070,9 @@
       },
       {
         "current": {
-          "text": "Data Proc (mlab-oti)",
-          "value": "Data Proc (mlab-oti)"
+          "tags": [],
+          "text": "Data Processing (mlab-oti)",
+          "value": "Data Processing (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -1871,7 +2158,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
@@ -1902,5 +2189,5 @@
   "timezone": "utc",
   "title": "Pipeline: Gardener",
   "uid": "eBbUW6oik",
-  "version": 120
+  "version": 128
 }
