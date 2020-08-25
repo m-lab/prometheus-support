@@ -1113,17 +1113,22 @@ groups:
         the DaemonSet is healthy (`kubectl describe ds cadvisor`).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
-  - alert: PlatformCluster_FluentdMissing
-    expr: absent(up{deployment="fluentd", cluster="platform-cluster"})
+  # NOTE: this alert is currently structured a bit differently than the other
+  # "DaemonSet Missing" alerts because Vector does not currently expose any
+  # metrics and cannot be auto-discovered by Prometheus as part of the
+  # kubernetes-pods job. Therefore, in this one case we use one known metric
+  # that is valid for Vector to determine if metrics are missing or not.
+  - alert: PlatformCluster_VectorMissing
+    expr: absent(kube_daemonset_status_desired_number_scheduled{daemonset="vector", cluster="platform-cluster"})
     for: 15m
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: The Fluentd DaemonSet is missing or has no metrics.
-      description: The Fluentd DaemonSet is missing or has no metrics. Verify that
-        the DaemonSet is healthy (`kubectl describe ds fluentd`).
-      dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+      summary: The Vector DaemonSet is missing or has no metrics.
+      description: The Vector DaemonSet is missing or has no metrics. Verify that
+        the DaemonSet is healthy (`kubectl describe ds vector`).
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   - alert: PlatformCluster_NdtMissing
     expr: absent(up{deployment="ndt", cluster="platform-cluster"})
