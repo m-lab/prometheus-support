@@ -409,7 +409,7 @@ scrape_configs:
         - 'up{container="etl-parser",instance=~".*:9090"}'
     static_configs:
       - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
-      labels:
+        labels:
           cluster: "data-processing"
 
   # Scrape config for federation.
