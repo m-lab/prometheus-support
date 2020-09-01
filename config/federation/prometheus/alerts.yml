@@ -249,7 +249,8 @@ groups:
   # Blackbox exporter probes to a machine are succeeding to a node that
   # kubernetes does not know about (not joined to the k8s cluster).
   - alert: MachineRunningWithoutK8sNode
-    expr: probe_success{service="ndt_ssl"} == 1 unless on(machine) kube_node_status_condition
+    expr: probe_success{service="ssh"} == 1 unless on(machine) kube_node_status_condition
+            unless on(machine) gmx_machine_maintenance == 1
     for: 1h
     labels:
       repo: ops-tracker
@@ -257,7 +258,7 @@ groups:
     annotations:
       summary: A machine is running that is not part of the k8s cluster.
       description: >
-        Blackbox exporter probes (for ndt_ssl) are succeeding to a node that
+        Blackbox exporter probes (for ssh) are succeeding to a node that
         kubernetes does not know about. This can happen when a machine gets
         segmented from the network, then gets manually deleted from kubernetes,
         then at some point the machine has its network connectivity restored.
