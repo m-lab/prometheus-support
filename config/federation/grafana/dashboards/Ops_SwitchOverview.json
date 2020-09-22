@@ -15,7 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1582921788995,
+  "id": 197,
+  "iteration": 1600807775380,
   "links": [],
   "panels": [
     {
@@ -61,7 +62,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "- quantile(0.99, 8 * rate(ifHCInOctets{ifAlias=\"uplink\"}[2m]))",
+          "expr": "- quantile(0.99, 8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "99th % In",
@@ -69,7 +70,7 @@
           "step": 10
         },
         {
-          "expr": "quantile(0.90, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\"}[2m]))",
+          "expr": "quantile(0.90, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -79,7 +80,7 @@
           "step": 10
         },
         {
-          "expr": "- max(8 * rate(ifHCInOctets{ifAlias=\"uplink\"}[2m]))",
+          "expr": "- max(8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -89,7 +90,7 @@
           "step": 10
         },
         {
-          "expr": "quantile(0.99, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\"}[2m]))",
+          "expr": "quantile(0.99, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "99th % Out",
@@ -97,7 +98,7 @@
           "step": 10
         },
         {
-          "expr": "max(8 * rate(ifHCOutOctets{ifAlias=\"uplink\"}[2m]))",
+          "expr": "max(8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -107,7 +108,7 @@
           "step": 10
         },
         {
-          "expr": "- quantile(0.90, 8 * rate(ifHCInOctets{ifAlias=\"uplink\"}[2m]))",
+          "expr": "- quantile(0.90, 8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -203,7 +204,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site_name\"}[2m])",
+          "expr": "8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2-$site.*\"}[2m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Out",
@@ -211,7 +212,7 @@
           "step": 10
         },
         {
-          "expr": "8 * rate(ifHCInOctets{ifAlias=\"uplink\", site=\"$site_name\"}[2m])",
+          "expr": "8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2-$site.*\"}[2m])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "In",
@@ -223,7 +224,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$site_name: uplink traffic (In/Out)",
+      "title": "$site: uplink traffic (In/Out)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -306,7 +307,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\"}[10m]))",
+          "expr": "topk(10, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[10m]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -400,7 +401,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, 8 * rate(ifHCInOctets{ifAlias=\"uplink\"}[10m]))",
+          "expr": "topk(10, 8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[10m]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -497,29 +498,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, switch:jnxCosQstatTotalDropPkts:irate4m_gt_0)",
+          "expr": "topk(10, irate(ifOutDiscards{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[4m]) > 0)",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{site}} Total (Juniper)",
+          "legendFormat": "{{site}} ({{interface}})",
           "refId": "B",
-          "step": 10
-        },
-        {
-          "expr": "topk(10, switch:ifOutDiscards:irate4m_gt_0)",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{site}} Out (HP/Cisco)",
-          "refId": "A",
-          "step": 10
-        },
-        {
-          "expr": "topk(10, irate(ifInDiscards{ifAlias=\"uplink\"}[4m]))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{site}} In (HP/Cisco)",
-          "refId": "C",
           "step": 10
         }
       ],
@@ -609,7 +594,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, rate(ifOutErrors{ifAlias=\"uplink\"}[2m]))",
+          "expr": "topk(10, rate(ifOutErrors{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -619,7 +604,7 @@
           "step": 10
         },
         {
-          "expr": "topk(10, rate(ifInErrors{ifAlias=\"uplink\"}[2m]))",
+          "expr": "topk(10, rate(ifInErrors{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -669,190 +654,6 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 24
-      },
-      "id": 8,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "topk(10, snmp_scrape_duration_seconds)",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{site}}",
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "snmp_exporter scrape times: Top 10",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 24
-      },
-      "id": 9,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "topk(10, snmp_scrape_duration_seconds{site=\"$site_name\"})",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{site}}",
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "$site_name: snmp_exporter scrape times",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     }
   ],
   "refresh": false,
@@ -864,8 +665,8 @@
       {
         "current": {
           "tags": [],
-          "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "text": "Platform Cluster (mlab-sandbox)",
+          "value": "Platform Cluster (mlab-sandbox)"
         },
         "hide": 0,
         "includeAll": false,
@@ -875,28 +676,27 @@
         "options": [],
         "query": "prometheus",
         "refresh": 1,
-        "regex": "/Prometheus/",
+        "regex": "/Platform Cluster/",
         "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "allValue": null,
         "current": {
-          "tags": [],
-          "text": "yyz02",
-          "value": "yyz02"
+          "text": "lga0t",
+          "value": "lga0t"
         },
         "datasource": "$datasource",
-        "definition": "",
+        "definition": "label_values(machine)",
         "hide": 0,
         "includeAll": false,
         "label": "Site",
         "multi": false,
-        "name": "site_name",
+        "name": "site",
         "options": [],
-        "query": "label_values(site)",
+        "query": "label_values(machine)",
         "refresh": 1,
-        "regex": "",
+        "regex": "/mlab[1-4]-([a-z]{3}[0-9t]{2}).*/",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
@@ -908,7 +708,7 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -939,5 +739,5 @@
   "timezone": "utc",
   "title": "Ops: Switch Overview",
   "uid": "SuqnZ6Hiz",
-  "version": 137
+  "version": 139
 }
