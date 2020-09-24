@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 197,
-  "iteration": 1600807775382,
+  "iteration": 1600980051932,
   "links": [],
   "panels": [
     {
@@ -62,7 +62,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "- quantile(0.99, 8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "- max by (site) (quantile(0.99, 8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "99th % In",
@@ -70,7 +70,7 @@
           "step": 10
         },
         {
-          "expr": "quantile(0.90, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "max by (site) (quantile(0.90, 8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -80,7 +80,7 @@
           "step": 10
         },
         {
-          "expr": "- max(8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "- max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -90,7 +90,7 @@
           "step": 10
         },
         {
-          "expr": "quantile(0.99, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "max by (site) (quantile(0.99, 8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "99th % Out",
@@ -98,7 +98,7 @@
           "step": 10
         },
         {
-          "expr": "max(8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -108,7 +108,7 @@
           "step": 10
         },
         {
-          "expr": "- quantile(0.90, 8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "- max by (site) (quantile(0.90, 8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -204,7 +204,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2-$site.*\"}[2m])",
+          "expr": "max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site\"}[4m]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Out",
@@ -212,7 +212,7 @@
           "step": 10
         },
         {
-          "expr": "8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2-$site.*\"}[2m])",
+          "expr": "max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\", site=\"$site\"}[4m]))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "In",
@@ -307,7 +307,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, 8 * rate(ifHCOutOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[10m]))",
+          "expr": "topk(10, max by (site) (8 * rate(ifHCOutOctets{ifAlias=\"uplink\"}[10m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -401,7 +401,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, 8 * rate(ifHCInOctets{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[10m]))",
+          "expr": "topk(10, max by (site) (8 * rate(ifHCInOctets{ifAlias=\"uplink\"}[10m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -498,7 +498,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, irate(ifOutDiscards{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[4m]) > 0)",
+          "expr": "topk(10, max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\"}[4m]) > 0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -594,7 +594,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, rate(ifOutErrors{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "topk(10, max by (site) (irate(ifOutErrors{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -604,7 +604,7 @@
           "step": 10
         },
         {
-          "expr": "topk(10, rate(ifInErrors{ifAlias=\"uplink\", machine=~\"mlab2.*\"}[2m]))",
+          "expr": "topk(10, max by (site) (irate(ifInErrors{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -739,5 +739,5 @@
   "timezone": "utc",
   "title": "Ops: Switch Overview",
   "uid": "SuqnZ6Hiz",
-  "version": 139
+  "version": 140
 }
