@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 201,
-  "iteration": 1600891265792,
+  "iteration": 1600982368879,
   "links": [],
   "panels": [
     {
@@ -428,7 +428,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "((quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n  + quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 60)",
+          "expr": "((quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])\n  + quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])) > 60)",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -437,7 +437,7 @@
           "refId": "G"
         },
         {
-          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])) > 96",
+          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])) > 96",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -446,7 +446,7 @@
           "refId": "H"
         },
         {
-          "expr": "(machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"})\n",
+          "expr": "(machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}\n + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"})\n",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -455,7 +455,7 @@
           "refId": "I"
         },
         {
-          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])\n + quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -464,7 +464,7 @@
           "refId": "J"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])\n + quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -478,7 +478,7 @@
           "refId": "F"
         },
         {
-          "expr": "(quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 60)\nunless (quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]))",
+          "expr": "(quantile_over_time(0.9,machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range]) > 60)\nunless (quantile_over_time(0.9, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range]))",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -487,7 +487,7 @@
           "refId": "A"
         },
         {
-          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range]) > 96)\nunless quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "(quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range]) > 96)\nunless quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -496,7 +496,7 @@
           "refId": "B"
         },
         {
-          "expr": "machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\nunless machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}\n",
+          "expr": "machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}\nunless machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}\n",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -505,7 +505,7 @@
           "refId": "C"
         },
         {
-          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\nunless quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.90, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])\nunless quantile_over_time(0.90, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -514,7 +514,7 @@
           "refId": "D"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])\nunless quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.98, machine:ndt5_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])\nunless quantile_over_time(0.98, machine:ndt7_client_test_results:rpm2m{machine=~\"$machine-$site.*\"}[$range])",
           "format": "time_series",
           "hide": false,
           "interval": "1m",
@@ -842,64 +842,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range]) > 0.5",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "warning - {{machine}}",
-          "refId": "B",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range]) > 0.8",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "error - {{machine}}",
-          "refId": "D",
-          "step": 900
-        },
-        {
-          "expr": "machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "raw - {{machine}}",
-          "refId": "A",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range])",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "q90 - {{machine}}",
-          "refId": "C",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_ms:max_ratio2m{machine=~\"$machine.$site.*\"}[$range])",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "q98 - {{machine}}",
-          "refId": "E",
-          "step": 900
-        },
-        {
-          "expr": "/* k8s */",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "refId": "F"
-        },
-        {
-          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range]) > 0.5",
+          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine-$site.*\"}[$range]) > 0.5",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -907,7 +850,7 @@
           "refId": "G"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range]) > 0.8",
+          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine-$site.*\"}[$range]) > 0.8",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -915,7 +858,7 @@
           "refId": "H"
         },
         {
-          "expr": "machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}",
+          "expr": "machine:node_disk_io_time_seconds:max2m{machine=~\"$machine-$site.*\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -923,7 +866,7 @@
           "refId": "I"
         },
         {
-          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.90, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine-$site.*\"}[$range])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -931,7 +874,7 @@
           "refId": "J"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine.$site.*\"}[$range])",
+          "expr": "quantile_over_time(0.98, machine:node_disk_io_time_seconds:max2m{machine=~\"$machine-$site.*\"}[$range])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1048,63 +991,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "quantile_over_time(0.90, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .5",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "warning - {{machine}}",
-          "refId": "E",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .8",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "error - {{machine}}",
-          "refId": "F",
-          "step": 900
-        },
-        {
-          "expr": "ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "raw - {{machine}}",
-          "refId": "G",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.90, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "q90 - {{machine}}",
-          "refId": "H",
-          "step": 900
-        },
-        {
-          "expr": "quantile_over_time(0.98, ndt:vdlimit_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
-          "format": "time_series",
-          "hide": false,
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "q98 - {{machine}}",
-          "refId": "A",
-          "step": 900
-        },
-        {
-          "expr": "/* k8s */",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "B"
-        },
-        {
-          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .5",
+          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine-$site.*\"}[3h]) > .5",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1112,7 +999,7 @@
           "refId": "C"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h]) > .8",
+          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine-$site.*\"}[3h]) > .8",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1120,7 +1007,7 @@
           "refId": "D"
         },
         {
-          "expr": "machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}",
+          "expr": "machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine-$site.*\"}",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1128,7 +1015,7 @@
           "refId": "I"
         },
         {
-          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "expr": "quantile_over_time(0.90, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine-$site.*\"}[3h])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1136,7 +1023,7 @@
           "refId": "J"
         },
         {
-          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine.$site.*\"}[3h])",
+          "expr": "quantile_over_time(0.98, machine:node_filesystem_used_ratio:predict_linear3h_12h{machine=~\"$machine-$site.*\"}[3h])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -1194,7 +1081,6 @@
     "list": [
       {
         "current": {
-          "tags": [],
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -1452,5 +1338,5 @@
   "timezone": "utc",
   "title": "NDT: Early Warning",
   "uid": "UM67WeHmz",
-  "version": 150
+  "version": 151
 }
