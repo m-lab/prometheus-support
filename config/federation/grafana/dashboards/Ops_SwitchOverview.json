@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 197,
-  "iteration": 1600980051932,
+  "iteration": 1601049106266,
   "links": [],
   "panels": [
     {
@@ -62,7 +62,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "- max by (site) (quantile(0.99, 8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "- quantile(0.99, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "99th % In",
@@ -70,7 +70,7 @@
           "step": 10
         },
         {
-          "expr": "max by (site) (quantile(0.90, 8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "quantile(0.90, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -80,7 +80,7 @@
           "step": 10
         },
         {
-          "expr": "- max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m]))",
+          "expr": "- max(8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -90,7 +90,7 @@
           "step": 10
         },
         {
-          "expr": "max by (site) (quantile(0.99, 8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "quantile(0.99, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "99th % Out",
@@ -98,7 +98,7 @@
           "step": 10
         },
         {
-          "expr": "max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m]))",
+          "expr": "max(8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -108,7 +108,7 @@
           "step": 10
         },
         {
-          "expr": "- max by (site) (quantile(0.90, 8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "- quantile(0.90, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -739,5 +739,5 @@
   "timezone": "utc",
   "title": "Ops: Switch Overview",
   "uid": "SuqnZ6Hiz",
-  "version": 140
+  "version": 141
 }
