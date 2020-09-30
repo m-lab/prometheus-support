@@ -108,21 +108,21 @@ groups:
 # SNMP metrics from the local switch. Since DISCO scrapes across the LAN the
 # number of errors should be close to zero.
 - alert: TooManyDiscoErrors
-    expr: |
-      sum_over_time(disco_collect_errors_total[24h]) > 10
-        and on(site) probe_success{instance=~"s1.*",module="icmp"} == 1
-        unless on(site) gmx_site_maintenance == 1
-    for: 12h
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: DISCO is reporting too many errors.
-      description: >
-        Maybe the switch is down? Is DISCO using the right community
-        string? Is the IP/prefix of the node where DISCO is running
-        whitelisted on the switch?
-      dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
+  expr: |
+    sum_over_time(disco_collect_errors_total[24h]) > 10
+      and on(site) probe_success{instance=~"s1.*",module="icmp"} == 1
+      unless on(site) gmx_site_maintenance == 1
+  for: 12h
+  labels:
+    repo: ops-tracker
+    severity: ticket
+  annotations:
+    summary: DISCO is reporting too many errors.
+    description: >
+      Maybe the switch is down? Is DISCO using the right community
+      string? Is the IP/prefix of the node where DISCO is running
+      whitelisted on the switch?
+    dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
 
 # More than 20% of the reachable switches are up but not providing SNMP metrics.
   - alert: TooManySnmpMetricsMissing

@@ -316,6 +316,7 @@ scrape_configs:
       'match[]':
         - 'up{job=~".+"}'
         - 'up{container="disco"}'
+        - 'disco_collect_errors_total'
         - 'ifHCOutOctets{deployment="disco"}'
         - 'lame_duck_experiment{job!="node-exporter"}'
         - 'node_filesystem_size_bytes{deployment="node-exporter"}'
