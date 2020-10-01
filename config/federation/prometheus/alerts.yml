@@ -87,23 +87,6 @@ groups:
       description: Check the status of Kubernetes clusters on each M-Lab GCP
         project. Look at the travis deployment history for m-lab/downloader.
 
-
-# Some SNMP metrics are missing from Prometheus. These should always be present.
-  - alert: SnmpMetricsMissing
-    expr: absent(ifHCOutOctets)
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: Expected SNMP metrics are missing from Prometheus.
-      description: >
-        Make sure that the DISCO pod in the platform cluster is properly
-        running on all nodes. Is there a problem with the DISCO DaemonSet? Is
-        the federation job that scrapes the platform cluster down or
-        configured incorrectly.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
-
   # DISCO is reporting too many errors, which likely means errors when scraping
   # SNMP metrics from the local switch. Since DISCO scrapes across the LAN the
   # number of errors should be close to zero.
@@ -1035,6 +1018,22 @@ groups:
         forget to increase the value in the bootstrap_prometheus.sh script in
         the k8s-support repository.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=Platform%20Cluster%20(mlab-oti)
+
+# Some SNMP metrics are missing from Prometheus. These should always be present.
+  - alert: PlatformCluster_SnmpMetricsMissing
+    expr: absent(ifHCOutOctets)
+    for: 30m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Expected SNMP metrics are missing from Prometheus.
+      description: >
+        Make sure that the DISCO pod in the platform cluster is properly
+        running on all nodes. Is there a problem with the DISCO DaemonSet? Is
+        the federation job that scrapes the platform cluster down or
+        configured incorrectly.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
 
 # Check for missing workloads.
 
