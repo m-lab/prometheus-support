@@ -646,10 +646,8 @@ groups:
         changes in configuration, or underlying system delays.
 
 # Too many NDT S2C tests on a node are being impacted by switch discards.
-# max-by is necessary here since DISCOv2 now collections swith uplink metrics
-# from every machine at a site, so we just take the max of the 3 (mlab[1-3]).
   - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
-    expr: max by (site) ((bq_ndt_s2c_with_discards / bq_ndt_s2c_total) > 0.05)
+    expr: (bq_ndt_s2c_with_discards / bq_ndt_s2c_total) > 0.05
     for: 10m
     labels:
       repo: ops-tracker
