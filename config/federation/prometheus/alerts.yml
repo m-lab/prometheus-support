@@ -87,26 +87,6 @@ groups:
       description: Check the status of Kubernetes clusters on each M-Lab GCP
         project. Look at the travis deployment history for m-lab/downloader.
 
-  # DISCO is reporting too many errors, which likely means errors when scraping
-  # SNMP metrics from the local switch. Since DISCO scrapes across the LAN the
-  # number of errors should be close to zero.
-  - alert: TooManyDiscoErrors
-    expr: |
-      sum_over_time(disco_collect_errors_total[24h]) > 10
-        and on(site) probe_success{instance=~"s1.*",module="icmp"} == 1
-        unless on(site) gmx_site_maintenance == 1
-    for: 12h
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: DISCO is reporting too many errors.
-      description: >
-        Maybe the switch is down? Is DISCO using the right community
-        string? Is the IP/prefix of the node where DISCO is running
-        whitelisted on the switch?
-      dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
-
 # More than 20% of the reachable switches are up but not providing SNMP metrics.
   - alert: TooManySnmpMetricsMissing
     expr: |
@@ -1034,6 +1014,26 @@ groups:
         the federation job that scrapes the platform cluster down or
         configured incorrectly.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/
+
+  # DISCO is reporting too many errors, which likely means errors when scraping
+  # SNMP metrics from the local switch. Since DISCO scrapes across the LAN the
+  # number of errors should be close to zero.
+  - alert: PlatformCluster_TooManyDiscoCollectionErrors
+    expr: |
+      increase(disco_collect_errors_total[10m]) > 10
+        unless on(site) gmx_site_maintenance == 1
+    for: 24h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: DISCO is reporting too many errors.
+      description: >
+        Maybe the switch is down? Is DISCO using the right community
+        string? Is the IP/prefix of the node where DISCO is running
+        whitelisted on the switch?
+      dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
+
 
 # Check for missing workloads.
 
