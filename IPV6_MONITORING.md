@@ -23,12 +23,14 @@ Below are first-time setup instructions and requirements for the VM:
   found in the M-Lab *shared_data* repository in the *ssh-keys/* directory.
 * Create the file _/etc/docker/daemon.json_ with the following content, and then
   restart Docker (`# systemctl restart docker`):
-```
+
+```json
 {
     "ipv6": true,
     "fixed-cidr-v6": "2600:3c02:e000:0185::/64"
 }
 ```
+
 * Pull the blackbox\_exporter Docker image: `$ docker pull
   prom/blackbox-exporter:v0.12.0`.
 
@@ -40,16 +42,19 @@ Below are first-time setup instructions and requirements for the VM:
   Later, these files will be [pushed to the VM automatically on
   builds](https://github.com/m-lab/prometheus-support/blob/master/deploy_bbe_config.sh)
   of m-lab/prometheus-support repo.
-```
+
+```text
 blackbox-exporter-config-mlab-sandbox.yml
 blackbox-exporter-config-mlab-staging.yml
 blackbox-exporter-config-mlab-oti.yml
 ```
+
 * Instantiate the Docker containers (as the user mlab, `pwd` must be /home/mlab).
   **NOTE**: it is very important to include the `--restart always` flag and argument.
   Without it, if the machine is rebooted or the container crashes, then it won't
   start again automatically.
-```
+
+```shell
 $ docker run --detach --publish 7115:9115 --volume `pwd`:/config \
     --restart always --name mlab-sandbox prom/blackbox-exporter:v0.12.0 \
     --config.file=/config/blackbox-exporter-config-mlab-sandbox.yml
@@ -62,6 +67,7 @@ $ docker run --detach --publish 9115:9115 --volume `pwd`:/config \
     --restart always --name mlab-oti prom/blackbox-exporter:v0.12.0 \
     --config.file=/config/blackbox-exporter-config-mlab-oti.yml
 ```
+
 * Install node\_exporter so that we can scrape metrics from this machine.
 
 $ sudo apt install prometheus-node-exporter
