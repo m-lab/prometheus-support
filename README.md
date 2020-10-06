@@ -624,18 +624,27 @@ Delete the configmaps.
 
     kubectl delete configmap blackbox-config
 
-## SNMP Exporter
+## Static outbound IP pinning
 
-The SNMP exporter allows probes of SNMP endpoints, mostly switches. However,
-the switches whitelist SNMP access by IP, so we need to do some special setup.
-We're going to create a two-node pool, make sure only services that need static
-outbound IPs run on it, and then use a service called [kubeIP](https://github.com/doitintl/kubeip)
-to assign static IPs to its nodes.
+There are currently two services running in the cluster which require that
+all outbound requests come from a static source IP: reboot-api and
+script-exporter. The reboot-api needs a static outbound IP address because it
+may need to reboot a node via the iDRAC and a firewall rule on the switch
+prevents access to the DRACs, except from a few permitted IPs. The
+script-exporter needs a static outbound IP because one of the things it does
+is to run e2e NDT tests, and we need a predetermined source IP address so that
+internal, e2e testing can be easily removed from the data we publish.
 
-## Create pool
+We're going to create a two-node pool, make sure only services that need
+static outbound IPs run on it, and then use a service called
+[kubeIP](https://github.com/doitintl/kubeip) to assign static IPs to its
+nodes.
 
-Create a two-node pool with a specific label (to make sure snmp-exporter can
-be selected onto it) and taint (to make sure other services are not run on it):
+### Create pool
+
+Create a two-node pool with a specific label (to make sure that any necessary
+pods can be selected onto it) and taint (to make sure other services are not
+run on it):
 
 ```
 gcloud container node-pools create static-outbound-ip \
@@ -643,7 +652,7 @@ gcloud container node-pools create static-outbound-ip \
 --node-labels=outbound-ip=static --node-taints=outbound-ip=static:NoSchedule
 ```
 
-## Create kubeIP credentials
+### Create kubeIP credentials
 
 Create gcloud service-account for kubeIP:
 

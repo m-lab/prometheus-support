@@ -87,24 +87,6 @@ groups:
       description: Check the status of Kubernetes clusters on each M-Lab GCP
         project. Look at the travis deployment history for m-lab/downloader.
 
-# More than 20% of the reachable switches are up but not providing SNMP metrics.
-  - alert: TooManySnmpMetricsMissing
-    expr: |
-      count(up{job="snmp-targets",site!~".*t$"} == 0 and on(site)
-      probe_success{instance=~"s1.*",module="icmp"} == 1) /
-      count(up{job="snmp-targets",site!~".*t$"}) > 0.2
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: More than 20% of reachable switches are not providing SNMP metrics.
-      description: >
-        The switches are pingable but SNMP scraping is not working.
-        Is the snmp_exporter using the right community strings? Look in
-        switch-details.json in the m-lab/switch-config repo. Is the IP of the
-        snmp_exporter VM in GCE whitelisted on the switch?
-      dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz'
-
 # Prometheus is unable to get data from the script_exporter deployment.
   - alert: ScriptExporterDownOrMissing
     expr: up{deployment="script-exporter"} == 0 or absent(up{deployment="script-exporter"})

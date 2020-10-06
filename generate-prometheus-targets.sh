@@ -7,7 +7,7 @@ BASEDIR=${PWD}
 
 # Create all output directories.
 for project in mlab-sandbox mlab-staging mlab-oti ; do
-  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,snmp-targets,script-targets,bmc-targets,switch-monitoring-targets}
+  mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,script-targets,bmc-targets,switch-monitoring-targets}
 done
 
 # GCP doesn't support IPv6, so we have a Linode VM running three instances of
@@ -161,15 +161,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --project "${project}" \
       --select "neubot.mlab" > \
           ${output}/blackbox-targets-ipv6/neubot_tls_ipv6.json
-
-  # snmp_exporter on port 9116.
-  ./mlabconfig.py --format=prom-targets-sites \
-      --sites "${sites}" \
-      --physical \
-      --select "${!switch_regex}" \
-      --template_target=s1-{{sitename}}.measurement-lab.org \
-      --label service=snmp > \
-          ${output}/snmp-targets/snmpexporter.json
 
   # ICMP probe for platform switches
   ./mlabconfig.py --format=prom-targets-sites \
