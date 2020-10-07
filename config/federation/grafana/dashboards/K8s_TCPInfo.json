@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 286,
-  "iteration": 1574354353566,
+  "iteration": 1602085345760,
   "links": [],
   "panels": [
     {
@@ -347,7 +347,7 @@
           "expr": "sum(rate(ndt5_client_test_results_total{machine=~\"$machine.$site.*\", result!=\"okay-without-rate\"}[10m])) by (result)",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 1,
+          "intervalFactor": 5,
           "legendFormat": "Worldwide NDT5 tests/sec  {{result}}",
           "refId": "A"
         },
@@ -355,7 +355,7 @@
           "expr": "sum(rate(ndt7_client_test_results_total{machine=~\"$machine.$site.*\", result!=\"okay-without-rate\"}[10m])) by (result)",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 1,
+          "intervalFactor": 5,
           "legendFormat": "Worldwide NDT7 tests/sec  {{result}}",
           "refId": "C"
         }
@@ -526,7 +526,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "",
+      "description": "The tcpinfo sampling interval is nominally 10 msec, and the max interval should never be greater than 20 msec.\nWhen machine load is high, the median interval should remain at 10 msec, but there will be more outliers, and the 95th percentile will increase.  Less than 15 msec is probably fine, but when the 95th percentile is above 16-18 msec, we may start to lose fidelity in the tcpinfo data.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -563,49 +563,49 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(rate(tcpinfo_polling_interval_histogram_sum{deployment=~\"$deployment\"}[2m])/rate(tcpinfo_polling_interval_histogram_count{deployment=~\"$deployment\"}[2m])) by (machine)",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Average {{machine}}",
-          "refId": "B"
-        },
-        {
-          "expr": "topk($TopK,histogram_quantile(0.99, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"ndt\", deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "topk($TopK,histogram_quantile(0.95, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "99th {{machine}} {{deployment}}",
+          "intervalFactor": 10,
+          "legendFormat": "95th {{machine}} {{deployment}}",
           "refId": "C"
         },
         {
-          "expr": "topk($TopK,histogram_quantile(0.99, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"host\", deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "topk($TopK,histogram_quantile(0.95, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"host\", deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "99th {{machine}} {{deployment}}",
+          "intervalFactor": 10,
+          "legendFormat": "95th {{machine}} {{deployment}}",
           "refId": "A"
         },
         {
-          "expr": "topk($TopK,histogram_quantile(0.99, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"bismark\", deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "topk($TopK,histogram_quantile(0.95, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"bismark\", deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "99th {{machine}} {{deployment}}",
+          "intervalFactor": 10,
+          "legendFormat": "95th {{machine}} {{deployment}}",
           "refId": "D"
         },
         {
-          "expr": "bottomk($TopK,histogram_quantile(0.01, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "bottomk($TopK,histogram_quantile(0.01, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 1,
+          "intervalFactor": 10,
           "legendFormat": "1% {{machine}} {{deployment}}",
           "refId": "E"
+        },
+        {
+          "expr": "topk($TopK,histogram_quantile(0.75, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"ndt\", deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "75th {{machine}} {{deployment}}",
+          "refId": "F"
         }
       ],
       "thresholds": [
@@ -614,14 +614,14 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0.018,
+          "value": 0.016,
           "yaxis": "left"
         }
       ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "99th percentile polling intervals, top K machines",
+      "title": "95th percentile polling intervals, top K machines",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1557,7 +1557,6 @@
     "list": [
       {
         "current": {
-          "selected": true,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -1647,7 +1646,6 @@
       {
         "allValue": ".*",
         "current": {
-          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -1742,7 +1740,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "k8s: TPCInfo",
+  "title": "K8S: TPCInfo",
   "uid": "1C1ypkdZk",
-  "version": 11
+  "version": 15
 }
