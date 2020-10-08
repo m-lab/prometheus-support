@@ -68,16 +68,6 @@ inhibit_rules:
     alertname: 'ScriptExporterMissingMetrics|TooManyNdtServersDown'
   equal: []
 
-# Don't alert on missing SNMP metrics or SNMP scraping being broken if the
-# snmp-exporter is down. The empty `equal` parameter tells AM to not attempt a
-# match on any other labels i.e., `source_match` and `target_match_re` are
-# sufficient.
-- source_match:
-    alertname: 'SnmpExporterDownOrMissing'
-  target_match_re:
-    alertname: 'SnmpExporterMissingMetrics|SnmpScrapingDownAtSite'
-  equal: []
-
 # Don't alert about missing platform cluster DaemonSet metrics if the entire
 # platform cluster scrape job is down.
 - source_match:
