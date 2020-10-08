@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 286,
-  "iteration": 1574354353566,
+  "iteration": 1602085345760,
   "links": [],
   "panels": [
     {
@@ -147,12 +147,13 @@
         },
         "orientation": "horizontal"
       },
-      "pluginVersion": "6.3.3",
+      "pluginVersion": "6.4.5",
       "targets": [
         {
           "datasource": "Platform Cluster (mlab-oti)",
           "expr": "count(lame_duck_experiment{workload=\"ndt\"})",
           "format": "time_series",
+          "hide": false,
           "instant": true,
           "interval": "",
           "intervalFactor": 1,
@@ -171,7 +172,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "",
+      "title": "Machine status",
       "transparent": true,
       "type": "bargauge"
     },
@@ -278,7 +279,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "",
+      "description": "Old platform processed up to 40 concurrent tests, which corresponds to about 240 tests per minute.  New platform can handle over 600 tests/min, but for now we set the warning level here at 240/min, and critical at 300/min.",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -310,16 +311,24 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "/Worldwide tests/",
+          "alias": "/Worldwide NDT7.*/",
+          "color": "rgb(105, 186, 191)",
           "linewidth": 2
         },
         {
-          "alias": "/okay/",
-          "color": "#37872D"
+          "alias": "/Worldwide NDT7.*error/",
+          "color": "#C4162A",
+          "linewidth": 2
         },
         {
-          "alias": "/error/",
-          "color": "#C4162A"
+          "alias": "/Worldwide NDT5.*/",
+          "color": "#37872D",
+          "linewidth": 2
+        },
+        {
+          "alias": "/Worldwide NDT5.*error/",
+          "color": "rgb(250, 0, 105)",
+          "linewidth": 2
         }
       ],
       "spaceLength": 10,
@@ -327,28 +336,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopK, 60 * sum(rate(ndt5_client_test_results_total{result=\"okay-with-rate\"}[10m])) by (machine))",
+          "expr": "topk($TopK, sum by(machine)(60*rate(ndt5_client_test_results_total{machine=~\"$machine.$site.*\"}[10m]))+sum by(machine)(60*rate(ndt7_client_test_results_total{machine=~\"$machine.$site.*\"}[10m])))",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Tests per minute - worst machine  {{machine}}",
-          "refId": "F"
+          "intervalFactor": 5,
+          "legendFormat": "Tests per minute - worst machines  {{machine}}",
+          "refId": "B"
         },
         {
-          "expr": "quantile(0.5, 60*rate(ndt5_client_test_results_total{result=\"okay-with-rate\"}[10m]))",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "Median tests per minute per machine",
-          "refId": "E"
-        },
-        {
-          "expr": "sum(rate(ndt5_client_test_results_total[10m])) by (result)",
+          "expr": "sum(rate(ndt5_client_test_results_total{machine=~\"$machine.$site.*\", result!=\"okay-without-rate\"}[10m])) by (result)",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Worldwide tests/sec  {{result}}",
+          "intervalFactor": 5,
+          "legendFormat": "Worldwide NDT5 tests/sec  {{result}}",
           "refId": "A"
+        },
+        {
+          "expr": "sum(rate(ndt7_client_test_results_total{machine=~\"$machine.$site.*\", result!=\"okay-without-rate\"}[10m])) by (result)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 5,
+          "legendFormat": "Worldwide NDT7 tests/sec  {{result}}",
+          "refId": "C"
         }
       ],
       "thresholds": [
@@ -357,7 +366,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 100,
+          "value": 300,
           "yaxis": "left"
         },
         {
@@ -365,7 +374,7 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 80,
+          "value": 240,
           "yaxis": "left"
         }
       ],
@@ -459,11 +468,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk($TopK,avg(rate(tcpinfo_connection_count_histogram_sum{deployment=~\"$deployment\"}[2m])/rate(tcpinfo_connection_count_histogram_count{deployment=~\"$deployment\"} [2m])) by (machine, af)) by (af)",
+          "expr": "topk($TopK,avg(rate(tcpinfo_connection_count_histogram_sum{deployment=~\"$deployment\"}[5m])/rate(tcpinfo_connection_count_histogram_count{deployment=~\"$deployment\"} [5m])) by (machine, af)) by (af)",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 1,
+          "intervalFactor": 5,
           "legendFormat": "TopK avg connection count {{machine}}  {{af}}",
           "refId": "A"
         }
@@ -517,7 +526,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "description": "",
+      "description": "The tcpinfo sampling interval is nominally 10 msec, and the max interval should never be greater than 20 msec.\nWhen machine load is high, the median interval should remain at 10 msec, but there will be more outliers, and the 95th percentile will increase.  Less than 15 msec is probably fine, but when the 95th percentile is above 16-18 msec, we may start to lose fidelity in the tcpinfo data.",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -554,49 +563,49 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(rate(tcpinfo_polling_interval_histogram_sum{deployment=~\"$deployment\"}[2m])/rate(tcpinfo_polling_interval_histogram_count{deployment=~\"$deployment\"}[2m])) by (machine)",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Average {{machine}}",
-          "refId": "B"
-        },
-        {
-          "expr": "topk($TopK,histogram_quantile(0.99, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"ndt\", deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "topk($TopK,histogram_quantile(0.95, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "99th {{machine}} {{deployment}}",
+          "intervalFactor": 10,
+          "legendFormat": "95th {{machine}} {{deployment}}",
           "refId": "C"
         },
         {
-          "expr": "topk($TopK,histogram_quantile(0.99, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"host\", deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "topk($TopK,histogram_quantile(0.95, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"host\", deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "99th {{machine}} {{deployment}}",
+          "intervalFactor": 10,
+          "legendFormat": "95th {{machine}} {{deployment}}",
           "refId": "A"
         },
         {
-          "expr": "topk($TopK,histogram_quantile(0.99, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"bismark\", deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "topk($TopK,histogram_quantile(0.95, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"bismark\", deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "99th {{machine}} {{deployment}}",
+          "intervalFactor": 10,
+          "legendFormat": "95th {{machine}} {{deployment}}",
           "refId": "D"
         },
         {
-          "expr": "bottomk($TopK,histogram_quantile(0.01, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=~\"$deployment\"}[2m])) by (le, machine, deployment)))",
+          "expr": "bottomk($TopK,histogram_quantile(0.01, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 1,
+          "intervalFactor": 10,
           "legendFormat": "1% {{machine}} {{deployment}}",
           "refId": "E"
+        },
+        {
+          "expr": "topk($TopK,histogram_quantile(0.75, sum(rate(tcpinfo_polling_interval_histogram_bucket{deployment=\"ndt\", deployment=~\"$deployment\"}[10m])) by (le, machine, deployment)))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "75th {{machine}} {{deployment}}",
+          "refId": "F"
         }
       ],
       "thresholds": [
@@ -605,14 +614,14 @@
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0.018,
+          "value": 0.016,
           "yaxis": "left"
         }
       ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "99th percentile polling intervals, top K machines",
+      "title": "95th percentile polling intervals, top K machines",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1541,15 +1550,13 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 19,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": false,
-          "tags": [],
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -1595,7 +1602,6 @@
       {
         "allValue": ".*",
         "current": {
-          "tags": [],
           "text": "All",
           "value": [
             "$__all"
@@ -1640,7 +1646,6 @@
       {
         "allValue": ".*",
         "current": {
-          "tags": [],
           "text": "All",
           "value": "$__all"
         },
@@ -1715,10 +1720,6 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
       "5m",
       "15m",
       "30m",
@@ -1727,17 +1728,19 @@
       "1d"
     ],
     "time_options": [
+      "5m",
       "15m",
       "1h",
       "3h",
       "6h",
       "12h",
       "24h",
-      "2d"
+      "2d",
+      "7d"
     ]
   },
   "timezone": "utc",
-  "title": "k8s: TPCInfo",
+  "title": "K8S: TPCInfo",
   "uid": "1C1ypkdZk",
-  "version": 11
+  "version": 15
 }
