@@ -1126,7 +1126,7 @@ groups:
   # lame-duck or GMX maintenance mode.
   - alert: PlatformCluster_NodeNotReady
     expr: |
-      kube_node_status_condition{cluster="platform-cluster", condition="Ready", status="false"} == 1
+      kube_node_status_condition{cluster="platform-cluster", condition="Ready", status=~"(false|unknown)"} == 1
         unless on(node) (
           kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
           gmx_machine_maintenance == 1
