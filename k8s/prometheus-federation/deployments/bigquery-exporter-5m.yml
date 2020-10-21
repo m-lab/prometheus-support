@@ -12,7 +12,7 @@ spec:
       labels:
         run: bigquery-exporter
         # Update this string to trigger redeployment, or delete the pod.
-        update: '2020-08-20-a'
+        update: '2020-10-21-a'
       annotations:
         prometheus.io/scrape: 'true'
     spec:
@@ -20,8 +20,8 @@ spec:
       - name: bigquery-exporter
         image: measurementlab/prometheus-bigquery-exporter:production-0.3
         args: [ "--project={{GCLOUD_PROJECT}}",
+                "--refresh=5m",
                 "--type=gauge", "--query=/queries/bq_mlabns_ratelimit.sql",
-                "--type=gauge", "--query=/queries/bq_annotation.sql",
                 "--type=gauge", "--query=/queries/bq_gardener_parse_time.sql",
                 "--type=gauge", "--query=/queries/bq_gardener.sql",
                 "--type=gauge", "--query=/queries/bq_ndt_s2c.sql",
