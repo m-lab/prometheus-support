@@ -1123,13 +1123,21 @@ groups:
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
 
   # If any node is NotReady for too long, fire an alert, unless the node is in
-  # lame-duck or GMX maintenance mode.
+  # lame-duck or GMX maintenance mode, or if the switch isn't pingable. Since
+  # individual ICMP probes may be unreliable, we determine that a switch is
+  # "down" if more than 75% of all ICMP probes over the last hour fail.
   - alert: PlatformCluster_NodeNotReady
     expr: |
-      kube_node_status_condition{cluster="platform-cluster", condition="Ready", status=~"(false|unknown)"} == 1
+      label_replace(
+        kube_node_status_condition{cluster="platform-cluster", condition="Ready", status=~"(false|unknown)"} == 1,
+        "site", "$1", "node", "mlab[1-4]-([a-z]{3}[0-9t]{2}).*"
+      )
         unless on(node) (
           kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"} or
           gmx_machine_maintenance == 1
+        )
+        unless on(site) (
+          sum_over_time(probe_success{module="icmp"}[1h]) < 15
         )
     for: 1h
     labels:
