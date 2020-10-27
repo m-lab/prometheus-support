@@ -12,7 +12,7 @@ spec:
       labels:
         run: bigquery-exporter
         # Update this string to trigger redeployment, or delete the pod.
-        update: '2020-10-21-a'
+        update: '2020-10-26-a'
       annotations:
         prometheus.io/scrape: 'true'
     spec:
@@ -22,6 +22,8 @@ spec:
         args: [ "--project={{GCLOUD_PROJECT}}",
                 "--refresh=3h",
                 "--type=gauge", "--query=/queries/bq_annotation.sql",
+                "--type=gauge", "--query=/queries/bq_gardener_parse_time.sql",
+                "--type=gauge", "--query=/queries/bq_gardener.sql",
               ]
         ports:
         - containerPort: 9050
