@@ -375,7 +375,7 @@ groups:
 # HTTP per-status response count is exported by stackdriver. If any of the
 # services in the mlab-ns GAE project return > 1% 5xx errors, an alert
 # should fire immediately.
-  - alert: MlabNS_ServiceUnavailable
+  - alert: MlabNS_TooManyServiceErrors
     expr: |
       sum(stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
         deployment="mlabns-stackdriver", loading="false", response_code=~"5.."}) /
