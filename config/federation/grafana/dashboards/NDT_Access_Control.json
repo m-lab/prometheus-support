@@ -1,0 +1,1605 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": 315,
+  "iteration": 1604592144311,
+  "links": [],
+  "panels": [
+    {
+      "content": "Columns are arranged in the same order they are handled by the ndt-server: tx, token, ndt server.\n\nIf a connection is rejected (or errors) at one stage, the remaining stages never see it.",
+      "datasource": null,
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 33,
+      "mode": "markdown",
+      "options": {},
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Overview",
+      "type": "text"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 2
+      },
+      "id": 31,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(increase(controller_access_txcontroller_requests_total{deployment=\"ndt\", request=\"rejected\"}[15m])) / \n  sum(increase(controller_access_txcontroller_requests_total{deployment=\"ndt\"}[15m]))",
+          "legendFormat": "rejected",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Global TX Rejection Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 2
+      },
+      "id": 30,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (reason, path) ((rate(controller_access_token_requests_total{deployment=\"ndt\",request=\"rejected\"}[10m]))) / ignoring(reason, path) group_left() sum ((rate(controller_access_token_requests_total{deployment=\"ndt\",}[10m])))",
+          "hide": false,
+          "legendFormat": "{{reason}} {{path}}",
+          "refId": "B"
+        },
+        {
+          "expr": "sum by (reason, request) ((rate(controller_access_token_requests_total{deployment=\"ndt\", path=~\".*v7.*\"}[10m]))) / ignoring(reason, request) group_left() sum ((rate(controller_access_token_requests_total{deployment=\"ndt\",}[10m])))",
+          "hide": true,
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Global Token Rejection Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "b mlab1.lax01.measurement-lab.org": "#E0752D",
+        "b mlab1.lga03.measurement-lab.org": "#1F78C1",
+        "b mlab1.lhr05.measurement-lab.org": "#BF1B00",
+        "inotify - mlab1.lax04.measurement-lab.org": "#7EB26D",
+        "inotify - mlab1.lax05.measurement-lab.org": "#7EB26D",
+        "mlab1.lax01.measurement-lab.org": "#E24D42",
+        "mlab1.lga03.measurement-lab.org": "#DEDAF7",
+        "mlab1.mia02.measurement-lab.org": "#F9D9F9",
+        "mlab1.ord04.measurement-lab.org": "#7EB26D",
+        "switch - ord04": "#F4D598",
+        "switch - peak - lax04": "#EF843C",
+        "switch - peak - lax05": "#EF843C"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 2
+      },
+      "id": 32,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(sum(rate(ndt5_client_test_results_total{result=\"error-without-rate\"}[10m]) or vector(0)) +\n sum(rate(ndt7_client_test_results_total{result=\"error-without-rate\"}[10m]) or vector(0))) /\n(sum(rate(ndt5_client_test_results_total[10m]) or vector(0)) +\n sum(rate(ndt7_client_test_results_total[10m]) or vector(0)))",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Global NDT Test Errors",
+      "tooltip": {
+        "shared": false,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "bps",
+          "label": "Switch Rate",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "content": "\n\n\n\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 0,
+        "y": 11
+      },
+      "id": 19,
+      "mode": "markdown",
+      "options": {},
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "TX Controller",
+      "type": "text"
+    },
+    {
+      "content": "\n\n\n\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 8,
+        "y": 11
+      },
+      "id": 20,
+      "mode": "markdown",
+      "options": {},
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Token Controller",
+      "type": "text"
+    },
+    {
+      "content": "\n\n\n\n",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 8,
+        "x": 16,
+        "y": 11
+      },
+      "id": 27,
+      "mode": "markdown",
+      "options": {},
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "NDT Server",
+      "type": "text"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 12
+      },
+      "id": 3,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(site) (label_replace(rate(controller_access_txcontroller_requests_total{request=\"rejected\", machine=~\"$machine\"}[$range]), \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z0-9]{5}).*\")) / \n  sum by(site) (label_replace(rate(controller_access_txcontroller_requests_total{machine=~\"$machine\"}[$range]), \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z0-9]{5}).*\"))",
+          "legendFormat": "{{site}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Percent of Rejected Requests / Site ($range avg)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 12
+      },
+      "id": 22,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(site) (label_replace(rate(controller_access_token_requests_total{deployment=\"ndt\", request=\"rejected\", path=~\".*ndt.*\", machine=~\"$machine\"}[$range]), \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z0-9]{5}).*\")) / \n  sum by(site) (label_replace(rate(controller_access_token_requests_total{deployment=\"ndt\", path=~\".*ndt.*\",  machine=~\"$machine\"}[$range]), \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z0-9]{5}).*\"))",
+          "legendFormat": "{{site}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Percent of Rejected Requests / Site ($range avg)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "b mlab1.lax01.measurement-lab.org": "#E0752D",
+        "b mlab1.lga03.measurement-lab.org": "#1F78C1",
+        "b mlab1.lhr05.measurement-lab.org": "#BF1B00",
+        "inotify - mlab1.lax04.measurement-lab.org": "#7EB26D",
+        "inotify - mlab1.lax05.measurement-lab.org": "#7EB26D",
+        "mlab1.lax01.measurement-lab.org": "#E24D42",
+        "mlab1.lga03.measurement-lab.org": "#DEDAF7",
+        "mlab1.mia02.measurement-lab.org": "#F9D9F9",
+        "mlab1.ord04.measurement-lab.org": "#7EB26D",
+        "switch - ord04": "#F4D598",
+        "switch - peak - lax04": "#EF843C",
+        "switch - peak - lax05": "#EF843C"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 12
+      },
+      "id": 28,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(site) (label_replace(                                                    \n  (                                                                             \n    (sum by(machine) (rate(ndt5_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[$range])) +\n     sum by(machine) (rate(ndt7_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[$range]))) /\n    (sum by(machine) (rate(ndt5_client_test_results_total{machine=~\"$machine\"}[$range])) +\n     sum by(machine) (rate(ndt7_client_test_results_total{machine=~\"$machine\"}[$range])))\n  )                                                                             \nOR                                                                              \n  (                                                                             \n    (sum by(machine) (rate(ndt5_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[5m]))) /\n    (sum by(machine) (rate(ndt5_client_test_results_total{machine=~\"$machine\"}[$range])))\n  )                                                                             \nOR                                                                              \n  (                                                                             \n    (sum by(machine) (rate(ndt7_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[$range]))) /\n    (sum by(machine) (rate(ndt7_client_test_results_total{machine=~\"$machine\"}[$range])))\n  )                                                                             \n , \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9t]{2}).*\"))",
+          "legendFormat": "{{site}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Percent NDT Test Errors / Site ($range avg)",
+      "tooltip": {
+        "shared": false,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "percentunit",
+          "label": "",
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "bps",
+          "label": "Switch Rate",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 21
+      },
+      "id": 17,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60*sum by(site) (label_replace(rate(controller_access_txcontroller_requests_total{machine=~\"$machine\"}[2m]), \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9t]{2}).*\"))",
+          "legendFormat": "{{site}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "TX Requests / Minute / Site",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 21
+      },
+      "id": 21,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60*sum by(site) (label_replace(rate(controller_access_token_requests_total{machine=~\"$machine\", path=~\".*ndt.*\"}[2m]), \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9t]{2}).*\"))",
+          "legendFormat": "{{site}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Token Requests / Minute / Site",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "b mlab1.lax01.measurement-lab.org": "#E0752D",
+        "b mlab1.lga03.measurement-lab.org": "#1F78C1",
+        "b mlab1.lhr05.measurement-lab.org": "#BF1B00",
+        "inotify - mlab1.lax04.measurement-lab.org": "#7EB26D",
+        "inotify - mlab1.lax05.measurement-lab.org": "#7EB26D",
+        "mlab1.lax01.measurement-lab.org": "#E24D42",
+        "mlab1.lga03.measurement-lab.org": "#DEDAF7",
+        "mlab1.mia02.measurement-lab.org": "#F9D9F9",
+        "mlab1.ord04.measurement-lab.org": "#7EB26D",
+        "switch - ord04": "#F4D598",
+        "switch - peak - lax04": "#EF843C",
+        "switch - peak - lax05": "#EF843C"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 21
+      },
+      "id": 7,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(site) (label_replace(                                                    \n  (                                                                             \n    (machine:ndt5_client_test_results:rpm2m{machine=~\"$machine\"} + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine\"})\n  )                                                                             \nOR                                                                              \n  (                                                                             \n    (machine:ndt5_client_test_results:rpm2m{machine=~\"$machine\"})\n  )                                                                             \nOR                                                                              \n  (                                                                             \n    (machine:ndt7_client_test_results:rpm2m{machine=~\"$machine\"})\n  )                                                                             \n , \"site\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}[0-9t]{2}).*\"))",
+          "hide": false,
+          "legendFormat": "{{site}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "NDT Test Count / Site",
+      "tooltip": {
+        "shared": false,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "NDT Tests / Min",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "bps",
+          "label": "Switch Rate",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 30
+      },
+      "id": 26,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60*sum by(machine) (rate(controller_access_txcontroller_requests_total{machine=~\"$machine\"}[2m]))",
+          "legendFormat": "{{machine}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "TX Requests / Minute / Machine",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 30
+      },
+      "id": 25,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60*sum by(machine) (rate(controller_access_token_requests_total{deployment=\"ndt\", machine=~\"$machine\", path=~\".*ndt.*\"}[2m]))",
+          "legendFormat": "{{machine}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Token Requests / Minute / machine",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "b mlab1.lax01.measurement-lab.org": "#E0752D",
+        "b mlab1.lga03.measurement-lab.org": "#1F78C1",
+        "b mlab1.lhr05.measurement-lab.org": "#BF1B00",
+        "inotify - mlab1.lax04.measurement-lab.org": "#7EB26D",
+        "inotify - mlab1.lax05.measurement-lab.org": "#7EB26D",
+        "mlab1.lax01.measurement-lab.org": "#E24D42",
+        "mlab1.lga03.measurement-lab.org": "#DEDAF7",
+        "mlab1.mia02.measurement-lab.org": "#F9D9F9",
+        "mlab1.ord04.measurement-lab.org": "#7EB26D",
+        "switch - ord04": "#F4D598",
+        "switch - peak - lax04": "#EF843C",
+        "switch - peak - lax05": "#EF843C"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 30
+      },
+      "id": 11,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(machine) ((machine:ndt5_client_test_results:rpm2m{machine=~\"$machine\"} + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine\"} ))",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "sum - {{machine}}",
+          "refId": "A"
+        },
+        {
+          "expr": "                                                  \n  (                                                                             \n    (machine:ndt5_client_test_results:rpm2m{machine=~\"$machine\"} + machine:ndt7_client_test_results:rpm2m{machine=~\"$machine\"})\n  )                                                                             \nOR                                                                              \n  (                                                                             \n    (machine:ndt5_client_test_results:rpm2m{machine=~\"$machine\"})\n  )                                                                             \nOR                                                                              \n  (                                                                             \n    (machine:ndt7_client_test_results:rpm2m{machine=~\"$machine\"})\n  )                                                                             \n",
+          "hide": false,
+          "legendFormat": "{{machine}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "NDT Test Count / Machine",
+      "tooltip": {
+        "shared": false,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "NDT Tests / Min",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "bps",
+          "label": "Switch Rate",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 39
+      },
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60 *sum by(machine) (rate(controller_access_txcontroller_requests_total{request=\"rejected\", machine=~\"$machine\"}[2m]))",
+          "legendFormat": "{{machine}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Rejected Requests / Minute / Machine",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 39
+      },
+      "id": 23,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60*sum by(machine, reason) (rate(controller_access_token_requests_total{deployment=\"ndt\", machine=~\"$machine\", request=\"rejected\", path=~\".*ndt.*\"}[2m]))",
+          "legendFormat": "{{machine}} {{reason}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Rejected Requests / Minute / Machine",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "b mlab1.lax01.measurement-lab.org": "#E0752D",
+        "b mlab1.lga03.measurement-lab.org": "#1F78C1",
+        "b mlab1.lhr05.measurement-lab.org": "#BF1B00",
+        "inotify - mlab1.lax04.measurement-lab.org": "#7EB26D",
+        "inotify - mlab1.lax05.measurement-lab.org": "#7EB26D",
+        "mlab1.lax01.measurement-lab.org": "#E24D42",
+        "mlab1.lga03.measurement-lab.org": "#DEDAF7",
+        "mlab1.mia02.measurement-lab.org": "#F9D9F9",
+        "mlab1.ord04.measurement-lab.org": "#7EB26D",
+        "switch - ord04": "#F4D598",
+        "switch - peak - lax04": "#EF843C",
+        "switch - peak - lax05": "#EF843C"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 39
+      },
+      "id": 29,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60 * ((                                                                             \n    (sum by(machine) (rate(ndt5_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[2m])) +\n     sum by(machine) (rate(ndt7_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[2m])))\n  )                                                                             \nOR                                                                              \n  (                                                                             \n    (sum by(machine) (rate(ndt5_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[2m])))\n  )\nOR                                                                              \n  (                                                                             \n    (sum by(machine) (rate(ndt7_client_test_results_total{machine=~\"$machine\", result=\"error-without-rate\"}[2m])))\n  ))",
+          "hide": false,
+          "legendFormat": "{{machine}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "NDT Test Errors / Machine",
+      "tooltip": {
+        "shared": false,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": null,
+          "format": "bps",
+          "label": "Switch Rate",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 20,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "tags": [],
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Platform/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "text": ".*par04.*",
+          "value": ".*par04.*"
+        },
+        "hide": 0,
+        "label": null,
+        "name": "machine",
+        "options": [
+          {
+            "text": ".*par04.*",
+            "value": ".*par04.*"
+          }
+        ],
+        "query": ".*par04.*",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "15m",
+          "value": "15m"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "range",
+        "options": [
+          {
+            "selected": false,
+            "text": "2m",
+            "value": "2m"
+          },
+          {
+            "selected": false,
+            "text": "5m",
+            "value": "5m"
+          },
+          {
+            "selected": false,
+            "text": "10m",
+            "value": "10m"
+          },
+          {
+            "selected": true,
+            "text": "15m",
+            "value": "15m"
+          },
+          {
+            "selected": false,
+            "text": "30m",
+            "value": "30m"
+          }
+        ],
+        "query": "2m,5m,10m,15m,30m",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "NDT: Access Control",
+  "uid": "GtHg-SlWx",
+  "version": 126
+}
