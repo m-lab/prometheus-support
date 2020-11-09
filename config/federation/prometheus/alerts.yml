@@ -960,10 +960,7 @@ groups:
         Investigate filesystem usage on the VM, but most likely if this alert
         fires it means that the size of the persistent disk is too small and
         may need to be increased. GCE persistent disks can be resized, even on
-        a running VM. Increase the size of the disk as necessary, then unmount
-        the disk on the machine and run `resize2fs`, then mount it again. Don't
-        forget to increase the value in the bootstrap_prometheus.sh script in
-        the k8s-support repository.
+        a running VM. [Instructions on how to do this](https://github.com/m-lab/k8s-support/blob/master/manage-cluster/PROMETHEUS.md#resizing-the-prometheus-vms-disk) are in the k8s-support repo.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=Platform%20Cluster%20(mlab-oti)
 
 # Some SNMP metrics are missing from Prometheus. These should always be present.
