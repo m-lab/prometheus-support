@@ -100,7 +100,7 @@ groups:
         The script_exporter service runs in the prometheus-federation GKE
         cluster in each M-Lab GCP project. For deployment details and
         troubleshooting, you can usually figure out the issue by looking
-        through the Travis-CI build logs[1]. You can also look for hints
+        through the [Travis-CI build logs][1]. You can also look for hints
         in the Kubernetes logs for the pod, or by kexec'ing into the pod
         itself.
         [1]: https://travis-ci.org/m-lab/prometheus-support
@@ -119,9 +119,8 @@ groups:
       summary: Expected script_exporter metrics are missing from Prometheus!
       description: >
         If the script_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS[1] and the target
-        status in Prometheus[2].
-
+        configuration error. Check the [target definitions in GCS][1] and the [target
+        status in Prometheus][2].
         [1]: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets
         [2]: https://prometheus.mlab-oti.measurementlab.net/targets
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/coR-U9gMx
@@ -171,7 +170,7 @@ groups:
         Scraping of the Github Maintenance Exporter is failing or missing.
         Check that the gmx-server deployment is healthy and that a pod for it
         exists. Check the status of the pod for errors. Check the logs of the
-        pod for errors.  Check the reason that the scrape failed[1].
+        pod for errors.  Check the [reason that the scrape failed][1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-nginx-proxied-services
 
   # Blackbox exporter probes to a machine are succeeding to a node that
@@ -413,8 +412,8 @@ groups:
       description: >
         One of the metrics that mlab-ns relies on to determine if an experiment
         should receive production traffic is missing. Most of these metrics are
-        scraped from the platform-cluster. Be sure that the fedrated scrape job
-        for the platform-cluster is healthy[1]. If the GMX metric is missing,
+        scraped from the platform-cluster. Be sure that the fedrated [scrape job
+        for the platform-cluster is healthy][1]. If the GMX metric is missing,
         then make sure that gmx-server deployment healthy in the
         prometheus-federation cluster.
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-platform-cluster
@@ -439,8 +438,8 @@ groups:
       summary: A metric for an NDT service is missing.
       description: >
         If the blackbox_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target
-        status in Prometheus[1].
+        configuration error. Check the target definitions in GCS and the [target
+        status in Prometheus][1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
 
 # One or more Neubot-specific metrics is missing. These are the Neubot metrics that
@@ -460,8 +459,8 @@ groups:
       summary: A metric for a Neubot service is missing.
       description: >
         If the blackbox_exporter service is running, then there may be a target
-        configuration error. Check the target definitions in GCS and the target
-        status in Prometheus[1].
+        configuration error. Check the target definitions in GCS and the [target
+        status in Prometheus][1].
         [1]: https://prometheus.mlab-oti.measurementlab.net/targets#job-blackbox-targets
 
 # One or more of the backend services handled by the nginx proxy is down.
@@ -960,9 +959,8 @@ groups:
         Investigate filesystem usage on the VM, but most likely if this alert
         fires it means that the size of the persistent disk is too small and
         may need to be increased. GCE persistent disks can be resized, even on
-        a running VM. Please refer to the instructions on how to do this[1].
-
-        [1] https://github.com/m-lab/k8s-support/blob/master/manage-cluster/PROMETHEUS.md#resizing-the-prometheus-vms-disk
+        a running VM. Please refer to the [instructions on how to do this][1].
+        [1]: https://github.com/m-lab/k8s-support/blob/master/manage-cluster/PROMETHEUS.md#resizing-the-prometheus-vms-disk
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=Platform%20Cluster%20(mlab-oti)
 
 # Some SNMP metrics are missing from Prometheus. These should always be present.
