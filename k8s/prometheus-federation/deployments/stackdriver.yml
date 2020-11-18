@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stackdriver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: stackdriver
+  template:
+    metadata:
+      labels:
+        run: stackdriver
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      nodeSelector:
+        prometheus-node: 'true'
+      containers:
+      - name: stackdriver
+        image: prometheuscommunity/stackdriver-exporter:v0.11.0
+        args: [
+          # Metrics are available with some delay, so look 5 minutes in the past.
+          "--monitoring.metrics-offset=5m",
+          # Prometheus scrapes every minute, so look at a 1 minute window.
+          "--monitoring.metrics-interval=1m",
+          "--google.project-id={{GCLOUD_PROJECT}}",
+          # Metrics are gauges, representing counts over the sampled interval.
+          "--monitoring.metrics-type-prefixes=logging.googleapis.com/user",
+          "--web.listen-address=:9256"
+        ]
+        ports:
+        - containerPort: 9256
