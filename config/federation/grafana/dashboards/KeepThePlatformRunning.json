@@ -15,8 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 350,
-  "iteration": 1607291390785,
+  "iteration": 1607464932567,
   "links": [],
   "panels": [
     {
@@ -58,12 +57,12 @@
       "seriesOverrides": [
         {
           "alias": "Current",
-          "color": "#56A64B",
+          "color": "#37872D",
           "linewidth": 2
         },
         {
           "alias": "One Week",
-          "color": "#56A64B"
+          "color": "rgb(58, 99, 51)"
         },
         {
           "alias": "Two Weeks",
@@ -76,16 +75,19 @@
       "targets": [
         {
           "expr": "sum(rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m]))",
+          "intervalFactor": 2,
           "legendFormat": "Current",
           "refId": "C"
         },
         {
           "expr": "sum(rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m] offset 7d))",
+          "hide": true,
           "legendFormat": "One Week",
           "refId": "A"
         },
         {
           "expr": "sum(rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m] offset 14d))",
+          "hide": true,
           "legendFormat": "Two Weeks",
           "refId": "B"
         }
@@ -94,7 +96,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Aggregate network usage (bits/s)",
+      "title": "Switch: Global Network Utilization (outbound)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -112,7 +114,7 @@
         {
           "decimals": null,
           "format": "bps",
-          "label": null,
+          "label": "Bits / Sec",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -153,7 +155,7 @@
         "current": false,
         "max": false,
         "min": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
@@ -200,7 +202,7 @@
         {
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "intervalFactor": 2,
           "legendFormat": "One Week",
           "refId": "A",
@@ -209,7 +211,7 @@
         {
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "intervalFactor": 2,
           "legendFormat": "Two Week",
           "refId": "B",
@@ -220,7 +222,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Week-over-week - NDT Global Total Test Rate",
+      "title": "NDT: Global Test Rate",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -263,7 +265,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
@@ -292,23 +294,42 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/tcpinfo|pcap/",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(datatype) (increase(pusher_bytes_per_tarfile_sum[5m]))",
+          "expr": "60*sum (rate(pusher_bytes_per_tarfile_sum{datatype!~\"tcpinfo|pcap\"}[5m]))",
+          "hide": true,
           "intervalFactor": 2,
-          "legendFormat": "{{datatype}}",
+          "legendFormat": "All Small datatypes (left axis)",
           "refId": "A"
+        },
+        {
+          "expr": "60*sum by(datatype) (rate(pusher_bytes_per_tarfile_sum{datatype=~\"tcpinfo|pcap\"}[5m]))",
+          "hide": true,
+          "intervalFactor": 2,
+          "legendFormat": "{{datatype}} (right axis)",
+          "refId": "B"
+        },
+        {
+          "expr": "60*sum  (rate(pusher_bytes_per_tarfile_sum[5m]))",
+          "intervalFactor": 2,
+          "legendFormat": "All datatypes",
+          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Successful Bytes Uploaded",
+      "title": "Pusher: Bytes Uploaded to GCS",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -325,19 +346,19 @@
       "yaxes": [
         {
           "format": "decbytes",
-          "label": null,
+          "label": "Bytes / Min",
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
         {
-          "format": "short",
-          "label": null,
+          "format": "decbytes",
+          "label": "Bytes / Min",
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -353,7 +374,7 @@
       "datasource": "-- Mixed --",
       "editable": false,
       "error": false,
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
@@ -387,34 +408,43 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/increase.*/",
-          "yaxis": 2
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
           "datasource": "Data Processing (mlab-oti)",
-          "expr": "sum by(table) (increase(etl_test_count[10m]))",
+          "expr": "60*sum by(table) (rate(etl_test_count[10m]))",
+          "hide": true,
           "legendFormat": "standard - {{table}}",
           "refId": "C"
         },
         {
           "datasource": "Prometheus (mlab-oti)",
-          "expr": "sum by (table) (increase(etl_test_count[10m]))",
+          "expr": "60 * sum by (table) (rate(etl_test_count[10m]))",
+          "hide": true,
           "legendFormat": "legacy - {{table}}",
           "refId": "D"
+        },
+        {
+          "datasource": "Data Processing (mlab-oti)",
+          "expr": "60*sum (rate(etl_test_count[10m]))",
+          "legendFormat": "standard",
+          "refId": "A"
+        },
+        {
+          "datasource": "Prometheus (mlab-oti)",
+          "expr": "60 * sum  (rate(etl_test_count[10m]))",
+          "legendFormat": "legacy",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total Rows Written",
+      "title": "ETL: Rows Written to BigQuery",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -433,7 +463,7 @@
       "yaxes": [
         {
           "format": "short",
-          "label": "Rows",
+          "label": "Rows / Min",
           "logBase": 1,
           "show": true
         },
@@ -441,7 +471,7 @@
           "format": "short",
           "label": "Increases",
           "logBase": 1,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -496,5 +526,5 @@
   "timezone": "",
   "title": "Keep the Platform Running",
   "uid": "jrd70ZoGx",
-  "version": 18
+  "version": 1
 }
