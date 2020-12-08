@@ -1,0 +1,530 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": false,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "iteration": 1607464932567,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "description": "",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "Current",
+          "color": "#37872D",
+          "linewidth": 2
+        },
+        {
+          "alias": "One Week",
+          "color": "rgb(58, 99, 51)"
+        },
+        {
+          "alias": "Two Weeks",
+          "color": "rgb(111, 130, 111)"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m]))",
+          "intervalFactor": 2,
+          "legendFormat": "Current",
+          "refId": "C"
+        },
+        {
+          "expr": "sum(rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m] offset 7d))",
+          "hide": true,
+          "legendFormat": "One Week",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m] offset 14d))",
+          "hide": true,
+          "legendFormat": "Two Weeks",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Switch: Global Network Utilization (outbound)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "bps",
+          "label": "Bits / Sec",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "decimals": 1,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "Current",
+          "color": "#37872D",
+          "linewidth": 2
+        },
+        {
+          "alias": "One Week",
+          "color": "rgba(117, 207, 105, 0.53)"
+        },
+        {
+          "alias": "Two Week",
+          "color": "rgba(135, 150, 132, 0.67)"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Current",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 2,
+          "legendFormat": "One Week",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))",
+          "format": "time_series",
+          "hide": true,
+          "intervalFactor": 2,
+          "legendFormat": "Two Week",
+          "refId": "B",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "NDT: Global Test Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Tests / Min",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 9,
+      "interval": "",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/tcpinfo|pcap/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "60*sum (rate(pusher_bytes_per_tarfile_sum{datatype!~\"tcpinfo|pcap\"}[5m]))",
+          "hide": true,
+          "intervalFactor": 2,
+          "legendFormat": "All Small datatypes (left axis)",
+          "refId": "A"
+        },
+        {
+          "expr": "60*sum by(datatype) (rate(pusher_bytes_per_tarfile_sum{datatype=~\"tcpinfo|pcap\"}[5m]))",
+          "hide": true,
+          "intervalFactor": 2,
+          "legendFormat": "{{datatype}} (right axis)",
+          "refId": "B"
+        },
+        {
+          "expr": "60*sum  (rate(pusher_bytes_per_tarfile_sum[5m]))",
+          "intervalFactor": 2,
+          "legendFormat": "All datatypes",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Pusher: Bytes Uploaded to GCS",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": "Bytes / Min",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "decbytes",
+          "label": "Bytes / Min",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "-- Mixed --",
+      "editable": false,
+      "error": false,
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 8,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": "Data Processing (mlab-oti)",
+          "expr": "60*sum by(table) (rate(etl_test_count[10m]))",
+          "hide": true,
+          "legendFormat": "standard - {{table}}",
+          "refId": "C"
+        },
+        {
+          "datasource": "Prometheus (mlab-oti)",
+          "expr": "60 * sum by (table) (rate(etl_test_count[10m]))",
+          "hide": true,
+          "legendFormat": "legacy - {{table}}",
+          "refId": "D"
+        },
+        {
+          "datasource": "Data Processing (mlab-oti)",
+          "expr": "60*sum (rate(etl_test_count[10m]))",
+          "legendFormat": "standard",
+          "refId": "A"
+        },
+        {
+          "datasource": "Prometheus (mlab-oti)",
+          "expr": "60 * sum  (rate(etl_test_count[10m]))",
+          "legendFormat": "legacy",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "ETL: Rows Written to BigQuery",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Rows / Min",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "Increases",
+          "logBase": 1,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 20,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Platform/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Keep the Platform Running",
+  "uid": "jrd70ZoGx",
+  "version": 1
+}
