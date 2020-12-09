@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "iteration": 1607464932567,
+  "iteration": 1607473739036,
   "links": [],
   "panels": [
     {
@@ -74,7 +74,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m]))",
+          "expr": "sum(max by(site) (rate(ifHCOutOctets{ifAlias=\"uplink\"}[5m])))",
           "intervalFactor": 2,
           "legendFormat": "Current",
           "refId": "C"
@@ -526,5 +526,5 @@
   "timezone": "",
   "title": "Keep the Platform Running",
   "uid": "jrd70ZoGx",
-  "version": 1
+  "version": 2
 }
