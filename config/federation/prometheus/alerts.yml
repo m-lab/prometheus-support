@@ -710,11 +710,11 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
 
 # GardenerDailyParsingIsBehind fires when daily processing has fallen behind
-# There should always be >= 2 of the past four dates available.
+# There should always be 3 or 4 of the past four dates available, most of time.
   - alert: GardenerDailyParsingIsBehind
     expr: |
-      bq_gardener_daily_done_last_4_days < 2
-    for: 10m
+      bq_gardener_daily_done_last_4_days < 4
+    for: 48h
     labels:
       repo: dev-tracker
       severity: ticket
