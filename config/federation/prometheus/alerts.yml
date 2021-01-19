@@ -176,7 +176,8 @@ groups:
   # Blackbox exporter probes to a machine are succeeding to a node that
   # kubernetes does not know about (not joined to the k8s cluster).
   - alert: MachineRunningWithoutK8sNode
-    expr: probe_success{service="ssh"} == 1 unless on(machine) kube_node_status_condition
+    expr: probe_success{service="ssh", module="ssh_v4_online"} == 1
+            unless on(machine) kube_node_status_condition
             unless on(machine) gmx_machine_maintenance == 1
     for: 1h
     labels:
