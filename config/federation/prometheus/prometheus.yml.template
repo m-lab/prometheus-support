@@ -507,14 +507,13 @@ scrape_configs:
         target_label: __param_module
         replacement: ${1}
 
-      # Use the target parameter defined above and use it to define the
-      # "instance" label.
+      # Use the original target __address__ to define the "instance" label.
       - source_labels: [__address__]
         regex: (.*)
         target_label: instance
         replacement: ${1}
 
-      # Since __address__ is the target that prometheus will contact,
+      # Since __address__ is the target that prometheus scrapes,
       # unconditionally reset the __address__ label to the blackbox exporter
       # address.
       - source_labels: []
