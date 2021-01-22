@@ -493,11 +493,12 @@ scrape_configs:
 
       # The default __address__ value is a target host from the config file.
       # Here, we set (i.e. "replace") a request parameter "target" equal to the
-      # host value.
+      # host value. NOTE: we also insert a trailing "." to optimize DNS lookup.
+      # NOTE: all address ports must be specified explicitly.
       - source_labels: [__address__]
-        regex: (.*)(:80)?
+        regex: (.*)(:.*)
         target_label: __param_target
-        replacement: ${1}
+        replacement: ${1}.${2}
 
       # Use the "module" label defined in the input file as the module name for
       # the blackbox exporter request.
@@ -506,14 +507,13 @@ scrape_configs:
         target_label: __param_module
         replacement: ${1}
 
-      # Use the target parameter defined above and use it to define the
-      # "instance" label.
-      - source_labels: [__param_target]
+      # Use the original target __address__ to define the "instance" label.
+      - source_labels: [__address__]
         regex: (.*)
         target_label: instance
         replacement: ${1}
 
-      # Since __address__ is the target that prometheus will contact,
+      # Since __address__ is the target that prometheus scrapes,
       # unconditionally reset the __address__ label to the blackbox exporter
       # address.
       - source_labels: []
