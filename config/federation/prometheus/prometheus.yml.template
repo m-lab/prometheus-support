@@ -512,7 +512,7 @@ scrape_configs:
       # Here, we set (i.e. "replace") a request parameter "target" equal to the
       # host value.
       - source_labels: [__tmp_host, __tmp_port]
-        separator: :
+        separator: ":"
         regex: .*
         target_label: __param_target
         replacement: ${1}
