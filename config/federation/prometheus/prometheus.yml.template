@@ -491,31 +491,13 @@ scrape_configs:
     # supported configuration: https://github.com/prometheus/blackbox_exporter
     relabel_configs:
 
-      # Create static default port.
-      - source_labels: []
-        regex: .*
-        target_label: __tmp_port
-        replacement: 80
-      # Extract actual port. If there is no :(.*) pattern, use default value.
-      - source_labels: [__address__]
-        regex: .*:(.*)
-        target_label: __tmp_port
-        replacement: ${1}
-      # Extract the host. Note: the replacement value includes a trailing "." to
-      # optimize DNS lookup.
-      - source_labels: [__address__]
-        regex: (.*)(:.*)?
-        target_label: __tmp_host
-        replacement: ${1}.
-
       # The default __address__ value is a target host from the config file.
       # Here, we set (i.e. "replace") a request parameter "target" equal to the
-      # host value.
-      - source_labels: [__tmp_host, __tmp_port]
-        separator: ":"
-        regex: .*
+      # host value. NOTE: we also insert a trailing "." to optimize DNS lookup.
+      - source_labels: [__address__]
+        regex: (.*)(:.*)
         target_label: __param_target
-        replacement: ${1}
+        replacement: ${1}.${2}
 
       # Use the "module" label defined in the input file as the module name for
       # the blackbox exporter request.
@@ -526,7 +508,7 @@ scrape_configs:
 
       # Use the target parameter defined above and use it to define the
       # "instance" label.
-      - source_labels: [__param_target]
+      - source_labels: [__address__]
         regex: (.*)
         target_label: instance
         replacement: ${1}
