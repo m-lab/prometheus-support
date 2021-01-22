@@ -494,6 +494,7 @@ scrape_configs:
       # The default __address__ value is a target host from the config file.
       # Here, we set (i.e. "replace") a request parameter "target" equal to the
       # host value. NOTE: we also insert a trailing "." to optimize DNS lookup.
+      # NOTE: all address ports must be specified explicitly.
       - source_labels: [__address__]
         regex: (.*)(:.*)
         target_label: __param_target
