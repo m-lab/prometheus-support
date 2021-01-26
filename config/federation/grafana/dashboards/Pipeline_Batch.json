@@ -2,7 +2,6 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:87",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": false,
@@ -13,11 +12,10 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 21,
-  "iteration": 1539211263063,
+  "iteration": 1582835553547,
   "links": [
     {
       "icon": "external link",
@@ -64,6 +62,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -87,8 +86,11 @@
       },
       "lines": true,
       "linewidth": 1,
-      "minSpan": 8,
+      "maxPerRow": 3,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -99,7 +101,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "$$hashKey": "object:382",
           "expr": "sum by(phase, status, retries)(increase(etl_gcs_retry_count{service=\"etl-batch-parser\"}[$interval]))",
           "format": "time_series",
           "interval": "",
@@ -111,6 +112,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Storage Errors [$interval]",
       "tooltip": {
@@ -118,7 +120,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -156,6 +157,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -182,11 +184,18 @@
       "links": [
         {
           "title": "Parser Logs",
-          "type": "absolute",
           "url": "https://console.cloud.google.com/logs/viewer?project=mlab-oti&organizationId=433637338589&minLogLevel=0&expandAll=false&timestamp=2017-11-04T12:17:52.000000000Z&dateRangeStart=2017-11-04T11:18:43.921Z&dateRangeEnd=2017-11-04T12:18:43.921Z&interval=PT1H&resource=gae_app%2Fmodule_id%2Fetl-batch-parser&filters=text:%22:%20Processed%20%22&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fnginx.request"
         }
       ],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": [
+          {
+            "title": "",
+            "url": ""
+          }
+        ]
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -205,8 +214,27 @@
           "step": 10
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 10000,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
+      "timeRegions": [
+        {
+          "colorMode": "background6",
+          "fill": true,
+          "fillColor": "rgba(234, 112, 112, 0.12)",
+          "line": false,
+          "lineColor": "rgba(237, 46, 24, 0.60)",
+          "op": "time"
+        }
+      ],
       "timeShift": null,
       "title": "Test Error Count by Type/Status [$interval]",
       "tooltip": {
@@ -214,7 +242,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -252,6 +279,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -277,6 +305,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -306,15 +337,16 @@
           "step": 20
         },
         {
-          "refId": "C",
           "expr": "sum(rate(annotator_external_latency_hist_msec_count{service=\"etl-batch-parser\"}[$interval])) by (le, detail, version)",
-          "intervalFactor": 1,
           "format": "time_series",
-          "legendFormat": "V2 {{detail}} {{version}}"
+          "intervalFactor": 1,
+          "legendFormat": "V2 {{detail}} {{version}}",
+          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Annotator Error Count [$interval]",
       "tooltip": {
@@ -322,7 +354,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -357,9 +388,11 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "description": "",
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 1,
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -384,6 +417,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -401,7 +437,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"})",
+          "expr": "topk(2,sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"}))",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{instance}}",
@@ -415,18 +451,26 @@
           "legendFormat": "instance count",
           "refId": "B",
           "step": 20
+        },
+        {
+          "expr": "bottomk(10,sum by(instance)(time()-process_start_time_seconds{service=\"etl-batch-parser\"}))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{instance}}",
+          "refId": "C",
+          "step": 20
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
-      "title": "Per Instance Uptime",
+      "title": "Oldest and Newest Uptime",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -467,6 +511,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 1,
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -491,27 +536,66 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/workers/",
+          "color": "rgba(53, 66, 194, 0.14)"
+        },
+        {
+          "alias": "/Average/",
+          "color": "#3274D9",
+          "linewidth": 3
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "etl_worker_count{service=\"etl-batch-parser\"}",
+          "expr": "sum(etl_worker_count{service=\"etl-batch-parser\"}) by (instance)",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "workers {{instance}}",
           "refId": "A",
+          "step": 60
+        },
+        {
+          "expr": "avg(sum(etl_worker_count{service=\"etl-batch-parser\"}) by (instance)) by (version)",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "Average",
+          "refId": "B",
           "step": 60
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "ok",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 10,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Worker Count By Instance",
       "tooltip": {
@@ -519,7 +603,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -556,6 +639,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -580,6 +664,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -601,6 +688,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Worker States",
       "tooltip": {
@@ -608,7 +696,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -645,6 +732,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -669,6 +757,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -689,6 +780,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Task Totals by Version / Status [$interval]",
       "tooltip": {
@@ -696,7 +788,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -734,6 +825,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 1,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -758,6 +850,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -779,6 +874,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Tasks/Min by Status",
       "tooltip": {
@@ -786,7 +882,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -822,7 +917,8 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 1,
+      "fill": 0,
+      "fillGradient": 1,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -847,11 +943,19 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/.*/",
+          "color": "rgba(67, 149, 21, 0.27)"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -868,6 +972,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Successful Tasks/Min by Instance",
       "tooltip": {
@@ -875,7 +980,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -913,6 +1017,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -937,6 +1042,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -958,6 +1066,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Tests/Sec by Type",
       "tooltip": {
@@ -965,7 +1074,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1002,6 +1110,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1026,6 +1135,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1047,6 +1159,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Test Count by Type [$interval]",
       "tooltip": {
@@ -1054,7 +1167,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1091,6 +1203,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1116,6 +1229,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1136,6 +1252,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Test Warning Count by Table/Type/Status [$interval]",
       "tooltip": {
@@ -1143,7 +1260,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1177,9 +1293,11 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "description": "",
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 1,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1204,17 +1322,27 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Failure/",
+          "color": "#C4162A",
+          "linewidth": 2,
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.99 {{status}}",
@@ -1222,7 +1350,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.95 {{status}}",
@@ -1230,7 +1358,7 @@
           "step": 10
         },
         {
-          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\"}[5m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\", status!=\"fail\"}[$interval]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "average",
@@ -1238,7 +1366,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.5 {{status}}",
@@ -1246,7 +1374,7 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.25 {{status}}",
@@ -1254,24 +1382,32 @@
           "step": 10
         },
         {
-          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "expr": "histogram_quantile(0.05, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status!=\"fail\"}[$interval])))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "0.05 {{status}}",
           "refId": "E",
           "step": 10
+        },
+        {
+          "expr": "(sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status=\"fail\"}[$interval]))) / (sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[$interval])))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Failure Rate",
+          "refId": "G",
+          "step": 10
         }
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
-      "title": "Approximate Insertion Time Percentiles",
+      "title": "Approximate Insertion Time Percentiles ($interval)",
       "tooltip": {
         "shared": true,
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1290,8 +1426,10 @@
           "show": true
         },
         {
-          "format": "short",
+          "format": "percentunit",
           "logBase": 1,
+          "max": ".02",
+          "min": "0",
           "show": true
         }
       ],
@@ -1309,6 +1447,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1333,6 +1472,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1387,6 +1529,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Approximate Snaplog Size Percentiles",
       "tooltip": {
@@ -1394,7 +1537,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1431,6 +1573,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1451,6 +1594,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1487,6 +1633,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Annotation time",
       "tooltip": {
@@ -1534,6 +1681,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1558,6 +1706,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1579,6 +1730,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Process Resident Memory",
       "tooltip": {
@@ -1586,7 +1738,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1622,7 +1773,8 @@
       "datasource": "$datasource",
       "editable": false,
       "error": false,
-      "fill": 1,
+      "fill": 0,
+      "fillGradient": 1,
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -1647,6 +1799,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1659,7 +1814,7 @@
         },
         {
           "alias": "/etl/",
-          "color": "rgba(146, 83, 83, 0.13)",
+          "color": "rgba(146, 83, 83, 0.19)",
           "dashLength": 1,
           "spaceLength": 2
         }
@@ -1669,7 +1824,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2",
+          "expr": "rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/etl_num_cpu",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1678,7 +1833,7 @@
           "step": 60
         },
         {
-          "expr": "avg(rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/2) by (version)",
+          "expr": "avg(rate(process_cpu_seconds_total{service=\"etl-batch-parser\"}[2m])/etl_num_cpu) by (version)",
           "format": "time_series",
           "interval": "60s",
           "intervalFactor": 1,
@@ -1689,6 +1844,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Per instance cpu utilization",
       "tooltip": {
@@ -1696,7 +1852,6 @@
         "sort": 1,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1734,6 +1889,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1758,6 +1914,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1786,6 +1945,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Total Insertion Calls [$interval]",
       "tooltip": {
@@ -1793,7 +1953,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1830,6 +1989,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1854,6 +2014,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -1884,6 +2047,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Insertions per Instance",
       "tooltip": {
@@ -1891,7 +2055,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1928,6 +2091,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -1952,6 +2116,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2020,6 +2187,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Json sizes of largest (5%) of snaplog records",
       "tooltip": {
@@ -2027,7 +2195,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -2065,6 +2232,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -2089,6 +2257,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2141,6 +2312,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Total Field Count",
       "tooltip": {
@@ -2148,7 +2320,6 @@
         "sort": 0,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -2186,6 +2357,7 @@
       "editable": false,
       "error": false,
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -2210,6 +2382,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2308,6 +2483,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Snapshot Field Count",
       "tooltip": {
@@ -2315,7 +2491,6 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "transparent": false,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -2352,6 +2527,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -2372,6 +2548,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2414,6 +2593,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Annotator request latency",
       "tooltip": {
@@ -2459,6 +2639,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 24,
@@ -2479,6 +2660,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -2499,6 +2683,7 @@
       ],
       "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
       "title": "Backend Failures",
       "tooltip": {
@@ -2539,24 +2724,28 @@
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 16,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
+          "selected": false,
           "tags": [],
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
         "hide": 0,
+        "includeAll": false,
         "label": "Datasource",
+        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
         "refresh": 1,
         "regex": "Prometheus.*",
+        "skipUrlSync": false,
         "type": "datasource"
       },
       {
@@ -2564,7 +2753,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": "1h",
           "value": "1h"
         },
@@ -2640,6 +2828,7 @@
         "query": "10m,1h,3h,6h,12h,18h,1d,2d,1w,4w,13w,1y",
         "refresh": false,
         "regex": "",
+        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -2676,5 +2865,5 @@
   "timezone": "utc",
   "title": "Pipeline: Batch (in progress)",
   "uid": "000000021",
-  "version": 22
+  "version": 66
 }
