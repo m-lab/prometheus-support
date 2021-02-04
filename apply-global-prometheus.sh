@@ -44,9 +44,10 @@ bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
 
-# Construct the per-project CLIENT_ID and CLIENT_SECRET for OAuth2.
+# Construct the per-project CLIENT_ID, CLIENT_SECRET and COOKIE_SECRET for OAuth.
 export OAUTH_PROXY_CLIENT_ID=OAUTH_PROXY_CLIENT_ID_${PROJECT/-/_}
 export OAUTH_PROXY_CLIENT_SECRET=OAUTH_PROXY_CLIENT_SECRET_${PROJECT/-/_}
+export OAUTH_PROXY_COOKIE_SECRET=OAUTH_PROXY_COOKIE_SECRET_${PROJECT/-/_}
 
 # Config maps and Secrets
 
@@ -304,6 +305,7 @@ kubectl create secret generic switch-monitoring-credentials\
 # Replace template variables in oauth2-proxy.yml.
 sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_CLIENT_SECRET}}|'${!OAUTH_PROXY_CLIENT_SECRET}'|g' \
+    -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
     k8s/prometheus-federation/deployments/oauth2-proxy.yml
 
 # Apply templates
