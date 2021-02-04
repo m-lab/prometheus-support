@@ -23,9 +23,16 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: prometheus-auth
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    # Set authentication URL and sign-in URL for OAuth.
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+    # This makes sure the user and email are available to the proxied 
+    # application in the X-User and X-Email headers.
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request_set $user   $upstream_http_x_auth_request_user;
+      auth_request_set $email  $upstream_http_x_auth_request_email;
+      proxy_set_header X-User  $user;
+      proxy_set_header X-Email $email;
 spec:
   tls:
   - hosts:
