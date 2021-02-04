@@ -44,6 +44,10 @@ bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
 
+# Construct the per-project CLIENT_ID and CLIENT_SECRET for OAuth2.
+export OAUTH_PROXY_CLIENT_ID=OAUTH_PROXY_CLIENT_ID_${PROJECT/-/_}
+export OAUTH_PROXY_CLIENT_SECRET=OAUTH_PROXY_CLIENT_SECRET_${PROJECT/-/_}
+
 # Config maps and Secrets
 
 ## Credentials for accessing Stackdriver monitoring for mlab-ns.
@@ -294,6 +298,13 @@ fi
 kubectl create secret generic switch-monitoring-credentials\
   "--from-file=/tmp/switch-monitoring.key" \
   --dry-run -o json | kubectl apply -f -
+
+## OAuth2 Proxy
+
+# Replace template variables in oauth2-proxy.yml.
+sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
+    -e 's|{{OAUTH_PROXY_CLIENT_SECRET}}|'${!OAUTH_PROXY_CLIENT_SECRET}'|g' \
+    k8s/prometheus-federation/deployments/oauth2-proxy.yml
 
 # Apply templates
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
