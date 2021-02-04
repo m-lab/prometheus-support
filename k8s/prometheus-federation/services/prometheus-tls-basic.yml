@@ -11,18 +11,16 @@ metadata:
     nginx.ingress.kubernetes.io/auth-type: basic
     nginx.ingress.kubernetes.io/auth-secret: prometheus-auth
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   tls:
   - hosts:
-    - prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
-    secretName: prometheus-tls
+    - prometheus-basicauth.{{GCLOUD_PROJECT}}.measurementlab.net
+    secretName: prometheus-basicauth-tls
   rules:
-  - host: prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
+  - host: prometheus-basicauth.{{GCLOUD_PROJECT}}.measurementlab.net
     http:
       paths:
-      - path: /basic(/|$)(.*)
+      - path: /
         backend:
           serviceName: prometheus-tls-service
           servicePort: 9090
