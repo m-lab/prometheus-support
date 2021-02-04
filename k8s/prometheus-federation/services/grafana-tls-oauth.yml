@@ -1,5 +1,6 @@
 # This Ingress makes sure oauth2-proxy intercepts requests going to the /oauth2
-# path. This path *must not* be secured, to prevent a redirection loop.
+# path. This path *must not* be protected with oauth, to prevent a redirection
+# loop when the application redirects to it to authenticate the user.
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
