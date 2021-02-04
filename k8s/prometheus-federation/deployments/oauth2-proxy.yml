@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: oauth2-proxy
+  name: oauth2-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        run: oauth2-proxy
+    spec:
+      containers:
+      - args:
+        - --provider=google
+        - --upstream=file:///dev/null
+        - --http-address=0.0.0.0:4180
+        - --client-id={{OAUTH_PROXY_CLIENT_ID}}
+        - --client-secret={{OAUTH_PROXY_CLIENT_SECRET}}
+        - --cookie-domain={{GCLOUD_PROJECT}}.measurementlab.net
+        - --cookie-refresh=1h
+        - --cookie-secret={{OAUTH_PROXY_COOKIE_SECRET}}
+        - --email-domain=measurementlab.net
+        - --email-domain={{GCLOUD_PROJECT}}.iam.gserviceaccount.com
+        - --email-domain=neu.edu
+        - --set-xauthrequest=true
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.0.0
+        name: oauth2-proxy
+        ports:
+        - containerPort: 4180
+          protocol: TCP

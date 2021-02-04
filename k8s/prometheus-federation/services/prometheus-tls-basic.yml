@@ -1,0 +1,26 @@
+# This ingress allows HTTP basic authentication on the /basic subpath, to allow
+# for easier machine access to Prometheus.
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-tls-basic
+  namespace: default
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: prometheus-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+spec:
+  tls:
+  - hosts:
+    - prometheus-basicauth.{{GCLOUD_PROJECT}}.measurementlab.net
+    secretName: prometheus-basicauth-tls
+  rules:
+  - host: prometheus-basicauth.{{GCLOUD_PROJECT}}.measurementlab.net
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-tls-service
+          servicePort: 9090
