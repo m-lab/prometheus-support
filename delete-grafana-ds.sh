@@ -6,11 +6,11 @@
 #    ./delete-grafana-ds.sh mlab-sandbox 42 session-id api-key
 #
 # In order to use this script you need to:
-# 1. Be logged into Grafana on a browser
-# 2. Get the value of the _oauth2_proxy cookie (the session-id)
-# 3. Generate a new API key in the API keys section in Grafana's settings
-# 4. Get the ID of the datasource you want to remove
 #
+# 1. Get the value of the _oauth2_proxy cookie (the session-id) from a browser
+# session
+# 2. Generate a new API key in the API keys section in Grafana's settings
+# 3. Get the ID of the datasource you want to remove
 
 set -e
 set -u
