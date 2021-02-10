@@ -496,7 +496,7 @@ scrape_configs:
       # host value. NOTE: we also insert a trailing "." to optimize DNS lookup.
       # NOTE: all address ports must be specified explicitly.
       - source_labels: [__address__]
-        regex: (.*)(:.*)
+        regex: (.*)(:.*)?
         target_label: __param_target
         replacement: ${1}.${2}
 
