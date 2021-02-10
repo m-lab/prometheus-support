@@ -495,7 +495,7 @@ scrape_configs:
       # Here, we set (i.e. "replace") a request parameter "target" equal to the
       # host value. NOTE: we also insert a trailing "." to optimize DNS lookup.
       - source_labels: [__address__]
-        regex: (.*)(:.*)?
+        regex: ([a-z0-9-.]+)(:[0-9]+)?
         target_label: __param_target
         replacement: ${1}.${2}
 
