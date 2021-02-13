@@ -1489,6 +1489,18 @@ groups:
         and/or system messages.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
+  - alert: PlatformHardware_MachineUpTooLong
+    expr: |
+      (time() - node_boot_time_seconds{node=~"(master|mlab[1-4])-.+"}) / (60 * 60 * 24) > 90
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: A machine has not been rebooted for too long
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#platformhardware_machineuptoolong
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/_fugwnWZk/ops-tactical-and-sre-overview
+
 # BMC alerts
 # The Reboot API performs an E2E connection test on a BMC every time its
 # /v1/e2e endpoint is scraped, and reports failure via this metric.
