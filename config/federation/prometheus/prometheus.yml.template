@@ -185,6 +185,15 @@ scrape_configs:
         action: keep
         regex: (\d+)
 
+      # Check for the prometheus.io/port=<port> annotation. If it exists, then
+      # only scrape that one port, no matter how many containerPorts are
+      # declared.
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+
       # Copy all pod labels from kubernetes to the Prometheus metrics.
       - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
@@ -318,6 +327,7 @@ scrape_configs:
         - 'disco_collect_errors_total'
         - 'ifHCOutOctets{deployment="disco"}'
         - 'lame_duck_experiment{job!="node-exporter"}'
+        - 'node_boot_time_seconds'
         - 'node_filesystem_size_bytes{deployment="node-exporter"}'
         - 'node_filesystem_avail_bytes{deployment="node-exporter"}'
         - 'node_memory_MemTotal_bytes'
@@ -599,6 +609,7 @@ scrape_configs:
         - https://gmx.{{PROJECT}}.measurementlab.net
         - https://grafana.{{PROJECT}}.measurementlab.net/login
         - https://prometheus.{{PROJECT}}.measurementlab.net/graph
+        - https://prometheus-basicauth.{{PROJECT}}.measurementlab.net/graph
         labels:
           module: nginx_proxy_svcs_online
     relabel_configs:
