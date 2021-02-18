@@ -1517,34 +1517,17 @@ groups:
         deployment on GKE, and that the /v1/e2e endpoint is returning a status
         code = 200.
 
-  - alert: BMC_CredentialsNotFound
+  - alert: BMC_E2eTestFailed
     expr: |
-        reboot_e2e_result{status="credentials_not_found"}
+        reboot_e2e_success == 0
         unless on(machine) gmx_machine_maintenance == 1
-    for: 1h
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: Credentials for {{ $labels.target }} not found on GCD.
-      description: >
-        The E2E test cannot run because credentials for this BMC are not
-        present on Google Cloud Datastore. Please add them.
-
-  - alert: BMC_ConnectionFailed
-    expr: |
-      reboot_e2e_result{status="connection_failed"}
-      unless on(machine) gmx_machine_maintenance == 1
     for: 1d
     labels:
       repo: ops-tracker
       severity: ticket
     annotations:
-      summary: Connection to {{ $labels.target }} has failed.
-      description: >
-        The E2E test is failing because the Reboot API could't connect to this
-        BMC. Please check that the BMC is enabled on this machine and the
-        credentials in Datastore are correct.
+      summary: E2E testing is failing to a DRAC
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#bmc_e2etestfailed
 
 # switch-monitoring alerts.
 # The switch-monitoring tool checks that the switch configurations match
