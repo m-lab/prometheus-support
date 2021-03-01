@@ -76,12 +76,12 @@ inhibit_rules:
     alertname: 'PlatformCluster_.+Missing|MachineRunningWithoutK8sNode'
   equal: ['cluster']
 
-# Don't alert on BMC connection failures if the switch is down.
+# Don't alert on various things when the switch is down.
 - source_match:
-    alertname: 'SwitchDownAtSite'
-  target_match_re:
-    alertname: 'BMC_ConnectionFailed'
-  equal: []
+    alertname: 'SwitchUnpingableAtSite'
+  target_match:
+    alertname: 'BMC_E2eTestFailed'
+  equal: [site]
 
 receivers:
 # For M-Lab Slack, visit:
