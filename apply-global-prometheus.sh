@@ -237,12 +237,10 @@ if [[ -n "${ALERTMANAGER_URL}" ]] ; then
 fi
 
 # Evaluate bq queries as templates.
-sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
-    config/federation/bigquery/bq_gardener_parse_time.sql.template > \
-    config/federation/bigquery/bq_gardener_parse_time.sql
-sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
-    config/federation/bigquery/bq_gardener.sql.template > \
-    config/federation/bigquery/bq_gardener.sql
+for filename in config/federation/bigquery/*.template ; do
+  sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
+      $filename > ${filename%%.template}
+done
 # Apply the bigquery exporter configurations.
 kubectl create configmap bigquery-exporter-config \
     --from-file=config/federation/bigquery \
