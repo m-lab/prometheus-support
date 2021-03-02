@@ -31,6 +31,8 @@ WITH all_types AS (
     parser.Time as parseTime,
   FROM
     `{{PROJECT}}.raw_ndt.ndt7`
+  WHERE
+    date > date('2019-01-01')
   UNION ALL
   SELECT
     "ndt/annotation" AS datatype,
