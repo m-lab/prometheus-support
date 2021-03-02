@@ -41,4 +41,5 @@ FROM (
   UNION ALL
     SELECT "ndt/annotation" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.annotation`
+    WHERE date > date('2019-01-01')
 )
