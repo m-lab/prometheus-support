@@ -8,6 +8,10 @@ spec:
   selector:
     matchLabels:
       run: script-exporter
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
