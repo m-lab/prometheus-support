@@ -44,10 +44,8 @@ groups:
   - record: candidate_service:etl_test_count:increase24h
     expr: sum by(service) (increase(etl_test_count{service!~".*batch.*",status="ok"}[1d]))
 
-  # Calculates the daily increase of GCS files for all datatypes. The
-  # expression uses subtraction rather than increase() to improve the accuracy
-  # of the result. Evidently, increase() is off 8-10 archives. The drawback is
-  # that this metric will be incorrect for 24hrs after the GCS exporter restarts.
+  # Calculates the daily increase of GCS files for all datatypes.
+  # NOTE: increase() appears to add an addition 8-10 archives over reality.
+  # Cause is unknown, but using increase() is simpler than a manual subtraction.
   - record: daily_public:gcs_archive_files:increase24h
-    expr: ((gcs_archive_files_total{bucket="archive-measurement-lab"}) -
-           (gcs_archive_files_total{bucket="archive-measurement-lab"} offset 24h)) > 0
+    expr: increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[24h])
