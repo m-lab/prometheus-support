@@ -614,6 +614,31 @@ groups:
         This could be caused by increases in the number of files, size of files,
         changes in configuration, or underlying system delays.
 
+# Pipeline: GCS Archives Not Found in BigQuery
+#
+# This alert enforces that archives found in GCS are successfully parsed and
+# found in BigQuery. Typically, we see ~11-12k archives per day. This alert
+# fires when more than 1% are missing for 6hrs.
+#
+# Scheduling:
+# * Both metrics depend on the GCS transfers completing successfully.
+# * The bq_daily_archive_count metric is run every 3hrs by the bqx.
+# * The gcs exporter is offset 14hr to align with the etl daily parsing.
+  - alert: Pipeline_GCSArchivesMissingFromBigQuery
+    expr: |
+      abs(
+         sum(bq_daily_archive_count {datatype="ndt7"}) - ignoring(experiment)
+         experiment_datatype:gcs_archive_files:increase24h{experiment="ndt", datatype="ndt7"} offset 14h)
+      ) > 110
+    for: 6h
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: Not all GCS archives found in BQ tables for ndt7.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_gcsarchivesmissingfrombigquery
+
+
 # Too many NDT S2C tests on a node are being impacted by switch discards.
   - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
     expr: (bq_ndt_s2c_with_discards / bq_ndt_s2c_total) > 0.05
