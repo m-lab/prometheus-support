@@ -11,23 +11,21 @@ spec:
     metadata:
       labels:
         run: bigquery-exporter
-        # Update this string to trigger redeployment, or delete the pod.
-        update: '2021-03-05-a'
       annotations:
         prometheus.io/scrape: 'true'
     spec:
       containers:
       - name: bigquery-exporter
-        image: measurementlab/prometheus-bigquery-exporter:production-0.3
-        args: [ "--project={{GCLOUD_PROJECT}}",
-                "--refresh=3h",
-                "--type=gauge", "--query=/queries/bq_annotation.sql",
-                "--type=gauge", "--query=/queries/bq_gardener_parse_time.sql",
-                "--type=gauge", "--query=/queries/bq_gardener.sql",
-                "--type=gauge", "--query=/queries/bq_daily_archive.sql",
+        image: measurementlab/prometheus-bigquery-exporter:v1.1.0
+        args: [ "-project={{GCLOUD_PROJECT}}",
+                "-refresh=3h",
+                "-gauge-query=/queries/bq_annotation.sql",
+                "-gauge-query=/queries/bq_gardener_parse_time.sql",
+                "-gauge-query=/queries/bq_gardener.sql",
+                "-gauge-query=/queries/bq_daily_archive.sql",
               ]
         ports:
-        - containerPort: 9050
+        - containerPort: 9348
         volumeMounts:
         - mountPath: /queries
           name: bigquery-config
