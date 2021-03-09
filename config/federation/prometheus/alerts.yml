@@ -628,7 +628,7 @@ groups:
     expr: |
       abs(
          sum(bq_daily_archive_count {datatype="ndt7"}) - ignoring(experiment)
-         experiment_datatype:gcs_archive_files:increase24h{experiment="ndt", datatype="ndt7"} offset 14h)
+         (experiment_datatype:gcs_archive_files:increase24h{experiment="ndt", datatype="ndt7"} offset 14h)
       ) > 110
     for: 6h
     labels:
