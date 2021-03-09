@@ -47,5 +47,5 @@ groups:
   # Calculates the daily increase of GCS files for all datatypes.
   # NOTE: increase() appears to add an addition 8-10 archives over reality.
   # Cause is unknown, but using increase() is simpler than a manual subtraction.
-  - record: daily_public:gcs_archive_files:increase24h
-    expr: increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[24h])
+  - record: experiment_datatype:gcs_archive_files:increase24h
+    expr: sum by(experiment, datatype) (increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[24h]))
