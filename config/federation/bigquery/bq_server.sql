@@ -6,11 +6,11 @@ WITH site_city_country AS (
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 173 DAY)
       THEN "-180"
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL  90 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 83 DAY)
-      THEN "-90"
+      THEN "-090"
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL  30 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 23 DAY)
-      THEN "-30"
+      THEN "-030"
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL   7 DAY) AND CURRENT_DATE()
-      THEN "-7"
+      THEN "-007"
     ELSE
       "ignore"
     END as period,

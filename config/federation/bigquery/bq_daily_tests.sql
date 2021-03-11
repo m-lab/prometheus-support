@@ -15,6 +15,6 @@ WITH ndt7_date_counts AS (
 )
 
 SELECT
-  CAST(-ROW_NUMBER() OVER() AS STRING) AS le, date, value_count
+  FORMAT("%04d", -ROW_NUMBER() OVER()) AS le, date, value_count
 FROM
   total_date_counts
