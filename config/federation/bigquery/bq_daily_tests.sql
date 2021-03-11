@@ -15,6 +15,11 @@ WITH ndt7_date_counts AS (
 )
 
 SELECT
-  FORMAT("%04d", -ROW_NUMBER() OVER()) AS le, date, value_count
+  FORMAT("%04d", -ROW_NUMBER() OVER()) AS le, value_count,
+  SUM(value_count)
+  OVER (
+    ORDER BY date
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+  ) AS total_purchases
 FROM
   total_date_counts
