@@ -15,7 +15,7 @@ WITH ndt7_date_counts AS (
 )
 
 SELECT
-  FORMAT("%04d", -ROW_NUMBER() OVER()) AS le,
+  FORMAT("%d", -ROW_NUMBER() OVER()) AS le,
   SUM(value_count) OVER (
     ORDER BY date
     ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
