@@ -2,17 +2,17 @@ WITH site_city_country AS (
   SELECT
     CASE
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL 360 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 353 DAY)
-      THEN "-360"
+      THEN -360
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 173 DAY)
-      THEN "-180"
+      THEN -180
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL  90 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 83 DAY)
-      THEN "-090"
+      THEN -90
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL  30 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 23 DAY)
-      THEN "-030"
+      THEN -30
     WHEN date between DATE_SUB(CURRENT_DATE(), INTERVAL   7 DAY) AND CURRENT_DATE()
-      THEN "-007"
+      THEN -7
     ELSE
-      "ignore"
+      0
     END as period,
     server.Site AS site,
     REGEXP_EXTRACT(server.Site, "([a-z]{3}).*") AS city,
@@ -25,16 +25,26 @@ WITH site_city_country AS (
     OR date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL  90 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 83 DAY)
     OR date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL  30 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 23 DAY)
     OR date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL   7 DAY) AND CURRENT_DATE()
+), raw_counts AS (
+  SELECT
+    period,
+    COUNT(distinct site) AS sites_count,
+    COUNT(distinct city) AS cities_count,
+    COUNT(distinct country) AS countries_count
+  FROM
+    site_city_country
+  GROUP BY
+    period
+  ORDER BY
+    period
 )
 
 SELECT
-  period,
-  COUNT(distinct site) AS value_sites_count,
-  COUNT(distinct city) AS value_cities_count,
-  COUNT(distinct country) AS value_countries_count
+  CAST(period AS STRING) AS le,
+  SUM(sites_count) OVER ( ORDER BY period ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS value_sites_count,
+  SUM(cities_count) OVER ( ORDER BY period ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS value_cities_count,
+  SUM(countries_count) OVER ( ORDER BY period ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS value_countries_count,
 FROM
-  site_city_country
-GROUP BY
-  period
+  raw_counts
 ORDER BY
   period
