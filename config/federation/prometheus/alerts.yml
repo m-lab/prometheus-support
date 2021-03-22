@@ -225,7 +225,7 @@ groups:
 # such that we don't have to duplicate the queries here in the alerts.
 
   # "ndt" mlab-ns query
-  - alert: TooManyNdtIpv4ServersDown
+  - alert: PlatformCluster_TooManyNDT5IPv4ServersDown
     expr: |
       (
         sum(
@@ -252,13 +252,11 @@ groups:
       severity: ticket
     annotations:
       summary: Less than 90% of ndt experiments are online according to mlab-ns.
-      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
-        consider that this could be a false positive because of bad or broken
-        monitoring.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_TooManyNDTServersDown
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/T-t8rWwGz/mlab-ns-prometheus-queries
 
   # "ndt_ipv6" mlab-ns query
-  - alert: TooManyNdtIpv6ServersDown
+  - alert: PlatformCluster_TooManyNDT5IPv6ServersDown
     expr: |
       (
         sum(
@@ -285,13 +283,11 @@ groups:
       severity: ticket
     annotations:
       summary: Less than 75% of ndt_ipv6 experiments are online according to mlab-ns.
-      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
-        consider that this could be a false positive because of bad or broken
-        monitoring.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_TooManyNDTServersDown
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/T-t8rWwGz/mlab-ns-prometheus-queries
 
   # "ndt_ssl" mlab-ns query
-  - alert: TooManyNdtTlsIpv4ServersDown
+  - alert: PlatformCluster_TooManyNDT5TLSIPv4ServersDown
     expr: |
       (
         sum(
@@ -319,12 +315,11 @@ groups:
       page_project: mlab-oti
     annotations:
       summary: Less than 90% of ndt_ssl experiments are online according to mlab-ns.
-      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
-        consider that this could be a false positive because of bad or broken
-        monitoring.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_TooManyNDTServersDown
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/T-t8rWwGz/mlab-ns-prometheus-queries
 
-  - alert: TooManyNdtTlsIpv6ServersDown
+  # "ndt_ssl_ipv6" mlab-ns query
+  - alert: PlatformCluster_TooManyNDT5TLSIPv6ServersDown
     expr: |
       (
         sum(
@@ -351,10 +346,70 @@ groups:
       severity: ticket
     annotations:
       summary: Less than 75% of ndt_ssl_ipv6 experiments are online according to mlab-ns.
-      description: Make sure that the kubernetes ndt DaemonSet is healthy. Also
-        consider that this could be a false positive because of bad or broken
-        monitoring.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/tZHLFQRZk/k8s-workload-overview
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_TooManyNDTServersDown
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/T-t8rWwGz/mlab-ns-prometheus-queries
+
+  # "ndt7" mlab-ns query
+  - alert: PlatformCluster_TooManyNDT7IPv4ServersDown
+    expr: |
+      (
+        sum(
+          min by (experiment, machine) (
+            probe_success{service="ndt7"} OR
+            label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
+              node_filesystem_avail_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
+                node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
+                "experiment", "ndt.iupui", "", "") < bool 0.95 OR
+            label_replace(kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"},
+              "experiment", "ndt.iupui", "", "") != bool 1 OR
+            lame_duck_experiment{cluster="platform-cluster"} != bool 1 OR
+            label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
+        )
+        ) /
+        count(
+          probe_success{service="ndt7"} unless on(machine)
+            (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)
+        )
+      ) < 0.90
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Less than 90% of ndt7 experiments are online according to mlab-ns.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_TooManyNDTServersDown
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/T-t8rWwGz/mlab-ns-prometheus-queries
+
+  # "ndt7_ipv6" mlab-ns query
+  - alert: PlatformCluster_TooManyNDT7IPv6ServersDown
+    expr: |
+      (
+        sum(
+          min by (experiment, machine) (
+            probe_success{service="ndt7_ipv6"} OR
+            label_replace(((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
+              node_filesystem_avail_bytes{cluster="platform-cluster", mountpoint="/cache/data"}) /
+                node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"}),
+                "experiment", "ndt.iupui", "", "") < bool 0.95 OR
+            label_replace(kube_node_spec_taint{cluster="platform-cluster", key="lame-duck"},
+              "experiment", "ndt.iupui", "", "") != bool 1 OR
+            lame_duck_experiment{cluster="platform-cluster"} != bool 1 OR
+            label_replace(gmx_machine_maintenance, "experiment", "ndt.iupui", "", "") != bool 1
+        )
+        ) /
+        count(
+          probe_success{service="ndt7_ipv6"} unless on(machine)
+            (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)
+        )
+      ) < 0.75
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+    annotations:
+      summary: Less than 75% of ndt7_ipv6 experiments are online according to mlab-ns.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_TooManyNDTServersDown
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/T-t8rWwGz/mlab-ns-prometheus-queries
 
 # Check 5xx errors for the rate-limiter deployment, too.
   - alert: RateLimiterTooManyServerSideErrors
