@@ -648,26 +648,21 @@ groups:
 # See: https://github.com/m-lab/gcp-config/blob/master/daily-archive-transfers.yaml
 #
 # This alert enforces that daily transfers are working for all datatypes.
+# Periodic delays are expected either to data volume or GCS Transfer service
+# variance, so the expression must be firing for over 36h.
   - alert: GCSTransfers_ArchiveFilesDoNotMatchOrMissing
     expr: |
       sum(increase(gcs_archive_files_total{bucket="archive-mlab-oti"}[1d]) - ignoring(bucket)
          increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d]) != 0)
       OR
       absent(gcs_archive_files_total)
-    for: 1d
+    for: 36h
     labels:
       repo: dev-tracker
       severity: ticket
     annotations:
       summary: GCS Transfers may not include all files.
-      description: Daily transfers should include all archive files for each day.
-        This alert is firing because over the last two days, the archive file
-        counts did not match. Check the historical transfer history of "STCTL"
-        managed "daily" transfer configs in mlab-oti and measurement-lab projects.
-        The m-lab/gcp-config/daily-archive-transfers.yaml are scheduled sequentially,
-        so if one takes longer than expected, the next will miss files from the first.
-        This could be caused by increases in the number of files, size of files,
-        changes in configuration, or underlying system delays.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#GCSTransfers_ArchiveFilesDoNotMatchOrMissing
 
 # Pipeline: GCS Archives Not Found in BigQuery
 #
