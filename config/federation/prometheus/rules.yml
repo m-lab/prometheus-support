@@ -36,10 +36,16 @@ groups:
 - name: rules.yml
   rules:
 
-## Parser volume checks.
-#
-# This rule optimizes the alert query used for ParserDailyVolumeTooLow. Rather
-# than calculate multi-day values continuously, this rule will maintain a history
-# of the precalculated value needed by the rule.
+  ## Parser volume checks.
+  #
+  # This rule optimizes the alert query used for ParserDailyVolumeTooLow. Rather
+  # than calculate multi-day values continuously, this rule will maintain a history
+  # of the precalculated value needed by the rule.
   - record: candidate_service:etl_test_count:increase24h
     expr: sum by(service) (increase(etl_test_count{service!~".*batch.*",status="ok"}[1d]))
+
+  # Calculates the daily increase of GCS files for all datatypes.
+  # NOTE: increase() appears to add an addition 8-10 archives over reality.
+  # Cause is unknown, but using increase() is simpler than a manual subtraction.
+  - record: experiment_datatype:gcs_archive_files:increase24h
+    expr: sum by(experiment, datatype) (increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[24h]))
