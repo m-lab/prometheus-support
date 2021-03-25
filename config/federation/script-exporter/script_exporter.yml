@@ -1,9 +1,16 @@
+# NOTE: monitoring-token requires these variables in the environment.
+# MONITORING_SIGNER_KEY=<path to signing key>
+# LOCATE_URL=<locate service url>
 scripts:
   - name: 'ndt5_client'
-    # NOTE: monitoring-token requires these variables in the environment.
-    # MONITORING_SIGNER_KEY=<path to signing key>
-    # LOCATE_URL=<locate service url>
-    script: cache_exit_code.sh 600
-      monitoring-token -machine=${TARGET} -service=ndt/ndt5 --
+    script: >
+      EXPERIMENT=ndt5 cache_exit_code.sh 600
+      monitoring-token -machine=${TARGET} -service=ndt/ndt5 -service-url --env-name SERVICE_URL --
       ndt5-client -exit-on-error=1 -exit-on-warning=1 -throttle=196608 -protocol=ndt5+wss
+    timeout: 50
+  - name: 'wehe_client'
+    script: >
+      EXPERIMENT=wehe cache_exit_code.sh 600
+      monitoring-token -machine=${TARGET} -service=wehe/replay --
+      wehe-client.sh -n applemusic -t wehe-cmdline/res/ -c
     timeout: 50

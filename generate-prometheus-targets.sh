@@ -109,7 +109,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt_ssl_ipv6.json
 
-  # script-exporter for e2e monitoring with access tokens.
+  # script-exporter for ndt5 e2e monitoring with access tokens.
   ./mlabconfig.py --format=prom-targets-nodes \
       --sites="${sites}" \
       --template_target={{hostname}} \
@@ -117,6 +117,15 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label experiment=ndt.iupui \
       --project "${project}" > \
           ${output}/script-targets/ndt5_client.json
+
+  # script-exporter for Wehe e2e monitoring with access tokens.
+  ./mlabconfig.py --format=prom-targets-nodes \
+      --sites="${sites}" \
+      --template_target={{hostname}} \
+      --label service=wehe_client \
+      --label experiment=wehe \
+      --project "${project}" > \
+          ${output}/script-targets/wehe_client.json
 
   # neubot on port 80 over IPv4
   ./mlabconfig.py --format=prom-targets \

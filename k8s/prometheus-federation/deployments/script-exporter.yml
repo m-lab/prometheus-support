@@ -8,6 +8,10 @@ spec:
   selector:
     matchLabels:
       run: script-exporter
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -28,7 +32,7 @@ spec:
 
       containers:
       - name: script-exporter
-        image: measurementlab/script-exporter-support:v0.1.0
+        image: measurementlab/script-exporter-support:v0.2.1
         args:
         - -config.file=/etc/script_exporter/script_exporter.yml
         env:
