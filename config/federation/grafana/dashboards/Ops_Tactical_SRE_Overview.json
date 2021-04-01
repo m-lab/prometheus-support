@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 266,
-  "iteration": 1617231839540,
+  "iteration": 1617307641392,
   "links": [],
   "panels": [
     {
@@ -771,7 +771,7 @@
       "fontSize": "100%",
       "gridPos": {
         "h": 9,
-        "w": 18,
+        "w": 12,
         "x": 0,
         "y": 18
       },
@@ -850,9 +850,10 @@
       ],
       "targets": [
         {
-          "expr": "sum by (alertname, status) (increase(githubreceiver_alerts_total[7d])) > 0",
+          "expr": "sum by (alertname, status) (increase(githubreceiver_alerts_total[$__range])) > 0",
           "format": "table",
           "instant": true,
+          "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
           "refId": "A"
@@ -862,7 +863,132 @@
       "timeShift": null,
       "title": "Alerts",
       "transform": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "table-old"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 18
+      },
+      "hiddenSeries": false,
+      "id": 22,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "count by (kubelet_version) (kube_node_info{node=~\".*measurement-lab.org\"})",
+          "legendFormat": "k8s - physical: {{kubelet_version}}",
+          "refId": "B"
+        },
+        {
+          "expr": "count by (kubelet_version) (kube_node_info{node!~\".*measurement-lab.org\"})",
+          "legendFormat": "k8s - virtual: {{kubelet_version}}",
+          "refId": "C"
+        },
+        {
+          "expr": "count by (kernel_version) (kube_node_info{node=~\".*measurement-lab.org\"})",
+          "legendFormat": "kernel - physical: {{kernel_version}}",
+          "refId": "A"
+        },
+        {
+          "expr": "count by (kernel_version) (kube_node_info{node!~\".*measurement-lab.org\"})",
+          "legendFormat": "kernel - virtual: {{kernel_version}}",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Cluster versions",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
     {
       "aliasColors": {},
@@ -976,7 +1102,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -988,6 +1114,7 @@
         "name": "datasource",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1046,5 +1173,5 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 36
+  "version": 37
 }
