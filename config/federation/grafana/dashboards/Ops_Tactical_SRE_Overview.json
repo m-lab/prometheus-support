@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 266,
-  "iteration": 1595267852263,
+  "iteration": 1617231839540,
   "links": [],
   "panels": [
     {
@@ -26,6 +26,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -34,6 +41,7 @@
         "x": 0,
         "y": 0
       },
+      "hiddenSeries": false,
       "hideTimeOverride": false,
       "id": 11,
       "legend": {
@@ -50,9 +58,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 0.5,
       "points": false,
       "renderer": "flot",
@@ -139,6 +148,13 @@
       "dashes": false,
       "datasource": "$cluster",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -147,6 +163,7 @@
         "x": 6,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 16,
       "legend": {
         "avg": false,
@@ -164,9 +181,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -176,8 +194,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kube_pod_container_status_restarts_total > 10",
+          "expr": "container:kube_pod_container_status_restarts:increase1d",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{exported_pod}}",
           "refId": "A"
@@ -187,7 +206,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pod container restarts > 10",
+      "title": "Pod container restarts (increase 1d)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -229,8 +248,15 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$cluster",
+      "datasource": "$datasource",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -239,26 +265,30 @@
         "x": 12,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 18,
       "legend": {
+        "alignAsTable": true,
         "avg": false,
-        "current": false,
+        "current": true,
         "hideEmpty": true,
         "hideZero": true,
         "max": false,
         "min": false,
+        "rightSide": true,
         "show": false,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -268,10 +298,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "err:dmesg_logs:increase_24h",
+          "expr": "sum by (log, priority) (stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_kernel_logs{priority=~\"[0-3]\"})",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{machine}}",
+          "legendFormat": "{{log}}",
           "refId": "A"
         }
       ],
@@ -279,7 +310,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Probable Container OOMs - increase(24h)",
+      "title": "Kernel logs priority <=3",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -335,6 +366,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -343,6 +381,7 @@
         "x": 18,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 8,
       "legend": {
         "alignAsTable": true,
@@ -360,9 +399,10 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -463,6 +503,12 @@
       ],
       "datasource": "$datasource",
       "description": "Nodes which have been rebooted by Rebot.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 9,
@@ -472,7 +518,6 @@
       },
       "id": 14,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -483,6 +528,7 @@
       "styles": [
         {
           "alias": "Rebooted",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": null,
           "mappingType": 1,
@@ -494,6 +540,7 @@
         },
         {
           "alias": "Node",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -520,12 +567,18 @@
       "timeFrom": null,
       "title": "Rebooted nodes",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "columns": [],
       "datasource": "$datasource",
       "description": "Sites that are in GMX maintenance.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 9,
@@ -535,7 +588,6 @@
       },
       "id": 4,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -546,12 +598,14 @@
       "styles": [
         {
           "alias": "Time",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
           "type": "date"
         },
         {
           "alias": "Site",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -579,12 +633,18 @@
       ],
       "title": "Sites GMX maintenance",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "columns": [],
       "datasource": "$datasource",
       "description": "Nodes that are in GMX maintenance and not part of a site under maintenance.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 9,
@@ -594,7 +654,6 @@
       },
       "id": 6,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -605,6 +664,7 @@
       "styles": [
         {
           "alias": "Node",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -635,12 +695,18 @@
       "timeFrom": null,
       "title": "Nodes GMX maintenance (outside sites in GMX)",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "columns": [],
       "datasource": "$datasource",
       "description": "Nodes that are currently in lame-duck mode.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 9,
@@ -650,7 +716,6 @@
       },
       "id": 9,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -661,6 +726,7 @@
       "styles": [
         {
           "alias": "Node",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -691,11 +757,17 @@
       "timeFrom": null,
       "title": "Lame-ducked nodes",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "columns": [],
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 9,
@@ -705,7 +777,6 @@
       },
       "id": 13,
       "links": [],
-      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -716,12 +787,14 @@
       "styles": [
         {
           "alias": "Time",
+          "align": "auto",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
           "type": "date"
         },
         {
           "alias": "Alert",
+          "align": "auto",
           "colorMode": "value",
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -742,6 +815,7 @@
         },
         {
           "alias": "State",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -758,6 +832,7 @@
         },
         {
           "alias": "Count",
+          "align": "auto",
           "colorMode": null,
           "colors": [
             "rgba(245, 54, 54, 0.9)",
@@ -787,7 +862,7 @@
       "timeShift": null,
       "title": "Alerts",
       "transform": "table",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "aliasColors": {},
@@ -796,6 +871,13 @@
       "dashes": false,
       "datasource": "$cluster",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -804,6 +886,7 @@
         "x": 18,
         "y": 18
       },
+      "hiddenSeries": false,
       "id": 20,
       "legend": {
         "avg": false,
@@ -818,9 +901,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -830,12 +914,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "reloader_reload_executed_total{success=\"true\"}",
+          "expr": "increase(reloader_reload_executed_total{success=\"true\"}[1d])",
+          "interval": "",
           "legendFormat": "Successes",
           "refId": "A"
         },
         {
-          "expr": "reloader_reload_executed_total{success=\"false\"}",
+          "expr": "increase(reloader_reload_executed_total{success=\"false\"}[1d])",
+          "interval": "",
           "legendFormat": "Failures",
           "refId": "B"
         }
@@ -844,7 +930,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Rolling updates triggered by Reloader",
+      "title": "Rolling updates triggered by Reloader (increase 1d)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -883,17 +969,18 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 20,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "tags": [],
+          "selected": false,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Data source",
@@ -908,9 +995,11 @@
       },
       {
         "current": {
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Cluster",
@@ -957,5 +1046,5 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 35
+  "version": 36
 }
