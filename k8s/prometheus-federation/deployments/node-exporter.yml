@@ -23,3 +23,9 @@ spec:
           name: scrape
       hostNetwork: true
       hostPID: true
+      tolerations:
+      - key: "outbound-ip"
+        operator: "Equal"
+        value: "static"
+        effect: "NoSchedule"
+
