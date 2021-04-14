@@ -58,6 +58,11 @@ spec:
             protocol: TCP
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 30
+      tolerations:
+      - key: "outbound-ip"
+        operator: "Equal"
+        value: "static"
+        effect: "NoSchedule"
       volumes:
       - name: rootfs
         hostPath:
