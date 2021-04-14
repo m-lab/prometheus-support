@@ -6,6 +6,10 @@ spec:
   selector:
     matchLabels:
       run: node-exporter
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
   template:
     metadata:
       name: node-exporter
