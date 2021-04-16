@@ -32,8 +32,9 @@ spec:
 
       containers:
       - name: script-exporter
-        image: measurementlab/script-exporter-support:v0.2.4
+        image: measurementlab/script-exporter-support:v0.2.5
         args:
+        - /go/bin/script_exporter
         - -config.file=/etc/script_exporter/script_exporter.yml
         env:
         - name: LOGX_DEBUG
