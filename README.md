@@ -644,12 +644,17 @@ nodes.
 
 Create a two-node pool with a specific label (to make sure that any necessary
 pods can be selected onto it) and taint (to make sure other services are not
-run on it):
+run on it). The machine type will differ depending on project as follows:
+
+mlab-sandbox: n2-standard-8
+mlab-staging: n2-highcpu-16
+mlab-oti: n2-highcpu-48
 
 ```
 gcloud container node-pools create static-outbound-ip \
---cluster=prometheus-federation --machine-type=n1-standard-8 --num-nodes=2 \
---node-labels=outbound-ip=static --node-taints=outbound-ip=static:NoSchedule
+--cluster=prometheus-federation --machine-type=<type> --num-nodes=2 \
+--node-labels=outbound-ip=static --node-taints=outbound-ip=static:NoSchedule \
+--scopes datastore --zone <prometheus-federation-zone> --project <project>
 ```
 
 ### Create kubeIP credentials
