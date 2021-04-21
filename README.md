@@ -646,9 +646,9 @@ Create a two-node pool with a specific label (to make sure that any necessary
 pods can be selected onto it) and taint (to make sure other services are not
 run on it). The machine type will differ depending on project as follows:
 
-mlab-sandbox: n2-standard-8
-mlab-staging: n2-highcpu-16
-mlab-oti: n2-highcpu-48
+* mlab-sandbox: n2-standard-8
+* mlab-staging: n2-highcpu-16
+* mlab-oti: n2-highcpu-48
 
 ```
 gcloud container node-pools create static-outbound-ip \
