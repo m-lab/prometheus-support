@@ -883,7 +883,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 18
+            "y": 10
           },
           "hiddenSeries": false,
           "id": 54,
@@ -990,7 +990,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 18
+            "y": 10
           },
           "hiddenSeries": false,
           "id": 53,
@@ -1130,7 +1130,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 18
+            "y": 10
           },
           "hiddenSeries": false,
           "id": 57,
@@ -1268,7 +1268,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 25
+            "y": 17
           },
           "hiddenSeries": false,
           "id": 73,
@@ -1405,7 +1405,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 25
+            "y": 17
           },
           "hiddenSeries": false,
           "id": 83,
@@ -1502,7 +1502,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 25
+            "y": 17
           },
           "hiddenSeries": false,
           "id": 87,
@@ -1617,7 +1617,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 11
           },
           "hiddenSeries": false,
           "id": 44,
@@ -1722,7 +1722,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 33
+            "y": 11
           },
           "hiddenSeries": false,
           "id": 2,
@@ -1871,7 +1871,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 33
+            "y": 11
           },
           "hiddenSeries": false,
           "id": 4,
@@ -2043,7 +2043,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 40
+            "y": 18
           },
           "hiddenSeries": false,
           "id": 74,
@@ -2139,6 +2139,288 @@
           "dashes": false,
           "datasource": "$PrometheusDS",
           "description": "",
+          "editable": false,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 8,
+            "y": 18
+          },
+          "hiddenSeries": false,
+          "id": 92,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:2318",
+              "alias": "/Failure Rate/",
+              "color": "#C4162A",
+              "linewidth": 3,
+              "yaxis": 2
+            },
+            {
+              "$$hashKey": "object:2325",
+              "alias": "/Average/",
+              "linewidth": 3
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.99, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status=\"succeed\"}[5m])))",
+              "format": "time_series",
+              "hide": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "0.99 {{status}}",
+              "refId": "A",
+              "step": 10
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status=\"succeed\"}[5m])))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "95th",
+              "refId": "B",
+              "step": 10
+            },
+            {
+              "expr": "(sum by(le, status) (rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\", status=\"succeed\"}[30m]))) / (sum by(le, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status=\"succeed\"}[30m])))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Average",
+              "refId": "F",
+              "step": 10
+            },
+            {
+              "expr": "histogram_quantile(0.5, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status=\"succeed\"}[5m])))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Median",
+              "refId": "C",
+              "step": 10
+            },
+            {
+              "expr": "histogram_quantile(0.25, sum by(le, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\", status=\"succeed\"}[5m])))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "25th",
+              "refId": "D",
+              "step": 10
+            },
+            {
+              "expr": "(sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\", status=\"fail\"}[30m])) or vector(0)) / (sum(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[30m])) or vector(1))",
+              "interval": "",
+              "legendFormat": "Insertion Failure Rate",
+              "refId": "G"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Insertion Error Rate and Latency",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1495",
+              "decimals": null,
+              "format": "s",
+              "label": "Insertion Latency",
+              "logBase": 2,
+              "min": 0,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1496",
+              "decimals": 3,
+              "format": "percentunit",
+              "label": "Error Rate",
+              "logBase": 1,
+              "max": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PrometheusDS",
+          "editable": false,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 16,
+            "y": 18
+          },
+          "hiddenSeries": false,
+          "id": 94,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+            {
+              "title": "Parser Logs",
+              "url": "https://console.cloud.google.com/logs/viewer?project=mlab-oti&organizationId=433637338589&minLogLevel=0&expandAll=false&timestamp=2017-11-04T12:17:52.000000000Z&dateRangeStart=2017-11-04T11:18:43.921Z&dateRangeEnd=2017-11-04T12:18:43.921Z&interval=PT1H&resource=gae_app%2Fmodule_id%2Fetl-batch-parser&filters=text:%22:%20Processed%20%22&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2Fmlab-oti%2Flogs%2Fappengine.googleapis.com%252Fnginx.request"
+            }
+          ],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(filetype, kind)(increase(etl_error_count{service=\"etl-batch-parser\", kind!~\"UNHANDLED.*error\"}[30m]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Error {{filetype}} : {{kind}}",
+              "refId": "A",
+              "step": 10
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Test Parsing Error Count by Type/Status",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:2459",
+              "format": "short",
+              "logBase": 1,
+              "min": 0,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:2460",
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PrometheusDS",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2148,10 +2430,10 @@
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
-            "h": 8,
+            "h": 7,
             "w": 8,
             "x": 8,
-            "y": 40
+            "y": 25
           },
           "hiddenSeries": false,
           "id": 86,
@@ -2246,10 +2528,10 @@
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
-            "h": 8,
+            "h": 7,
             "w": 8,
             "x": 16,
-            "y": 40
+            "y": 25
           },
           "hiddenSeries": false,
           "id": 85,
@@ -2364,7 +2646,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 49
+            "y": 5
           },
           "hiddenSeries": false,
           "id": 36,
@@ -2497,7 +2779,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 49
+            "y": 5
           },
           "hiddenSeries": false,
           "id": 71,
@@ -2612,7 +2894,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 49
+            "y": 5
           },
           "hiddenSeries": false,
           "id": 51,
@@ -2755,7 +3037,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 57
+            "y": 13
           },
           "hiddenSeries": false,
           "id": 78,
@@ -2889,7 +3171,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 57
+            "y": 13
           },
           "hiddenSeries": false,
           "id": 88,
@@ -3011,6 +3293,130 @@
               "logBase": 1,
               "max": "15",
               "min": "0",
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PrometheusDS",
+          "editable": false,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 16,
+            "y": 13
+          },
+          "hiddenSeries": false,
+          "id": 96,
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(increase(etl_annotator_Annotation_Time_Summary_count{service=\"etl-batch-parser\"}[10m]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Requests",
+              "metric": "etl_annotator_Error_Count",
+              "refId": "A",
+              "step": 10
+            },
+            {
+              "expr": "sum by(source)(increase(etl_annotator_Error_Count{service=\"etl-batch-parser\"}[10m]))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Errors: {{source}}",
+              "refId": "B",
+              "step": 20
+            },
+            {
+              "expr": "sum(rate(annotator_external_latency_hist_msec_count{service=\"etl-batch-parser\"}[10m])) by (le, detail, version)",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "V2 {{detail}} {{version}}",
+              "refId": "C"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Annotator Error Count",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:2548",
+              "format": "short",
+              "logBase": 10,
+              "min": 0,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:2549",
+              "format": "short",
+              "logBase": 1,
               "show": true
             }
           ],
