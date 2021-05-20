@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 197,
-  "iteration": 1621440829972,
+  "iteration": 1621512359113,
   "links": [],
   "panels": [
     {
@@ -25,13 +25,6 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -40,7 +33,6 @@
         "x": 0,
         "y": 0
       },
-      "hiddenSeries": false,
       "id": 1,
       "legend": {
         "alignAsTable": true,
@@ -73,7 +65,6 @@
         {
           "expr": "- quantile(0.99, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
           "format": "time_series",
-          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th % In",
           "refId": "B",
@@ -226,7 +217,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$Uplinks\"}[4m]))",
+          "expr": "-max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$Uplinks\"}[4m]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -425,6 +416,8 @@
         "min": false,
         "rightSide": true,
         "show": true,
+        "sort": "avg",
+        "sortDesc": true,
         "sideWidth": null,
         "total": false,
         "values": true
@@ -549,28 +542,36 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:468",
+          "alias": "/Global/",
+          "bars": false,
+          "color": "rgb(110, 109, 109)",
+          "lines": true
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site,speed,interface) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=\"10g\",speed=~\"$Uplinks\"}[4m]) > 0))",
+          "expr": "topk(10, max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m]) > 0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{site}} {{speed}} ({{interface}})",
+          "intervalFactor": 1,
+          "legendFormat": "{{site}}",
           "refId": "B",
           "step": 10
         },
         {
-          "expr": "topk(10, max by (site,speed,interface) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=\"1g\",speed=~\"$Uplinks\"}[4m]) > 0))",
+          "expr": "sum(max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m]) > 0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{site}} {{speed}} ({{interface}})",
+          "intervalFactor": 1,
+          "legendFormat": "Global",
           "refId": "A",
           "step": 10
         }
@@ -651,6 +652,8 @@
         "min": false,
         "rightSide": true,
         "show": true,
+        "sort": "avg",
+        "sortDesc": true,
         "total": false,
         "values": true
       },
@@ -672,22 +675,22 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-topk(10, max by (site, speed) (irate(ifOutErrors{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "-topk(10, max by(site)(irate(ifOutErrors{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{site}} Out {{speed}}",
+          "legendFormat": "{{site}} Out",
           "refId": "B",
           "step": 10
         },
         {
-          "expr": "topk(10, max by (site,speed) (irate(ifInErrors{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "topk(10, max by(site)(irate(ifInErrors{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{site}} In {{speed}}",
+          "legendFormat": "{{site}} In ",
           "refId": "A",
           "step": 10
         }
@@ -727,7 +730,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -764,9 +767,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "akl01",
-          "value": "akl01"
+          "selected": true,
+          "text": "dfw02",
+          "value": "dfw02"
         },
         "datasource": "$datasource",
         "definition": "label_values(machine)",
@@ -792,33 +795,36 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
-          "text": [
-            "10g"
-          ],
-          "value": [
-            "10g"
-          ]
+          "text": "All",
+          "value": "$__all"
         },
-        "datasource": "$datasource",
-        "definition": "label_values(speed)",
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "Uplinks",
-        "options": [],
-        "query": "label_values(speed)",
-        "refresh": 2,
-        "regex": "",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "1g",
+            "value": "1g"
+          },
+          {
+            "selected": false,
+            "text": "10g",
+            "value": "10g"
+          }
+        ],
+        "query": "1g,10g",
+        "queryValue": "",
         "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "custom"
       }
     ]
   },
@@ -854,5 +860,5 @@
   "timezone": "utc",
   "title": "Ops: Switch Overview",
   "uid": "SuqnZ6Hiz",
-  "version": 142
+  "version": 143
 }
