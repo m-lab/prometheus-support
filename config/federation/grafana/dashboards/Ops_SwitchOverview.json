@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 197,
-  "iteration": 1621872182999,
+  "iteration": 1621888082480,
   "links": [],
   "panels": [
     {
@@ -253,25 +253,6 @@
           "legendFormat": "In",
           "refId": "B",
           "step": 10
-        },
-        {
-          "expr": "avg by (speed)(8 * rate(ifHCInOctets{ifAlias=\"uplink\", speed=~\"$speed\"}[1h]))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 10,
-          "legendFormat": "In Global Avg {{speed}}",
-          "refId": "C",
-          "step": 10
-        },
-        {
-          "expr": "-avg by (speed)(8 * rate(ifHCOutOctets{ifAlias=\"uplink\", speed=~\"$speed\"}[1h]))",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 10,
-          "legendFormat": "Out Global Avg {{speed}}",
-          "refId": "D",
-          "step": 10
         }
       ],
       "thresholds": [],
@@ -372,11 +353,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site, speed) (8 * rate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[10m])))",
+          "expr": "topk(10, max by (site) (8 * rate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[10m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{site}} {{speed}}",
+          "legendFormat": "{{site}}",
           "refId": "A",
           "step": 10
         }
@@ -806,7 +787,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "dfw05",
           "value": "dfw05"
         },
@@ -842,7 +823,7 @@
         "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "uplink speed",
+        "label": "Uplink speed",
         "multi": false,
         "name": "speed",
         "options": [],
@@ -891,5 +872,5 @@
   "timezone": "utc",
   "title": "Ops: Switch Overview",
   "uid": "SuqnZ6Hiz",
-  "version": 144
+  "version": 146
 }
