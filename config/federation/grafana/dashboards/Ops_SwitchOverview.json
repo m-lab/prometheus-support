@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 197,
-  "iteration": 1601049106266,
+  "iteration": 1621888082480,
   "links": [],
   "panels": [
     {
@@ -25,6 +25,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -33,6 +39,7 @@
         "x": 0,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 1,
       "legend": {
         "alignAsTable": true,
@@ -50,9 +57,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -62,15 +70,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "- quantile(0.99, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "- quantile(0.99, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th % In",
           "refId": "B",
           "step": 10
         },
         {
-          "expr": "quantile(0.90, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "quantile(0.90, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -80,7 +89,7 @@
           "step": 10
         },
         {
-          "expr": "- max(8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m]))",
+          "expr": "- max(8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -90,15 +99,16 @@
           "step": 10
         },
         {
-          "expr": "quantile(0.99, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "quantile(0.99, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th % Out",
           "refId": "F",
           "step": 10
         },
         {
-          "expr": "max(8 * irate(ifHCOutOctets{ifAlias=\"uplink\"}[4m]))",
+          "expr": "max(8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -108,7 +118,7 @@
           "step": 10
         },
         {
-          "expr": "- quantile(0.90, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\"}[4m])))",
+          "expr": "- quantile(0.90, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -125,7 +135,7 @@
       "title": "Uplink Percentiles (In/Out)",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -138,6 +148,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:391",
           "format": "bps",
           "label": null,
           "logBase": 1,
@@ -146,6 +157,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:392",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -165,6 +177,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -173,6 +192,7 @@
         "x": 12,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 7,
       "legend": {
         "alignAsTable": false,
@@ -183,7 +203,7 @@
         "max": false,
         "min": false,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": true
       },
@@ -192,28 +212,43 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1176",
+          "alias": "/10g/",
+          "color": "#8AB8FF"
+        },
+        {
+          "$$hashKey": "object:1192",
+          "alias": "/1g/",
+          "color": "#1F60C4"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site\"}[4m]))",
+          "expr": "-max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Out",
           "refId": "A",
           "step": 10
         },
         {
-          "expr": "max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\", site=\"$site\"}[4m]))",
+          "expr": "max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
+          "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "In",
           "refId": "B",
@@ -227,7 +262,7 @@
       "title": "$site: uplink traffic (In/Out)",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -240,6 +275,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:477",
           "format": "bps",
           "label": null,
           "logBase": 1,
@@ -248,6 +284,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:478",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -267,6 +304,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -275,6 +319,7 @@
         "x": 0,
         "y": 9
       },
+      "hiddenSeries": false,
       "id": 3,
       "legend": {
         "alignAsTable": true,
@@ -295,9 +340,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -307,7 +353,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site) (8 * rate(ifHCOutOctets{ifAlias=\"uplink\"}[10m])))",
+          "expr": "topk(10, max by (site) (8 * rate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[10m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -336,6 +382,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:305",
           "format": "bps",
           "label": null,
           "logBase": 1,
@@ -344,6 +391,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:306",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -363,6 +411,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -371,6 +426,7 @@
         "x": 12,
         "y": 9
       },
+      "hiddenSeries": false,
       "id": 4,
       "legend": {
         "alignAsTable": true,
@@ -381,6 +437,8 @@
         "rightSide": true,
         "show": true,
         "sideWidth": null,
+        "sort": "avg",
+        "sortDesc": true,
         "total": false,
         "values": true
       },
@@ -389,9 +447,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -401,7 +460,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site) (8 * rate(ifHCInOctets{ifAlias=\"uplink\"}[10m])))",
+          "expr": "topk(10, max by (site) (8 * rate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[10m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -430,6 +489,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:561",
           "format": "bps",
           "label": null,
           "logBase": 1,
@@ -438,6 +498,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:562",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -457,6 +518,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -465,6 +533,7 @@
         "x": 0,
         "y": 17
       },
+      "hiddenSeries": false,
       "id": 6,
       "legend": {
         "alignAsTable": true,
@@ -486,25 +555,44 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:468",
+          "alias": "/Global/",
+          "bars": false,
+          "color": "rgb(110, 109, 109)",
+          "lines": true
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\"}[4m]) > 0))",
+          "expr": "topk(10, max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]) > 0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{site}} ({{interface}})",
+          "intervalFactor": 1,
+          "legendFormat": "{{site}}",
           "refId": "B",
+          "step": 10
+        },
+        {
+          "expr": "sum(max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]) > 0))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Global",
+          "refId": "A",
           "step": 10
         }
       ],
@@ -528,6 +616,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:81",
           "format": "pps",
           "label": null,
           "logBase": 1,
@@ -536,6 +625,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:82",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -555,6 +645,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -563,17 +660,20 @@
         "x": 12,
         "y": 17
       },
+      "hiddenSeries": false,
       "id": 2,
       "legend": {
         "alignAsTable": true,
         "avg": true,
         "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
+        "hideEmpty": true,
+        "hideZero": true,
         "max": false,
         "min": false,
         "rightSide": true,
         "show": true,
+        "sort": "avg",
+        "sortDesc": true,
         "total": false,
         "values": true
       },
@@ -582,10 +682,11 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pointradius": 5,
+      "pluginVersion": "7.3.5",
+      "pointradius": 1,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [],
@@ -594,7 +695,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site) (irate(ifOutErrors{ifAlias=\"uplink\"}[4m])))",
+          "expr": "-topk(10, max by(site)(irate(ifOutErrors{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -604,12 +705,12 @@
           "step": 10
         },
         {
-          "expr": "topk(10, max by (site) (irate(ifInErrors{ifAlias=\"uplink\"}[4m])))",
+          "expr": "topk(10, max by(site)(irate(ifInErrors{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{site}} In",
+          "legendFormat": "{{site}} In ",
           "refId": "A",
           "step": 10
         }
@@ -634,6 +735,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:645",
           "format": "pps",
           "label": null,
           "logBase": 1,
@@ -642,12 +744,13 @@
           "show": true
         },
         {
+          "$$hashKey": "object:646",
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -657,17 +760,18 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 20,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "tags": [],
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Datasource",
@@ -683,11 +787,13 @@
       {
         "allValue": null,
         "current": {
-          "text": "akl01",
-          "value": "akl01"
+          "selected": false,
+          "text": "dfw05",
+          "value": "dfw05"
         },
         "datasource": "$datasource",
         "definition": "label_values(machine)",
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Site",
@@ -699,6 +805,33 @@
         "regex": "/mlab[1-4]-([a-z]{3}[0-9t]{2}).*/",
         "skipUrlSync": false,
         "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "$datasource",
+        "definition": "label_values(speed)",
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Uplink speed",
+        "multi": false,
+        "name": "speed",
+        "options": [],
+        "query": "label_values(speed)",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -739,5 +872,5 @@
   "timezone": "utc",
   "title": "Ops: Switch Overview",
   "uid": "SuqnZ6Hiz",
-  "version": 141
+  "version": 146
 }
