@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 197,
-  "iteration": 1621512359113,
+  "iteration": 1621872182999,
   "links": [],
   "panels": [
     {
@@ -25,6 +25,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -33,6 +39,7 @@
         "x": 0,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 1,
       "legend": {
         "alignAsTable": true,
@@ -63,15 +70,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "- quantile(0.99, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "- quantile(0.99, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "99th % In",
           "refId": "B",
           "step": 10
         },
         {
-          "expr": "quantile(0.90, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "quantile(0.90, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -81,7 +89,7 @@
           "step": 10
         },
         {
-          "expr": "- max(8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m]))",
+          "expr": "- max(8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -91,7 +99,7 @@
           "step": 10
         },
         {
-          "expr": "quantile(0.99, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "quantile(0.99, max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -100,7 +108,7 @@
           "step": 10
         },
         {
-          "expr": "max(8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m]))",
+          "expr": "max(8 * irate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -110,7 +118,7 @@
           "step": 10
         },
         {
-          "expr": "- quantile(0.90, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "- quantile(0.90, max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -127,7 +135,7 @@
       "title": "Uplink Percentiles (In/Out)",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -195,7 +203,7 @@
         "max": false,
         "min": false,
         "rightSide": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": true
       },
@@ -211,13 +219,24 @@
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1176",
+          "alias": "/10g/",
+          "color": "#8AB8FF"
+        },
+        {
+          "$$hashKey": "object:1192",
+          "alias": "/1g/",
+          "color": "#1F60C4"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$Uplinks\"}[4m]))",
+          "expr": "-max by (site) (8 * irate(ifHCOutOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -226,12 +245,32 @@
           "step": 10
         },
         {
-          "expr": "max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$Uplinks\"}[4m]))",
+          "expr": "max by (site) (8 * irate(ifHCInOctets{ifAlias=\"uplink\", site=\"$site\",speed=~\"$speed\"}[4m]))",
           "format": "time_series",
+          "hide": false,
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "In",
           "refId": "B",
+          "step": 10
+        },
+        {
+          "expr": "avg by (speed)(8 * rate(ifHCInOctets{ifAlias=\"uplink\", speed=~\"$speed\"}[1h]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "In Global Avg {{speed}}",
+          "refId": "C",
+          "step": 10
+        },
+        {
+          "expr": "-avg by (speed)(8 * rate(ifHCOutOctets{ifAlias=\"uplink\", speed=~\"$speed\"}[1h]))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "Out Global Avg {{speed}}",
+          "refId": "D",
           "step": 10
         }
       ],
@@ -242,7 +281,7 @@
       "title": "$site: uplink traffic (In/Out)",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -333,7 +372,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site, speed) (8 * rate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[10m])))",
+          "expr": "topk(10, max by (site, speed) (8 * rate(ifHCOutOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[10m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -416,9 +455,9 @@
         "min": false,
         "rightSide": true,
         "show": true,
+        "sideWidth": null,
         "sort": "avg",
         "sortDesc": true,
-        "sideWidth": null,
         "total": false,
         "values": true
       },
@@ -440,7 +479,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site) (8 * rate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[10m])))",
+          "expr": "topk(10, max by (site) (8 * rate(ifHCInOctets{ifAlias=\"uplink\",speed=~\"$speed\"}[10m])))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -556,7 +595,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m]) > 0))",
+          "expr": "topk(10, max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]) > 0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -566,7 +605,7 @@
           "step": 10
         },
         {
-          "expr": "sum(max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m]) > 0))",
+          "expr": "sum(max by (site) (irate(ifOutDiscards{ifAlias=\"uplink\",speed=~\"$speed\"}[4m]) > 0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -666,7 +705,7 @@
       },
       "percentage": false,
       "pluginVersion": "7.3.5",
-      "pointradius": 5,
+      "pointradius": 1,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [],
@@ -675,7 +714,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "-topk(10, max by(site)(irate(ifOutErrors{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "-topk(10, max by(site)(irate(ifOutErrors{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -685,7 +724,7 @@
           "step": 10
         },
         {
-          "expr": "topk(10, max by(site)(irate(ifInErrors{ifAlias=\"uplink\",speed=~\"$Uplinks\"}[4m])))",
+          "expr": "topk(10, max by(site)(irate(ifInErrors{ifAlias=\"uplink\",speed=~\"$speed\"}[4m])))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -768,8 +807,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "dfw02",
-          "value": "dfw02"
+          "text": "dfw05",
+          "value": "dfw05"
         },
         "datasource": "$datasource",
         "definition": "label_values(machine)",
@@ -794,16 +833,16 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
         "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
+        "label": "uplink speed",
         "multi": false,
-        "name": "Uplinks",
+        "name": "speed",
         "options": [
           {
             "selected": true,
@@ -829,8 +868,8 @@
     ]
   },
   "time": {
-    "from": "2021-05-19T01:46:34.587Z",
-    "to": "2021-05-19T04:50:34.587Z"
+    "from": "now-24h",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -860,5 +899,5 @@
   "timezone": "utc",
   "title": "Ops: Switch Overview",
   "uid": "SuqnZ6Hiz",
-  "version": 143
+  "version": 144
 }
