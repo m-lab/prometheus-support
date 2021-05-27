@@ -1096,7 +1096,7 @@ groups:
 
 # Some SNMP metrics are missing from Prometheus. These should always be present.
   - alert: PlatformCluster_SnmpMetricsMissing
-    expr: absent(ifHCOutOctets)
+    expr: absent(ifHCOutOctets) or absent(ifInErrors)
     for: 30m
     labels:
       repo: ops-tracker
