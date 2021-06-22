@@ -15,7 +15,7 @@
 	"editable": true,
 	"gnetId": null,
 	"graphTooltip": 1,
-	"iteration": 1624365754832,
+	"iteration": 1624365754842,
 	"links": [],
 	"panels": [
 	  {
@@ -184,7 +184,7 @@
 		"dashLength": 10,
 		"dashes": false,
 		"datasource": "$datasource",
-		"description": "",
+		"description": "This packs a lot of information, so may be a bit hard to sort out.  Perhaps we should break into multiple panels. \n\nIt includes average for each deployment, and average across all deployments, and average success and failure rates across all deployments.  Select a single deployment to get more detail.",
 		"fieldConfig": {
 		  "defaults": {
 			"custom": {},
@@ -192,7 +192,7 @@
 		  },
 		  "overrides": []
 		},
-		"fill": 1,
+		"fill": 0,
 		"fillGradient": 0,
 		"gridPos": {
 		  "h": 7,
@@ -226,12 +226,20 @@
 		  {
 			"$$hashKey": "object:113",
 			"alias": "/success/",
-			"color": "#73BF69"
+			"color": "#73BF69",
+			"linewidth": 3
 		  },
 		  {
 			"$$hashKey": "object:121",
 			"alias": "/error/",
-			"color": "#F2495C"
+			"color": "#F2495C",
+			"linewidth": 3
+		  },
+		  {
+			"$$hashKey": "object:1861",
+			"alias": "/Average/",
+			"color": "#8AB8FF",
+			"linewidth": 3
 		  }
 		],
 		"spaceLength": 10,
@@ -241,21 +249,30 @@
 		  {
 			"expr": "60* avg by (outcome)(rate(trace_time_seconds_count{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))",
 			"interval": "",
-			"legendFormat": "{{outcome}} {{deployment}}",
+			"intervalFactor": 10,
+			"legendFormat": "Outcome: {{outcome}}",
 			"refId": "A"
 		  },
 		  {
 			"expr": "60* avg by (type)(rate(traces_performed_total{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))",
 			"interval": "",
-			"legendFormat": "{{type}} {{deployment}}",
+			"intervalFactor": 10,
+			"legendFormat": "Average: {{type}}",
 			"refId": "B"
+		  },
+		  {
+			"expr": "60* avg by (type, deployment)(rate(traces_performed_total{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))",
+			"interval": "",
+			"intervalFactor": 10,
+			"legendFormat": "Deployment: {{deployment}}",
+			"refId": "C"
 		  }
 		],
 		"thresholds": [],
 		"timeFrom": null,
 		"timeRegions": [],
 		"timeShift": null,
-		"title": "TRC performed/outcome [$deployment/$site]",
+		"title": "Average Trace Rate [$deployment/$site]",
 		"tooltip": {
 		  "shared": true,
 		  "sort": 2,
@@ -770,6 +787,7 @@
 		  "allValue": null,
 		  "current": {
 			"selected": true,
+			"tags": [],
 			"text": [
 			  "All"
 			],
