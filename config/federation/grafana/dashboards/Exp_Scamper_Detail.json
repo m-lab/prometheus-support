@@ -15,7 +15,7 @@
 	"editable": true,
 	"gnetId": null,
 	"graphTooltip": 1,
-	"iteration": 1624365754798,
+	"iteration": 1624365754832,
 	"links": [],
 	"panels": [
 	  {
@@ -239,13 +239,13 @@
 		"steppedLine": false,
 		"targets": [
 		  {
-			"expr": "60* sum(rate(trace_time_seconds_count{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval])) by (outcome, deployment)",
+			"expr": "60* avg by (outcome)(rate(trace_time_seconds_count{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))",
 			"interval": "",
 			"legendFormat": "{{outcome}} {{deployment}}",
 			"refId": "A"
 		  },
 		  {
-			"expr": "60* sum(rate(traces_performed_total{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval])) by (type, deployment)",
+			"expr": "60* avg by (type)(rate(traces_performed_total{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))",
 			"interval": "",
 			"legendFormat": "{{type}} {{deployment}}",
 			"refId": "B"
@@ -401,6 +401,7 @@
 		"dashLength": 10,
 		"dashes": false,
 		"datasource": "$datasource",
+		"decimals": 2,
 		"description": "",
 		"fieldConfig": {
 		  "defaults": {
@@ -443,7 +444,6 @@
 		  {
 			"$$hashKey": "object:388",
 			"alias": "/Average/",
-			"color": "#5794F2",
 			"linewidth": 3
 		  }
 		],
@@ -460,10 +460,11 @@
 			"refId": "B"
 		  },
 		  {
-			"expr": "avg((sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\", outcome!=\"success\"}[$interval]))) / (sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))))\n",
+			"expr": "avg by (deployment)((sum by (machine, deployment)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\", outcome!=\"success\"}[$interval]))) / (sum by (machine, deployment)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))))\n",
 			"hide": false,
 			"interval": "",
-			"legendFormat": "Average",
+			"intervalFactor": 10,
+			"legendFormat": "Average {{deployment}}",
 			"refId": "A"
 		  }
 		],
@@ -517,6 +518,7 @@
 		"dashLength": 10,
 		"dashes": false,
 		"datasource": "$datasource",
+		"decimals": 1,
 		"description": "",
 		"fieldConfig": {
 		  "defaults": {
@@ -555,16 +557,22 @@
 		"pointradius": 2,
 		"points": false,
 		"renderer": "flot",
-		"seriesOverrides": [],
+		"seriesOverrides": [
+		  {
+			"$$hashKey": "object:1316",
+			"alias": "/Average/",
+			"linewidth": 3
+		  }
+		],
 		"spaceLength": 10,
 		"stack": false,
 		"steppedLine": false,
 		"targets": [
 		  {
-			"expr": "avg(traces_in_progress{deployment=~\"$deployment\", machine=~\".*($site).*\"}) by (type)",
+			"expr": "avg(traces_in_progress{deployment=~\"$deployment\", machine=~\".*($site).*\"}) by (deployment, type)",
 			"hide": false,
 			"interval": "",
-			"legendFormat": "Average {{type}}",
+			"legendFormat": "Average {{deployment}} {{type}}",
 			"refId": "B"
 		  },
 		  {
@@ -612,7 +620,7 @@
 			"logBase": 1,
 			"max": null,
 			"min": null,
-			"show": true
+			"show": false
 		  }
 		],
 		"yaxis": {
@@ -681,7 +689,7 @@
 		{
 		  "allValue": null,
 		  "current": {
-			"selected": false,
+			"selected": true,
 			"text": "3h",
 			"value": "3h"
 		  },
@@ -754,6 +762,7 @@
 			}
 		  ],
 		  "query": "10m,1h,3h,6h,12h,18h,1d,2d,1w,4w,13w,1y",
+		  "queryValue": "",
 		  "skipUrlSync": false,
 		  "type": "custom"
 		},
@@ -762,10 +771,10 @@
 		  "current": {
 			"selected": true,
 			"text": [
-			  "ndt"
+			  "All"
 			],
 			"value": [
-			  "ndt"
+			  "$__all"
 			]
 		  },
 		  "datasource": "$datasource",
