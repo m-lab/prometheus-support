@@ -15,7 +15,7 @@
 	"editable": true,
 	"gnetId": null,
 	"graphTooltip": 1,
-	"iteration": 1624365754842,
+	"iteration": 1624370972936,
 	"links": [],
 	"panels": [
 	  {
@@ -469,11 +469,11 @@
 		"steppedLine": false,
 		"targets": [
 		  {
-			"expr": "topk(5, (sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\", outcome!=\"success\"}[6h]))) / (sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h]))))\n",
+			"expr": "label_replace(topk(5, (sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\", outcome!=\"success\"}[6h]))) / (sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h])))),\"machine\",\"$1.$2\",\"machine\",\"(mlab.*)-(.*).mlab-(.*).*\")\n",
 			"hide": false,
 			"interval": "",
 			"intervalFactor": 10,
-			"legendFormat": "",
+			"legendFormat": "{{machine}}",
 			"refId": "B"
 		  },
 		  {
@@ -557,6 +557,8 @@
 		"legend": {
 		  "avg": false,
 		  "current": false,
+		  "hideEmpty": true,
+		  "hideZero": true,
 		  "max": false,
 		  "min": false,
 		  "show": false,
@@ -589,11 +591,11 @@
 			"expr": "avg(traces_in_progress{deployment=~\"$deployment\", machine=~\".*($site).*\"}) by (deployment, type)",
 			"hide": false,
 			"interval": "",
-			"legendFormat": "Average {{deployment}} {{type}}",
+			"legendFormat": "Average {{type}} {{deployment}}",
 			"refId": "B"
 		  },
 		  {
-			"expr": "topk(3, avg_over_time(traces_in_progress{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h])) by (type)",
+			"expr": "label_replace(topk(3, avg_over_time(traces_in_progress{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h])),\"machine\",\"$1.$2\",\"machine\",\"(mlab.*)-(.*).mlab-(.*).measurement-lab.org\")",
 			"hide": false,
 			"interval": "",
 			"intervalFactor": 10,
@@ -787,12 +789,11 @@
 		  "allValue": null,
 		  "current": {
 			"selected": true,
-			"tags": [],
 			"text": [
-			  "All"
+			  "ndt"
 			],
 			"value": [
-			  "$__all"
+			  "ndt"
 			]
 		  },
 		  "datasource": "$datasource",
@@ -838,5 +839,5 @@
 	"timezone": "",
 	"title": "Exp: Scamper Detail",
 	"uid": "7l1KQtR7k",
-	"version": 17
+	"version": 20
   }
