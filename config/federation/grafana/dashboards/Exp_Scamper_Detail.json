@@ -15,7 +15,7 @@
 	"editable": true,
 	"gnetId": null,
 	"graphTooltip": 1,
-	"iteration": 1624370972936,
+	"iteration": 1624370972938,
 	"links": [],
 	"panels": [
 	  {
@@ -261,7 +261,7 @@
 			"refId": "B"
 		  },
 		  {
-			"expr": "60* avg by (type, deployment)(rate(traces_performed_total{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))",
+			"expr": "60* avg by (type, deployment) (rate(traces_performed_total{container=\"traceroute-caller\", deployment=~\"$deployment\", machine=~\".*($site).*\"}[$interval]))",
 			"interval": "",
 			"intervalFactor": 10,
 			"legendFormat": "Deployment: {{deployment}}",
@@ -427,7 +427,7 @@
 		  },
 		  "overrides": []
 		},
-		"fill": 1,
+		"fill": 0,
 		"fillGradient": 0,
 		"gridPos": {
 		  "h": 8,
@@ -469,11 +469,11 @@
 		"steppedLine": false,
 		"targets": [
 		  {
-			"expr": "label_replace(topk(5, (sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\", outcome!=\"success\"}[6h]))) / (sum by (machine)(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h])))),\"machine\",\"$1.$2\",\"machine\",\"(mlab.*)-(.*).mlab-(.*).*\")\n",
+			"expr": "topk(5, (sum by (site)(label_replace(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\", outcome!=\"success\"}[6h]),\"site\",\"$1\",\"machine\",\"mlab[1234]-(.*).mlab-.*\"))) / (sum by (site)(label_replace(rate(trace_time_seconds_count{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h]),\"site\",\"$1\",\"machine\",\"mlab[1234]-(.*).mlab-.*\"))))\n",
 			"hide": false,
 			"interval": "",
 			"intervalFactor": 10,
-			"legendFormat": "{{machine}}",
+			"legendFormat": "Site: {{site}}",
 			"refId": "B"
 		  },
 		  {
@@ -595,11 +595,11 @@
 			"refId": "B"
 		  },
 		  {
-			"expr": "label_replace(topk(3, avg_over_time(traces_in_progress{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h])),\"machine\",\"$1.$2\",\"machine\",\"(mlab.*)-(.*).mlab-(.*).measurement-lab.org\")",
+			"expr": "topk(3, avg by (site)(label_replace(avg by (machine)(avg_over_time(traces_in_progress{deployment=~\"$deployment\", machine=~\".*($site).*\"}[6h])), \"site\",\"$1\",\"machine\",\"mlab[1234]-(.*).mlab-.*\")))",
 			"hide": false,
 			"interval": "",
 			"intervalFactor": 10,
-			"legendFormat": "{{machine}}",
+			"legendFormat": "Site average: {{site}}",
 			"refId": "A"
 		  }
 		],
@@ -790,10 +790,10 @@
 		  "current": {
 			"selected": true,
 			"text": [
-			  "ndt"
+			  "All"
 			],
 			"value": [
-			  "ndt"
+			  "$__all"
 			]
 		  },
 		  "datasource": "$datasource",
