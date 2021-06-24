@@ -307,64 +307,20 @@ scrape_configs:
       username: {{PLATFORM_PROM_AUTH_USER}}
       password: {{PLATFORM_PROM_AUTH_PASS}}
     params:
-      # Scrape the status of all jobs. This should allow us determine
-      # whether, for example, node_exporter is failing to be scraped
-      # somewhere, as well as other core and experiment services.
-      #
-      # Also scrape lame_duck_experiment metrics, since mlab-ns needs these,
-      # but ignorning the fake metric scraped from node-exporter.
-      #
-      # TODO/NOTE: Currently, this prometheus-federation cluster is scraping a
-      # publicly available endpoint of platform cluster metrics. This will add
-      # additional delay in the propagation of lame_duck_experiment status to
-      # mlab-ns, since the platform cluster scrapes every minute, and the
+      # TODO/NOTE: Propagation of lame_duck_experiment status to mlab-ns may be
+      # slow, since the platform cluster scrapes every minute, and the
       # federation cluster scrapes that cluster every minute, and mlab-ns
       # queries the federation cluster every minute. We could potentially have
       # up to 3m delay in propagation. We should find a better way to handle
       # this.
       'match[]':
-        - 'up{job=~".+"}'
-        - 'disco_collect_errors_total'
-        - 'ifHCOutOctets{deployment="disco"}'
-        - 'ifInErrors{deployment="disco", ifAlias="uplink"}'
+        # Used by "mlab-ns" and MachineRunningWithoutK8sNode alerts
+        - 'kube_node_status_condition'
+        # mlab-ns uses these metrics. Do not remove them.
+        - 'kube_node_spec_taint{key="lame-duck"}'
         - 'lame_duck_experiment{job!="node-exporter"}'
-        - 'node_boot_time_seconds'
         - 'node_filesystem_size_bytes{deployment="node-exporter"}'
         - 'node_filesystem_avail_bytes{deployment="node-exporter"}'
-        - 'node_memory_MemTotal_bytes'
-        - 'node_edac_correctable_errors_total'
-        - 'node_edac_uncorrectable_errors_total'
-        - 'kube_node_info'
-        - 'kube_node_labels'
-        - 'kube_node_spec_taint{key="lame-duck"}'
-        - 'kube_node_status_condition'
-        - 'kube_pod_container_info{exported_namespace="kube-system", exported_container=~"(kube-apiserver|kube-controller-manager|kube-scheduler)"}'
-        - 'etcd_server_has_leader'
-        - 'etcd_server_leader_changes_seen_total'
-        - 'etcd_server_proposals_failed_total'
-        - 'etcd_network_peer_round_trip_time_seconds_bucket'
-        - 'etcd_disk_wal_fsync_duration_seconds_bucket'
-        - 'etcd_disk_backend_commit_duration_seconds_bucket'
-        - 'kube_daemonset_status_current_number_scheduled'
-        - 'kube_daemonset_status_desired_number_scheduled'
-        - 'kube_daemonset_updated_number_scheduled'
-        - 'kube_deployment_status_replicas'
-        - 'kube_deployment_spec_replicas'
-        - 'kube_pod_info'
-        - 'kube_pod_status_ready'
-        # For recording rules for NDT Early Warning dashboard and Global Test Rates.
-        - 'ndt5_client_test_results_total'
-        - 'ndt7_client_test_results_total'
-        - 'node_disk_io_time_seconds_total{deployment="node-exporter"}'
-        # Aggregate the collectd health status from node-exporter.
-        - 'collectd_mlab_success'
-        # Used by PlatformCluster_PusherDailyDataVolumeTooLow alert.
-        - 'datatype:pusher_bytes_per_tarfile:increase24h'
-        # Systemd metrics
-        - 'node_systemd_units'
-        - 'node_systemd_unit_state{state="failed"}'
-        # PusherSLO
-        - 'pusher_finder_mtime_lower_bound'
     static_configs:
       - targets: ['prometheus-platform-cluster-basicauth.{{PROJECT}}.measurementlab.net:443']
         labels:
