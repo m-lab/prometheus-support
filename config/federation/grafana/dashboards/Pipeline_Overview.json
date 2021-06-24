@@ -15,12 +15,11 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 361,
-  "iteration": 1620936249494,
+  "iteration": 1623702230339,
   "links": [],
   "panels": [
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -29,828 +28,392 @@
         "y": 0
       },
       "id": 90,
-      "panels": [],
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PrometheusDS",
+          "decimals": null,
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 0,
+            "y": 8
+          },
+          "hiddenSeries": false,
+          "id": 63,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": true,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "bq_gardener_parse_time_age_days",
+              "format": "time_series",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{datatype}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Oldest Bigquery Parse Time",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "series",
+            "name": null,
+            "show": false,
+            "values": [
+              "total"
+            ]
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:574",
+              "decimals": 1,
+              "format": "none",
+              "label": "Days",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:575",
+              "decimals": 0,
+              "format": "short",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$Gardener2_DS",
+          "description": "We may want to monitor this from the Gardener instance, and suspend operation if the cost exceeds some threshold.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 8,
+            "y": 8
+          },
+          "hiddenSeries": false,
+          "id": 59,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:63",
+              "alias": "/Cumulative/",
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum  by(version, datatype, query)(rate(query_cost_seconds_sum{}[1h])/rate(query_cost_seconds_count{}[1h]))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Slot Time per Query {{datatype}} {{query}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by(version, datatype, query)(increase(query_cost_seconds_sum{}[24h]))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Cumulative per Day {{datatype}} {{query}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [
+            {
+              "$$hashKey": "object:98",
+              "colorMode": "warning",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 2419200,
+              "yaxis": "right"
+            }
+          ],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Gardener 2.0 Bigquery Costs",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:70",
+              "decimals": null,
+              "format": "s",
+              "label": "Slot Time per Query",
+              "logBase": 1,
+              "max": "28800",
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:71",
+              "decimals": null,
+              "format": "s",
+              "label": "Avg Slot Time per Day",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$Gardener2_DS",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 16,
+            "y": 8
+          },
+          "hiddenSeries": false,
+          "id": 61,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:482",
+              "alias": "/Recent/",
+              "linewidth": 5
+            },
+            {
+              "$$hashKey": "object:490",
+              "alias": "/Dedup/",
+              "color": "#3274D9"
+            },
+            {
+              "$$hashKey": "object:500",
+              "alias": "/4 weeks/",
+              "dashes": true,
+              "linewidth": 3
+            },
+            {
+              "$$hashKey": "object:511",
+              "alias": "/Join/",
+              "color": "#A352CC"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(version, query)(increase(query_cost_seconds_sum{}[24h]))",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 10,
+              "legendFormat": "Recent {{version}} {{query}}",
+              "refId": "B"
+            },
+            {
+              "expr": "sum by(version, query)(increase(query_cost_seconds_sum{}[24h]  offset 28d))",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 10,
+              "legendFormat": "4 weeks ago {{version}} {{query}}",
+              "refId": "C"
+            },
+            {
+              "expr": "sum by(query)(increase(query_cost_seconds_sum{}[24h]  offset 56d))",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 10,
+              "legendFormat": "8 weeks ago {{query}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Weekly query slot-time",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:289",
+              "format": "s",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:290",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
       "title": "General",
       "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "bars": true,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PrometheusDS",
-      "decimals": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 1
-      },
-      "hiddenSeries": false,
-      "id": 63,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": true,
-        "max": false,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": false,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.5",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "bq_gardener_parse_time_age_days",
-          "format": "time_series",
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{datatype}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Oldest Bigquery Parse Time",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "series",
-        "name": null,
-        "show": false,
-        "values": [
-          "total"
-        ]
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:574",
-          "decimals": 1,
-          "format": "none",
-          "label": "Days",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:575",
-          "decimals": 0,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$Gardener2_DS",
-      "description": "We may want to monitor this from the Gardener instance, and suspend operation if the cost exceeds some threshold.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 1
-      },
-      "hiddenSeries": false,
-      "id": 59,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.5",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:63",
-          "alias": "/Cumulative/",
-          "yaxis": 2
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum  by(version, datatype, query)(rate(query_cost_seconds_sum{}[1h])/rate(query_cost_seconds_count{}[1h]))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Slot Time per Query {{datatype}} {{query}}",
-          "refId": "A"
-        },
-        {
-          "expr": "sum by(version, datatype, query)(increase(query_cost_seconds_sum{}[24h]))",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Cumulative per Day {{datatype}} {{query}}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:98",
-          "colorMode": "warning",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 2419200,
-          "yaxis": "right"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Gardener 2.0 Bigquery Costs",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:70",
-          "decimals": null,
-          "format": "s",
-          "label": "Slot Time per Query",
-          "logBase": 1,
-          "max": "28800",
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:71",
-          "decimals": null,
-          "format": "s",
-          "label": "Avg Slot Time per Day",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$Gardener2_DS",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 1
-      },
-      "hiddenSeries": false,
-      "id": 61,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": true,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.5",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:482",
-          "alias": "/Recent/",
-          "linewidth": 5
-        },
-        {
-          "$$hashKey": "object:490",
-          "alias": "/Dedup/",
-          "color": "#3274D9"
-        },
-        {
-          "$$hashKey": "object:500",
-          "alias": "/4 weeks/",
-          "dashes": true,
-          "linewidth": 3
-        },
-        {
-          "$$hashKey": "object:511",
-          "alias": "/Join/",
-          "color": "#A352CC"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by(version, query)(increase(query_cost_seconds_sum{}[24h]))",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 10,
-          "legendFormat": "Recent {{version}} {{query}}",
-          "refId": "B"
-        },
-        {
-          "expr": "sum by(version, query)(increase(query_cost_seconds_sum{}[24h]  offset 28d))",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 10,
-          "legendFormat": "4 weeks ago {{version}} {{query}}",
-          "refId": "C"
-        },
-        {
-          "expr": "sum by(query)(increase(query_cost_seconds_sum{}[24h]  offset 56d))",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 10,
-          "legendFormat": "8 weeks ago {{query}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Weekly query slot-time",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:289",
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:290",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 8
-      },
-      "id": 67,
-      "panels": [],
-      "title": "Uptime",
-      "type": "row"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$LegacyDS",
-      "description": "Uptime for Legacy Gardener Instances",
-      "editable": false,
-      "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 1,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 9
-      },
-      "hiddenSeries": false,
-      "id": 49,
-      "interval": "",
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.5",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:750",
-          "alias": "/instance count/",
-          "fill": 0,
-          "yaxis": 2
-        },
-        {
-          "$$hashKey": "object:751",
-          "alias": "/Gardener/",
-          "linewidth": 2,
-          "steppedLine": false
-        },
-        {
-          "$$hashKey": "object:752",
-          "alias": "/Git Commit/",
-          "fill": 0,
-          "yaxis": 2
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": true,
-      "targets": [
-        {
-          "expr": "avg by(run, pod_template_hash)(time()-process_start_time_seconds{container=~\"etl-gardener\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{run}} {{pod_template_hash}}",
-          "refId": "A",
-          "step": 20
-        },
-        {
-          "expr": "sum by(container, value)(etl_commit_hash{})",
-          "interval": "",
-          "legendFormat": "Git Hash {{container}} = {{value}}",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Legacy Gardeners (one per datatype) ",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:777",
-          "format": "dtdurations",
-          "logBase": 10,
-          "min": 60,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:778",
-          "decimals": null,
-          "format": "short",
-          "logBase": 1,
-          "max": "20",
-          "min": 0,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$PrometheusDS",
-      "description": "",
-      "editable": false,
-      "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 1,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 9
-      },
-      "hiddenSeries": false,
-      "id": 52,
-      "interval": "",
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.5",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/Max/",
-          "fill": 0
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": true,
-      "targets": [
-        {
-          "expr": "avg by(version, service)(time()-process_start_time_seconds{version!=\"\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Avg {{service}} {{version}}",
-          "refId": "B",
-          "step": 20
-        },
-        {
-          "expr": "max by(version, service)(time()-process_start_time_seconds{version!=\"\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Max {{service}} {{version}}",
-          "refId": "C",
-          "step": 20
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Legacy Parsers / Annotators",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:995",
-          "decimals": 0,
-          "format": "dtdurations",
-          "logBase": 10,
-          "max": null,
-          "min": "360",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:996",
-          "decimals": null,
-          "format": "short",
-          "logBase": 1,
-          "max": "20",
-          "min": 0,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$Gardener2_DS",
-      "description": "Uptimes for V2 Gardener and Parsers.",
-      "editable": false,
-      "error": false,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 1,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 9
-      },
-      "hiddenSeries": false,
-      "id": 48,
-      "interval": "",
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.5",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/Gardener Instances/",
-          "color": "#37872D",
-          "fill": 0,
-          "yaxis": 2
-        },
-        {
-          "alias": "/Gardener/",
-          "linewidth": 2
-        },
-        {
-          "alias": "/Parser Instances/",
-          "color": "#8F3BB8",
-          "fill": 0,
-          "yaxis": 2
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": true,
-      "targets": [
-        {
-          "expr": "avg by(run, pod_template_hash)(time()-process_start_time_seconds{container=~\"etl-.*\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{run}} {{pod_template_hash}}",
-          "refId": "A",
-          "step": 20
-        },
-        {
-          "expr": "avg by(run, container, pod_template_hash)(time()-process_start_time_seconds{container=~\"etl-parser\"})",
-          "format": "time_series",
-          "hide": true,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Avg {{run}} {{pod_template_hash}}",
-          "refId": "C",
-          "step": 20
-        },
-        {
-          "expr": "count by(container, pod_template_hash, value)(etl_commit_hash{container=~\"etl-parser.*\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Parser Instances {{pod_template_hash}} - Git: {{value}} ",
-          "refId": "D",
-          "step": 20
-        },
-        {
-          "expr": "count by(run, pod_template_hash)(process_start_time_seconds{container=~\"etl-gardener.*\"})",
-          "format": "time_series",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Gardener Instances {{pod_template_hash}}",
-          "refId": "B",
-          "step": 20
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Gardener 2.0 and K8S Parsers",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1074",
-          "format": "dtdurations",
-          "logBase": 10,
-          "min": 60,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1075",
-          "decimals": 0,
-          "format": "short",
-          "label": "Instances",
-          "logBase": 1,
-          "max": "5",
-          "min": 0,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     },
     {
       "collapsed": true,
@@ -859,7 +422,445 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 1
+      },
+      "id": 67,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$LegacyDS",
+          "description": "Uptime for Legacy Gardener Instances",
+          "editable": false,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 9
+          },
+          "hiddenSeries": false,
+          "id": 49,
+          "interval": "",
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:750",
+              "alias": "/instance count/",
+              "fill": 0,
+              "yaxis": 2
+            },
+            {
+              "$$hashKey": "object:751",
+              "alias": "/Gardener/",
+              "linewidth": 2,
+              "steppedLine": false
+            },
+            {
+              "$$hashKey": "object:752",
+              "alias": "/Git Commit/",
+              "fill": 0,
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": true,
+          "targets": [
+            {
+              "expr": "avg by(run, pod_template_hash)(time()-process_start_time_seconds{container=~\"etl-gardener\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "{{run}} {{pod_template_hash}}",
+              "refId": "A",
+              "step": 20
+            },
+            {
+              "expr": "sum by(container, value)(etl_commit_hash{})",
+              "interval": "",
+              "legendFormat": "Git Hash {{container}} = {{value}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Legacy Gardeners (one per datatype) ",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:777",
+              "format": "dtdurations",
+              "logBase": 10,
+              "min": 60,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:778",
+              "decimals": null,
+              "format": "short",
+              "logBase": 1,
+              "max": "20",
+              "min": 0,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$PrometheusDS",
+          "description": "",
+          "editable": false,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 9
+          },
+          "hiddenSeries": false,
+          "id": 52,
+          "interval": "",
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/Max/",
+              "fill": 0
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": true,
+          "targets": [
+            {
+              "expr": "avg by(version, service)(time()-process_start_time_seconds{version!=\"\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Avg {{service}} {{version}}",
+              "refId": "B",
+              "step": 20
+            },
+            {
+              "expr": "max by(version, service)(time()-process_start_time_seconds{version!=\"\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Max {{service}} {{version}}",
+              "refId": "C",
+              "step": 20
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Legacy Parsers / Annotators",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:995",
+              "decimals": 0,
+              "format": "dtdurations",
+              "logBase": 10,
+              "max": null,
+              "min": "360",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:996",
+              "decimals": null,
+              "format": "short",
+              "logBase": 1,
+              "max": "20",
+              "min": 0,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$Gardener2_DS",
+          "description": "Uptimes for V2 Gardener and Parsers.",
+          "editable": false,
+          "error": false,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 9
+          },
+          "hiddenSeries": false,
+          "id": 48,
+          "interval": "",
+          "isNew": false,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.5",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "/Gardener Instances/",
+              "color": "#37872D",
+              "fill": 0,
+              "yaxis": 2
+            },
+            {
+              "alias": "/Gardener/",
+              "linewidth": 2
+            },
+            {
+              "alias": "/Parser Instances/",
+              "color": "#8F3BB8",
+              "fill": 0,
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": true,
+          "targets": [
+            {
+              "expr": "avg by(run, pod_template_hash)(time()-process_start_time_seconds{container=~\"etl-.*\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "{{run}} {{pod_template_hash}}",
+              "refId": "A",
+              "step": 20
+            },
+            {
+              "expr": "avg by(run, container, pod_template_hash)(time()-process_start_time_seconds{container=~\"etl-parser\"})",
+              "format": "time_series",
+              "hide": true,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Avg {{run}} {{pod_template_hash}}",
+              "refId": "C",
+              "step": 20
+            },
+            {
+              "expr": "count by(container, pod_template_hash, value)(etl_commit_hash{container=~\"etl-parser.*\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Parser Instances {{pod_template_hash}} - Git: {{value}} ",
+              "refId": "D",
+              "step": 20
+            },
+            {
+              "expr": "count by(run, pod_template_hash)(process_start_time_seconds{container=~\"etl-gardener.*\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "Gardener Instances {{pod_template_hash}}",
+              "refId": "B",
+              "step": 20
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Gardener 2.0 and K8S Parsers",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "format": "",
+            "logBase": 0,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1074",
+              "format": "dtdurations",
+              "logBase": 10,
+              "min": 60,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1075",
+              "decimals": 0,
+              "format": "short",
+              "label": "Instances",
+              "logBase": 1,
+              "max": "5",
+              "min": 0,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "title": "Uptime",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
       },
       "id": 65,
       "panels": [
@@ -1587,1441 +1588,1772 @@
       "type": "row"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 3
       },
       "id": 76,
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$LegacyDS",
-          "description": "Task dates of the most recent updates to each task state.\n\n\"Invalid date\" appears when Gardener has been restarted recently.  Haven't figured out how to suppress that.\n\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 33
-          },
-          "hiddenSeries": false,
-          "id": 44,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "1000*quantile_over_time(0.2, gardener_state_date{state=~\"$states\"}[20m])",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "{{deployment}} {{state}}",
-              "refId": "D"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Task Date of Recent State Updates",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1834",
-              "decimals": null,
-              "format": "dateTimeAsIso",
-              "label": "State update for task date",
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1835",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "",
-          "editable": false,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 8,
-            "y": 33
-          },
-          "hiddenSeries": false,
-          "id": 2,
-          "isNew": false,
-          "legend": {
-            "alignAsTable": false,
-            "avg": false,
-            "current": false,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": false,
-            "min": false,
-            "rightSide": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:106",
-              "alias": "/Instances/",
-              "color": "#6ed0e0",
-              "fill": 0,
-              "linewidth": 4,
-              "yaxis": 2
-            },
-            {
-              "$$hashKey": "object:108",
-              "alias": "/inst .*/",
-              "color": "rgba(163, 163, 163, 0.55)",
-              "fill": 0
-            },
-            {
-              "$$hashKey": "object:921",
-              "alias": "/Average: etl-/",
-              "color": "#8F3BB8",
-              "linewidth": 2
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(instance) (process_resident_memory_bytes{service=~\"etl-batch-parser\"})",
-              "format": "time_series",
-              "hide": false,
-              "interval": "60s",
-              "intervalFactor": 1,
-              "legendFormat": "inst {{instance}}",
-              "refId": "A",
-              "step": 60
-            },
-            {
-              "expr": "avg by(service,version) (process_resident_memory_bytes{service=~\"etl-batch-parser\"})",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Average: {{service}}:{{version}}",
-              "refId": "C"
-            },
-            {
-              "expr": "count by(service,version) (process_start_time_seconds{service=~\"etl-batch-parser\"})",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Instances: {{service}}:{{version}}",
-              "refId": "B"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Parsers - Process Resident Memory",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "format": "",
-            "logBase": 0,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:139",
-              "format": "decbytes",
-              "logBase": 1,
-              "max": "10000000000",
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:140",
-              "decimals": 0,
-              "format": "short",
-              "logBase": 1,
-              "max": "15",
-              "min": "0",
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "editable": false,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 16,
-            "y": 33
-          },
-          "hiddenSeries": false,
-          "id": 4,
-          "isNew": false,
-          "legend": {
-            "alignAsTable": false,
-            "avg": false,
-            "current": false,
-            "hideEmpty": false,
-            "hideZero": false,
-            "max": false,
-            "min": false,
-            "rightSide": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "Parser Status Page",
-              "url": "https://etl-batch-parser-dot-${project}.appspot.com/"
-            },
-            {
-              "targetBlank": true,
-              "title": "Parser Logs",
-              "url": "https://console.cloud.google.com/logs/viewer?project=${project}&interval=PT6H&resource=gae_app%2Fmodule_id%2Fetl-batch-parser&logName=projects%2F${project}%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2F${project}%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2F${project}%2Flogs%2Fappengine.googleapis.com%252Fnginx.request&advancedFilter=resource.type%3D%22gae_app%22%0Aresource.labels.module_id%3D%22etl-batch-parser%22"
-            }
-          ],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:358",
-              "alias": "/Instance Count/",
-              "color": "#6ed0e0",
-              "linewidth": 4,
-              "yaxis": 2
-            },
-            {
-              "$$hashKey": "object:359",
-              "alias": "/Average/",
-              "color": "#7eb26d",
-              "linewidth": 2
-            },
-            {
-              "$$hashKey": "object:360",
-              "alias": "/Instance CPU/",
-              "color": "rgba(115, 115, 115, 0.55)",
-              "fill": 0
-            },
-            {
-              "$$hashKey": "object:361",
-              "alias": "/Num CPU/",
-              "yaxis": 2
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "rate(process_cpu_seconds_total{service=~\"etl-.*\"}[2m])/etl_num_cpu ",
-              "format": "time_series",
-              "interval": "60s",
-              "intervalFactor": 5,
-              "legendFormat": "Instance CPU {{instance}}",
-              "refId": "A",
-              "step": 60
-            },
-            {
-              "expr": "avg(rate(process_cpu_seconds_total{service=~\"etl-.*\"}[5m])/etl_num_cpu)",
-              "format": "time_series",
-              "interval": "60s",
-              "intervalFactor": 4,
-              "legendFormat": "Average Parser CPU",
-              "refId": "C",
-              "step": 60
-            },
-            {
-              "expr": "count by(service) (process_start_time_seconds{service=~\"etl-.*\"})",
-              "format": "time_series",
-              "hide": false,
-              "interval": "60s",
-              "intervalFactor": 1,
-              "legendFormat": "Instance Count",
-              "refId": "B"
-            },
-            {
-              "expr": "avg by (version)(etl_num_cpu)",
-              "interval": "",
-              "intervalFactor": 10,
-              "legendFormat": "Num CPU",
-              "refId": "D"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Parser CPU - Per-instance & Avg",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "format": "",
-            "logBase": 0,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:394",
-              "decimals": null,
-              "format": "percentunit",
-              "label": "CPU %",
-              "logBase": 1,
-              "max": "1",
-              "min": "0",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:395",
-              "decimals": 0,
-              "format": "short",
-              "label": "Instance Count / Num CPU",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 40
-          },
-          "hiddenSeries": false,
-          "id": 74,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by (kind, table)(60*rate(etl_backend_failure_count[10m]))",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "$$hashKey": "object:2272",
-              "colorMode": "warning",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 50,
-              "yaxis": "left"
-            }
-          ],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Backend Failure Rate",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1996",
-              "format": "short",
-              "label": "Failures/Minute",
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1997",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 40
-          },
-          "hiddenSeries": false,
-          "id": 86,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(table)(rate(etl_test_file_size_bytes_sum{}[30m]))",
-              "interval": "",
-              "legendFormat": "Bytes/Sec {{table}}",
-              "refId": "C"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Processing Rate",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:115",
-              "format": "Bps",
-              "label": null,
-              "logBase": 10,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:116",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 16,
-            "y": 40
-          },
-          "hiddenSeries": false,
-          "id": 85,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(0.5,sum by(le, table)(rate(etl_test_file_size_bytes_bucket{}[10m])))",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 10,
-              "legendFormat": "Bytes/File {{table}}",
-              "refId": "C"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Median Filesize",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:115",
-              "format": "decbytes",
-              "label": null,
-              "logBase": 10,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:116",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        }
-      ],
+      "panels": [],
       "title": "Legacy Pipeline",
       "type": "row"
     },
     {
-      "collapsed": true,
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$LegacyDS",
+      "description": "Task dates of the most recent updates to each task state.\n\n\"Invalid date\" appears when Gardener has been restarted recently.  Haven't figured out how to suppress that.\n\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.\nNOTE: In sandbox, we now process only a small subset of the requests, to get high throughput and test across the full date range quickly.  Cycle time is less than a day for sandbox, compared with one or two weeks for production.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 4
+      },
+      "hiddenSeries": false,
+      "id": 44,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "1000*quantile_over_time(0.2, gardener_state_date{state=~\"$states\"}[20m])",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{deployment}} {{state}}",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Task Date of Recent State Updates",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1834",
+          "decimals": null,
+          "format": "dateTimeAsIso",
+          "label": "State update for task date",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1835",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "",
+      "editable": false,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 4
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:106",
+          "alias": "/Instances/",
+          "color": "#6ed0e0",
+          "fill": 0,
+          "linewidth": 4,
+          "yaxis": 2
+        },
+        {
+          "$$hashKey": "object:108",
+          "alias": "/inst .*/",
+          "color": "rgba(163, 163, 163, 0.55)",
+          "fill": 0
+        },
+        {
+          "$$hashKey": "object:921",
+          "alias": "/Average: etl-/",
+          "color": "#8F3BB8",
+          "linewidth": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(instance) (process_resident_memory_bytes{service=~\"etl-batch-parser\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "inst {{instance}}",
+          "refId": "A",
+          "step": 60
+        },
+        {
+          "expr": "avg by(service,version) (process_resident_memory_bytes{service=~\"etl-batch-parser\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Average: {{service}}:{{version}}",
+          "refId": "C"
+        },
+        {
+          "expr": "count by(service,version) (process_start_time_seconds{service=~\"etl-batch-parser\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Instances: {{service}}:{{version}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Parsers - Process Resident Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:139",
+          "format": "decbytes",
+          "logBase": 1,
+          "max": "10000000000",
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:140",
+          "decimals": 0,
+          "format": "short",
+          "logBase": 1,
+          "max": "15",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "editable": false,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 4
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Parser Status Page",
+          "url": "https://etl-batch-parser-dot-${project}.appspot.com/"
+        },
+        {
+          "targetBlank": true,
+          "title": "Parser Logs",
+          "url": "https://console.cloud.google.com/logs/viewer?project=${project}&interval=PT6H&resource=gae_app%2Fmodule_id%2Fetl-batch-parser&logName=projects%2F${project}%2Flogs%2Fappengine.googleapis.com%252Fstdout&logName=projects%2F${project}%2Flogs%2Fappengine.googleapis.com%252Fstderr&logName=projects%2F${project}%2Flogs%2Fappengine.googleapis.com%252Fnginx.request&advancedFilter=resource.type%3D%22gae_app%22%0Aresource.labels.module_id%3D%22etl-batch-parser%22"
+        }
+      ],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:358",
+          "alias": "/Instance Count/",
+          "color": "#6ed0e0",
+          "linewidth": 4,
+          "yaxis": 2
+        },
+        {
+          "$$hashKey": "object:359",
+          "alias": "/Average/",
+          "color": "#7eb26d",
+          "linewidth": 2
+        },
+        {
+          "$$hashKey": "object:360",
+          "alias": "/Instance CPU/",
+          "color": "rgba(115, 115, 115, 0.55)",
+          "fill": 0
+        },
+        {
+          "$$hashKey": "object:361",
+          "alias": "/Num CPU/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{service=~\"etl-.*\"}[2m])/etl_num_cpu ",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 5,
+          "legendFormat": "Instance CPU {{instance}}",
+          "refId": "A",
+          "step": 60
+        },
+        {
+          "expr": "avg(rate(process_cpu_seconds_total{service=~\"etl-.*\"}[5m])/etl_num_cpu)",
+          "format": "time_series",
+          "interval": "60s",
+          "intervalFactor": 4,
+          "legendFormat": "Average Parser CPU",
+          "refId": "C",
+          "step": 60
+        },
+        {
+          "expr": "count by(service) (process_start_time_seconds{service=~\"etl-.*\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "60s",
+          "intervalFactor": 1,
+          "legendFormat": "Instance Count",
+          "refId": "B"
+        },
+        {
+          "expr": "avg by (version)(etl_num_cpu)",
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "Num CPU",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Parser CPU - Per-instance & Avg",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:394",
+          "decimals": null,
+          "format": "percentunit",
+          "label": "CPU %",
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:395",
+          "decimals": 0,
+          "format": "short",
+          "label": "Instance Count / Num CPU",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 74,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (kind, table)(60*rate(etl_backend_failure_count[10m]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "$$hashKey": "object:2272",
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 50,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Backend Failure Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1996",
+          "format": "short",
+          "label": "Failures/Minute",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1997",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 86,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(table)(rate(etl_test_file_size_bytes_sum{}[30m]))",
+          "interval": "",
+          "legendFormat": "Bytes/Sec {{table}}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Processing Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:115",
+          "format": "Bps",
+          "label": null,
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:116",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 85,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.5,sum by(le, table)(rate(etl_test_file_size_bytes_bucket{}[10m])))",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "Bytes/File {{table}}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Median Filesize",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:115",
+          "format": "decbytes",
+          "label": null,
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:116",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "editable": false,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 19
+      },
+      "hiddenSeries": false,
+      "id": 92,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by(le, table, status) (rate(etl_insertion_time_seconds_bucket{service=\"etl-batch-parser\"}[5m])))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "0.95 {{status}} {{table}}",
+          "refId": "B",
+          "step": 10
+        },
+        {
+          "expr": "(sum by(le, table, status)(rate(etl_insertion_time_seconds_sum{service=\"etl-batch-parser\"}[5m]))) / (sum by(le, table, status)(rate(etl_insertion_time_seconds_count{service=\"etl-batch-parser\"}[5m])))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "average {{table}}",
+          "refId": "F",
+          "step": 10
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Approximate Insertion Time Percentiles",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "logBase": 2,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 19
+      },
+      "hiddenSeries": false,
+      "id": 94,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:1910",
+          "expr": "sum by(version, status, service) (irate(etl_worker_duration_seconds_count{}[4m]))",
+          "format": "time_series",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{version}} {{status}}",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Worker QPS",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 2,
+          "format": "none",
+          "label": "QPS",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "",
+      "editable": false,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 19
+      },
+      "hiddenSeries": false,
+      "id": 96,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/increase.*/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "$$hashKey": "object:2532",
+          "expr": "sum by(version, service, table)(increase(etl_insertion_time_seconds_count{}[10m]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "increase - {{version}} {{service}} {{table}}",
+          "refId": "A",
+          "step": 120
+        },
+        {
+          "$$hashKey": "object:2533",
+          "expr": "sum by(version, service)(etl_insertion_time_seconds_count{service=~\"$service\"})",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "total - {{version}} {{service}}",
+          "refId": "B",
+          "step": 120
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "BQ Insert Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Total",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": "Increases",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 27
       },
       "id": 69,
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "These are the per second request rates to the Annotation Service.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 0,
-            "y": 49
-          },
-          "hiddenSeries": false,
-          "id": 36,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:408",
-              "alias": "/Uptime:/",
-              "yaxis": 2
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(service, test_type) (rate(etl_annotator_Annotation_Time_Summary_count{service=~\"etl-.*\"}[1h]))",
-              "format": "time_series",
-              "hide": true,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Requests:  {{test_type}}",
-              "refId": "A"
-            },
-            {
-              "expr": "sum by(source, service)(rate(etl_annotator_Error_Count{service=~\"etl-.*\"}[1h]))",
-              "format": "time_series",
-              "hide": true,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Errors: {{source}}",
-              "refId": "B"
-            },
-            {
-              "expr": "avg by(service, version)(time()-process_start_time_seconds{service=~\"annotator\"})",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Uptime: {{service}} {{version}}",
-              "refId": "C"
-            },
-            {
-              "expr": "sum by (type, detail)(rate(annotator_latency_hist_usec_count{service=\"annotator\"}[1h]))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Requests: {{type}} {{detail}}",
-              "refId": "D"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Uptime and Incoming Request Rates",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:415",
-              "format": "reqps",
-              "label": null,
-              "logBase": 10,
-              "max": null,
-              "min": "1",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:416",
-              "format": "s",
-              "label": null,
-              "logBase": 10,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "Ripples in the various metrics likely reflect oscillations in the different queues feeding the ETL pipelines.  The queues slow down as they empty, and push faster when refilled.  This changes the mix of requests for different data types.  Since the different parsers handle annotation differently, this changes the load on the annotator.\n\nWe expect to see bursts of \"reject (loading)\" when a new dataset is requested.  However, we DON'T want to see reject (cache full).  These might mean that gardener is misbehaving, or that the dataset cache is broken in some way.\n\nEarly (<2013) NDTTests trigger a burst of \"missing annotations for client IP\". Not clear why.\n \nWe are sometimes seeing long bursts of \"Invalid IP\".  This requires more investigation - likely a problem with the raw data.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 49
-          },
-          "hiddenSeries": false,
-          "id": 71,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(test_type) (rate(etl_annotator_Annotation_Time_Summary_count{}[1h]))",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Requests {{test_type}}",
-              "metric": "annotator_Request_Response_Time_Summary_sum",
-              "refId": "B",
-              "step": 20
-            },
-            {
-              "expr": "sum by(source)(rate(etl_annotator_Error_Count{service=~\"etl-.*\"}[1h]))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Errors: {{source}}",
-              "refId": "C"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Request Rate Per Datatype / Result",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "transparent": true,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:851",
-              "decimals": null,
-              "format": "short",
-              "label": "Requests / Second",
-              "logBase": 10,
-              "max": null,
-              "min": "1",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:852",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$Gardener2_DS",
-          "description": "v2 API requests and error rate from K8S parsers.\n\nNOTE:  These should be zero, since the 2.0 pipeline should get annotations from uuid-annotator.  However, we haven't removed the annotator calls yet.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 16,
-            "y": 49
-          },
-          "hiddenSeries": false,
-          "id": 51,
-          "legend": {
-            "alignAsTable": false,
-            "avg": false,
-            "current": false,
-            "hideEmpty": false,
-            "hideZero": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:1408",
-              "alias": "/Error Rate/",
-              "yaxis": 2
-            },
-            {
-              "$$hashKey": "object:1409",
-              "alias": "/High/",
-              "color": "#F2495C",
-              "fill": 1,
-              "fillGradient": 3,
-              "zindex": 3
-            },
-            {
-              "$$hashKey": "object:1410",
-              "alias": "/Request Rate/",
-              "fill": 1
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(test_type) (rate(etl_annotator_Annotation_Time_Summary_count{container=\"etl-parser\"}[1h]))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "V2 Requests/sec {{test_type}}",
-              "refId": "D"
-            },
-            {
-              "expr": "(sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\", detail!=\"success\"}[10m])) or vector(0)) / (sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\"}[10m])) or vector(1)) > .01",
-              "interval": "",
-              "legendFormat": "High Error Rate",
-              "refId": "A"
-            },
-            {
-              "expr": "(sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\", detail!=\"success\"}[10m])) or vector(0)) / (sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\"}[10m])) or vector(1))",
-              "interval": "",
-              "legendFormat": "Error Rate",
-              "refId": "C"
-            }
-          ],
-          "thresholds": [
-            {
-              "$$hashKey": "object:1463",
-              "colorMode": "critical",
-              "fill": false,
-              "line": true,
-              "op": "gt",
-              "value": 0.01,
-              "yaxis": "right"
-            }
-          ],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "K8S Parser V2 Requests and Error Rate",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1435",
-              "format": "short",
-              "label": "V2 Requests/Sec",
-              "logBase": 10,
-              "max": null,
-              "min": "5",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1436",
-              "format": "percentunit",
-              "label": "V2 Error Rate",
-              "logBase": 1,
-              "max": "1",
-              "min": "0",
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "The annotation service runs in AppEngine Flex.  The term \"legacy\" refers to the legacy geolite1 maxmind datasets, NOT the legacy pipeline.\n\nRequest service time varies primarily on the number of IP addresses requested.  Requests of up to 5 are typically completed in about 100 usec.  Large requests of 400+ IPs typically take 2.5 msec.\n\nWhen there are large numbers of small requests, the worst case large request times spike, likely due to lock contention.  We might want to optimize this a bit better.\n\nRoughly 50% of the time is spent marshallling and unmarshallling.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 57
-          },
-          "hiddenSeries": false,
-          "id": 78,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": false
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "histogram_quantile(0.5, sum(rate(annotator_latency_hist_usec_bucket[30m])) by (version, le, type, detail))",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 10,
-              "legendFormat": "Median {{type}} {{detail}}",
-              "refId": "D"
-            },
-            {
-              "expr": "topk(1, histogram_quantile(0.99, sum(rate(annotator_latency_hist_usec_bucket[30m])) by (version, le, type, detail)))",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 10,
-              "legendFormat": "Worst 0.99 {{type}} {{detail}}",
-              "refId": "E"
-            },
-            {
-              "expr": "histogram_quantile(0.5, sum(rate(annotator_latency_hist_usec_bucket[30m])) by (version, le))",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 10,
-              "legendFormat": "Median request {{version}}",
-              "refId": "F"
-            }
-          ],
-          "thresholds": [
-            {
-              "$$hashKey": "object:2865",
-              "colorMode": "warning",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 100000,
-              "yaxis": "left"
-            }
-          ],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Internal Serving Latency",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "transparent": true,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:2837",
-              "decimals": null,
-              "format": "µs",
-              "label": "Time",
-              "logBase": 10,
-              "max": null,
-              "min": "20",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:2838",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$PrometheusDS",
-          "description": "These currently run on machines with 257GB available memory.\nGradually rising value likely indicates a memory leak.",
-          "editable": false,
-          "error": false,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 8,
-            "y": 57
-          },
-          "hiddenSeries": false,
-          "id": 88,
-          "isNew": false,
-          "legend": {
-            "alignAsTable": false,
-            "avg": false,
-            "current": false,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": false,
-            "min": false,
-            "rightSide": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:914",
-              "alias": "/Average: annotator/",
-              "color": "#37872D",
-              "linewidth": 2
-            },
-            {
-              "$$hashKey": "object:1069",
-              "alias": "/Instances:/",
-              "color": "rgb(114, 115, 115)"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "avg by(service,version) (process_resident_memory_bytes{service=~\"annotator.*\"})",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Average: {{service}}:{{version}}",
-              "refId": "C"
-            },
-            {
-              "expr": "avg by(service,version, instance) (process_resident_memory_bytes{service=~\"annotator.*\"})",
-              "format": "time_series",
-              "hide": false,
-              "interval": "",
-              "intervalFactor": 2,
-              "legendFormat": "Instances: {{service}}:{{version}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [
-            {
-              "$$hashKey": "object:1024",
-              "colorMode": "warning",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 240000000000,
-              "yaxis": "left"
-            },
-            {
-              "$$hashKey": "object:1030",
-              "colorMode": "critical",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 257000000000,
-              "yaxis": "left"
-            }
-          ],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Process Resident Memory",
-          "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "format": "",
-            "logBase": 0,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:139",
-              "decimals": null,
-              "format": "decbytes",
-              "logBase": 1,
-              "max": "300000000000",
-              "min": "200000000000",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:140",
-              "decimals": 0,
-              "format": "short",
-              "logBase": 1,
-              "max": "15",
-              "min": "0",
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        }
-      ],
+      "panels": [],
       "title": "Annotator Stats",
       "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "These are the per second request rates to the Annotation Service.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 28
+      },
+      "hiddenSeries": false,
+      "id": 36,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:408",
+          "alias": "/Uptime:/",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(service, test_type) (rate(etl_annotator_Annotation_Time_Summary_count{service=~\"etl-.*\"}[1h]))",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Requests:  {{test_type}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by(source, service)(rate(etl_annotator_Error_Count{service=~\"etl-.*\"}[1h]))",
+          "format": "time_series",
+          "hide": true,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Errors: {{source}}",
+          "refId": "B"
+        },
+        {
+          "expr": "avg by(service, version)(time()-process_start_time_seconds{service=~\"annotator\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Uptime: {{service}} {{version}}",
+          "refId": "C"
+        },
+        {
+          "expr": "sum by (type, detail)(rate(annotator_latency_hist_usec_count{service=\"annotator\"}[1h]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Requests: {{type}} {{detail}}",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Uptime and Incoming Request Rates",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:415",
+          "format": "reqps",
+          "label": null,
+          "logBase": 10,
+          "max": null,
+          "min": "1",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:416",
+          "format": "s",
+          "label": null,
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "Ripples in the various metrics likely reflect oscillations in the different queues feeding the ETL pipelines.  The queues slow down as they empty, and push faster when refilled.  This changes the mix of requests for different data types.  Since the different parsers handle annotation differently, this changes the load on the annotator.\n\nWe expect to see bursts of \"reject (loading)\" when a new dataset is requested.  However, we DON'T want to see reject (cache full).  These might mean that gardener is misbehaving, or that the dataset cache is broken in some way.\n\nEarly (<2013) NDTTests trigger a burst of \"missing annotations for client IP\". Not clear why.\n \nWe are sometimes seeing long bursts of \"Invalid IP\".  This requires more investigation - likely a problem with the raw data.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 28
+      },
+      "hiddenSeries": false,
+      "id": 71,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(test_type) (rate(etl_annotator_Annotation_Time_Summary_count{}[1h]))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Requests {{test_type}}",
+          "metric": "annotator_Request_Response_Time_Summary_sum",
+          "refId": "B",
+          "step": 20
+        },
+        {
+          "expr": "sum by(source)(rate(etl_annotator_Error_Count{service=~\"etl-.*\"}[1h]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Errors: {{source}}",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Request Rate Per Datatype / Result",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:851",
+          "decimals": null,
+          "format": "short",
+          "label": "Requests / Second",
+          "logBase": 10,
+          "max": null,
+          "min": "1",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:852",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$Gardener2_DS",
+      "description": "v2 API requests and error rate from K8S parsers.\n\nNOTE:  These should be zero, since the 2.0 pipeline should get annotations from uuid-annotator.  However, we haven't removed the annotator calls yet.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 28
+      },
+      "hiddenSeries": false,
+      "id": 51,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1408",
+          "alias": "/Error Rate/",
+          "yaxis": 2
+        },
+        {
+          "$$hashKey": "object:1409",
+          "alias": "/High/",
+          "color": "#F2495C",
+          "fill": 1,
+          "fillGradient": 3,
+          "zindex": 3
+        },
+        {
+          "$$hashKey": "object:1410",
+          "alias": "/Request Rate/",
+          "fill": 1
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by(test_type) (rate(etl_annotator_Annotation_Time_Summary_count{container=\"etl-parser\"}[1h]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "V2 Requests/sec {{test_type}}",
+          "refId": "D"
+        },
+        {
+          "expr": "(sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\", detail!=\"success\"}[10m])) or vector(0)) / (sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\"}[10m])) or vector(1)) > .01",
+          "interval": "",
+          "legendFormat": "High Error Rate",
+          "refId": "A"
+        },
+        {
+          "expr": "(sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\", detail!=\"success\"}[10m])) or vector(0)) / (sum(rate(annotator_external_latency_hist_msec_count{container=\"etl-parser\"}[10m])) or vector(1))",
+          "interval": "",
+          "legendFormat": "Error Rate",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [
+        {
+          "$$hashKey": "object:1463",
+          "colorMode": "critical",
+          "fill": false,
+          "line": true,
+          "op": "gt",
+          "value": 0.01,
+          "yaxis": "right"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "K8S Parser V2 Requests and Error Rate",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1435",
+          "format": "short",
+          "label": "V2 Requests/Sec",
+          "logBase": 10,
+          "max": null,
+          "min": "5",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1436",
+          "format": "percentunit",
+          "label": "V2 Error Rate",
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "The annotation service runs in AppEngine Flex.  The term \"legacy\" refers to the legacy geolite1 maxmind datasets, NOT the legacy pipeline.\n\nRequest service time varies primarily on the number of IP addresses requested.  Requests of up to 5 are typically completed in about 100 usec.  Large requests of 400+ IPs typically take 2.5 msec.\n\nWhen there are large numbers of small requests, the worst case large request times spike, likely due to lock contention.  We might want to optimize this a bit better.\n\nRoughly 50% of the time is spent marshallling and unmarshallling.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 36
+      },
+      "hiddenSeries": false,
+      "id": 78,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": false
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.5, sum(rate(annotator_latency_hist_usec_bucket[30m])) by (version, le, type, detail))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "Median {{type}} {{detail}}",
+          "refId": "D"
+        },
+        {
+          "expr": "topk(1, histogram_quantile(0.99, sum(rate(annotator_latency_hist_usec_bucket[30m])) by (version, le, type, detail)))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "Worst 0.99 {{type}} {{detail}}",
+          "refId": "E"
+        },
+        {
+          "expr": "histogram_quantile(0.5, sum(rate(annotator_latency_hist_usec_bucket[30m])) by (version, le))",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 10,
+          "legendFormat": "Median request {{version}}",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [
+        {
+          "$$hashKey": "object:2865",
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 100000,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Internal Serving Latency",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:2837",
+          "decimals": null,
+          "format": "µs",
+          "label": "Time",
+          "logBase": 10,
+          "max": null,
+          "min": "20",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:2838",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$PrometheusDS",
+      "description": "These currently run on machines with 257GB available memory.\nGradually rising value likely indicates a memory leak.",
+      "editable": false,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 36
+      },
+      "hiddenSeries": false,
+      "id": 88,
+      "isNew": false,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.5",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:914",
+          "alias": "/Average: annotator/",
+          "color": "#37872D",
+          "linewidth": 2
+        },
+        {
+          "$$hashKey": "object:1069",
+          "alias": "/Instances:/",
+          "color": "rgb(114, 115, 115)"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg by(service,version) (process_resident_memory_bytes{service=~\"annotator.*\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Average: {{service}}:{{version}}",
+          "refId": "C"
+        },
+        {
+          "expr": "avg by(service,version, instance) (process_resident_memory_bytes{service=~\"annotator.*\"})",
+          "format": "time_series",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Instances: {{service}}:{{version}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "$$hashKey": "object:1024",
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 240000000000,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:1030",
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 257000000000,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Process Resident Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "format": "",
+        "logBase": 0,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:139",
+          "decimals": null,
+          "format": "decbytes",
+          "logBase": 1,
+          "max": "300000000000",
+          "min": "200000000000",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:140",
+          "decimals": 0,
+          "format": "short",
+          "logBase": 1,
+          "max": "15",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": "5m",
@@ -3126,6 +3458,7 @@
         "allValue": null,
         "current": {
           "selected": true,
+          "tags": [],
           "text": [
             "Finishing",
             "Processing"
@@ -3283,7 +3616,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -3312,7 +3645,7 @@
     ]
   },
   "timezone": "utc",
-  "title": "Pipeline Overview",
+  "title": "Pipeline: Overview",
   "uid": "UTgnK-jMz",
-  "version": 4
+  "version": 1
 }
