@@ -1,0 +1,770 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 1,
+    "id": 365,
+    "iteration": 1624891633413,
+    "links": [],
+    "panels": [
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "$datasource",
+        "decimals": null,
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": null,
+              "filterable": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "hiddenSeries": false,
+        "id": 2,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.3.5",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\",  monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, machine))",
+            "interval": "",
+            "legendFormat": "{{machine}} {{protocol}}",
+            "refId": "A"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Median Download Throughput (Mbps) by machine [$site, $protocol]",
+        "tooltip": {
+          "shared": true,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "$datasource",
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {},
+            "links": []
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 2,
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "hiddenSeries": false,
+        "id": 4,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "rightSide": true,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.3.5",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [
+          {
+            "alias": "50th",
+            "linewidth": 3
+          }
+        ],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "histogram_quantile (.95, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, workload, protocol))",
+            "interval": "",
+            "legendFormat": "{{machine}} 95th -- {{workload}}",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile (0.75, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, workload,protocol))",
+            "interval": "",
+            "legendFormat": "{{machine}} 75th -- {{workload}}",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile (0.5, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\",  monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, workload,protocol))",
+            "interval": "",
+            "legendFormat": "{{machine}} 50th -- {{workload}}",
+            "refId": "C"
+          },
+          {
+            "expr": "histogram_quantile (0.25, sum(increase(ndt_test_rate_mbps_bucket{direction=~\"s2c|download\", monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (le, workload,protocol))",
+            "interval": "",
+            "legendFormat": "{{machine}} 25th -- {{workload}}",
+            "refId": "D"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "$protocol - Download Bandwidth Quartiles (Mbps) [$site, $protocol]",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": 0,
+            "format": "short",
+            "label": "Mbps",
+            "logBase": 10,
+            "max": null,
+            "min": "1",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "$datasource",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {}
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 10
+        },
+        "hiddenSeries": false,
+        "id": 10,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.3.5",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "60 * sum(rate(ndt7_client_sender_errors_total{deployment=~\"ndt.*\", machine=~\".*($site).*\"}[$interval])) by (machine)",
+            "interval": "",
+            "legendFormat": "Sender errors - {{machine}}",
+            "refId": "A"
+          },
+          {
+            "expr": "60 * sum(rate(ndt7_client_receiver_errors_total{deployment=~\"ndt.*\", machine=~\".*($site).*\"}[$interval])) by (machine)",
+            "interval": "",
+            "legendFormat": "Receiver errors - {{machine}}",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "ndt7 error rate (errors/min)",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": "errors/min",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "$datasource",
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {},
+            "links": []
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 10
+        },
+        "hiddenSeries": false,
+        "id": 8,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.3.5",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "60* sum(rate(ndt_test_rate_mbps_count{direction=~\"s2c|download\",  monitoring=\"false\", machine=~\".*($site).*\", protocol=\"$protocol\"}[$interval])) by (machine)",
+            "interval": "",
+            "legendFormat": "{{machine}}",
+            "refId": "A"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Rate of Downloads (Tests/Min) [$site, $protocol]",
+        "tooltip": {
+          "shared": true,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": null,
+            "format": "short",
+            "label": "Tests/Min",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "$datasource",
+        "description": "Left Y: Aggregate DaemonSet CPU usage expressed as a percentage of a node's total CPU cores.\n\nRight Y: Aggregate DaemonSet CPU usage as an absolute number of cores on a node.",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {},
+            "links": []
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 19
+        },
+        "hiddenSeries": false,
+        "id": 6,
+        "legend": {
+          "alignAsTable": true,
+          "avg": false,
+          "current": false,
+          "hideEmpty": true,
+          "hideZero": true,
+          "max": false,
+          "min": false,
+          "rightSide": true,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.3.5",
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [
+          {
+            "alias": "/^Cores/",
+            "yaxis": 2
+          }
+        ],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "machine_daemonset:container_cpu_usage_seconds:ratio{daemonset=~\"ndt.*\", machine=~\".*($site).*\"}",
+            "format": "time_series",
+            "hide": false,
+            "interval": "",
+            "intervalFactor": 1,
+            "legendFormat": "% Total: {{daemonset}} ({{machine}})",
+            "refId": "A"
+          },
+          {
+            "expr": "machine_daemonset:container_cpu_usage_seconds:sum_rate1h{daemonset=~\"ndt.*\", machine=~\".*($site).*\"}",
+            "format": "time_series",
+            "hide": false,
+            "interval": "",
+            "intervalFactor": 1,
+            "legendFormat": "Cores: {{daemonset}} ({{machine}})",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "NDT DaemonSet CPU usage by node",
+        "tooltip": {
+          "shared": true,
+          "sort": 2,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": null,
+            "format": "percentunit",
+            "label": "% Total Cores",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": "Cores",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 26,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "Platform Cluster (mlab-oti)",
+            "value": "Platform Cluster (mlab-oti)"
+          },
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "datasource",
+          "options": [],
+          "query": "prometheus",
+          "refresh": 1,
+          "regex": "^Platform(.*)",
+          "skipUrlSync": false,
+          "type": "datasource"
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "bom01",
+            "value": "bom01"
+          },
+          "datasource": "Platform Cluster (mlab-oti)",
+          "definition": "label_values(ndt_test_rate_mbps_bucket{deployment=\"ndt-canary\"}, machine)",
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": "",
+          "multi": false,
+          "name": "site",
+          "options": [],
+          "query": "label_values(ndt_test_rate_mbps_bucket{deployment=\"ndt-canary\"}, machine)",
+          "refresh": 1,
+          "regex": "/mlab[1-4].([a-z0-9]{5}).*/",
+          "skipUrlSync": false,
+          "sort": 1,
+          "tagValuesQuery": "",
+          "tags": [],
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": true,
+            "text": "3h",
+            "value": "3h"
+          },
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "interval",
+          "options": [
+            {
+              "selected": false,
+              "text": "10m",
+              "value": "10m"
+            },
+            {
+              "selected": true,
+              "text": "1h",
+              "value": "1h"
+            },
+            {
+              "selected": false,
+              "text": "3h",
+              "value": "3h"
+            },
+            {
+              "selected": false,
+              "text": "6h",
+              "value": "6h"
+            },
+            {
+              "selected": false,
+              "text": "12h",
+              "value": "12h"
+            },
+            {
+              "selected": false,
+              "text": "18h",
+              "value": "18h"
+            },
+            {
+              "selected": false,
+              "text": "1d",
+              "value": "1d"
+            },
+            {
+              "selected": false,
+              "text": "2d",
+              "value": "2d"
+            },
+            {
+              "selected": false,
+              "text": "1w",
+              "value": "1w"
+            },
+            {
+              "selected": false,
+              "text": "4w",
+              "value": "4w"
+            },
+            {
+              "selected": false,
+              "text": "13w",
+              "value": "13w"
+            },
+            {
+              "selected": false,
+              "text": "1y",
+              "value": "1y"
+            }
+          ],
+          "query": "10m,1h,3h,6h,12h,18h,1d,2d,1w,4w,13w,1y",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "ndt7+wss",
+            "value": "ndt7+wss"
+          },
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "protocol",
+          "options": [
+            {
+              "selected": false,
+              "text": "ndt5+ws",
+              "value": "ndt5+ws"
+            },
+            {
+              "selected": false,
+              "text": "ndt5+wss",
+              "value": "ndt5+wss"
+            },
+            {
+              "selected": false,
+              "text": "ndt5+plain",
+              "value": "ndt5+plain"
+            },
+            {
+              "selected": false,
+              "text": "ndt7+ws",
+              "value": "ndt7+ws"
+            },
+            {
+              "selected": true,
+              "text": "ndt7+wss",
+              "value": "ndt7+wss"
+            }
+          ],
+          "query": "ndt5+ws,ndt5+wss,ndt5+plain,ndt7+ws,ndt7+wss",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-7d",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "NDT: Canary Release Monitoring",
+    "uid": "kk1Zukz7k",
+    "version": 31
+  }
