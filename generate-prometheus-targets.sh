@@ -48,7 +48,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=ndt7 \
-      --label module=tcp_v4_online \
+      --label module=tcp_v4_tls_online \
       --project "${project}" \
       --select "ndt.iupui" > \
           ${output}/blackbox-targets/ndt7.json
@@ -58,7 +58,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --sites "${sites}" \
       --template_target={{hostname}}:443 \
       --label service=ndt7_ipv6 \
-      --label module=tcp_v6_online \
+      --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
       --project "${project}" \
       --select "ndt.iupui" \
