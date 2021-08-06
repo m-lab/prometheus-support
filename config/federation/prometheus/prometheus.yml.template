@@ -479,6 +479,13 @@ scrape_configs:
         target_label: instance
         replacement: ${1}
 
+      # Extract the site name from the FQDN of the node/service and drop it
+      # into a label named "site'.
+      - source_labels: [__address__]
+        regex: .*mlab[1-4]-([a-z]{3}[0-9t]{2}).*
+        target_label: site
+        replacement: ${1}
+
       # Since __address__ is the target that prometheus scrapes,
       # unconditionally reset the __address__ label to the blackbox exporter
       # address.
@@ -530,6 +537,13 @@ scrape_configs:
       - source_labels: [__address__]
         regex: (.*)
         target_label: __param_target
+        replacement: ${1}
+
+      # Extract the site name from the FQDN of the node/service and drop it
+      # into a label named "site'.
+      - source_labels: [__address__]
+        regex: .*mlab[1-4]-([a-z]{3}[0-9t]{2}).*
+        target_label: site
         replacement: ${1}
 
       # Use the "module" label defined in the input file as the module name for
@@ -633,6 +647,13 @@ scrape_configs:
         target_label: __param_target
         replacement: ${1}
 
+      # Extract the site name from the FQDN of the node/service and drop it
+      # into a label named "site'.
+      - source_labels: [__address__]
+        regex: .*mlab[1-4]-([a-z]{3}[0-9t]{2}).*
+        target_label: site
+        replacement: ${1}
+
       # Since __address__ is the target that prometheus will contact,
       # unconditionally reset the __address__ label to the script_exporter
       # address.
@@ -708,6 +729,13 @@ scrape_configs:
       - source_labels: [__address__]
         regex: (.*)
         target_label: __param_target
+        replacement: ${1}
+
+      # Extract the site name from the FQDN of the node/service and drop it
+      # into a label named "site'.
+      - source_labels: [__address__]
+        regex: .*mlab[1-4]-([a-z]{3}[0-9t]{2}).*
+        target_label: site
         replacement: ${1}
 
       # Since __address__ is the target that prometheus will contact,
