@@ -354,6 +354,13 @@ scrape_configs:
         action: replace
         target_label: machine
 
+      # Extract the a node's site from the node name, and add a new 'site'
+      # label using the value.
+      - source_labels: [node]
+        regex: mlab[1-4]-([a-z]{3}[0-9tc]{2}).*
+        target_label: site
+        replacement: ${1}
+
   # Scrape config for the node_exporter on eb.measurementlab.net.
   - job_name: 'eb-node-exporter'
     static_configs:
