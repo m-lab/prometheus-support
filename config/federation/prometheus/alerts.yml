@@ -489,19 +489,12 @@ groups:
 # too long, but *only* when the status of IPv4 is up for the same machine. If
 # IPv4 is up, then IPv6 should be too. However, do not alert on sites that
 # don't even have IPv6 (currently DEL02, LOS02, and TNR01). Also don't alert
-# about a machine when it is in GMX or lame-ducked. The semi abusive use of
-# label_replace() is to extract a site label, because we expect this alert will
-# mostly fire when IPv6 is down for an entire site, and grouping on site will
-# cause only a single alert to fire no matter how many machines at site are
-# affected.
+# about a machine when it is in GMX or lame-ducked.
   - alert: PlatformCluster_IPv6AtSiteDownForTooLong
     expr: |
       count by (site) (
-        label_replace(
-          probe_success{service="ndt7_ipv6"} == 0
-            unless on(machine) probe_success{service="ndt7"} == 0,
-          "site", "$1", "machine", "mlab[1-4].([a-z]{3}[0-9]{2}).*"
-        )
+        probe_success{service="ndt7_ipv6"} == 0
+          unless on(machine) probe_success{service="ndt7"} == 0,
       )
       unless on(site)
         probe_success{module="icmp", instance=~"s1.(del02|los02|tnr01).*"}
@@ -510,10 +503,7 @@ groups:
           gmx_machine_maintenance == 1,
           "site", "$1", "machine", "mlab[1-4].([a-z]{3}[0-9]{2}).*"
         ) or
-        label_replace(
-          kube_node_spec_taint{cluster="platform", key="lame-duck"},
-          "site", "$1", "node", "mlab[1-4].([a-z]{3}[0-9]{2}).*"
-        )
+        kube_node_spec_taint{cluster="platform", key="lame-duck"},
       ) > 0
     for: 24h
     labels:
