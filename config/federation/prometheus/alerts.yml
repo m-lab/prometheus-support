@@ -493,16 +493,11 @@ groups:
   - alert: PlatformCluster_IPv6AtSiteDownForTooLong
     expr: |
       count by (site) (
-        probe_success{service="ndt7_ipv6"} == 0
+        probe_success{service="ndt7_ipv6", ipv6="present"} == 0
           unless on(machine) probe_success{service="ndt7"} == 0
       )
-      unless on(site)
-        probe_success{module="icmp", instance=~"s1.(del02|los02|tnr01).*"}
       unless on(site) (
-        label_replace(
-          gmx_machine_maintenance == 1,
-          "site", "$1", "machine", "mlab[1-4].([a-z]{3}[0-9]{2}).*"
-        ) or
+        gmx_machine_maintenance == 1 or
         kube_node_spec_taint{cluster="platform", key="lame-duck"}
       ) > 0
     for: 24h
