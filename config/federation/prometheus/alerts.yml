@@ -494,7 +494,7 @@ groups:
     expr: |
       count by (site) (
         probe_success{service="ndt7_ipv6"} == 0
-          unless on(machine) probe_success{service="ndt7"} == 0,
+          unless on(machine) probe_success{service="ndt7"} == 0
       )
       unless on(site)
         probe_success{module="icmp", instance=~"s1.(del02|los02|tnr01).*"}
