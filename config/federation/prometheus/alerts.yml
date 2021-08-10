@@ -487,18 +487,16 @@ groups:
 
 # Alert when the status of IPv6 for any or all machines at a site is down for
 # too long, but *only* when the status of IPv4 is up for the same machine. If
-# IPv4 is up, then IPv6 should be too. However, do not alert on sites that
-# don't even have IPv6 (currently DEL02, LOS02, and TNR01). Also don't alert
-# about a machine when it is in GMX or lame-ducked.
+# IPv4 is up, then IPv6 should be too.
   - alert: PlatformCluster_IPv6AtSiteDownForTooLong
     expr: |
       count by (site) (
         probe_success{service="ndt7_ipv6", ipv6="present"} == 0
           unless on(machine) probe_success{service="ndt7"} == 0
-      )
-      unless on(site) (
-        gmx_machine_maintenance == 1 or
-        kube_node_spec_taint{cluster="platform", key="lame-duck"}
+        unless on(machine) (
+          gmx_machine_maintenance == 1 or
+          kube_node_spec_taint{cluster="platform", key="lame-duck"}
+        )
       ) > 0
     for: 24h
     labels:
