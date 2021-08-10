@@ -484,6 +484,29 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_TooManyServersDown
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/T-t8rWwGz/mlab-ns-prometheus-queries
 
+
+# Alert when the status of IPv6 for any or all machines at a site is down for
+# too long, but *only* when the status of IPv4 is up for the same machine. If
+# IPv4 is up, then IPv6 should be too.
+  - alert: PlatformCluster_IPv6AtSiteDownForTooLong
+    expr: |
+      count by (site) (
+        probe_success{service="ndt7_ipv6", ipv6="present"} == 0
+          unless on(machine) probe_success{service="ndt7"} == 0
+          unless on(machine) (
+            gmx_machine_maintenance == 1 or
+            kube_node_spec_taint{cluster="platform", key="lame-duck"}
+          )
+      ) > 0
+    for: 24h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: IPv6 at a site has been down for too long.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#PlatformCluster_IPv6AtSiteDownForTooLong
+
 # Check 5xx errors for the rate-limiter deployment, too.
   - alert: RateLimiterTooManyServerSideErrors
     expr: |
