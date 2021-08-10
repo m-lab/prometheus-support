@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 357,
-  "iteration": 1617995965275,
+  "id": 89,
+  "iteration": 1628628773577,
   "links": [],
   "panels": [
     {
@@ -67,7 +67,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt_ssl$protocol\"} OR\n    script_success{service=\"ndt5_client\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt.iupui\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\"},\n      \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt_ssl$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
+          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt_ssl$protocol\"} OR\n    script_success{service=\"ndt5_client\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt.iupui\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt_ssl$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -162,7 +162,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt7$protocol\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt.iupui\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\"},\n      \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt7$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
+          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt7$protocol\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt.iupui\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt7$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -258,7 +258,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} OR\n    probe_success{service=\"neubot_tls$protocol\", experiment=\"neubot\"} OR\n    label_replace(kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\"},\n      \"experiment\", \"neubot.mlab\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"neubot.mlab\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
+          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} OR\n    probe_success{service=\"neubot_tls$protocol\", experiment=\"neubot\"} OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"neubot.mlab\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"neubot.mlab\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -353,7 +353,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum (\n  node_filesystem_size_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"} -\n  node_filesystem_avail_bytes{cluster=\"platform-cluster\", mountpoint=\"/cache/data\"}\n)\n              ",
+          "expr": "sum (\n  node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n  node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}\n)\n              ",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -924,13 +924,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "count(kube_node_spec_taint{cluster=\"platform-cluster\", key=\"lame-duck\"})\n              ",
+          "expr": "count(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"})\n              ",
           "interval": "",
           "legendFormat": "nodes",
           "refId": "A"
         },
         {
-          "expr": "count(lame_duck_experiment{cluster=\"platform-cluster\"} == 1)",
+          "expr": "count(lame_duck_experiment{cluster=\"platform\"} == 1)",
           "interval": "",
           "legendFormat": "experiments",
           "refId": "B"
@@ -986,7 +986,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -1044,5 +1044,5 @@
   "timezone": "",
   "title": "MLAB-NS: Prometheus Queries",
   "uid": "T-t8rWwGz",
-  "version": 19
+  "version": 4
 }
