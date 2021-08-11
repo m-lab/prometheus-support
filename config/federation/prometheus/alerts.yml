@@ -492,10 +492,10 @@ groups:
     expr: |
       count by (site) (
         probe_success{service="ndt7_ipv6", ipv6="present"} == 0
-          unless on(machine) probe_success{service="ndt7"} == 0
           unless on(machine) (
-            gmx_machine_maintenance == 1 or
-            kube_node_spec_taint{cluster="platform", key="lame-duck"}
+            probe_success{service="ndt7"} == 0
+            or gmx_machine_maintenance == 1
+            or kube_node_spec_taint{cluster="platform", key="lame-duck"}
           )
       ) > 0
     for: 24h
