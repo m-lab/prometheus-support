@@ -43,6 +43,14 @@ WITH all_types AS (
   WHERE date > date('2019-01-01')
   UNION ALL
   SELECT
+    "raw_ndt.hopannotation1" AS datatype,
+    id,
+    date,
+    parser.Time as parseTime,
+  FROM
+    `{{PROJECT}}.raw_ndt.hopannotation1`
+  WHERE date > date('2019-01-01')
+  SELECT
     "raw_ndt.pcap" AS datatype,
     id,
     date,
