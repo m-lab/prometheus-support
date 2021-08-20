@@ -36,6 +36,9 @@ spec:
         env:
         - name: GF_PATHS_PROVISIONING
           value: "/etc/provisioning"
+          # doitintl-bigquery-datasource adds the BigQuery datasource.
+        - name: GF_INSTALL_PLUGINS
+          value: "doitintl-bigquery-datasource"
         - name: GF_SECURITY_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -95,8 +98,6 @@ spec:
           name: grafana-dashboard-provisioning
         - mountPath: /etc/provisioning/datasources
           name: grafana-datasource-provisioning
-        - mountPath: /etc/provisioning/plugins
-          name: grafana-plugin-provisioning
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
@@ -115,6 +116,3 @@ spec:
       - name: grafana-datasource-provisioning
         configMap:
           name: grafana-datasource-provisioning
-      - name: grafana-plugin-provisioning
-        configMap:
-          name: grafana-plugin-provisioning
