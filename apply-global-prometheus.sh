@@ -141,6 +141,10 @@ kubectl create configmap grafana-datasource-provisioning \
     --from-file=config/federation/grafana/provisioning/datasources \
     --dry-run -o json | kubectl apply -f -
 
+kubectl create configmap grafana-plugin-provisioning \
+    --from-file=config/federation/grafana/provisioning/plugins \
+    --dry-run -o json | kubectl apply -f -
+
 # Keep the password a secret.
 set +x
 # It does not really matter what the admin password is.
