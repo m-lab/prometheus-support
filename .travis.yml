@@ -1,8 +1,13 @@
-language: go
+dist: focal
 
+language: go
 go:
  - 1.13
 
+addons:
+  apt:
+    update: true
+    packages: ca-certificates
 
 # Unconditionally place the repo at GOPATH/src/${go_import_path} to support
 # forks.
@@ -160,5 +165,4 @@ before_install:
 - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
 - sudo apt-get -qq update
 - sudo apt-get install -y apache2-utils jq
-- sudo apt-get install --reinstall ca-certificates
 
