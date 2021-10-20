@@ -50,4 +50,8 @@ FROM (
     SELECT "ndt/pcap" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.pcap`
     WHERE date > date('2019-01-01')
+  UNION ALL
+    SELECT "ndt/scamper1" AS datatype, MIN(Parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_ndt.scamper1`
+    WHERE date > date('2019-01-01')
 )
