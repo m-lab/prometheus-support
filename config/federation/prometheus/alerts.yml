@@ -1207,16 +1207,21 @@ groups:
         currently reachable and the switch-monitoring user exists and has the
         right privileges.
 
-# PlatformCluster_PrometheusPersistentDiskTooFull fires when the persistent
+# PrometheusPersistentDiskTooFull fires when the persistent
 # disk mounted on the Prometheus VM gets too full (less than 5% free).
-  - alert: PlatformCluster_PrometheusPersistentDiskTooFull
+# TODO(cristinaleon): Add an alerts configuration to the data-processing instance
+# that includes its own version of this alert.
+  - alert: PrometheusPersistentDiskTooFull
     expr: |
-      node_filesystem_avail_bytes{cluster="platform-cluster", node="prometheus-platform-cluster", mountpoint="/mnt/local"}
-        / node_filesystem_size_bytes < 0.05
+      ((node_filesystem_avail_bytes{cluster="data-processing", mountpoint="/prometheus"}
+        / node_filesystem_size_bytes{cluster="data-processing", mountpoint="/prometheus"}) < 0.05) OR
+      ((node_filesystem_avail_bytes{cluster="prometheus-federation", mountpoint="/prometheus"}
+        / node_filesystem_size_bytes{cluster="prometheus-federation", mountpoint="/prometheus"}) < 0.05)
     for: 1m
     labels:
       repo: ops-tracker
       severity: ticket
+      cluster: prometheus-federation
     annotations:
       summary: The Prometheus persistent disk has less than 5% free space.
       description: >
@@ -1226,27 +1231,5 @@ groups:
         may need to be increased. GCE persistent disks can be resized, even on
         a running VM. Please refer to the [instructions on how to do this][1].
         [1]: https://github.com/m-lab/k8s-support/blob/master/manage-cluster/PROMETHEUS.md#resizing-the-prometheus-vms-disk
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=Platform%20Cluster%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=default
 
-  # The /cache/data mount point on a node has exceeded 95% of its capacity.
-  # This is where all pods write all experiment and core service data (shared
-  # pool of space). If this mount point fills up, all experiments and core
-  # services will fail in some way.
-  - alert: PlatformCluster_DataPartitionTooFull
-    expr: |
-      ((node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"} -
-          node_filesystem_free_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
-          / node_filesystem_size_bytes{cluster="platform-cluster", mountpoint="/cache/data"})
-        > 0.95
-    for: 10m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-    annotations:
-      summary: The /cache/data mount point on a node is more than 95% full.
-      description: All experiment and core service data is written to a shared
-        pool of disk space on a partition mounted at /cache/data. The mount
-        point has exceed 95% usage. Check that the pusher sidecar container in
-        all pods is working. See which pod is using all the space with `df -sh
-        /cache/data/*`.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
