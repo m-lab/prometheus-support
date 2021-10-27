@@ -389,6 +389,8 @@ scrape_configs:
       'match[]':
         - 'up{container="etl-gardener",instance=~".*:9090"}'
         - 'up{container="etl-parser",instance=~".*:9090"}'
+        - 'node_filesystem_size_bytes{deployment="node-exporter"}'
+        - 'node_filesystem_avail_bytes{deployment="node-exporter"}'
     static_configs:
       - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
 
