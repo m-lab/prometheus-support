@@ -1,0 +1,1783 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "This dashboard allows to compare the production version of ndt-server with the current canary release(s).",
+  "editable": false,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "iteration": 1634031066807,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 24,
+      "panels": [],
+      "title": "Summary",
+      "type": "row"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "Variation in the weighted average of download speeds worldwide, averaged over the selected time range to get a single value.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "global ratio"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 1
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.1",
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'global' as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanSpeed,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanSpeed,\n  \n  FROM $table\n  WHERE complete AND NOT slow AND $__timeFilter(time_column) \n  GROUP BY test_date\n)\nSELECT time, (canaryLogMeanSpeed / prodLogMeanSpeed - 1) AS percentFaster FROM global\nORDER BY time DESC\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Download Speed Variation",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "Variation in the weighted average of logMeanMinRTT for all metros, averaged over the selected time range to get a single value.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 5,
+        "y": 1
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.1",
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'global' as metric,\n  EXP(SUM(IF(NDTVersion = 'ndt',tests*SAFE.LN(logMeanMinRTT),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanMinRTT,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(logMeanMinRTT),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanMinRTT,\n  \n  FROM $table\n  WHERE complete AND NOT slow AND $__timeFilter(time_column) \n  GROUP BY test_date\n)\nSELECT time, (canaryLogMeanMinRTT / prodLogMeanMinRTT - 1) AS variation FROM global\nORDER BY time DESC\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "MinRTT variation",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 12,
+      "panels": [],
+      "title": "Global Stats",
+      "type": "row"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "Weighted Geometric Mean of log_mean_speed for all metros",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Mbits"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "global ratio"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "global percentFaster"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": -0.2
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 0.2
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'global' as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanSpeed,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanSpeed,\n  \n  FROM $table\n  -- If we remove the complete requirement, the difference drops to about 1.5% to 2%\n  -- For the tests that are NOT COMPLETE, the canary is 13% SLOWER than prod.  This is MOSTLY due to tests that run longer than 13 seconds.\n  WHERE $__timeFilter(time_column) AND NOT slow --AND complete \n  AND (\"$canary\" = \"ndt-canary\" OR site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\"))\n  GROUP BY test_date\n)\nSELECT *, (canaryLogMeanSpeed / prodLogMeanSpeed - 1) AS percentFaster FROM global\nORDER BY time DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Global Geometric Mean Download Speed",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "Weighted Geometric Mean of logMeanMinRTT for all metros",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "global percent"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": -0.2
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 0.2
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'global' as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(logMeanMinRTT),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanMinRTT,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(logMeanMinRTT),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanMinRTT,\n  \n  FROM $table\n  WHERE complete AND NOT slow AND $__timeFilter(time_column) \n  GROUP BY test_date\n)\nSELECT *, (canaryLogMeanMinRTT / prodLogMeanMinRTT - 1) AS percent FROM global\nORDER BY time DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Global Geometric Mean MinRTT",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Mbits"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*percent.*"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.scaleDistribution",
+                "value": {
+                  "type": "linear"
+                }
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    5,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'global' as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(q90),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodQ90,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(q90),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryQ90,\n  \n  FROM $table\n  WHERE NOT slow \n  AND (\"$canary\"=\"ndt-canary\" OR site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\"))\n  GROUP BY test_date\n)\nSELECT *, (canaryQ90 / prodQ90 - 1) AS q90percentFaster FROM global\nORDER BY time DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'global' as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(q75),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodQ75,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(q75),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryQ75,\n  \n  FROM $table\n  WHERE NOT slow \n  AND (\"$canary\"=\"ndt-canary\" OR site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\"))\n  GROUP BY test_date\n)\nSELECT *, (canaryQ75 / prodQ75 - 1) AS q75percentFaster FROM global\nORDER BY time DESC",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'global' as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(q25),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodQ25,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(q25),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryQ25,\n  \n  FROM $table\n  WHERE NOT slow \n  AND (\"$canary\"=\"ndt-canary\" OR site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\"))\n  GROUP BY test_date\n)\nSELECT *, (canaryQ25 / prodQ25 - 1) AS q25percentFaster FROM global\nORDER BY time DESC",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Log Mean Machine Quantiles",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "Weighted Geometric Mean of log_mean_speed for all metros, by client",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Mbits"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client percentFaster"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": -0.2
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 0.2
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH global as (\n  SELECT TIMESTAMP(test_date) as time,\n  'client' as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanSpeed,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanSpeed,\n  FROM $table\n  WHERE $__timeFilter(time_column) AND NOT slow and clientName = \"$client\" \n  AND (\"$canary\" = \"ndt-canary\" OR site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\"))\n  GROUP BY test_date, clientName HAVING SUM(clients) > 100 AND canaryLogMeanSpeed IS NOT NULL and prodLogMeanSpeed IS NOT NULL\n)\nSELECT *, (canaryLogMeanSpeed / prodLogMeanSpeed - 1) AS percentFaster FROM global\nORDER BY time DESC",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Global Geometric Mean Download Speed by client ($client)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH metro_summary AS (\n  SELECT TIMESTAMP(DATE_TRUNC(test_date, DAY)) as time,\n  site as metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanSpeed,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanSpeed,\n  SUM(clients) as nclients,\n  FROM $table\n  WHERE NOT slow \n  AND (\"$canary\"=\"ndt-canary\" OR site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\"))\n  GROUP BY time, metric HAVING canaryLogMeanSpeed IS NOT NULL\n)\n\nSELECT time, metric, (canaryLogMeanSpeed / prodLogMeanSpeed - 1) AS percentFaster FROM metro_summary WHERE nclients > $nclients\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Geometric Mean Download Speed Difference by site",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 10,
+      "panels": [],
+      "title": "Download Stats ($metro)",
+      "type": "row"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Mbits"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 36
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  TIMESTAMP(test_date) AS time,\n  metro AS metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanSpeed,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(log_Mean_Speed),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanSpeed,\nFROM $table\nWHERE NOT slow \nAND (\"$canary\"=\"ndt-canary\" OR site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\"))\nAND  $__timeFilter(time_column) AND metro IN ($metro)\nGROUP BY time, metric\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Geometric Mean Download Speed by metro ($metro)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 36
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  TIMESTAMP(test_date) AS time,\n  metro AS metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(Q90),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodQ90,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(Q90),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryQ90,\nFROM $table\nWHERE complete AND NOT slow AND  $__timeFilter(time_column) AND metro IN ($metro) AND site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\")\nGROUP BY time, metric\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Geometric Mean Download Q90 by metro ($metro)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 45
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  TIMESTAMP(test_date) AS time,\n  metro AS metric,\n  EXP(SUM(IF(NDTVersion = \"ndt\",tests*SAFE.LN(logMeanMinRTT),NULL))/SUM(IF(NDTVersion = \"ndt\", tests, 0))) AS prodLogMeanMinRTT,\n  EXP(SUM(IF(NDTVersion = \"$canary\",tests*SAFE.LN(logMeanMinRTT),NULL))/SUM(IF(NDTVersion = \"$canary\", tests, 0))) AS canaryLogMeanMinRTT,\nFROM $table\nWHERE complete AND NOT slow AND  $__timeFilter(time_column) AND metro IN ($metro) AND site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\")\nGROUP BY time, metric\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Geometric Mean MinRTT by metro ($metro)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": "BigQuery (mlab-sandbox)",
+      "description": "",
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 45
+      },
+      "id": 6,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "darkgrey"
+          },
+          "margin": {
+            "b": 20,
+            "t": 30
+          },
+          "paper_bgcolor": "rgba(0,0,0,0)",
+          "plot_bgcolor": "rgba(0,0,0,0)",
+          "xaxis": {
+            "autorange": true,
+            "range": [
+              946684800000,
+              978307200000
+            ],
+            "type": "date"
+          },
+          "yaxis": {
+            "autorange": true,
+            "range": [
+              -1,
+              4
+            ],
+            "type": "log"
+          }
+        },
+        "onclick": "console.log(data)\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data)\n\nconst pSBC=(p,c0,c1,l)=>{\n    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)==\"string\";\n    if(typeof(p)!=\"number\"||p<-1||p>1||typeof(c0)!=\"string\"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;\n    if(!this.pSBCr)this.pSBCr=(d)=>{\n        let n=d.length,x={};\n        if(n>9){\n            [r,g,b,a]=d=d.split(\",\"),n=d.length;\n            if(n<3||n>4)return null;\n            x.r=i(r[3]==\"a\"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1\n        }else{\n            if(n==8||n==6||n<4)return null;\n            if(n<6)d=\"#\"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:\"\");\n            d=i(d.slice(1),16);\n            if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;\n            else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1\n        }return x};\n    h=c0.length>9,h=a?c1.length>9?true:c1==\"c\"?!h:false:h,f=this.pSBCr(c0),P=p<0,t=c1&&c1!=\"c\"?this.pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;\n    if(!f||!t)return null;\n    if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);\n    else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);\n    a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;\n    if(h)return\"rgb\"+(f?\"a(\":\"(\")+r+\",\"+g+\",\"+b+(f?\",\"+m(a*1000)/1000:\"\")+\")\";\n    else return\"#\"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)\n};\n\nconst colorMap = new Map();\n\nmergedSeries = data.series.map((series) => {\n  if (series.name === undefined) {\n    return;\n  }\n  let metro = series.name.split('-')[0];\n  let color = colorMap.get(metro);\n  if (color === undefined) {\n    // Generate random color and add it to the map.\n    color = '#'+(Math.random()*0xFFFFFF<<0).toString(16);\n    colorMap.set(metro, color);\n  }\n  \n  if (series.name.includes('canary')) {\n    color = pSBC(0.3, color, false, true);\n  } else {\n    color = pSBC(-0.3, color, false, true);\n  }\n\n  console.log('colors', colorMap);\n  return {\n    name: series.name,\n    type: 'scatter',\n    mode: 'markers',\n    line: {\n      color: color\n    },\n    x: series.fields[0].values.buffer,\n    y: series.fields[1].values.buffer\n  };\n})\n\nreturn {data:mergedSeries,layout:{}};"
+      },
+      "targets": [
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  TIMESTAMP(test_date) AS time,\n  CONCAT(metro, \"-canary\") AS metric,\n  EXP(SUM(tests*SAFE.LN(log_Mean_Speed))/SUM(tests)) AS value,\nFROM $table\nWHERE complete AND NOT slow AND  $__timeFilter(time_column) AND metro IN ($metro) AND site IN (\"sin01\",\"lga05\",\"fln01\",\"bom01\",\"hkg01\",\"mil04\")\nAND NDTVersion = \"$canary\"\nGROUP BY time, metric\nORDER BY time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "dataset": "statistics",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "partitioned": false,
+          "partitionedField": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  TIMESTAMP(test_date) AS time,\n  CONCAT(metro, \"-prod\") AS metric,\n  EXP(SUM(tests*SAFE.LN(log_Mean_Speed))/SUM(tests)) AS value,\nFROM $table\nWHERE complete AND NOT slow AND  $__timeFilter(time_column) AND metro IN ($metro)\nAND NDTVersion = \"ndt\"\nGROUP BY time, metric\nORDER BY time\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "tests"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sharded": false,
+          "table": "ndt_canary_gfr",
+          "timeColumn": "test_date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Geometric Mean Download Speed by metro ($metro)",
+      "transparent": true,
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "datasource": "Platform Cluster (mlab-oti)",
+      "description": "NOTE: This should be normalized by number of tests, instead of the raw errors per minute.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "60 * avg(\n     label_replace(\n     rate(ndt7_client_sender_errors_total{deployment=\"ndt\", machine=~\".*$metro.*\"}[$interval]),\n      \"site\",\n      \"$1\",\n      \"machine\",\n      \"mlab[1-4]-([a-zA-Z]{3}\\\\d{2}).+\"\n    )\n) by (site, deployment)",
+          "interval": "",
+          "legendFormat": "{{deployment}} {{site}}",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "60 * avg(\n     label_replace(\n     rate(ndt7_client_sender_errors_total{deployment=\"$canary\", machine=~\".*$metro.*\"}[$interval]),\n      \"site\",\n      \"$1\",\n      \"machine\",\n      \"mlab[1-4]-([a-zA-Z]{3}\\\\d{2}).+\"\n    )\n) by (site, deployment)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{deployment}} {{site}}",
+          "refId": "B"
+        }
+      ],
+      "title": "ndt7 error rate (errors/min) by machine ($metro)",
+      "transparent": true,
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "mlab-sandbox",
+          "value": "mlab-sandbox"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "project",
+        "options": [
+          {
+            "selected": true,
+            "text": "mlab-sandbox",
+            "value": "mlab-sandbox"
+          },
+          {
+            "selected": false,
+            "text": "mlab-staging",
+            "value": "mlab-staging"
+          },
+          {
+            "selected": false,
+            "text": "mlab-oti",
+            "value": "mlab-oti"
+          }
+        ],
+        "query": "mlab-sandbox,mlab-staging,mlab-oti",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "mlab-sandbox.statistics.ndt_canary_2021",
+          "value": "mlab-sandbox.statistics.ndt_canary_2021"
+        },
+        "datasource": "BigQuery (mlab-sandbox)",
+        "definition": "SELECT CONCAT(table_catalog, \".\", table_schema, \".\", table_name) FROM `$project.statistics.INFORMATION_SCHEMA.TABLES` WHERE STARTS_WITH(table_name, 'ndt') OR STARTS_WITH(table_name, 'gfr')",
+        "description": "",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "table",
+        "options": [],
+        "query": "SELECT CONCAT(table_catalog, \".\", table_schema, \".\", table_name) FROM `$project.statistics.INFORMATION_SCHEMA.TABLES` WHERE STARTS_WITH(table_name, 'ndt') OR STARTS_WITH(table_name, 'gfr')",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "lga"
+          ],
+          "value": [
+            "lga"
+          ]
+        },
+        "datasource": "BigQuery (mlab-sandbox)",
+        "definition": "SELECT DISTINCT METRO FROM $table",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "metro",
+        "options": [],
+        "query": "SELECT DISTINCT METRO FROM $table",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "auto": false,
+        "auto_count": 30,
+        "auto_min": "10s",
+        "current": {
+          "selected": false,
+          "text": "10m",
+          "value": "10m"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "label": null,
+        "name": "interval",
+        "options": [
+          {
+            "selected": true,
+            "text": "10m",
+            "value": "10m"
+          },
+          {
+            "selected": false,
+            "text": "30m",
+            "value": "30m"
+          },
+          {
+            "selected": false,
+            "text": "1h",
+            "value": "1h"
+          },
+          {
+            "selected": false,
+            "text": "6h",
+            "value": "6h"
+          },
+          {
+            "selected": false,
+            "text": "12h",
+            "value": "12h"
+          },
+          {
+            "selected": false,
+            "text": "1d",
+            "value": "1d"
+          },
+          {
+            "selected": false,
+            "text": "7d",
+            "value": "7d"
+          },
+          {
+            "selected": false,
+            "text": "14d",
+            "value": "14d"
+          }
+        ],
+        "query": "10m,30m,1h,6h,12h,1d,7d,14d",
+        "queryValue": "",
+        "refresh": 2,
+        "skipUrlSync": false,
+        "type": "interval"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "ist",
+          "value": "ist"
+        },
+        "datasource": "BigQuery (mlab-sandbox)",
+        "definition": "SELECT DISTINCT clientName FROM $table",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "client",
+        "options": [],
+        "query": "SELECT DISTINCT clientName FROM $table",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "5000",
+          "value": "5000"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "label": null,
+        "name": "nclients",
+        "options": [
+          {
+            "selected": true,
+            "text": "5000",
+            "value": "5000"
+          }
+        ],
+        "query": "5000",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "ndt-canary",
+          "value": "ndt-canary"
+        },
+        "datasource": "BigQuery (mlab-sandbox)",
+        "definition": "SELECT DISTINCT NDTVersion FROM $table",
+        "description": "The canary version to compare",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Canary version",
+        "multi": false,
+        "name": "canary",
+        "options": [],
+        "query": "SELECT DISTINCT NDTVersion FROM $table",
+        "refresh": 1,
+        "regex": "/^ndt-.+/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "NDT: Canary Validation",
+  "uid": "kFrLGgLVu",
+  "version": 73
+}
