@@ -105,3 +105,13 @@ spec:
         - mountPath: /prometheus-config
           name: prometheus-config
 
+      # Disks created manually, can be named here explicitly using
+      # gcePersistentDisk instead of the persistentVolumeClaim.
+      volumes:
+      - name: prometheus-storage
+        persistentVolumeClaim:
+          claimName: auto-prometheus-ssd0
+      - name: prometheus-config
+        configMap:
+          name: prometheus-cluster-config
+
