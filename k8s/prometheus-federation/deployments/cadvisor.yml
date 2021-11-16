@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: cadvisor
-        image: k8s.gcr.io/cadvisor:v0.34.0
+        image: gcr.io/cadvisor/cadvisor:v0.38.8
         args:
           - --housekeeping_interval=60s
           - --max_housekeeping_interval=75s
@@ -27,7 +27,7 @@ spec:
           - --event_storage_age_limit=default=0
           # Note: tcp,udp stats are very expensive.
           # Enable only network, diskIO, cpu, memory.
-          - --disable_metrics=percpu,disk,tcp,udp
+          - --disable_metrics=percpu,tcp,udp
           # Only show stats for docker containers.
           - --docker_only
         resources:
