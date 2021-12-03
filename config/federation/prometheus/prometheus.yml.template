@@ -138,7 +138,11 @@ scrape_configs:
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/${1}/proxy/metrics
-
+      # Add explicit cluster label to node metrics.
+      - source_labels: []
+        regex: .*
+        target_label: cluster
+        replacement: prometheus-federation
 
   # kube-state-metrics reports status about k8s objects (pods, nodes,
   # deployments, etc). We cannot rely on service-discovery because the metric
