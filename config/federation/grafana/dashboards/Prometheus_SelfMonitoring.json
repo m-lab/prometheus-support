@@ -15,13 +15,17 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 297,
-  "iteration": 1575931594609,
+  "id": 192,
+  "iteration": 1638825747083,
   "links": [],
   "panels": [
     {
       "collapsed": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -35,22 +39,39 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "rgba(237, 129, 40, 0.89)",
-        "rgba(50, 172, 45, 0.97)"
-      ],
       "datasource": "$datasource",
-      "decimals": null,
-      "format": "s",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -61,39 +82,23 @@
       "id": 40,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "expr": "min(time() - process_start_time_seconds{container=\"prometheus\"})",
@@ -105,36 +110,44 @@
           "step": 1800
         }
       ],
-      "thresholds": "",
       "title": "Uptime",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "rgba(237, 129, 40, 0.89)",
-        "rgba(50, 172, 45, 0.97)"
-      ],
       "datasource": "$datasource",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -145,39 +158,23 @@
       "id": 41,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "options": {},
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "8.1.1",
       "targets": [
         {
           "expr": "max(prometheus_tsdb_blocks_loaded)",
@@ -189,18 +186,8 @@
           "step": 1800
         }
       ],
-      "thresholds": "",
       "title": "TSDB Blocks in Memory",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "avg"
+      "type": "stat"
     },
     {
       "aliasColors": {},
@@ -208,6 +195,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -216,6 +209,7 @@
         "x": 12,
         "y": 1
       },
+      "hiddenSeries": false,
       "id": 43,
       "legend": {
         "alignAsTable": true,
@@ -233,9 +227,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -308,6 +303,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -316,6 +317,7 @@
         "x": 0,
         "y": 5
       },
+      "hiddenSeries": false,
       "id": 38,
       "legend": {
         "avg": false,
@@ -331,9 +333,10 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -403,6 +406,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -411,6 +420,7 @@
         "x": 8,
         "y": 5
       },
+      "hiddenSeries": false,
       "id": 39,
       "legend": {
         "avg": false,
@@ -426,9 +436,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -501,6 +512,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -509,6 +526,7 @@
         "x": 16,
         "y": 5
       },
+      "hiddenSeries": false,
       "id": 42,
       "legend": {
         "alignAsTable": true,
@@ -526,9 +544,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -593,14 +612,21 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 12
       },
+      "hiddenSeries": false,
       "id": 49,
       "legend": {
         "alignAsTable": true,
@@ -618,9 +644,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -713,14 +740,21 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 6,
+        "w": 8,
+        "x": 8,
         "y": 12
       },
+      "hiddenSeries": false,
       "id": 48,
       "legend": {
         "alignAsTable": true,
@@ -738,9 +772,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -827,112 +862,21 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 12,
+        "w": 8,
+        "x": 16,
         "y": 12
       },
-      "id": 47,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": false,
-        "max": true,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(prometheus_tsdb_head_samples_appended_total[5m])*60",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Rate of Ingested Samples",
-          "refId": "A"
-        },
-        {
-          "expr": "prometheus_tsdb_head_series",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "legendFormat": "Series in Memory",
-          "refId": "C"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Samples",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$datasource",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 18,
-        "y": 12
-      },
+      "hiddenSeries": false,
       "id": 44,
       "legend": {
         "alignAsTable": true,
@@ -950,9 +894,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1024,6 +969,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1032,24 +983,28 @@
         "x": 0,
         "y": 19
       },
-      "id": 26,
+      "hiddenSeries": false,
+      "id": 47,
       "legend": {
+        "alignAsTable": true,
         "avg": false,
         "current": false,
-        "max": false,
+        "max": true,
         "min": false,
+        "rightSide": true,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1059,33 +1014,25 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "deriv(avg by(mountpoint, workload) (node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", pod!~\".*srglv.*\", cluster!~\".+\"})[1d:10m]) * 86400",
+          "expr": "rate(prometheus_tsdb_head_samples_appended_total[5m])*60",
           "format": "time_series",
-          "hide": false,
-          "interval": "60s",
-          "intervalFactor": 4,
-          "legendFormat": "",
-          "metric": "",
-          "refId": "A",
-          "step": 240
+          "intervalFactor": 1,
+          "legendFormat": "Rate of Ingested Samples",
+          "refId": "A"
         },
         {
-          "expr": "deriv(avg by(mountpoint) (node_filesystem_avail_bytes{mountpoint=\"/prometheus\", pod!~\".*srglv.*\"})[1d:10m]) * 86400",
+          "expr": "prometheus_tsdb_head_series",
           "format": "time_series",
-          "hide": false,
-          "interval": "60s",
-          "intervalFactor": 4,
-          "legendFormat": "",
-          "metric": "",
-          "refId": "C",
-          "step": 240
+          "intervalFactor": 1,
+          "legendFormat": "Series in Memory",
+          "refId": "C"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Daily Filesystem Consumption Rate",
+      "title": "Samples",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1101,11 +1048,11 @@
       },
       "yaxes": [
         {
-          "format": "bytes",
-          "label": "",
+          "format": "short",
+          "label": null,
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -1128,6 +1075,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -1136,6 +1089,7 @@
         "x": 12,
         "y": 19
       },
+      "hiddenSeries": false,
       "id": 25,
       "legend": {
         "avg": false,
@@ -1151,9 +1105,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.1.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1163,40 +1118,62 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "predict_linear(avg by(mountpoint) (node_filesystem_avail_bytes{mountpoint=\"/prometheus\"})[2d:10m], 10*86400)",
+          "exemplar": true,
+          "expr": "predict_linear(kubelet_volume_stats_available_bytes{cluster=\"prometheus-federation\", persistentvolumeclaim=\"auto-prometheus-disk0\"}[2d:10m], 10*86400)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
-          "legendFormat": "{{deployment}} - 10 days",
+          "legendFormat": "prometheus-federation - 10 days",
           "refId": "C"
         },
         {
-          "expr": "node_filesystem_avail_bytes{mountpoint=\"/prometheus\"}",
+          "exemplar": true,
+          "expr": "kubelet_volume_stats_available_bytes{cluster=\"prometheus-federation\", persistentvolumeclaim=\"auto-prometheus-disk0\"}",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
-          "legendFormat": "{{deployment}} - raw",
+          "legendFormat": "prometheus-federation - raw",
           "refId": "D"
         },
         {
-          "expr": "predict_linear(avg by(mountpoint) (node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", cluster!~\".+\"})[2d:10m], 10*86400)",
+          "exemplar": true,
+          "expr": "predict_linear(node_filesystem_avail_bytes{node=\"prometheus-platform-cluster\", mountpoint=\"/mnt/local\"}[2d:10m], 10*86400)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
-          "legendFormat": "{{deployment}} - 10 days",
+          "legendFormat": "platform - 10 days",
           "refId": "E"
         },
         {
-          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/local\", cluster!~\".+\"}",
+          "exemplar": true,
+          "expr": "node_filesystem_avail_bytes{node=\"prometheus-platform-cluster\", mountpoint=\"/mnt/local\"}",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
-          "legendFormat": "{{deployment}} - raw",
+          "legendFormat": "platform - raw",
           "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "predict_linear(kubelet_volume_stats_available_bytes{instance=~\"gke-data-processing.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"}[2d:10m], 10*86400)",
+          "format": "time_series",
+          "hide": false,
+          "interval": "60s",
+          "intervalFactor": 2,
+          "legendFormat": "data-processing - 10 days",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "kubelet_volume_stats_available_bytes{instance=~\"gke-data-processing.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"}",
+          "hide": false,
+          "interval": "60s",
+          "legendFormat": "data-processing - raw",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1219,6 +1196,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:89",
           "decimals": null,
           "format": "bytes",
           "label": "",
@@ -1228,6 +1206,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:90",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1242,18 +1221,20 @@
       }
     }
   ],
-  "refresh": false,
-  "schemaVersion": 20,
+  "refresh": "",
+  "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "tags": [],
+          "selected": true,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Data source",
@@ -1261,6 +1242,7 @@
         "name": "datasource",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1300,6 +1282,5 @@
   "timezone": "utc",
   "title": "Prometheus: Self-monitoring",
   "uid": "sVklmeHik",
-  "version": 139
-
+  "version": 149
 }
