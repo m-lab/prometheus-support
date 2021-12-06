@@ -393,7 +393,7 @@ scrape_configs:
       'match[]':
         - 'up{container="etl-gardener",instance=~".*:9090"}'
         - 'up{container="etl-parser",instance=~".*:9090"}'
-        - 'kubelet_volume_stats_used_bytes{persistentvolumeclaim="auto-prometheus-ssd0"}'
+        - 'kubelet_volume_stats_available_bytes{persistentvolumeclaim="auto-prometheus-ssd0"}'
         - 'kubelet_volume_stats_capacity_bytes{persistentvolumeclaim="auto-prometheus-ssd0"}'
     static_configs:
       - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
