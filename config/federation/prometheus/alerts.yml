@@ -1213,23 +1213,17 @@ groups:
 # that includes its own version of this alert.
   - alert: PrometheusPersistentDiskTooFull
     expr: |
-      ((node_filesystem_avail_bytes{cluster="data-processing", mountpoint="/prometheus"}
-        / node_filesystem_size_bytes{cluster="data-processing", mountpoint="/prometheus"}) < 0.05) OR
-      ((node_filesystem_avail_bytes{cluster="prometheus-federation", mountpoint="/prometheus"}
-        / node_filesystem_size_bytes{cluster="prometheus-federation", mountpoint="/prometheus"}) < 0.05)
+      ((kubelet_volume_stats_available_bytes{cluster="data-processing", persistentvolumeclaim="auto-prometheus-ssd0"}
+        / kubelet_volume_stats_capacity_bytes) < 0.05) OR
+      ((kubelet_volume_stats_available_bytes{cluster="prometheus-federation", persistentvolumeclaim="auto-prometheus-disk0"}
+        / kubelet_volume_stats_capacity_bytes) < 0.05)
     for: 1m
     labels:
       repo: ops-tracker
       severity: ticket
-      cluster: prometheus-federation
+      cluster: "{{ $labels.cluster }}"
     annotations:
       summary: The Prometheus persistent disk has less than 5% free space.
-      description: >
-        The Prometheus persistent disk has less than 5% free space.
-        Investigate filesystem usage on the VM, but most likely if this alert
-        fires it means that the size of the persistent disk is too small and
-        may need to be increased. GCE persistent disks can be resized, even on
-        a running VM. Please refer to the [instructions on how to do this][1].
-        [1]: https://github.com/m-lab/k8s-support/blob/master/manage-cluster/PROMETHEUS.md#resizing-the-prometheus-vms-disk
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#prometheuspersistentdisktoofull
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=default
 

@@ -138,7 +138,11 @@ scrape_configs:
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/${1}/proxy/metrics
-
+      # Add explicit cluster label to node metrics.
+      - source_labels: []
+        regex: .*
+        target_label: cluster
+        replacement: prometheus-federation
 
   # kube-state-metrics reports status about k8s objects (pods, nodes,
   # deployments, etc). We cannot rely on service-discovery because the metric
@@ -389,8 +393,8 @@ scrape_configs:
       'match[]':
         - 'up{container="etl-gardener",instance=~".*:9090"}'
         - 'up{container="etl-parser",instance=~".*:9090"}'
-        - 'node_filesystem_size_bytes{deployment="node-exporter"}'
-        - 'node_filesystem_avail_bytes{deployment="node-exporter"}'
+        - 'kubelet_volume_stats_available_bytes{persistentvolumeclaim="auto-prometheus-ssd0"}'
+        - 'kubelet_volume_stats_capacity_bytes{persistentvolumeclaim="auto-prometheus-ssd0"}'
     static_configs:
       - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
 
