@@ -19,10 +19,10 @@
     ]
   },
   "description": "This dashboard allows to compare the production version of ndt-server with the current canary release(s).",
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1639521166423,
+  "iteration": 1639523959931,
   "links": [],
   "panels": [
     {
@@ -40,7 +40,7 @@
       "type": "row"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "Variation in the weighted average of download speeds worldwide, averaged over the selected time range to get a single value.",
       "fieldConfig": {
         "defaults": {
@@ -139,7 +139,7 @@
       "type": "stat"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "Variation in the weighted average of logMeanMinRTT for all metros, averaged over the selected time range to get a single value.",
       "fieldConfig": {
         "defaults": {
@@ -239,7 +239,7 @@
       "type": "row"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "Weighted Geometric Mean of log_mean_speed for all metros",
       "fieldConfig": {
         "defaults": {
@@ -385,7 +385,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "Weighted Geometric Mean of logMeanMinRTT for all metros",
       "fieldConfig": {
         "defaults": {
@@ -515,7 +515,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -731,7 +731,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "Weighted Geometric Mean of log_mean_speed for all metros, by client",
       "fieldConfig": {
         "defaults": {
@@ -862,7 +862,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -989,7 +989,7 @@
       "type": "row"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1103,7 +1103,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1214,7 +1214,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1328,7 +1328,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "BigQuery (mlab-sandbox)",
+      "datasource": "${datasource}",
       "description": "",
       "gridPos": {
         "h": 9,
@@ -1543,12 +1543,32 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "BigQuery (mlab-oti)",
+          "value": "BigQuery (mlab-oti)"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "doitintl-bigquery-datasource",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
       {
         "allValue": null,
         "current": {
@@ -1588,7 +1608,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "mlab-oti.statistics.ndt_canary_2021",
           "value": "mlab-oti.statistics.ndt_canary_2021"
         },
@@ -1779,5 +1799,5 @@
   "timezone": "",
   "title": "NDT: Canary Validation",
   "uid": "kFrLGgLVu",
-  "version": 1
+  "version": 2
 }
