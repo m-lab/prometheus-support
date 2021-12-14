@@ -852,6 +852,18 @@ groups:
       description: Gardener runs in the "data-processing" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
 
+  - alert: GardenerHistoricalThroughputIsStalled
+    expr: |
+      gardener_up_to_date == 1
+        UNLESS ON(datatype, date) bq_gardener_historical_throughput > 0
+    for: 1m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Gardener historical throughput below 1 for {{ $labels.datatype }}.
+
 # ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
 # may increase due to a transient issue or a short-lived trigger for a parser
 # bug. The alert will fire as long as the rate is above zero for more than 5
