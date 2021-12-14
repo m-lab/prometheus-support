@@ -19,10 +19,10 @@
     ]
   },
   "description": "This dashboard allows to compare the production version of ndt-server with the current canary release(s).",
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1634031066807,
+  "iteration": 1639521166423,
   "links": [],
   "panels": [
     {
@@ -1552,9 +1552,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "mlab-sandbox",
-          "value": "mlab-sandbox"
+          "selected": true,
+          "text": "mlab-oti",
+          "value": "mlab-oti"
         },
         "description": null,
         "error": null,
@@ -1565,7 +1565,7 @@
         "name": "project",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "mlab-sandbox",
             "value": "mlab-sandbox"
           },
@@ -1575,7 +1575,7 @@
             "value": "mlab-staging"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "mlab-oti",
             "value": "mlab-oti"
           }
@@ -1588,11 +1588,11 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "mlab-sandbox.statistics.ndt_canary_2021",
-          "value": "mlab-sandbox.statistics.ndt_canary_2021"
+          "selected": true,
+          "text": "mlab-oti.statistics.ndt_canary_2021",
+          "value": "mlab-oti.statistics.ndt_canary_2021"
         },
-        "datasource": "BigQuery (mlab-sandbox)",
+        "datasource": "BigQuery (mlab-oti)",
         "definition": "SELECT CONCAT(table_catalog, \".\", table_schema, \".\", table_name) FROM `$project.statistics.INFORMATION_SCHEMA.TABLES` WHERE STARTS_WITH(table_name, 'ndt') OR STARTS_WITH(table_name, 'gfr')",
         "description": "",
         "error": null,
@@ -1620,7 +1620,7 @@
             "lga"
           ]
         },
-        "datasource": "BigQuery (mlab-sandbox)",
+        "datasource": "BigQuery (mlab-oti)",
         "definition": "SELECT DISTINCT METRO FROM $table",
         "description": null,
         "error": null,
@@ -1706,7 +1706,7 @@
           "text": "ist",
           "value": "ist"
         },
-        "datasource": "BigQuery (mlab-sandbox)",
+        "datasource": "BigQuery (mlab-oti)",
         "definition": "SELECT DISTINCT clientName FROM $table",
         "description": null,
         "error": null,
@@ -1752,7 +1752,7 @@
           "text": "ndt-canary",
           "value": "ndt-canary"
         },
-        "datasource": "BigQuery (mlab-sandbox)",
+        "datasource": "BigQuery (mlab-oti)",
         "definition": "SELECT DISTINCT NDTVersion FROM $table",
         "description": "The canary version to compare",
         "error": null,
@@ -1779,5 +1779,5 @@
   "timezone": "",
   "title": "NDT: Canary Validation",
   "uid": "kFrLGgLVu",
-  "version": 73
+  "version": 1
 }
