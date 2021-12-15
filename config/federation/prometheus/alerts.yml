@@ -854,7 +854,7 @@ groups:
 
   - alert: GardenerHistoricalThroughputIsStalled
     expr: |
-      gardener_up_to_date[1d] == 1
+      (gardener_up_to_date > 0)[1d:]
         UNLESS ON(datatype, date) bq_gardener_historical_throughput > 0
     for: 1m
     labels:
