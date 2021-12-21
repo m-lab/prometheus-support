@@ -257,7 +257,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "irate(node_network_receive_bytes_total{nodepool=\"data-processing-annotation-export\"}[5m])*8",
+          "expr": "irate(node_network_receive_bytes_total{nodepool=~\"data-processing-.*annotation.*-export\"}[5m])*8",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -267,7 +267,7 @@
         },
         {
           "exemplar": true,
-          "expr": "irate(node_network_transmit_bytes_total{nodepool=\"data-processing-annotation-export\"}[5m])*8",
+          "expr": "irate(node_network_transmit_bytes_total{nodepool=~\"data-processing-.*annotation.*-export\"}[5m])*8",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -440,7 +440,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=\"data-processing-annotation-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -451,7 +451,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=\"data-processing-annotation-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -462,7 +462,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=\"data-processing-annotation-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -473,7 +473,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=\"data-processing-annotation-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -484,7 +484,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=\"data-processing-annotation-export\"}[5m])) * 100",
+          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -495,7 +495,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=\"data-processing-annotation-export\"}[5m])) * 100",
+          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -862,7 +862,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(go_memstats_alloc_bytes{deployment=\"annotation-export\", instance=~\".*:9990\"}) ",
+          "expr": "sum(go_memstats_alloc_bytes{deployment=~\".*annotation.*-export\", instance=~\".*:9990\"}) ",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -873,7 +873,7 @@
         },
         {
           "exemplar": true,
-          "expr": "rate(go_memstats_alloc_bytes_total{deployment=\"annotation-export\", instance=~\".*:9990\"}[2m])",
+          "expr": "rate(go_memstats_alloc_bytes_total{deployment=~\".*annotation.*-export\", instance=~\".*:9990\"}[2m])",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -885,7 +885,7 @@
         },
         {
           "exemplar": true,
-          "expr": "go_memstats_stack_inuse_bytes{deployment=\"annotation-export\", instance=~\".*:9990\"}",
+          "expr": "go_memstats_stack_inuse_bytes{deployment=~\".*annotation.*-export\", instance=~\".*:9990\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -896,7 +896,7 @@
         },
         {
           "exemplar": true,
-          "expr": "go_memstats_heap_inuse_bytes{deployment=\"annotation-export\", instance=~\".*:9990\"}",
+          "expr": "go_memstats_heap_inuse_bytes{deployment=~\".*annotation.*-export\", instance=~\".*:9990\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1007,7 +1007,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(go_memstats_alloc_bytes{deployment=\"annotation-export\", instance=~\".*:9991\"}) ",
+          "expr": "sum(go_memstats_alloc_bytes{deployment=~\".*annotation.*-export\", instance=~\".*:9991\"}) ",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1018,7 +1018,7 @@
         },
         {
           "exemplar": true,
-          "expr": "rate(go_memstats_alloc_bytes_total{deployment=\"annotation-export\", instance=~\".*:9991\"}[2m])",
+          "expr": "rate(go_memstats_alloc_bytes_total{deployment=~\".*annotation.*-export\", instance=~\".*:9991\"}[2m])",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -1030,7 +1030,7 @@
         },
         {
           "exemplar": true,
-          "expr": "go_memstats_stack_inuse_bytes{deployment=\"annotation-export\", instance=~\".*:9991\"}",
+          "expr": "go_memstats_stack_inuse_bytes{deployment=~\".*annotation.*-export\", instance=~\".*:9991\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1041,7 +1041,7 @@
         },
         {
           "exemplar": true,
-          "expr": "go_memstats_heap_inuse_bytes{deployment=\"annotation-export\", instance=~\".*:9991\"}",
+          "expr": "go_memstats_heap_inuse_bytes{deployment=~\".*annotation.*-export\", instance=~\".*:9991\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1140,14 +1140,14 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(process_resident_memory_bytes{deployment=\"annotation-export\"})",
+          "expr": "sum(process_resident_memory_bytes{deployment=~\".*annotation.*-export\"})",
           "interval": "",
           "legendFormat": "resident",
           "refId": "B"
         },
         {
           "exemplar": true,
-          "expr": "sum(process_virtual_memory_bytes{deployment=\"annotation-export\"})",
+          "expr": "sum(process_virtual_memory_bytes{deployment=~\".*annotation.*-export\"})",
           "interval": "",
           "legendFormat": "virtual",
           "refId": "A"
@@ -1240,7 +1240,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(go_goroutines{deployment=\"annotation-export\"})",
+          "expr": "sum(go_goroutines{deployment=~\".*annotation.*-export\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -1345,7 +1345,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "rate(process_cpu_seconds_total{deployment=\"annotation-export\", container=\"pusher\"}[2m])  ",
+          "expr": "rate(process_cpu_seconds_total{deployment=~\".*annotation.*-export\", container=\"pusher\"}[2m])  ",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1356,7 +1356,7 @@
         },
         {
           "exemplar": true,
-          "expr": "rate(process_cpu_seconds_total{deployment=\"annotation-export\", container=\"stats-pipeline\"}[2m])  ",
+          "expr": "rate(process_cpu_seconds_total{deployment=~\".*annotation.*-export\", container=\"stats-pipeline\"}[2m])  ",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1460,7 +1460,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(process_open_fds{deployment=\"annotation-export\"}) by (deployment)",
+          "expr": "sum(process_open_fds{deployment=~\".*annotation.*-export\"}) by (deployment)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1674,7 +1674,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(stats_pipeline_exporter_uploaded_bytes{deployment=\"annotation-export\"}) by (table)",
+          "expr": "sum(stats_pipeline_exporter_uploaded_bytes{deployment=~\".*annotation.*-export\"}) by (table)",
           "interval": "",
           "legendFormat": "{{table}}",
           "refId": "A"
@@ -1769,7 +1769,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(stats_pipeline_exporter_bytes_processed{deployment=\"annotation-export\"}) by (table)",
+          "expr": "sum(stats_pipeline_exporter_bytes_processed{deployment=~\".*annotation.*-export\"}) by (table)",
           "interval": "",
           "legendFormat": "{{table}}",
           "refId": "A"
@@ -1868,7 +1868,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum by(table, success) (rate (stats_pipeline_exporter_written_files_total{deployment=\"annotation-export\"}[2m]))",
+          "expr": "sum by(table, success) (rate (stats_pipeline_exporter_written_files_total{deployment=~\".*annotation.*-export\"}[2m]))",
           "instant": false,
           "interval": "",
           "legendFormat": "{{table}} {{success}}",
@@ -1876,7 +1876,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by(table, success) (rate (stats_pipeline_exporter_written_files{deployment=\"annotation-export\"}[2m]))",
+          "expr": "sum by(table, success) (rate (stats_pipeline_exporter_written_files{deployment=~\".*annotation.*-export\"}[2m]))",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -1962,7 +1962,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum by(le) (rate(stats_pipeline_exporter_inflight_uploads_bucket{deployment=\"annotation-export\"}[2m]))",
+          "expr": "sum by(le) (rate(stats_pipeline_exporter_inflight_uploads_bucket{deployment=~\".*annotation.*-export\"}[2m]))",
           "format": "heatmap",
           "interval": "",
           "intervalFactor": 10,
@@ -2031,7 +2031,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum by (le) (rate (stats_pipeline_exporter_uploads_queue_size_bucket{deployment=\"annotation-export\"}[2m]))",
+          "expr": "sum by (le) (rate (stats_pipeline_exporter_uploads_queue_size_bucket{deployment=~\".*annotation.*-export\"}[2m]))",
           "format": "heatmap",
           "interval": "",
           "intervalFactor": 10,
