@@ -49,7 +49,7 @@ WITH all_types AS (
   WHERE date > date('2019-03-28')
 )
 
-SELECT datatype, COUNT(distinct date) AS value_historical_throughput
+SELECT datatype, COUNT(distinct date) AS value_throughput
 FROM all_types
 WHERE (parseTime
         BETWEEN TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
