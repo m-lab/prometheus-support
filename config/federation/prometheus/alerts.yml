@@ -826,7 +826,7 @@ groups:
 # There should always be 3 or 4 of the past four dates available, most of time.
   - alert: GardenerDailyParsingIsBehind
     expr: |
-      bq_gardener_daily_done_last_4_days < 4
+      bq_gardener_daily_done_last_4_days < 3
     for: 48h
     labels:
       repo: dev-tracker
@@ -837,20 +837,53 @@ groups:
       description: Gardener runs in the "data-processing" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
 
-# GardenerSlowProgress fires when reprocessing is stalled for NDT7
-# The expected rate is actually much higher than 24, but this is a conservative SLO.
-  - alert: GardenerSlowProgress
-    expr: |
-      bq_gardener_dates_fully_parsed_last_day < 24
+# GardenerHistoricalThroughputIsStalled fires when historical reprocessing for
+# datatypes under processing by the v2 pipeline falls below 1 date / day.
+ - alert: GardenerHistoricalThroughputIsStalled
+    expr: increase(gardener_jobs_total{status="success"}[1d]) > 0
+             UNLESS ON(datatype)
+                bq_gardener_historical_throughput > 0
     for: 10m
     labels:
       repo: dev-tracker
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: Reprocessing for {{ $labels.datatype }} has fallen behind.
+      summary: Gardener historical throughput below 1 for {{ $labels.datatype }}.
       description: Gardener runs in the "data-processing" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+
+# GardenerFailureRateTooHighOrMissing fires when the number of failed Gardener jobs
+# in the last day rises above 1% or the number of total jobs is not reported.
+  - alert: GardenerFailureRateTooHighOrMissing
+    expr: (sum(rate(gardener_jobs_total{status!="success"}[1d])) by (datatype) /
+      sum(rate(gardener_jobs_total[1d])) by (datatype)) > 0.01
+      OR absent(gardener_jobs_total)
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Gardener job failure rate above 1% or missing for {{ $labels.datatype }}.
+      description: Gardener runs in the "data-processing" cluster.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+
+# ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
+# in the last hour rises above 1% or the number of total tasks is not reported.
+  - alert: ParserFailureRateTooHighOrMissing
+    expr: (sum(rate(etl_task_total{status!="OK", cluster="data-processing"}[1h])) by (datatype) /
+      sum(rate(etl_task_total{cluster="data-processing"}[1h])) by (datatype)) > 0.01
+      OR absent(etl_task_total{cluster="data-processing"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Parser task failure rate above 1% or missing for {{ $labels.datatype }}.
+      description: Parsers filtered by cluster="data-processing".
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/UTgnK-jMz/pipeline-overview?orgId=1&refresh=5m&from=now-2d&to=now&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-LegacyDS=Data%20Proc%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)&var-states=Finishing&var-states=Processing&var-states2=complete
 
 # ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
 # may increase due to a transient issue or a short-lived trigger for a parser
@@ -921,24 +954,6 @@ groups:
       summary: Too many NDT tests are missing geolocation annotations!
       description: The annotator runs in AppEngine. Check logs and recent
         deployments. The daily and batch parsers may also be affected.
-
-# Gardener_ParseTimeDifferenceTooOldOrMissing fires when the maximum and minimum
-# parse_time values for each data set are greater than 80 days or the
-# bq_gardener_parse_time_age_days metrics disappear.
-  - alert: Gardener_ParseTimeDifferenceTooOldOrMissing
-    expr: |
-      bq_gardener_parse_time_age_days > 80
-        or absent(bq_gardener_parse_time_age_days)
-    for: 10m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-      cluster: prometheus-federation
-    annotations:
-      summary: 'Gardener progress is too slow for dataset: {{ $labels.dataset }}'
-      description: Gardener throughput is dependent on the etl-batch-parser and
-        associated queues.yaml.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/
 
 # Rebot_MissingMetrics fires when no metrics can be collected for rebot for
 # the past 10 minutes.
