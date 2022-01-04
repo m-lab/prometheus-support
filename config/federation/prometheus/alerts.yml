@@ -856,9 +856,9 @@ groups:
       description: Gardener runs in the "data-processing" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
 
-# GardenerConfigDatatypeMissingInGardenerHistoricalThroughput fires when a datatype exists in the Gardener config
+# GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery fires when a datatype exists in the Gardener config
 # but not in the bq_gardener_historical_throughput query.
-  - alert: GardenerConfigDatatypeMissingInGardenerHistoricalThroughput
+  - alert: GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery
     expr: |
       gardener_config_datatypes UNLESS ON(datatype) bq_gardener_historical_throughput
     for: 190m
@@ -869,7 +869,7 @@ groups:
     annotations:
       summary: Datatype {{ $labels.datatype }} in Gardener config missing in bq_gardener_historical_throughput query.
       description: A Gardener configured datatype was not discovered by the bq_gardener_historical_throughput
-        metric in BigQuery Exporter. Check the query to make sure that all the datatypes configured in the Gardener
+        query in BigQuery Exporter. Check the query to make sure that all the datatypes configured in the Gardener
         exist in the query.
 
 # GardenerFailureRateTooHighOrMissing fires when the number of failed Gardener jobs
