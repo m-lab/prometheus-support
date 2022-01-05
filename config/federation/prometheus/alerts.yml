@@ -890,8 +890,8 @@ groups:
 # ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
 # in the last hour rises above 1% or the number of total tasks is not reported.
   - alert: ParserFailureRateTooHighOrMissing
-    expr: (sum(rate(etl_task_total{status!="OK", cluster="data-processing"}[1h])) by (datatype) /
-      sum(rate(etl_task_total{cluster="data-processing"}[1h])) by (datatype)) > 0.01
+    expr: (sum(rate(etl_task_total{status!="OK", cluster="data-processing"}[1h])) by (table) /
+      sum(rate(etl_task_total{cluster="data-processing"}[1h])) by (table)) > 0.01
       OR absent(etl_task_total{cluster="data-processing"})
     for: 10m
     labels:
@@ -899,7 +899,7 @@ groups:
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: Parser task failure rate above 1% or missing for {{ $labels.datatype }}.
+      summary: Parser task failure rate above 1% or missing for {{ $labels.table }}.
       description: Parsers filtered by cluster="data-processing".
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/UTgnK-jMz/pipeline-overview?orgId=1&refresh=5m&from=now-2d&to=now&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-LegacyDS=Data%20Proc%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)&var-states=Finishing&var-states=Processing&var-states2=complete
 
