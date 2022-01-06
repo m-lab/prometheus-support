@@ -4,7 +4,7 @@
       {
         "builtIn": 1,
         "datasource": "-- Grafana --",
-        "enable": false,
+        "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
@@ -21,24 +21,10 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 319,
-  "iteration": 1641426563564,
+  "id": 379,
+  "iteration": 1641441478981,
   "links": [],
   "panels": [
-    {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 28,
-      "panels": [],
-      "title": "Row title",
-      "type": "row"
-    },
     {
       "aliasColors": {},
       "bars": false,
@@ -59,7 +45,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 1
+        "y": 0
       },
       "hiddenSeries": false,
       "id": 18,
@@ -86,19 +72,23 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:282",
           "alias": "yyz",
           "color": "#56A64B",
           "linewidth": 2
         },
         {
+          "$$hashKey": "object:283",
           "alias": "lga",
           "color": "#5794F2"
         },
         {
+          "$$hashKey": "object:284",
           "alias": "yul",
           "color": "#8AB8FF"
         },
         {
+          "$$hashKey": "object:285",
           "alias": "ord",
           "color": "#1F60C4"
         }
@@ -108,7 +98,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(60 * sum by(metro) (\n    label_replace(rate(ndt_test_rate_mbps_count{protocol=~\"$protocol\", monitoring=\"false\"}[5m]),\n       \"metro\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}).*\"))\n)",
+          "exemplar": true,
+          "expr": "(60 * sum by(metro) (\n    label_replace(rate(ndt_test_rate_mbps_count{protocol=~\"$protocol\", monitoring=\"false\"}[$interval]),\n       \"metro\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}).*\"))\n)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -180,7 +171,7 @@
         "h": 9,
         "w": 16,
         "x": 8,
-        "y": 1
+        "y": 0
       },
       "hiddenSeries": false,
       "id": 22,
@@ -262,20 +253,6 @@
       }
     },
     {
-      "collapsed": false,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 10
-      },
-      "id": 26,
-      "panels": [],
-      "title": "Row title",
-      "type": "row"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -294,7 +271,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 11
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 24,
@@ -415,7 +392,7 @@
         "h": 8,
         "w": 16,
         "x": 8,
-        "y": 11
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 20,
@@ -536,7 +513,7 @@
         "h": 8,
         "w": 16,
         "x": 8,
-        "y": 19
+        "y": 17
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -604,7 +581,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 20
+        "y": 18
       },
       "hiddenSeries": false,
       "id": 4,
@@ -715,7 +692,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 27
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 8,
@@ -824,7 +801,7 @@
         "h": 7,
         "w": 16,
         "x": 8,
-        "y": 27
+        "y": 25
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -872,391 +849,6 @@
       "yBucketBound": "upper",
       "yBucketNumber": null,
       "yBucketSize": null
-    },
-    {
-      "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 34
-      },
-      "id": 30,
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": true,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$datasource",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 42
-          },
-          "hiddenSeries": false,
-          "id": 9,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": false,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "color": "#70dbed"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"s2c|download\", machine=~\".*$site.*\"}[5m])) -\nsum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"s2c|download\", machine=~\".*$site.*\"}[5m] offset 7d))",
-              "format": "heatmap",
-              "hide": false,
-              "interval": "5m",
-              "intervalFactor": 1,
-              "legendFormat": "{{le}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Weekly change",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "series",
-            "name": null,
-            "show": true,
-            "values": [
-              "total"
-            ]
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:124",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:125",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "cards": {
-            "cardPadding": 0,
-            "cardRound": 0
-          },
-          "color": {
-            "cardColor": "#cffaff",
-            "colorScale": "linear",
-            "colorScheme": "interpolateSpectral",
-            "exponent": 0.5,
-            "max": null,
-            "min": null,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "$datasource",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 16,
-            "x": 8,
-            "y": 42
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 11,
-          "interval": "5m",
-          "legend": {
-            "show": true
-          },
-          "links": [],
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "expr": "(\n   sum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"s2c|download\",  machine=~\".*$site.*\"}[5m])) -\n   sum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"s2c|download\",  machine=~\".*$site.*\"}[5m] offset 7d))\n) > 0",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "5m",
-              "intervalFactor": 1,
-              "legendFormat": "{{le}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "Heatmap of Download Weekly Changes",
-          "tooltip": {
-            "show": true,
-            "showHistogram": true
-          },
-          "tooltipDecimals": 0,
-          "transparent": true,
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "Mbits",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null
-          },
-          "yBucketBound": "upper",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "aliasColors": {},
-          "bars": true,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$datasource",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "links": []
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 49
-          },
-          "hiddenSeries": false,
-          "id": 12,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": false,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.3.5",
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "alias": "/.*/",
-              "color": "#70dbed"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"c2s|upload\", machine=~\".*$site.*\"}[5m])) - sum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"c2s|upload\", machine=~\".*$site.*\"}[5m] offset 7d))",
-              "format": "heatmap",
-              "hide": false,
-              "interval": "5m",
-              "intervalFactor": 1,
-              "legendFormat": "{{le}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Weekly change",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "series",
-            "name": null,
-            "show": true,
-            "values": [
-              "total"
-            ]
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:124",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:125",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "cards": {
-            "cardPadding": 0,
-            "cardRound": 0
-          },
-          "color": {
-            "cardColor": "#cffaff",
-            "colorScale": "linear",
-            "colorScheme": "interpolateSpectral",
-            "exponent": 0.5,
-            "max": null,
-            "min": null,
-            "mode": "spectrum"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "$datasource",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 15,
-            "x": 8,
-            "y": 49
-          },
-          "heatmap": {},
-          "hideZeroBuckets": true,
-          "highlightCards": true,
-          "id": 13,
-          "interval": "5m",
-          "legend": {
-            "show": true
-          },
-          "links": [],
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "expr": "(\n   sum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"c2s|upload\",  machine=~\".*$site.*\"}[5m])) -\n   sum by(le) (increase(ndt_test_rate_mbps_bucket{protocol=~\"$protocol\", direction=~\"c2s|upload\",  machine=~\".*$site.*\"}[5m] offset 7d))\n) > 0",
-              "format": "heatmap",
-              "instant": false,
-              "interval": "5m",
-              "intervalFactor": 1,
-              "legendFormat": "{{le}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "title": "Heatmap of Upload Weekly Changes",
-          "tooltip": {
-            "show": true,
-            "showHistogram": true
-          },
-          "tooltipDecimals": 0,
-          "transparent": true,
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "Mbits",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null
-          },
-          "yBucketBound": "upper",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        }
-      ],
-      "title": "Row title",
-      "type": "row"
     }
   ],
   "refresh": false,
@@ -1289,7 +881,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "lga"
           ],
@@ -1323,20 +915,16 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": [
-            "ndt7+wss"
-          ],
-          "value": [
-            "ndt7+wss"
-          ]
+          "selected": true,
+          "text": "ndt7+wss",
+          "value": "ndt7+wss"
         },
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
-        "multi": true,
+        "multi": false,
         "name": "protocol",
         "options": [
           {
@@ -1378,9 +966,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "30m",
-          "value": "30m"
+          "selected": true,
+          "text": "10m",
+          "value": "10m"
         },
         "description": null,
         "error": null,
@@ -1401,12 +989,12 @@
             "value": "5m"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "10m",
             "value": "10m"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "30m",
             "value": "30m"
           },
@@ -1424,7 +1012,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
@@ -1454,6 +1042,6 @@
   },
   "timezone": "utc",
   "title": "NDT: Client Rates, Quantiles over time, & Heatmaps",
-  "uid": "7bv138lWj",
-  "version": 41
+  "uid": "SAvQ0QAnj",
+  "version": 2
 }
