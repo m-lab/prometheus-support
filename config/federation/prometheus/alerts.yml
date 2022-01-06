@@ -859,7 +859,7 @@ groups:
 # but not in the bq_gardener_historical_throughput query.
   - alert: GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery
     expr: |
-      gardener_jobs_total UNLESS ON(datatype) bq_gardener_historical_throughput
+      gardener_config_datatypes UNLESS ON(datatype) bq_gardener_historical_throughput
     for: 190m
     labels:
       repo: dev-tracker
