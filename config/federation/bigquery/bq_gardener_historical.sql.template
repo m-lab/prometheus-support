@@ -62,7 +62,7 @@ processed_types AS (
     all_types
   WHERE
     (parseTime BETWEEN TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR) AND CURRENT_TIMESTAMP())
-    AND date < DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY) -- exclude daily.
+    AND date < DATE_SUB(DATE(parseTime), INTERVAL 1 DAY) -- exclude daily.
   GROUP BY
     datatype
 )
