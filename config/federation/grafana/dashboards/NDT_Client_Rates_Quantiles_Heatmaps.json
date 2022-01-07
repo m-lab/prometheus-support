@@ -21,8 +21,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
-  "id": 379,
-  "iteration": 1641441478981,
+  "id": 97,
+  "iteration": 1641584072018,
   "links": [],
   "panels": [
     {
@@ -99,7 +99,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "(60 * sum by(metro) (\n    label_replace(rate(ndt_test_rate_mbps_count{protocol=~\"$protocol\", monitoring=\"false\"}[$interval]),\n       \"metro\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}).*\"))\n)",
+          "expr": "(60 * sum by(metro) (\n    label_replace(rate(ndt_test_rate_mbps_count{protocol=~\"$protocol\", machine=~\".*$site.*\", monitoring=\"false\"}[$interval]),\n       \"metro\", \"$1\", \"machine\", \"mlab[1-4].([a-z]{3}).*\"))\n)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -112,7 +112,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$protocol per-metro (global)",
+      "title": "Total test rate of $protocol per-metro ($site)",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -748,6 +748,7 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transparent": true,
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -881,7 +882,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "lga"
           ],
@@ -915,7 +916,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "ndt7+wss",
           "value": "ndt7+wss"
         },
@@ -966,9 +967,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "10m",
-          "value": "10m"
+          "selected": false,
+          "text": "30m",
+          "value": "30m"
         },
         "description": null,
         "error": null,
@@ -989,12 +990,12 @@
             "value": "5m"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "10m",
             "value": "10m"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "30m",
             "value": "30m"
           },
@@ -1043,5 +1044,5 @@
   "timezone": "utc",
   "title": "NDT: Client Rates, Quantiles over time, & Heatmaps",
   "uid": "SAvQ0QAnl",
-  "version": 3
+  "version": 4
 }
