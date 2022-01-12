@@ -56,7 +56,8 @@ spec:
                "--storage.tsdb.path=/prometheus",
                "--storage.tsdb.retention.time=120d",
                "--web.enable-lifecycle",
-               "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net"]
+               "--web.external-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net",
+               "--enable-feature=memory-snapshot-on-shutdown"]
         ports:
           - containerPort: 9090
         resources:

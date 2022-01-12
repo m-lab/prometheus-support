@@ -64,7 +64,8 @@ spec:
         args: ["--config.file=/etc/prometheus/prometheus.yml",
                "--storage.tsdb.retention.time=120d",
                "--storage.tsdb.path=/data",
-               "--web.enable-lifecycle"]
+               "--web.enable-lifecycle",
+               "--enable-feature=memory-snapshot-on-shutdown"]
         ports:
           - containerPort: 9090
         resources:
