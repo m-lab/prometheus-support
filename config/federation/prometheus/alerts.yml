@@ -843,7 +843,7 @@ groups:
 # deployment, so the timeout for this alert is 3 hours and 10 minutes.
   - alert: GardenerHistoricalThroughputIsStalled
     expr: |
-      increase(gardener_jobs_total{status="success"}[1d] offset 24h) > 0
+      increase(gardener_jobs_total{status="success", daily="false"}[1d] offset 24h) > 0
         UNLESS ON(datatype) bq_gardener_historical_throughput > 0
     for: 190m
     labels:
@@ -854,6 +854,23 @@ groups:
       summary: Gardener historical throughput below 1 for {{ $labels.datatype }}.
       description: Gardener runs in the "data-processing" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+
+# GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery fires when
+# a datatype exists in the Gardener config
+# but not in the bq_gardener_historical_throughput query.
+  - alert: GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery
+    expr: |
+      gardener_config_datatypes UNLESS ON(datatype) bq_gardener_historical_throughput
+    for: 190m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Datatype {{ $labels.datatype }} in Gardener config missing in
+        bq_gardener_historical_throughput query.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#gardenerconfigdatatypemissingingardenerhistoricalthroughputquery
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?from=now-2d&to=now&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)&orgId=1
 
 # GardenerFailureRateTooHighOrMissing fires when the number of failed Gardener jobs
 # in the last day rises above 1% or the number of total jobs is not reported.
@@ -874,8 +891,8 @@ groups:
 # ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
 # in the last hour rises above 1% or the number of total tasks is not reported.
   - alert: ParserFailureRateTooHighOrMissing
-    expr: (sum(rate(etl_task_total{status!="OK", cluster="data-processing"}[1h])) by (datatype) /
-      sum(rate(etl_task_total{cluster="data-processing"}[1h])) by (datatype)) > 0.01
+    expr: (sum(rate(etl_task_total{status!="OK", cluster="data-processing"}[1h])) by (table) /
+      sum(rate(etl_task_total{cluster="data-processing"}[1h])) by (table)) > 0.01
       OR absent(etl_task_total{cluster="data-processing"})
     for: 10m
     labels:
@@ -883,7 +900,7 @@ groups:
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: Parser task failure rate above 1% or missing for {{ $labels.datatype }}.
+      summary: Parser task failure rate above 1% or missing for {{ $labels.table }}.
       description: Parsers filtered by cluster="data-processing".
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/UTgnK-jMz/pipeline-overview?orgId=1&refresh=5m&from=now-2d&to=now&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-LegacyDS=Data%20Proc%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)&var-states=Finishing&var-states=Processing&var-states2=complete
 
