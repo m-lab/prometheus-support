@@ -19,10 +19,9 @@ spec:
         prometheus-node: 'true'
       containers:
       - name: kube-state-metrics
-        # image: gcr.io/google_containers/kube-state-metrics:v0.5.0
-        image: quay.io/coreos/kube-state-metrics:v1.5.0
+        image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.2.4
         args: [
-          "--collectors=deployments,nodes,pods,services",
+          "--resources=deployments,nodes,pods,services",
           "--port=8080",
         ]
         ports:
