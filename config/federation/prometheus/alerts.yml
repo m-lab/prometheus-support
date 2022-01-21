@@ -843,7 +843,7 @@ groups:
 # deployment, so the timeout for this alert is 3 hours and 10 minutes.
   - alert: GardenerHistoricalThroughputIsStalled
     expr: |
-      increase(gardener_jobs_total{status="success", daily="false"}[1d] offset 24h) > 0
+      increase(gardener_jobs_total{status="success", daily="false"}[1d]) > 0
         UNLESS ON(datatype) bq_gardener_historical_throughput > 0
     for: 190m
     labels:
