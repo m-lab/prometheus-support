@@ -929,7 +929,7 @@ groups:
 # (prometheus scrape attempts fail) or prometheus does not know about the
 # annotator service at all.
   - alert: ETL_AnnotationDownOrMissing
-    expr: up{service="annotator"} == 0 or absent(up{service="annotator"})
+    expr: sum(up{service="annotator"}) == 0 or absent(up{service="annotator"})
     for: 30m
     labels:
       repo: dev-tracker
