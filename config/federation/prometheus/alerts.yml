@@ -845,7 +845,7 @@ groups:
     expr: |
       increase(gardener_jobs_total{status="success", daily="false"}[1d]) > 0
         UNLESS ON(datatype) bq_gardener_historical_throughput > 0
-    for: 190m
+    for: 4h
     labels:
       repo: dev-tracker
       severity: ticket
@@ -861,7 +861,7 @@ groups:
   - alert: GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery
     expr: |
       gardener_config_datatypes UNLESS ON(datatype) bq_gardener_historical_throughput
-    for: 190m
+    for: 4h
     labels:
       repo: dev-tracker
       severity: ticket
