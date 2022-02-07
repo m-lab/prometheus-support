@@ -840,12 +840,12 @@ groups:
 # GardenerHistoricalThroughputIsStalled fires when historical reprocessing for
 # datatypes under processing by the v2 pipeline falls below 1 date / day.
 # The bq_gardener_historical_throughput metric is under the bigquery exporter 3h
-# deployment, so the timeout for this alert is 3 hours and 10 minutes.
+# deployment, so the timeout for this alert is 4 hours.
   - alert: GardenerHistoricalThroughputIsStalled
     expr: |
       increase(gardener_jobs_total{status="success", daily="false"}[1d]) > 0
         UNLESS ON(datatype) bq_gardener_historical_throughput > 0
-    for: 190m
+    for: 4h
     labels:
       repo: dev-tracker
       severity: ticket
@@ -861,7 +861,7 @@ groups:
   - alert: GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery
     expr: |
       gardener_config_datatypes UNLESS ON(datatype) bq_gardener_historical_throughput
-    for: 190m
+    for: 4h
     labels:
       repo: dev-tracker
       severity: ticket
