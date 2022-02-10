@@ -24,7 +24,7 @@ WITH
     sample.timestamp AS tend,
     sample.value AS discards
   FROM
-    `measurement-lab.utilization.switch`,
+    `measurement-lab.utilization.switch_legacy`,
     UNNEST(sample) AS sample
   WHERE
     partition_date = queryDATE()
@@ -43,7 +43,7 @@ WITH
     result.S2C.StartTime AS tstart,
     result.S2C.EndTime AS tend
   FROM
-    `measurement-lab.ndt.ndt5`
+    `measurement-lab.ndt_raw.ndt5_legacy`
   WHERE
     partition_date = queryDATE()
     AND result.S2C.UUID IS NOT NULL
@@ -107,7 +107,7 @@ FROM (
   END
     AS discards
   FROM
-    `measurement-lab.ndt.ndt5`
+    `measurement-lab.ndt_raw.ndt5_legacy`
   WHERE
     partition_date = queryDATE()
     AND result.S2C.UUID IS NOT NULL
