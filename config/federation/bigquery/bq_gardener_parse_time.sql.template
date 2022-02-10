@@ -18,22 +18,22 @@ SELECT
   datatype
 FROM (
     SELECT "ndt/web100" AS datatype, MIN(parse_time) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt.web100`
+    FROM   `{{PROJECT}}.ndt_raw.web100_legacy`
   UNION ALL
     SELECT "sidestream/web100" AS datatype, MIN(parse_time) AS min_parse_time
-    FROM   `{{PROJECT}}.sidestream.web100`
+    FROM   `{{PROJECT}}.sidestream.web100_legacy`
   UNION ALL
     SELECT "utilization/switch" AS datatype, MIN(parse_time) AS min_parse_time
-    FROM   `{{PROJECT}}.utilization.switch`
+    FROM   `{{PROJECT}}.utilization.switch_legacy`
   UNION ALL
     SELECT "ndt/traceroute" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt.traceroute`
+    FROM   `{{PROJECT}}.ndt_raw.traceroute_legacy`
   UNION ALL
     SELECT "ndt/tcpinfo" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt.tcpinfo`
+    FROM   `{{PROJECT}}.ndt_raw.tcpinfo_legacy`
   UNION ALL
     SELECT "ndt/ndt5" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt.ndt5`
+    FROM   `{{PROJECT}}.ndt_raw.ndt5_legacy`
   UNION ALL
     SELECT "ndt/ndt7" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.ndt7`
