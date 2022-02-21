@@ -891,7 +891,7 @@ groups:
 # ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
 # in the last hour rises above 1% or the number of total tasks is not reported.
   - alert: ParserFailureRateTooHighOrMissing
-    expr: (sum(rate(etl_test_total{status!="OK", cluster="data-processing"}[1h])) by (table) /
+    expr: (sum(rate(etl_test_total{status!="ok", cluster="data-processing"}[1h])) by (table) /
       sum(rate(etl_test_total{cluster="data-processing"}[1h])) by (table)) > 0.01
       OR absent(etl_test_total{cluster="data-processing"})
     for: 10m
