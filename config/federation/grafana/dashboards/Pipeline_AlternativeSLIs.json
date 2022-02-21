@@ -302,7 +302,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "(sum(rate(etl_task_total{status!=\"OK\", cluster=\"data-processing\"}[1h])) by (table) /\nsum(rate(etl_task_total{cluster=\"data-processing\"}[1h])) by (table))",
+          "expr": "(sum(rate(etl_test_total{status!=\"OK\", cluster=\"data-processing\"}[1h])) by (table) /\nsum(rate(etl_test_total{cluster=\"data-processing\"}[1h])) by (table))",
           "interval": "",
           "legendFormat": "{{table}}",
           "refId": "A"
@@ -662,7 +662,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(rate(etl_task_total{cluster=\"data-processing\"}[1h])) by (table)",
+          "expr": "sum(rate(etl_test_total{cluster=\"data-processing\"}[1h])) by (table)",
           "interval": "",
           "legendFormat": "{{table}}",
           "refId": "A"
