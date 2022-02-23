@@ -23,8 +23,8 @@ FROM (
     SELECT "sidestream/web100" AS datatype, MIN(parse_time) AS min_parse_time
     FROM   `{{PROJECT}}.sidestream.web100_legacy`
   UNION ALL
-    SELECT "utilization/switch" AS datatype, MIN(parse_time) AS min_parse_time
-    FROM   `{{PROJECT}}.utilization.switch_legacy`
+    SELECT "utilization/switch" AS datatype, MIN(Parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.utilization.switch`
   UNION ALL
     SELECT "ndt/traceroute" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
     FROM   `{{PROJECT}}.ndt_raw.traceroute_legacy`
