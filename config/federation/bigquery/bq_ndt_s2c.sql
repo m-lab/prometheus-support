@@ -24,7 +24,7 @@ WITH
     a.collectionTime AS tend,
     a.SwitchDiscardsUplinkTx AS discards
   FROM
-    `measurement-lab.raw_utilization.switch`
+    `measurement-lab.utilization.switch`
   WHERE
     date = queryDATE()
   GROUP BY
