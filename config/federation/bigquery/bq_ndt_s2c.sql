@@ -24,7 +24,7 @@ WITH
     sample.timestamp AS tend,
     sample.value AS discards
   FROM
-    `measurement-lab.utilization.switch`,
+    `measurement-lab.utilization.switch_legacy`,
     UNNEST(sample) AS sample
   WHERE
     partition_date = queryDATE()

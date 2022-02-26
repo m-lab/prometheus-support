@@ -18,7 +18,7 @@ FROM (
           END AS direction
 
     FROM
-       `measurement-lab.ndt.web100`
+       `measurement-lab.ndt_raw.web100_legacy`
 
     WHERE
         -- For faster queries we use `partition_date` boundaries. And, to

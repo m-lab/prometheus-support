@@ -109,7 +109,7 @@ FROM (
     connection_spec.client_geolocation.country_code AS country_code,
     connection_spec.client_geolocation.continent_code AS continent_code
   FROM
-    `measurement-lab.ndt.web100`
+    `measurement-lab.ndt_raw.web100_legacy`
   WHERE
     -- For faster queries we use `partition_date` boundaries. And, to
     -- guarantee the partition_date data is "complete" (all data collected

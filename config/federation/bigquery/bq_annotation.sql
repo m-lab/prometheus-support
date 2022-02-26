@@ -17,11 +17,11 @@
 
 WITH recent_ndt_tcpinfo AS (
   SELECT "ndt/tcpinfo" AS datatype, Client.Geo.latitude, Client.Geo.longitude, systems.ASNs AS asn
-  FROM `measurement-lab.ndt.tcpinfo`, UNNEST(Client.Network.Systems) AS systems
+  FROM `measurement-lab.ndt_raw.tcpinfo_legacy`, UNNEST(Client.Network.Systems) AS systems
   WHERE ParseInfo.ParseTime >= (TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR))
 ), recent_traceroute AS (
   SELECT "aggregate/traceroute" AS datatype, Source.Geo.latitude, Destination.Geo.longitude, systems.ASNs AS asn
-  FROM   `measurement-lab.aggregate.traceroute`, UNNEST(Destination.Network.Systems) AS systems
+  FROM   `measurement-lab.ndt_raw.traceroute_legacy`, UNNEST(Destination.Network.Systems) AS systems
   WHERE  ParseInfo.ParseTime >= (TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR))
 )
 

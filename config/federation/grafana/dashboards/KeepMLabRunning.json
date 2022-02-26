@@ -465,27 +465,27 @@
       "targets": [
         {
           "datasource": "Data Processing (mlab-oti)",
-          "expr": "60*sum by(table) (rate(etl_test_count[10m]))",
+          "expr": "60*sum by(table) (rate(etl_test_total[10m]))",
           "hide": true,
           "legendFormat": "standard - {{table}}",
           "refId": "C"
         },
         {
           "datasource": "Prometheus (mlab-oti)",
-          "expr": "60 * sum by (table) (rate(etl_test_count[10m]))",
+          "expr": "60 * sum by (table) (rate(etl_test_total[10m]))",
           "hide": true,
           "legendFormat": "legacy - {{table}}",
           "refId": "D"
         },
         {
           "datasource": "Data Processing (mlab-oti)",
-          "expr": "60*sum (rate(etl_test_count[10m]))",
+          "expr": "60*sum (rate(etl_test_total[10m]))",
           "legendFormat": "standard",
           "refId": "A"
         },
         {
           "datasource": "Prometheus (mlab-oti)",
-          "expr": "60 * sum  (rate(etl_test_count[10m]))",
+          "expr": "60 * sum  (rate(etl_test_total[10m]))",
           "legendFormat": "legacy",
           "refId": "B"
         }
