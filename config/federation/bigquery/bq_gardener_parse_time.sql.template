@@ -26,8 +26,8 @@ FROM (
     SELECT "utilization/switch" AS datatype, MIN(parse_time) AS min_parse_time
     FROM   `{{PROJECT}}.utilization.switch_legacy`
   UNION ALL
-    SELECT "ndt/traceroute" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt_raw.traceroute_legacy`
+    SELECT "ndt/paris1" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
+    FROM   `{{PROJECT}}.ndt_raw.paris1_legacy`
   UNION ALL
     SELECT "ndt/tcpinfo" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
     FROM   `{{PROJECT}}.ndt_raw.tcpinfo_legacy`
