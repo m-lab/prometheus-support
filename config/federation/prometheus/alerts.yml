@@ -559,7 +559,7 @@ groups:
         unless on(node) label_replace(
           sum_over_time(
             stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_container_logs
-          [15m]),
+          [1h]),
           "node", "$1", "node_id", "(.*)"
         )
         unless on(node) gmx_machine_maintenance == 1
