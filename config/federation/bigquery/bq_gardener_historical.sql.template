@@ -14,6 +14,16 @@ WITH all_types AS (
     date > date('2019-01-01')
   UNION ALL
   SELECT
+    "ndt5" AS datatype,
+    id,
+    date,
+    parser.Time as parseTime,
+  FROM
+    `{{PROJECT}}.raw_ndt.ndt5`
+  WHERE
+    date > date('2019-01-01')
+  UNION ALL
+  SELECT
     "annotation" AS datatype,
     id,
     date,
