@@ -21,7 +21,7 @@ WITH
   SELECT
     CONCAT(a.Machine, "-", a.Site) AS node,
     TIMESTAMP_SUB(a.CollectionTime, INTERVAL 10 SECOND) AS tstart,
-    a.collectionTime AS tend,
+    a.CollectionTime AS tend,
     a.SwitchDiscardsUplinkTx AS discards
   FROM
     `measurement-lab.utilization.switch`
