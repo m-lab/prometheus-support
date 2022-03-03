@@ -19,16 +19,18 @@ CREATE TEMPORARY FUNCTION
 WITH
   disco_intervals_with_discards AS (
   SELECT
-    CONCAT(a.Machine, "-", a.Site) AS node,
-    TIMESTAMP_SUB(a.CollectionTime, INTERVAL 10 SECOND) AS tstart,
-    a.CollectionTime AS tend,
-    a.SwitchDiscardsUplinkTx AS discards
+    toNodeName(hostname) AS node,
+    TIMESTAMP_SUB(sample.timestamp, INTERVAL 10 SECOND) AS tstart,
+    sample.timestamp AS tend,
+    sample.value AS discards
   FROM
-    `measurement-lab.utilization.switch`
+    `measurement-lab.utilization.switch_legacy`,
+    UNNEST(sample) AS sample
   WHERE
-    date = queryDATE()
+    partition_date = queryDATE()
+    AND metric = 'switch.discards.uplink.tx'
   GROUP BY
-    node,
+    hostname,
     tstart,
     tend,
     discards
