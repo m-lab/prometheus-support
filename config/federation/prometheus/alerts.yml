@@ -548,6 +548,24 @@ groups:
         the underlying service. Please check the GAE dashboard and logs to
         determine the cause.
 
+# If container logs for a node are missing in Stackdriver for too long, then
+# fire an alert, unless the node is in maintenance mode.
+  - alert: PlatformCluster_ContainerLogsMissingInStackdriver
+    expr: |
+      label_replace(
+        sum_over_time(stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_container_logs[1h]) == 0,
+        "node", "$1", "node_id", "(.*)"
+      ) unless on(node) gmx_machine_maintenance == 1
+    for: 24h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: platform
+    annotations:
+      summary: Container logs for a node are missing in Stackdriver for more than 24h.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#platformcluster_containerlogsmissinginstackdriver
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
+
 # One or more generic (non-experiment specific) mlab-ns metrics is missing.
 # These are metrics that mlab-ns relies on to determine whether an experiment
 # should receive production traffic, so we need to make sure that the metrics
@@ -666,12 +684,12 @@ groups:
 # the delay dimension.
   - alert: ParserDailyVolumeTooLow
     expr: |
-      candidate_service:etl_test_count:increase24h
+      candidate_service:etl_test_total:increase24h
         < (0.7 * quantile by(service)(0.5,
-          label_replace(candidate_service:etl_test_count:increase24h offset 1d, "delay", "1d", "", ".*") or
-          label_replace(candidate_service:etl_test_count:increase24h offset 3d, "delay", "3d", "", ".*") or
-          label_replace(candidate_service:etl_test_count:increase24h offset 5d, "delay", "5d", "", ".*") or
-            label_replace(candidate_service:etl_test_count:increase24h offset 1w, "delay", "7d", "", ".*") or
+          label_replace(candidate_service:etl_test_total:increase24h offset 1d, "delay", "1d", "", ".*") or
+          label_replace(candidate_service:etl_test_total:increase24h offset 3d, "delay", "3d", "", ".*") or
+          label_replace(candidate_service:etl_test_total:increase24h offset 5d, "delay", "5d", "", ".*") or
+            label_replace(candidate_service:etl_test_total:increase24h offset 1w, "delay", "7d", "", ".*") or
             label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-disco-parser", "", ".*") or
             label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-disco-parser", "", ".*") or
             label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-ndt-parser", "", ".*") or
