@@ -107,6 +107,16 @@ WITH all_types AS (
   FROM
     `{{PROJECT}}.ndt.scamper1`
   WHERE date > date('2019-03-28')
+  UNION ALL
+  SELECT
+    "raw_utilization.switch" AS datatype,
+    id,
+    date,
+    parser.Time as parseTime,
+  FROM
+    `{{PROJECT}}.raw_utilization.switch`
+  WHERE
+    date > date('2015-11-19')
 ),
 
 basic_stats AS (
