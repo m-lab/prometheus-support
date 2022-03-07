@@ -549,13 +549,17 @@ groups:
         determine the cause.
 
 # If container logs for a node are missing in Stackdriver for too long, then
-# fire an alert, unless the node is in maintenance mode.
+# fire an alert, unless the node is in maintenance mode. This somewhat awkward
+# query discovers cases where the stackdriver metric has been absent for too
+# long, indicating a likely issue with the Vector pod on the node, causing it
+# to fail to upload container logs to Stackdriver.
   - alert: PlatformCluster_ContainerLogsMissingInStackdriver
     expr: |
-      label_replace(
-        sum_over_time(stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_container_logs[1h]) == 0,
-        "node", "$1", "node_id", "(.*)"
-      ) unless on(node) gmx_machine_maintenance == 1
+      kube_node_status_condition{condition="Ready", status="true", node=~"mlab[1-4].*"} == 1
+        unless on(machine) sum_over_time(
+          stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_container_logs
+        [1h])
+        unless on(machine) gmx_machine_maintenance == 1
     for: 24h
     labels:
       repo: ops-tracker
