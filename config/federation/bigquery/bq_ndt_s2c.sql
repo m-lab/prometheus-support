@@ -41,7 +41,7 @@ WITH
     result.S2C.StartTime AS tstart,
     result.S2C.EndTime AS tend
   FROM
-    `measurement-lab.ndt_raw.ndt5_legacy`
+    `measurement-lab.ndt.ndt5`
   WHERE
     partition_date = queryDATE()
     AND result.S2C.UUID IS NOT NULL
@@ -105,7 +105,7 @@ FROM (
   END
     AS discards
   FROM
-    `measurement-lab.ndt_raw.ndt5_legacy`
+    `measurement-lab.ndt.ndt5`
   WHERE
     partition_date = queryDATE()
     AND result.S2C.UUID IS NOT NULL
