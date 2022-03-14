@@ -36,16 +36,16 @@ WITH
     discards > 0 ),
   ndt_s2c_tests AS (
   SELECT
-    toNodeName(ParseInfo.TaskFileName) AS node,
-    result.S2C.UUID AS s2c_uuid,
-    result.S2C.StartTime AS tstart,
-    result.S2C.EndTime AS tend
+    CONCAT(server.Machine, "-", server.Site) AS node,
+    raw.S2C.UUID AS s2c_uuid,
+    raw.S2C.StartTime AS tstart,
+    raw.S2C.EndTime AS tend
   FROM
     `measurement-lab.ndt.ndt5`
   WHERE
-    partition_date = queryDATE()
-    AND result.S2C.UUID IS NOT NULL
-    AND result.S2C.UUID != "ERROR_DISCOVERING_UUID"
+    date = queryDATE()
+    AND raw.S2C.UUID IS NOT NULL
+    AND raw.S2C.UUID != "ERROR_DISCOVERING_UUID"
   GROUP BY
     node,
     s2c_uuid,
@@ -107,7 +107,7 @@ FROM (
   FROM
     `measurement-lab.ndt.ndt5`
   WHERE
-    partition_date = queryDATE()
+    date = queryDATE()
     AND result.S2C.UUID IS NOT NULL
     AND result.S2C.UUID != "ERROR_DISCOVERING_UUID"
   UNION ALL
