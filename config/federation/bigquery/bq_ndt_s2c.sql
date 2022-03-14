@@ -19,18 +19,16 @@ CREATE TEMPORARY FUNCTION
 WITH
   disco_intervals_with_discards AS (
   SELECT
-    toNodeName(hostname) AS node,
-    TIMESTAMP_SUB(sample.timestamp, INTERVAL 10 SECOND) AS tstart,
-    sample.timestamp AS tend,
-    sample.value AS discards
+    CONCAT(a.Machine, "-", a.Site) AS node,
+    TIMESTAMP_SUB(a.CollectionTime, INTERVAL 10 SECOND) AS tstart,
+    a.CollectionTime AS tend,
+    a.SwitchDiscardsUplinkTx AS discards
   FROM
-    `measurement-lab.utilization.switch_legacy`,
-    UNNEST(sample) AS sample
+    `measurement-lab.utilization.switch`
   WHERE
-    partition_date = queryDATE()
-    AND metric = 'switch.discards.uplink.tx'
+    date = queryDATE()
   GROUP BY
-    hostname,
+    node,
     tstart,
     tend,
     discards
@@ -38,16 +36,16 @@ WITH
     discards > 0 ),
   ndt_s2c_tests AS (
   SELECT
-    toNodeName(ParseInfo.TaskFileName) AS node,
-    result.S2C.UUID AS s2c_uuid,
-    result.S2C.StartTime AS tstart,
-    result.S2C.EndTime AS tend
+    CONCAT(server.Machine, "-", server.Site) AS node,
+    raw.S2C.UUID AS s2c_uuid,
+    raw.S2C.StartTime AS tstart,
+    raw.S2C.EndTime AS tend
   FROM
-    `measurement-lab.ndt_raw.ndt5_legacy`
+    `measurement-lab.ndt.ndt5`
   WHERE
-    partition_date = queryDATE()
-    AND result.S2C.UUID IS NOT NULL
-    AND result.S2C.UUID != "ERROR_DISCOVERING_UUID"
+    date = queryDATE()
+    AND raw.S2C.UUID IS NOT NULL
+    AND raw.S2C.UUID != "ERROR_DISCOVERING_UUID"
   GROUP BY
     node,
     s2c_uuid,
@@ -96,22 +94,22 @@ SELECT
   COUNT(*) AS value_total
 FROM (
   SELECT
-    result.S2C.UUID AS s2c_uuid,
-    REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3})[0-9]{2}.*') AS metro,
-    REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*') AS site,
-    toNodeName(ParseInfo.TaskFileName) AS node,
+    raw.S2C.UUID AS s2c_uuid,
+    REGEXP_EXTRACT(server.site, r'([a-z]{3})[0-9]{2}') as metro,
+    server.Site AS site,
+    CONCAT(server.Machine, "-", server.Site) AS node,
     CASE
-      WHEN result.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'true'
+      WHEN raw.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'true'
     ELSE
     'false'
   END
     AS discards
   FROM
-    `measurement-lab.ndt_raw.ndt5_legacy`
+    `measurement-lab.ndt.ndt5`
   WHERE
-    partition_date = queryDATE()
-    AND result.S2C.UUID IS NOT NULL
-    AND result.S2C.UUID != "ERROR_DISCOVERING_UUID"
+    date = queryDATE()
+    AND raw.S2C.UUID IS NOT NULL
+    AND raw.S2C.UUID != "ERROR_DISCOVERING_UUID"
   UNION ALL
   SELECT
     raw.Download.UUID AS s2c_uuid,
