@@ -94,12 +94,12 @@ SELECT
   COUNT(*) AS value_total
 FROM (
   SELECT
-    result.S2C.UUID AS s2c_uuid,
-    REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3})[0-9]{2}.*') AS metro,
-    REGEXP_EXTRACT(ParseInfo.TaskFileName, r'mlab[1-4]-([a-z]{3}[0-9]{2}).*') AS site,
-    toNodeName(ParseInfo.TaskFileName) AS node,
+    raw.S2C.UUID AS s2c_uuid,
+    REGEXP_EXTRACT(server.site, r'([a-z]{3})[0-9]{2}') as metro,
+    server.Site AS site,
+    CONCAT(server.Machine, "-", server.Site) AS node,
     CASE
-      WHEN result.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'true'
+      WHEN raw.S2C.UUID IN ( SELECT s2c_uuid FROM ndt_s2c_tests_with_discards) THEN 'true'
     ELSE
     'false'
   END
@@ -108,8 +108,8 @@ FROM (
     `measurement-lab.ndt.ndt5`
   WHERE
     date = queryDATE()
-    AND result.S2C.UUID IS NOT NULL
-    AND result.S2C.UUID != "ERROR_DISCOVERING_UUID"
+    AND raw.S2C.UUID IS NOT NULL
+    AND raw.S2C.UUID != "ERROR_DISCOVERING_UUID"
   UNION ALL
   SELECT
     raw.Download.UUID AS s2c_uuid,
