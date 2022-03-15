@@ -23,15 +23,16 @@ FROM (
     SELECT "sidestream/web100" AS datatype, MIN(parse_time) AS min_parse_time
     FROM   `{{PROJECT}}.sidestream.web100_legacy`
   UNION ALL
+    SELECT "ndt/traceroute" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
+    FROM   `{{PROJECT}}.ndt_raw.traceroute_legacy`
+  UNION ALL
     SELECT "utilization/switch" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.utilization.switch`
     WHERE date > DATE('2015-11-19')
   UNION ALL
-    SELECT "ndt/traceroute" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt_raw.traceroute_legacy`
-  UNION ALL
-    SELECT "ndt/tcpinfo" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt_raw.tcpinfo_legacy`
+    SELECT "ndt/tcpinfo" AS datatype, MIN(parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_ndt.tcpinfo`
+    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
   UNION ALL
     SELECT "ndt/ndt5" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.ndt5`
