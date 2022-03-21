@@ -30,10 +30,6 @@ FROM (
     FROM   `{{PROJECT}}.utilization.switch`
     WHERE date > DATE('2015-11-19')
   UNION ALL
-    SELECT "ndt/tcpinfo" AS datatype, MIN(parser.Time) AS min_parse_time
-    FROM   `{{PROJECT}}.raw_ndt.tcpinfo`
-    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
-  UNION ALL
     SELECT "ndt/ndt5" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.ndt5`
     WHERE date > DATE('2019-01-01') -- satisfy required date filter.
@@ -57,4 +53,8 @@ FROM (
     SELECT "ndt/scamper1" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.scamper1`
     WHERE date > date('2019-03-28')
+  UNION ALL
+    SELECT "ndt/tcpinfo" AS datatype, MIN(parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_ndt.tcpinfo`
+    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
 )
