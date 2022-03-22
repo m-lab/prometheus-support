@@ -72,6 +72,16 @@ WITH all_types AS (
     `{{PROJECT}}.raw_utilization.switch`
   WHERE
     date > date('2015-11-19')
+  UNION ALL
+  SELECT
+   "tcpinfo" AS datatype,
+   id,
+   date,
+   parser.Time as parseTime,
+  FROM
+    `{{PROJECT}}.raw_ndt.tcpinfo`
+  WHERE
+    date > DATE('2019-01-01')
 ),
 
 processed_types AS (
