@@ -19,14 +19,14 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1642100563404,
+  "iteration": 1648507276018,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -43,7 +43,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${PrometheusDS}",
+      "datasource": {
+        "uid": "${PrometheusDS}"
+      },
       "description": "",
       "fill": 1,
       "fillGradient": 0,
@@ -73,7 +75,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "8.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -92,9 +94,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Daily Jobs (Last 4 Days)",
       "tooltip": {
         "shared": true,
@@ -103,9 +103,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -113,29 +111,24 @@
         {
           "$$hashKey": "object:371",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:372",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
-      "datasource": "${PrometheusDS}",
+      "datasource": {
+        "uid": "${PrometheusDS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -201,7 +194,7 @@
         "text": {},
         "textMode": "value_and_name"
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "exemplar": true,
@@ -211,14 +204,11 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Gardener Latest Daily Job Completed",
       "type": "stat"
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -231,7 +221,9 @@
       "type": "row"
     },
     {
-      "datasource": "${PrometheusDS}",
+      "datasource": {
+        "uid": "${PrometheusDS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -312,18 +304,108 @@
       "type": "timeseries"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${PrometheusDS}",
-      "fill": 1,
-      "fillGradient": 0,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${PrometheusDS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.01
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 9,
         "w": 12,
         "x": 12,
         "y": 12
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "xIXR1_LMz"
+          },
+          "exemplar": true,
+          "expr": "(sum(rate(etl_test_total{status!=\"ok\", cluster=\"data-processing\"}[1h])) by (table) /\nsum(rate(etl_test_total{cluster=\"data-processing\"}[1h])) by (table))",
+          "interval": "",
+          "legendFormat": "{{table}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Parser Failure Rate (Tests / Hour)",
+      "type": "timeseries"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "uid": "${PrometheusDS}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 21
       },
       "hiddenSeries": false,
       "id": 2,
@@ -344,7 +426,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "8.3.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -362,9 +444,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Gardener Failure Rate (Jobs / Day)",
       "tooltip": {
         "shared": true,
@@ -373,9 +453,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -383,35 +461,27 @@
         {
           "$$hashKey": "object:373",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:374",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 30
       },
       "id": 12,
       "panels": [],
@@ -419,7 +489,9 @@
       "type": "row"
     },
     {
-      "datasource": "${Gardener2_DS}",
+      "datasource": {
+        "uid": "${Gardener2_DS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -475,7 +547,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 31
       },
       "id": 16,
       "options": {
@@ -498,13 +570,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Gardener Self-Reported Historical Throughput",
       "type": "timeseries"
     },
     {
-      "datasource": "${PrometheusDS}",
+      "datasource": {
+        "uid": "${PrometheusDS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -560,7 +632,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 31
       },
       "id": 18,
       "options": {
@@ -583,13 +655,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "BigQuery Exporter Verified Historical Throughput",
       "type": "timeseries"
     },
     {
-      "datasource": "${PrometheusDS}",
+      "datasource": {
+        "uid": "${PrometheusDS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -645,7 +717,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 39
       },
       "id": 19,
       "options": {
@@ -673,20 +745,17 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 30,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": true,
           "text": "mlab-sandbox",
           "value": "mlab-sandbox"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Project",
@@ -720,11 +789,8 @@
           "text": "Prometheus (mlab-sandbox)",
           "value": "Prometheus (mlab-sandbox)"
         },
-        "description": null,
-        "error": null,
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "PrometheusDS",
         "options": [],
@@ -740,8 +806,6 @@
           "text": "Data Processing (mlab-sandbox)",
           "value": "Data Processing (mlab-sandbox)"
         },
-        "description": null,
-        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Gardener 2.0 Datasource",
@@ -764,5 +828,6 @@
   "timezone": "",
   "title": "Pipeline SLIs",
   "uid": "q4MrNzh7k",
-  "version": 23
+  "version": 29,
+  "weekStart": ""
 }
