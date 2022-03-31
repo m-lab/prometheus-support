@@ -717,30 +717,6 @@ done
 
 Then continue your deployment as normal.
 
-# Pushgateway
-
-A prometheus push gateway are useful for short-lived processes, or processes
-that are not network accessible by the prometheus server.
-
-Note that push gateways have limitations. So, consider this an option of last
-resort and understand the limits before proceeding.
-
-For more information, see:
-https://github.com/prometheus/pushgateway#prometheus-pushgateway
-
-## Create
-
-The pushgateway has no configuration file or persistent state. Create the
-deployment.
-
-    kubectl create -f k8s/mlab-sandbox/<cluster-name>/deployments/pushgateway.yml
-
-## Delete
-
-Delete the deployment.
-
-    kubectl delete -f k8s/mlab-sandbox/<cluster-name>/deployments/pushgateway.yml
-
 # Debugging the steps above
 
 ## Public IP appears to hang
