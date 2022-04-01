@@ -17,11 +17,11 @@
 
 WITH recent_ndt_tcpinfo AS (
   SELECT "ndt/tcpinfo" AS datatype, Client.Geo.latitude, Client.Geo.longitude, systems.ASNs AS asn
-  FROM `measurement-lab.ndt_raw.tcpinfo_legacy`, UNNEST(Client.Network.Systems) AS systems
+  FROM `{{PROJECT}}.ndt_raw.tcpinfo_legacy`, UNNEST(Client.Network.Systems) AS systems
   WHERE ParseInfo.ParseTime >= (TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR))
-), recent_traceroute AS (
-  SELECT "aggregate/traceroute" AS datatype, Source.Geo.latitude, Destination.Geo.longitude, systems.ASNs AS asn
-  FROM   `measurement-lab.ndt_raw.traceroute_legacy`, UNNEST(Destination.Network.Systems) AS systems
+), recent_paris1 AS (
+  SELECT "aggregate/paris1" AS datatype, Source.Geo.latitude, Destination.Geo.longitude, systems.ASNs AS asn
+  FROM   `{{PROJECT}}.ndt_raw.paris1_legacy`, UNNEST(Destination.Network.Systems) AS systems
   WHERE  ParseInfo.ParseTime >= (TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR))
 )
 
@@ -35,7 +35,7 @@ SELECT
 FROM (
    SELECT * FROM recent_ndt_tcpinfo
    UNION ALL
-   SELECT * FROM recent_traceroute
+   SELECT * FROM recent_paris1
 )
 GROUP BY
   datatype
