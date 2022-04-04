@@ -17,11 +17,11 @@
 
 WITH recent_ndt_tcpinfo AS (
   SELECT "ndt/tcpinfo" AS datatype, Client.Geo.latitude, Client.Geo.longitude, systems.ASNs AS asn
-  FROM `{{PROJECT}}.ndt_raw.tcpinfo_legacy`, UNNEST(Client.Network.Systems) AS systems
+  FROM `measurement-lab.ndt_raw.tcpinfo_legacy`, UNNEST(Client.Network.Systems) AS systems
   WHERE ParseInfo.ParseTime >= (TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR))
 ), recent_paris1 AS (
   SELECT "aggregate/paris1" AS datatype, Source.Geo.latitude, Destination.Geo.longitude, systems.ASNs AS asn
-  FROM   `{{PROJECT}}.ndt_raw.paris1_legacy`, UNNEST(Destination.Network.Systems) AS systems
+  FROM   `measurement-lab.ndt_raw.paris1_legacy`, UNNEST(Destination.Network.Systems) AS systems
   WHERE  ParseInfo.ParseTime >= (TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR))
 )
 
