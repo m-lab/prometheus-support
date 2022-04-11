@@ -6,18 +6,18 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      run: bigquery-exporter
+      run: bigquery-exporter-discuss
   template:
     metadata:
       labels:
-        run: bigquery-exporter
+        run: bigquery-exporter-discuss
       annotations:
         prometheus.io/scrape: 'true'
     spec:
       containers:
       - name: bigquery-exporter
         image: measurementlab/prometheus-bigquery-exporter:v1.1.1
-        args: [ "-project={{GCLOUD_PROJECT}}",
+        args: [ "-project=measurement-lab",
                 "-refresh=15m",
                 "-gauge-query=/queries/bq_daily_discuss.sql",
               ]
