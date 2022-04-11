@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bigquery-exporter-5m
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: bigquery-exporter
+  template:
+    metadata:
+      labels:
+        run: bigquery-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+      - name: bigquery-exporter
+        image: measurementlab/prometheus-bigquery-exporter:v1.1.1
+        args: [ "-project={{GCLOUD_PROJECT}}",
+                "-refresh=15m",
+                "-gauge-query=/queries/bq_daily_discuss.sql",
+              ]
+        ports:
+        - containerPort: 9348
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/credentials/discuss.json
+        volumeMounts:
+        - mountPath: /queries
+          name: bigquery-config
+        - name: credentials
+          mountPath: /etc/credentials
+          readOnly: true
+      volumes:
+      - name: bigquery-config
+        configMap:
+          name: bigquery-exporter-config
+      - name: credentials
+        secret:
+          secretName: discuss-credentials
