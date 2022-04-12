@@ -12,13 +12,13 @@
 -- authenticated queries of unified views once they are more efficient.
 
 WITH ndt7 AS (
-    SELECT * FROM `measurement-lab.ndt.ndt7` WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+    SELECT * FROM `measurement-lab.ndt.ndt7` WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 ), ndt5 AS (
-    SELECT * FROM `measurement-lab.ndt.ndt5` WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+    SELECT * FROM `measurement-lab.ndt.ndt5` WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 ), scamper1 AS (
-    SELECT * FROM `measurement-lab.ndt.scamper1` WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+    SELECT * FROM `measurement-lab.ndt.scamper1` WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 ), tcpinfo AS (
-    SELECT * FROM `measurement-lab.ndt.tcpinfo` WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+    SELECT * FROM `measurement-lab.ndt.tcpinfo` WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 )
 
 SELECT "ndt7" as datatype, COUNT(*) AS value_total FROM ndt7
