@@ -19,11 +19,16 @@ spec:
         image: measurementlab/prometheus-bigquery-exporter:v1.1.1
         args: [ "-project=measurement-lab",
                 "-refresh=15m",
+                # TODO(github.com/m-lab/prometheus-support/issues/894): include discuss@
+                # authenticated queries of unified views once they are more efficient.
                 "-gauge-query=/queries/bq_daily_discuss.sql",
               ]
         ports:
         - containerPort: 9348
         env:
+        # We run bigquery exporter with service account credentials so that the
+        # only permissions granted to queries are through the discuss@ ACL, just
+        # like users.
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /etc/credentials/discuss.json
         volumeMounts:

@@ -1,8 +1,12 @@
 --
--- bq_daily_discuss.sql should be run with a service account authorized to query
--- measurement-lab tables through the discuss@ mailing list.
+-- bq_daily_discuss.sql is designed to be part of a system that simulates
+-- user-privileged queries. By running with the same privileges as users, we will
+-- be able to monitor user-visible failures, such as permission errors or schema
+-- changes.
 --
--- Because this requires separate service account credentials,
+-- To achive this, we run bigquery exporter with service account credentials. The
+-- service account is created without any role/permissions. So, the only
+-- permissions granted are through the discuss@ ACL, just like users.
 --
 -- TODO(github.com/m-lab/prometheus-support/issues/894): include discuss@
 -- authenticated queries of unified views once they are more efficient.
