@@ -58,6 +58,12 @@ kubectl create secret generic mlabns-credentials \
     "--from-file=/tmp/mlabns.json" \
     --dry-run -o json | kubectl apply -f -
 
+## Credentials for accessing BigQuery using discuss@measurementlab.net permissions.
+( set +x; echo "${SERVICE_ACCOUNT_discuss}" > /tmp/discuss.json )
+kubectl create secret generic discuss-credentials \
+    "--from-file=/tmp/discuss.json" \
+    --dry-run -o json | kubectl apply -f -
+
 ## Prometheus
 
 # Generate the basic auth string for Prometheus.
