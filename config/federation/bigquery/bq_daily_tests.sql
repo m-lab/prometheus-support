@@ -4,9 +4,9 @@ WITH ndt7_date_counts AS (
   WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY)
   GROUP BY date
 ), ndt5_date_counts AS (
-  SELECT partition_date AS date, COUNT(*) AS total_rows
-  FROM `measurement-lab.ndt_raw.ndt5_legacy`
-  WHERE partition_date > DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY)
+  SELECT date, COUNT(*) AS total_rows
+  FROM `measurement-lab.ndt.ndt5`
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY)
   GROUP BY date
 ), total_date_counts AS (
   SELECT date, n5.total_rows + n7.total_rows AS value_count
