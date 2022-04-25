@@ -980,7 +980,7 @@ groups:
         deployments. The daily and batch parsers may also be affected.
 
 # NDT_GeoAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
-# tests appears to have too many failures or the bq_annotation_* metrics
+# tests (or sidecars) appears to have too many failures or the bq_annotation_* metrics
 # disappear.
   - alert: NDT_GeoAnnotationRatioTooLowOrMissing
     expr: |
@@ -993,8 +993,9 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: Too many NDT tests are missing geolocation annotations!
-      description: The annotator runs in AppEngine. Check logs and recent
-        deployments. The daily and batch parsers may also be affected.
+      description: The uuid-annotator generates annotations and they are joined with
+        tests data by gardener JOINs. Check logs and recent deployments of these
+        components.
 
 # Rebot_MissingMetrics fires when no metrics can be collected for rebot for
 # the past 10 minutes.
