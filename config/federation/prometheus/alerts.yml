@@ -655,64 +655,6 @@ groups:
       description: Did the nginx k8s deployment or nginx-lb k8s service fail?
         Did the backend service or deployment fail in some way?
 
-# TODO:
-#   Replace this with two other alerts:
-#    1.  Alert if hourly test volume on servers drops relative to same hour on recent days.
-#    2.  E2E alert that compares rows in tables to test volume on servers.
-#
-# ParserDailyVolumeTooLow: 24 hour test volume has dropped over 30% compared to
-# the average of the 2 smallest test volumes of 4 days out of the last week.  Two vectors
-# of conservative constant value avoid false alarms when there is little valid history.
-# On occasion, processing may fall behind a bit.  The "FOR 2h" waits 2h before triggering
-# an actual alert, so the pipeline may fall behind for up to 2 hours without alerting.
-# However, if the pipeline falls several hours behind, and stays behind for more than
-# 2 hours, the alert will fire.
-#
-# In normal operation, we expect the 50th quantile to split mid-way between the two smallest
-# volume days of the 4 sample days.  The 4 sample always include one weekend day, so one of
-# the two smallest days will generally be a weekend day.
-# For example, for a Tuesday, the prior data might be ordered (decreasing):
-# M, F, W, Sa, C1, C2,
-# and the 50th quantile will be midway between previous Sat and previous Wed.
-#
-# The alert condition ignores batch processing.
-#
-# Implementation notes:
-# This alert uses label_replace to merge multiple vectors.  We tried simpler queries using
-# AND, OR or +, but these do not do what we need.  We use label_replace to add a new "delay"
-# label, which then allows us to compute quantile across multiple vectors.  (Or we could compute
-# sums, averages, topk, min, etc.)
-# The constant vectors require adding two labels, "service" which associates with a pipeline, and
-# "delay" which differentiates from the actual delayed metrics for 1d, 3d, etc.
-# For each pipeline service, the quantile computation then aggregates across the 6 vectors in
-# the delay dimension.
-  - alert: ParserDailyVolumeTooLow
-    expr: |
-      candidate_service:etl_test_total:increase24h
-        < (0.7 * quantile by(service)(0.5,
-          label_replace(candidate_service:etl_test_total:increase24h offset 1d, "delay", "1d", "", ".*") or
-          label_replace(candidate_service:etl_test_total:increase24h offset 3d, "delay", "3d", "", ".*") or
-          label_replace(candidate_service:etl_test_total:increase24h offset 5d, "delay", "5d", "", ".*") or
-            label_replace(candidate_service:etl_test_total:increase24h offset 1w, "delay", "7d", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-disco-parser", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-disco-parser", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-ndt-parser", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-ndt-parser", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-sidestream-parser", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c1", "", ".*"), "service", "etl-traceroute-parser", "", ".*") or
-            label_replace(label_replace(vector(0), "delay", "c2", "", ".*"), "service", "etl-traceroute-parser", "", ".*")
-            ))
-    for: 2h
-    labels:
-      repo: dev-tracker
-      severity: ticket
-      cluster: prometheus-federation
-    annotations:
-      summary: Today's test volume is less than 70% of nominal daily volume.
-      description: Are machines online? Is data being collected? Is the parser working?
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/PKqnWeNmz/
-
 # GCS Transfer SLO
 #
 # We run daily GCS transfers between project buckets and to the public archive.
@@ -963,7 +905,7 @@ groups:
         deployments. The daily and batch parsers may also be affected.
 
 # NDT_AsnAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
-# tests appears to have too many failures or the bq_ndt_annotation_* metrics
+# tests appear to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
   - alert: NDT_AsnAnnotationRatioTooLowOrMissing
     expr: |
@@ -980,7 +922,7 @@ groups:
         deployments. The daily and batch parsers may also be affected.
 
 # NDT_GeoAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
-# tests appears to have too many failures or the bq_annotation_* metrics
+# tests (or sidecars) appear to have too many failures or the bq_annotation_* metrics
 # disappear.
   - alert: NDT_GeoAnnotationRatioTooLowOrMissing
     expr: |
@@ -993,8 +935,9 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: Too many NDT tests are missing geolocation annotations!
-      description: The annotator runs in AppEngine. Check logs and recent
-        deployments. The daily and batch parsers may also be affected.
+      description: The uuid-annotator generates annotations and they are joined with
+        tests data by gardener JOINs. Check logs and recent deployments of these
+        components.
 
 # Rebot_MissingMetrics fires when no metrics can be collected for rebot for
 # the past 10 minutes.

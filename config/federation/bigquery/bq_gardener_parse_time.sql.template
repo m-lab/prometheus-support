@@ -8,24 +8,11 @@
 --       in days, labeled with the datatype name.
 --
 -- Each metric above also has a "datatype" label.
---
--- TODO(https://github.com/m-lab/dev-tracker/issues/496): once parsers write
--- directly to canonical tables for k8s platform data, enumerate all supported
--- datatypes.
 
 SELECT
   TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), min_parse_time, SECOND) / 86400.0 AS value_age_days,
   datatype
 FROM (
-    SELECT "ndt/web100" AS datatype, MIN(parse_time) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt_raw.web100_legacy`
-  UNION ALL
-    SELECT "sidestream/web100" AS datatype, MIN(parse_time) AS min_parse_time
-    FROM   `{{PROJECT}}.sidestream.web100_legacy`
-  UNION ALL
-    SELECT "ndt/paris1" AS datatype, MIN(ParseInfo.ParseTime) AS min_parse_time
-    FROM   `{{PROJECT}}.ndt_raw.paris1_legacy`
-  UNION ALL
     SELECT "utilization/switch" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.utilization.switch`
     WHERE date > DATE('2015-11-19')
