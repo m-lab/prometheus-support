@@ -1224,3 +1224,18 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#prometheuspersistentdisktoofull
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/sVklmeHik/prometheus-self-monitoring?orgId=1&var-datasource=default
 
+
+# Pipeline_DailyDiscussAccessZeroOrMissing fires when queries run with the same
+# permissions as a member of the discuss@ mailing list return zero results
+# or fail entirely.
+  - alert: Pipeline_DailyDiscussAccessZeroOrMissing
+    expr: |
+      bq_daily_discuss_total == 0 OR absent(bq_daily_discuss_total)
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+    annotations:
+      summary: Queries run by discuss@ users may be broken or return zero results.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_dailydiscussaccesszeroormissing
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/UTgnK-jMz/pipeline-overview?orgId=1&refresh=5m
