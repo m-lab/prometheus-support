@@ -13,14 +13,14 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1592444440456,
+  "id": 195,
+  "iteration": 1651097042352,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
-      "content": "# Real time",
-      "datasource": null,
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -29,9 +29,11 @@
       },
       "id": 21,
       "links": [],
-      "mode": "markdown",
-      "options": {},
-      "title": "",
+      "options": {
+        "content": "# Real time",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.3.4",
       "type": "text"
     },
     {
@@ -39,8 +41,17 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
       "decimals": 1,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -49,6 +60,7 @@
         "x": 0,
         "y": 3
       },
+      "hiddenSeries": false,
       "id": 22,
       "legend": {
         "avg": false,
@@ -64,9 +76,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.3.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -90,7 +103,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"download\", result!=\"error-without-rate\"}[5m])) or vector(0))",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "exemplar": true,
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"download\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -99,7 +117,12 @@
           "step": 120
         },
         {
-          "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"upload\", result!=\"error-without-rate\"}[5m])) or vector(0))",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "exemplar": true,
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"upload\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 1,
@@ -108,9 +131,15 @@
           "step": 120
         },
         {
-          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "exemplar": true,
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
           "format": "time_series",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Total",
           "refId": "C",
@@ -118,9 +147,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "NDT Global Test Rate (Up, Down) (5m average)",
       "tooltip": {
         "shared": true,
@@ -129,33 +156,28 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
+          "$$hashKey": "object:44",
           "format": "short",
           "label": "Tests / Min",
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
+          "$$hashKey": "object:45",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -163,8 +185,17 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
       "decimals": 1,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -173,6 +204,7 @@
         "x": 0,
         "y": 14
       },
+      "hiddenSeries": false,
       "id": 20,
       "legend": {
         "avg": false,
@@ -188,9 +220,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "8.3.4",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -214,7 +247,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m])) or vector(0))",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "exemplar": true,
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -224,18 +262,30 @@
           "step": 240
         },
         {
-          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 7d)) or vector(0))",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "exemplar": true,
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 7d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 7d)) or vector(0))",
           "format": "time_series",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "One Week",
           "refId": "A",
           "step": 240
         },
         {
-          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\"}[5m] offset 14d)) or vector(0))",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "exemplar": true,
+          "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 14d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 14d)) or vector(0))",
           "format": "time_series",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Two Week",
           "refId": "B",
@@ -243,9 +293,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Week-over-week - NDT Global Total Test Rate",
       "tooltip": {
         "shared": true,
@@ -254,45 +302,40 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
+          "$$hashKey": "object:146",
           "format": "short",
           "label": "Tests / Min",
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
+          "$$hashKey": "object:147",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
   "refresh": false,
-  "schemaVersion": 20,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "tags": [],
+          "selected": true,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -303,10 +346,45 @@
         "name": "datasource",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "/Platform/",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "Physical",
+            "Virtual"
+          ],
+          "value": [
+            "physical",
+            "virtual"
+          ]
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Site type",
+        "multi": true,
+        "name": "sitetype",
+        "options": [
+          {
+            "selected": true,
+            "text": "Physical",
+            "value": "physical"
+          },
+          {
+            "selected": true,
+            "text": "Virtual",
+            "value": "virtual"
+          }
+        ],
+        "query": "Physical : physical, Virtual : virtual",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -342,5 +420,6 @@
   "timezone": "utc",
   "title": "NDT: Global Test Rate",
   "uid": "Cyq7WeNiz",
-  "version": 147
+  "version": 156,
+  "weekStart": ""
 }
