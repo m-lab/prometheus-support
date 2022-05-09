@@ -734,23 +734,6 @@ groups:
       description: Login to EB to see if it is in fact crashed. If so, look
         through the logs.
 
-# DataProcessingCluster_GardenerDownOrMissing fires when the etl-gardener is down or absent.
-# TODO: enable annotations to ignore some container ports, and simplify this query.
-# https://github.com/m-lab/prometheus-support/issues/48
-  - alert: DataProcessingCluster_GardenerDownOrMissing
-    expr: |
-      up{container="etl-gardener", deployment!="etl-gardener-universal", instance=~".*:9090"} == 0
-        or absent(up{container="etl-gardener", deployment!="etl-gardener-universal", instance=~".*:9090"})
-    for: 10m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-      cluster: prometheus-federation
-    annotations:
-      summary: The Gardener instance is down or missing.
-      description: Gardener runs in the data-processing-cluster.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Proc%20(mlab-oti)
-
 # DataProcessing_GardenerDownOrMissing fires when the etl-gardener-universal is down or absent.
 # TODO: enable annotations to ignore some container ports, and simplify this query.
 # https://github.com/m-lab/prometheus-support/issues/48
