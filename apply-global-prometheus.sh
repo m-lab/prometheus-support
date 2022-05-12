@@ -332,11 +332,25 @@ kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
 curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
 tar -zxvf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
 
+# Add repos
+./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+./linux-amd64/helm repo add jetstack https://charts.jetstack.io
+
+# Update local repos
+./linux-amd64/helm repo update
+
 # Install the NGINX ingress controller in the ingress-nginx namespace.
 kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
-./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-./linux-amd64/helm repo update
 ./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
-  -n ingress-nginx \
+  --namespace ingress-nginx \
   --version ${K8S_INGRESS_NGINX_VERSION} \
   --values helm/prometheus-federation/ingress-nginx/${PROJECT}.yml
+
+# Install cert-manager
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.8.0 \
+  --set installCRDs=true
+
