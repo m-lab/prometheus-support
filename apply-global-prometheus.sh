@@ -347,8 +347,7 @@ kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
   --values helm/prometheus-federation/ingress-nginx/${PROJECT}.yml
 
 # Install cert-manager
-helm install \
-  cert-manager jetstack/cert-manager \
+./linux-amd64/helm upgrade --install cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --create-namespace \
   --version v1.8.0 \
