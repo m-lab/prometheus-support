@@ -351,5 +351,7 @@ kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
   --namespace cert-manager \
   --create-namespace \
   --version v1.8.0 \
-  --set installCRDs=true
+  --set installCRDs=true \
+  --set ingressShim.defaultIssuerKind=ClusterIssuer \
+  --set ingressShim.defaultIssuerName=letsencrypt
 
