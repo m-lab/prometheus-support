@@ -36,6 +36,15 @@ BBE_IPV6_PORT_mlab_oti="9115"
 BBE_IPV6_PORT_mlab_staging="8115"
 BBE_IPV6_PORT_mlab_sandbox="7115"
 
+# cert-manager needs to know which ClusterIssuer resource to use. In production
+# and staging we will use the LetsEncrypt production ACME servers. In sandbox,
+# where there will be more churn and testing and failing, use LE's staging
+# ACME server. These ClusterIssuer resource are defined at:
+# ./k8s/prometheus-federation/clusterissuers/
+CLUSTER_ISSUER_mlab_oti="letsencrypt"
+CLUSTER_ISSUER_mlab_staging="letsencrypt"
+CLUSTER_ISSUER_mlab_sandbox="letsencrypt-staging"
+
 # Construct the per-project blackbox_exporter port using the passed $PROJECT
 # argument.
 bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
@@ -347,7 +356,7 @@ kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
   --version v1.8.0 \
   --set installCRDs=true \
   --set ingressShim.defaultIssuerKind=ClusterIssuer \
-  --set ingressShim.defaultIssuerName=letsencrypt
+  --set ingressShim.defaultIssuerName=${!CLUSTER_ISSUER_${PROJECT/-/_}}
 
 # Finally, apply templates
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
