@@ -9,7 +9,7 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: nginx
   tls:
   - hosts:
     - grafana.{{GCLOUD_PROJECT}}.measurementlab.net
@@ -18,12 +18,13 @@ spec:
   - host: grafana.{{GCLOUD_PROJECT}}.measurementlab.net
     http:
       paths:
-      - backend:
+      - path: /oauth2
+        pathType: Prefix
+        backend:
           service:
             name: oauth2-proxy
             port:
               number: 4180
-        path: /oauth2
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -43,7 +44,7 @@ metadata:
       proxy_set_header X-User  $user;
       proxy_set_header X-Email $email;
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: nginx
   tls:
   - hosts:
     - grafana.{{GCLOUD_PROJECT}}.measurementlab.net
@@ -53,6 +54,7 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
           service:
             name: grafana-tls-service

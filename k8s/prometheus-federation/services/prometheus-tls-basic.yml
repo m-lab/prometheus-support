@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-secret: prometheus-auth
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: nginx
   tls:
   - hosts:
     - prometheus-basicauth.{{GCLOUD_PROJECT}}.measurementlab.net
@@ -21,6 +21,7 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
           service:
             name: prometheus-tls-service

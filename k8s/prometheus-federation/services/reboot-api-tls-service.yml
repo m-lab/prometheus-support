@@ -23,7 +23,7 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: nginx
   tls:
   - hosts:
     - reboot.{{GCLOUD_PROJECT}}.measurementlab.net
@@ -33,6 +33,7 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
           service:
             name: reboot-api-tls-service
