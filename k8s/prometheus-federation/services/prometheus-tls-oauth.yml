@@ -1,15 +1,15 @@
 # This Ingress makes sure oauth2-proxy intercepts requests going to the /oauth2
 # path. This path *must not* be protected with oauth, to prevent a redirection
 # loop when the application redirects to it to authenticate the user.
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: prometheus-tls-oauth
   namespace: default
   annotations:
     kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: "nginx"
 spec:
+  ingressClassName: "nginx"
   tls:
   - hosts:
     - prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
@@ -23,14 +23,13 @@ spec:
           servicePort: 4180
         path: /oauth2
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: prometheus-tls
   namespace: default
   annotations:
     kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: "nginx"
     # Set authentication URL and sign-in URL for OAuth.
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
@@ -42,6 +41,7 @@ metadata:
       proxy_set_header X-User  $user;
       proxy_set_header X-Email $email;
 spec:
+  ingressClassName: "nginx"
   tls:
   - hosts:
     - prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
