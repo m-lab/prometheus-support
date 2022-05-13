@@ -44,6 +44,7 @@ BBE_IPV6_PORT_mlab_sandbox="7115"
 CLUSTER_ISSUER_mlab_oti="letsencrypt"
 CLUSTER_ISSUER_mlab_staging="letsencrypt"
 CLUSTER_ISSUER_mlab_sandbox="letsencrypt-staging"
+cluster_issuer=CLUSTER_ISSUER_${PROJECT/-/_}
 
 # Construct the per-project blackbox_exporter port using the passed $PROJECT
 # argument.
@@ -356,7 +357,7 @@ kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
   --version v1.8.0 \
   --set installCRDs=true \
   --set ingressShim.defaultIssuerKind=ClusterIssuer \
-  --set ingressShim.defaultIssuerName=${!CLUSTER_ISSUER_${PROJECT/-/_}}
+  --set ingressShim.defaultIssuerName=${!cluster_issuer}
 
 # Finally, apply templates
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
