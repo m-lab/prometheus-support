@@ -312,12 +312,6 @@ sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
     k8s/prometheus-federation/deployments/oauth2-proxy.yml
 
-# Apply templates
-CFG=/tmp/${CLUSTER}-${PROJECT}.yml
-kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
-    -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
-kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
-
 # Reload configurations. If the deployment configuration has changed then this
 # request may fail becuase the container has already shutdown.
 # TODO: there is an indeterminate delay between the time that a configmap is
@@ -355,3 +349,8 @@ kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
   --set ingressShim.defaultIssuerKind=ClusterIssuer \
   --set ingressShim.defaultIssuerName=letsencrypt
 
+# Finally, apply templates
+CFG=/tmp/${CLUSTER}-${PROJECT}.yml
+kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
+    -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
+kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
