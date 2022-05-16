@@ -1,36 +1,38 @@
 # This Ingress makes sure oauth2-proxy intercepts requests going to the /oauth2
 # path. This path *must not* be protected with oauth, to prevent a redirection
 # loop when the application redirects to it to authenticate the user.
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: grafana-tls-oauth
   namespace: default
   annotations:
     kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: "nginx"
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
     - grafana.{{GCLOUD_PROJECT}}.measurementlab.net
-    secretName: grafana-tls
+    secretName: grafana-tls-oauth
   rules:
   - host: grafana.{{GCLOUD_PROJECT}}.measurementlab.net
     http:
       paths:
-      - backend:
-          serviceName: oauth2-proxy
-          servicePort: 4180
-        path: /oauth2
+      - path: /oauth2
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy
+            port:
+              number: 4180
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: grafana-tls
   namespace: default
   annotations:
     kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: "nginx"
     # Set authentication URL and sign-in URL for OAuth.
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
@@ -42,6 +44,7 @@ metadata:
       proxy_set_header X-User  $user;
       proxy_set_header X-Email $email;
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
     - grafana.{{GCLOUD_PROJECT}}.measurementlab.net
@@ -51,6 +54,10 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: grafana-tls-service
-          servicePort: 3000
+          service:
+            name: grafana-tls-service
+            port:
+              number: 3000
+

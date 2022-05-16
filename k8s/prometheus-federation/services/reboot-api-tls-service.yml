@@ -15,15 +15,15 @@ spec:
   sessionAffinity: None
   type: NodePort
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: reboot-api-tls
   namespace: default
   annotations:
     kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: "nginx"
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
     - reboot.{{GCLOUD_PROJECT}}.measurementlab.net
@@ -33,6 +33,10 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: reboot-api-tls-service
-          servicePort: 8080
+          service:
+            name: reboot-api-tls-service
+            port:
+              number: 8080
+

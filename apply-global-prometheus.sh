@@ -312,12 +312,6 @@ sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
     k8s/prometheus-federation/deployments/oauth2-proxy.yml
 
-# Apply templates
-CFG=/tmp/${CLUSTER}-${PROJECT}.yml
-kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
-    -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
-kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
-
 # Reload configurations. If the deployment configuration has changed then this
 # request may fail becuase the container has already shutdown.
 # TODO: there is an indeterminate delay between the time that a configmap is
@@ -332,11 +326,38 @@ kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
 curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
 tar -zxvf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
 
+# Add repos
+./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+./linux-amd64/helm repo add jetstack https://charts.jetstack.io
+
+# Update local repos
+./linux-amd64/helm repo update
+
 # Install the NGINX ingress controller in the ingress-nginx namespace.
 kubectl create namespace ingress-nginx --dry-run -o json | kubectl apply -f -
-./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-./linux-amd64/helm repo update
 ./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
-  -n ingress-nginx \
+  --namespace ingress-nginx \
   --version ${K8S_INGRESS_NGINX_VERSION} \
   --values helm/prometheus-federation/ingress-nginx/${PROJECT}.yml
+
+# Install cert-manager.
+#
+# NOTE: for testing of cert-manager/certificates which might exhaust
+# our API limits for LetsEncrypt's production ACME servers, please change the
+# defaultIssuerName below to "letsencrypt-staging". Once your testing is done,
+# change it back to "letsencrypt". LE staging ACME servers have much higher
+# quotes/limits, and issue valid certificates, but ones which aren't trusted by
+# most clients (browsers, etc.).
+./linux-amd64/helm upgrade --install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.8.0 \
+  --set installCRDs=true \
+  --set ingressShim.defaultIssuerKind=ClusterIssuer \
+  --set ingressShim.defaultIssuerName=letsencrypt
+
+# Finally, apply templates
+CFG=/tmp/${CLUSTER}-${PROJECT}.yml
+kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
+    -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
+kubectl apply -f ${CFG} || (cat ${CFG} && exit 1)
