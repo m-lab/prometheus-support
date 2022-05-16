@@ -872,21 +872,6 @@ groups:
         the bug or create a new issue describing the failure and linking to the
         triggering archive.
 
-# ETL_AnnotationDownOrMissing fires when the annotator AppEngine service is down
-# (prometheus scrape attempts fail) or prometheus does not know about the
-# annotator service at all.
-  - alert: ETL_AnnotationDownOrMissing
-    expr: sum(up{service="annotator"}) == 0 or absent(up{service="annotator"})
-    for: 30m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-      cluster: prometheus-federation
-    annotations:
-      summary: An ETL Annotation Server is offline or missing!
-      description: The annotator runs in AppEngine. Check logs and recent
-        deployments. The daily and batch parsers may also be affected.
-
 # NDT_AsnAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
 # tests appear to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
