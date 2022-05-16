@@ -20,7 +20,7 @@ install:
   PROMTOOL_VERSION=v2.16.0;
   go install $PROMTOOL_URI:$PROMTOOL_VERSION;
   # Install kexpand templating tool. Only works from HEAD.
-- go get github.com/kopeio/kexpand
+- go install github.com/kopeio/kexpand@latest
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
   # Install jsonlint (use npm which is lightweight and actually works)
 - npm install jsonlint -g
