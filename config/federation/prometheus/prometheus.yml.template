@@ -399,6 +399,8 @@ scrape_configs:
         - 'gardener_config_datatypes'
         - 'etl_task_total'
         - 'etl_test_total'
+        - 'up{container="downloader"}'
+        - 'downloader_last_success_time_seconds'
     static_configs:
       - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
 
