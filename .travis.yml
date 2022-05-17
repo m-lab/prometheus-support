@@ -16,6 +16,8 @@ go_import_path: github.com/m-lab/prometheus-support
 
 install:
   # Install promtool and pin it at the latest stable version.
+  # TODO: use a prebuilt binary from the prometheus Docker container to speed
+  # up the build.
 - PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
   PROMTOOL_VERSION=v2.16.0;
   GO111MODULE=off go get -d $PROMTOOL_URI;
