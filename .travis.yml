@@ -2,7 +2,7 @@ dist: focal
 
 language: go
 go:
- - 1.13
+ - 1.18
 
 addons:
   apt:
@@ -16,13 +16,15 @@ go_import_path: github.com/m-lab/prometheus-support
 
 install:
   # Install promtool and pin it at the latest stable version.
+  # TODO: use a prebuilt binary from the prometheus Docker container to speed
+  # up the build.
 - PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
   PROMTOOL_VERSION=v2.16.0;
-  go get -d $PROMTOOL_URI;
+  GO111MODULE=off go get -d $PROMTOOL_URI;
   git -C $GOPATH/src/$PROMTOOL_URI checkout -b $PROMTOOL_VERSION tags/$PROMTOOL_VERSION;
-  go install $PROMTOOL_URI
+  GO111MODULE=off go install $PROMTOOL_URI
   # Install kexpand templating tool. Only works from HEAD.
-- go get github.com/kopeio/kexpand
+- go install github.com/kopeio/kexpand@latest
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
   # Install jsonlint (use npm which is lightweight and actually works)
 - npm install jsonlint -g
