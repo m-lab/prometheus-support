@@ -966,8 +966,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "WW1Jk2sGk"
+            "uid": "$datasource"
           },
           "exemplar": false,
           "expr": "avg(node_hwmon_temp_celsius{node=~\"$node.$site.*\", chip=\"platform_coretemp_0\"})",
@@ -1244,8 +1243,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "WW1Jk2sGk"
+            "uid": "$datasource"
           },
           "exemplar": true,
           "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"(eth0|ens4)\", node=~\"$node-$site.*\"}[4m])",
@@ -1257,8 +1255,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "WW1Jk2sGk"
+            "uid": "$datasource"
           },
           "exemplar": true,
           "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"(eth0|ens4)\", node=~\"$node-$site.*\"}[4m])",
