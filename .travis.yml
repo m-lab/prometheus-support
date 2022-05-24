@@ -4,6 +4,9 @@ language: go
 go:
  - 1.18
 
+services:
+ - docker
+
 addons:
   apt:
     update: true
@@ -15,14 +18,8 @@ addons:
 go_import_path: github.com/m-lab/prometheus-support
 
 install:
-  # Install promtool and pin it at the latest stable version.
-  # TODO: use a prebuilt binary from the prometheus Docker container to speed
-  # up the build.
-- PROMTOOL_URI=github.com/prometheus/prometheus/cmd/promtool;
-  PROMTOOL_VERSION=v2.16.0;
-  GO111MODULE=off go get -d $PROMTOOL_URI;
-  git -C $GOPATH/src/$PROMTOOL_URI checkout -b $PROMTOOL_VERSION tags/$PROMTOOL_VERSION;
-  GO111MODULE=off go install $PROMTOOL_URI
+  # Install promtool and pin to a recent stable version.
+- docker pull prom/prometheus:v2.35.0
   # Install kexpand templating tool. Only works from HEAD.
 - go install github.com/kopeio/kexpand@latest
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh kubectl
@@ -34,8 +31,10 @@ script:
 - which jsonlint
 - git ls-files | grep '\.json$' | xargs jsonlint -q
 # Use promtool to check current alerts and rules. This is only a syntax check.
-- promtool check rules config/federation/prometheus/alerts.yml
-- promtool check rules config/federation/prometheus/rules.yml
+- docker run -v $PWD/config:/config --entrypoint /bin/promtool -t prom/prometheus:v2.35.0
+    check rules /config/federation/prometheus/alerts.yml
+- docker run -v $PWD/config:/config --entrypoint /bin/promtool -t prom/prometheus:v2.35.0
+    check rules /config/federation/prometheus/rules.yml
 - $TRAVIS_BUILD_DIR/travis/install_gcloud.sh
 
 # TODO(soltesz): support check-config.
