@@ -875,11 +875,11 @@ groups:
 # NDT_AsnAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
 # tests appear to have too many failures or the bq_ndt_annotation_* metrics
 # disappear.
-  - alert: NDT_AsnAnnotationRatioTooLowOrMissing
+  - alert: DataPipeline_AsnAnnotationRatioTooLowOrMissing
     expr: |
       bq_annotation_asn_success / bq_annotation_total < 0.98
         or absent(bq_annotation_asn_success / bq_annotation_total)
-    for: 30m
+    for: 60m
     labels:
       repo: dev-tracker
       severity: ticket
@@ -892,11 +892,11 @@ groups:
 # NDT_GeoAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
 # tests (or sidecars) appear to have too many failures or the bq_annotation_* metrics
 # disappear.
-  - alert: NDT_GeoAnnotationRatioTooLowOrMissing
+  - alert: DataPipeline_GeoAnnotationRatioTooLowOrMissing
     expr: |
       bq_annotation_geo_success / bq_annotation_total < 0.98
         or absent(bq_annotation_geo_success / bq_annotation_total)
-    for: 30m
+    for: 60m
     labels:
       repo: dev-tracker
       severity: ticket
