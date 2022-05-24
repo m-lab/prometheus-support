@@ -37,6 +37,10 @@ FROM (
    SELECT * FROM recent_ndt_tcpinfo
    UNION ALL
    SELECT * FROM recent_ndt_ndt7
+   UNION ALL
+   SELECT * FROM recent_ndt_ndt5
+   UNION ALL
+   SELECT * FROM recent_ndt_scamper1
 )
 GROUP BY
   datatype
