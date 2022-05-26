@@ -16,8 +16,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 266,
-  "iteration": 1644349276212,
+  "id": 76,
+  "iteration": 1653582353452,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -824,6 +824,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$cluster"
       },
       "fieldConfig": {
@@ -871,22 +872,29 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "count by (kubelet_version) (kube_node_info{node=~\".*measurement-lab.org\"})",
+          "exemplar": true,
+          "expr": "count by (kubelet_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"physical\"})",
+          "interval": "",
           "legendFormat": "k8s - physical: {{kubelet_version}}",
           "refId": "B"
         },
         {
-          "expr": "count by (kubelet_version) (kube_node_info{node!~\".*measurement-lab.org\"})",
+          "exemplar": true,
+          "expr": "count by (kubelet_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"virtual\"})",
+          "interval": "",
           "legendFormat": "k8s - virtual: {{kubelet_version}}",
           "refId": "C"
         },
-        {
-          "expr": "count by (kernel_version) (kube_node_info{node=~\".*measurement-lab.org\"})",
+          "exemplar": true,
+          "expr": "count by (kernel_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"physical\"})",
+          "interval": "",
           "legendFormat": "kernel - physical: {{kernel_version}}",
           "refId": "A"
         },
         {
-          "expr": "count by (kernel_version) (kube_node_info{node!~\".*measurement-lab.org\"})",
+          "exemplar": true,
+          "expr": "count by (kernel_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"virtual\"})",
+          "interval": "",
           "legendFormat": "kernel - virtual: {{kernel_version}}",
           "refId": "D"
         }
@@ -1093,6 +1101,6 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 42,
+  "version": 15,
   "weekStart": ""
 }
