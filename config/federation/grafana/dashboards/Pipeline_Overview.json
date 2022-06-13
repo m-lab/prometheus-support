@@ -15,7 +15,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1654868086229,
+  "iteration": 1655154780908,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -466,141 +466,122 @@
       }
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "$Gardener2_DS"
+        "uid": "${Gardener2_DS}"
       },
-      "description": "Uptimes for V2 Gardener and Parsers.",
-      "editable": false,
-      "error": false,
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "links": []
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Instances.*"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          }
+        ]
       },
-      "fill": 0,
-      "fillGradient": 1,
       "gridPos": {
         "h": 7,
         "w": 4,
         "x": 8,
         "y": 8
       },
-      "hiddenSeries": false,
-      "id": 48,
-      "interval": "",
-      "isNew": false,
-      "legend": {
-        "alignAsTable": false,
-        "avg": false,
-        "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
+      "id": 115,
       "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.3.4",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:2874",
-          "alias": "/Instances/",
-          "fill": 3,
-          "yaxis": 2
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
         }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": true,
+      },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "000000062"
+            "uid": "${Gardener2_DS}"
           },
           "exemplar": true,
           "expr": "avg by(container, pod_template_hash)(time()-process_start_time_seconds{container=~\"etl-.*\"})",
-          "format": "time_series",
-          "hide": false,
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Uptime {{container}} {{pod_template_hash}}",
-          "refId": "A",
-          "step": 20
+          "legendFormat": "Uptime {{container}}",
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "000000062"
+            "uid": "${Gardener2_DS}"
           },
           "exemplar": true,
           "expr": "count by(container, run, pod_template_hash)(process_start_time_seconds{container=~\"etl-.*\"})",
-          "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Instances {{container}} {{pod_template_hash}}",
-          "refId": "B",
-          "step": 20
+          "legendFormat": "Instances {{container}}",
+          "refId": "B"
         }
       ],
-      "thresholds": [],
-      "timeRegions": [],
       "title": "v2 Data Pipeline Gardener & Parser Uptime & Instances",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "format": "",
-        "logBase": 0,
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1074",
-          "format": "dtdurations",
-          "label": "Uptime",
-          "logBase": 10,
-          "min": 60,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1075",
-          "decimals": 0,
-          "format": "short",
-          "label": "Instances",
-          "logBase": 1,
-          "max": "40",
-          "min": 0,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      "type": "timeseries"
     },
     {
       "aliasColors": {},
@@ -739,7 +720,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "$Gardener2_DS"
+        "uid": "${Gardener2_DS}"
       },
       "description": "",
       "fill": 0,
@@ -800,7 +781,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "000000062"
+            "uid": "${Gardener2_DS}"
           },
           "exemplar": true,
           "expr": "sum by(version)(increase(query_cost_seconds_sum{}[24h]))",
@@ -813,7 +794,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "000000062"
+            "uid": "${Gardener2_DS}"
           },
           "exemplar": true,
           "expr": "sum by(version)(increase(query_cost_seconds_sum{}[24h]  offset 1w  ))",
@@ -826,7 +807,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "000000062"
+            "uid": "${Gardener2_DS}"
           },
           "exemplar": true,
           "expr": "sum by(version) (increase(query_cost_seconds_sum{}[24h]  offset 2w))",
@@ -887,7 +868,7 @@
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "$Gardener2_DS"
+            "uid": "${Gardener2_DS}"
           },
           "description": "We may want to monitor this from the Gardener instance, and suspend operation if the cost exceeds some threshold.",
           "fieldConfig": {
@@ -937,9 +918,10 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
-              "expr": "sum  by(version, datatype, query)(rate(query_cost_seconds_sum{}[1h])/rate(query_cost_seconds_count{}[1h]))",
+              "exemplar": true,
+              "expr": "sum  by(version, datatype, query)(rate(query_cost_seconds_sum{datatype=~\"$datatype\"}[1h])/rate(query_cost_seconds_count{}[1h]))",
               "format": "time_series",
               "hide": true,
               "interval": "",
@@ -950,10 +932,10 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
-              "expr": "sum by(version, datatype, query)(increase(query_cost_seconds_sum{}[24h]))",
+              "expr": "sum by(version, datatype, query)(increase(query_cost_seconds_sum{datatype=~\"$datatype\"}[24h]))",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -1309,6 +1291,10 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Gardener2_DS}"
+          },
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1377,7 +1363,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
               "expr": "sum by(datatype) (gardener_tasks_in_flight{state=\"parsing\"}) # sum merges across restarts",
@@ -1529,6 +1515,10 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Gardener2_DS}"
+          },
           "description": "How long each date spends in each processing state.\nIf Processing exceeds 12 hours, then there will likely be data loss from expiration in the task queue.",
           "fieldConfig": {
             "defaults": {
@@ -1575,7 +1565,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
               "expr": "histogram_quantile(0.90, sum(rate(gardener_state_time_histogram_bucket{datatype=~\"$datatype\"}[6h])) by (state, datatype, le))",
@@ -1745,7 +1735,7 @@
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "$Gardener2_DS"
+            "uid": "${Gardener2_DS}"
           },
           "description": "",
           "fill": 1,
@@ -1793,7 +1783,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
               "expr": "60*sum by (table) (rate(etl_gcs_retry_count[10m]))",
@@ -1844,7 +1834,7 @@
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "$Gardener2_DS"
+            "uid": "${Gardener2_DS}"
           },
           "description": "",
           "fill": 1,
@@ -1885,7 +1875,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
               "expr": "sum by(table)(rate(etl_test_file_size_bytes_sum{}[30m]))",
@@ -2142,7 +2132,7 @@
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "$Gardener2_DS"
+            "uid": "${Gardener2_DS}"
           },
           "description": "Not clear why there is a small background failure rate.  Probably should investigate.\n\nTODO - separate GCS read and write error metrics",
           "fill": 1,
@@ -2190,7 +2180,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
               "expr": "60*sum by (kind, table)(rate(etl_backend_failure_count[10m]))\n",
@@ -2202,7 +2192,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
               "expr": "1000*(sum by (table)(rate(etl_backend_failure_count{kind=\"googleapi.Error\"}[30m])))",
@@ -2253,7 +2243,7 @@
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "$Gardener2_DS"
+            "uid": "${Gardener2_DS}"
           },
           "fill": 1,
           "fillGradient": 0,
@@ -2293,10 +2283,10 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "000000062"
+                "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
-              "expr": "histogram_quantile(0.5,sum by(le, table)(rate(etl_test_file_size_bytes_bucket{}[1h])))",
+              "expr": "histogram_quantile(0.5,sum by(le, table)(rate(etl_test_file_size_bytes_bucket{table=~\"$datatype\"}[1h])))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{table}}",
@@ -2340,7 +2330,7 @@
       "type": "row"
     }
   ],
-  "refresh": "5m",
+  "refresh": false,
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -2400,23 +2390,6 @@
       {
         "current": {
           "selected": false,
-          "text": "No data sources found",
-          "value": ""
-        },
-        "hide": 2,
-        "includeAll": false,
-        "multi": false,
-        "name": "LegacyDS",
-        "options": [],
-        "query": "prometheus",
-        "refresh": 1,
-        "regex": "Data Proc \\($project\\)",
-        "skipUrlSync": false,
-        "type": "datasource"
-      },
-      {
-        "current": {
-          "selected": false,
           "text": "Data Processing (mlab-oti)",
           "value": "Data Processing (mlab-oti)"
         },
@@ -2468,7 +2441,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "tcpinfo"
           ],
@@ -2499,7 +2472,7 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -2530,6 +2503,6 @@
   "timezone": "utc",
   "title": "Pipeline: Overview",
   "uid": "UTgnK-jMz",
-  "version": 11,
+  "version": 12,
   "weekStart": ""
 }
