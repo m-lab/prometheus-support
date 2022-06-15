@@ -819,20 +819,34 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#gardenerconfigdatatypemissingingardenerhistoricalthroughputquery
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
 
-# GardenerFailureRateTooHighOrMissing fires when the number of failed Gardener jobs
-# in the last day rises above 1% or the number of total jobs is not reported.
+# GardenerFailureRateTooHigh fires when the number of failed Gardener jobs
+# in the last day rises above 1%.
   - alert: GardenerFailureRateTooHighOrMissing
     expr: (sum(rate(gardener_jobs_total{status!="success"}[1d])) by (datatype) /
       sum(rate(gardener_jobs_total[1d])) by (datatype)) > 0.01
-      OR absent(gardener_jobs_total)
     for: 10m
     labels:
       repo: dev-tracker
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: Gardener job failure rate above 1% or missing for {{ $labels.datatype }}.
+      summary: Gardener job failure rate above 1% for {{ $labels.datatype }}.
       description: Gardener runs in the "data-processing" cluster.
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
+
+# GardenerJobsTotalMissing fires when the number of total jobs is not reported.
+  - alert: GardenerJobsTotalMissing
+    expr: absent(gardener_jobs_total)
+    for: 30m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: gardener_jobs_total metric is missing.
+      description: Gardener runs in the "data-processing" cluster. Is the
+        gardener running? If it is running has processing slowed below 1 job every
+        30min?
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
 
 # ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
