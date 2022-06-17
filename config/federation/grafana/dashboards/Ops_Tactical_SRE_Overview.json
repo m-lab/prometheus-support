@@ -16,7 +16,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1655494122017,
+  "iteration": 1655496781097,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -751,6 +751,10 @@
       "type": "table-old"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -824,7 +828,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "000000008"
+            "uid": "${datasource}"
           },
           "exemplar": true,
           "expr": "sum (increase(githubreceiver_alerts_total{status=\"firing\"}[30d])) / 30",
@@ -1119,7 +1123,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -1188,6 +1192,6 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 16,
+  "version": 45,
   "weekStart": ""
 }
