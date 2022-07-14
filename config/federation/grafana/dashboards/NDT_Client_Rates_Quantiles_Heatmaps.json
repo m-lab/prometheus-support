@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": 97,
-  "iteration": 1647289486297,
+  "iteration": 1657823609966,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -817,23 +817,61 @@
         "type": "datasource"
       },
       {
+        "allValue": ".*",
         "current": {
           "selected": true,
-          "text": [],
-          "value": []
+          "text": [
+            "physical",
+            "virtual"
+          ],
+          "value": [
+            "physical",
+            "virtual"
+          ]
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": true,
+        "name": "type",
+        "options": [
+          {
+            "selected": true,
+            "text": "physical",
+            "value": "physical"
+          },
+          {
+            "selected": true,
+            "text": "virtual",
+            "value": "virtual"
+          }
+        ],
+        "query": "physical, virtual",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "akl01"
+          ],
+          "value": [
+            "akl01"
+          ]
         },
         "datasource": {
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(machine)",
+        "definition": "label_values(ndt_test_rate_mbps_count{site_type=~\"$type\"}, machine)",
         "hide": 0,
         "includeAll": false,
         "multi": true,
         "name": "site",
         "options": [],
         "query": {
-          "query": "label_values(machine)",
+          "query": "label_values(ndt_test_rate_mbps_count{site_type=~\"$type\"}, machine)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -968,6 +1006,6 @@
   "timezone": "utc",
   "title": "NDT: Client Rates, Quantiles over time, & Heatmaps",
   "uid": "SAvQ0QAnl",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
