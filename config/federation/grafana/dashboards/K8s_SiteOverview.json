@@ -2075,7 +2075,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(node)",
+        "definition": "label_values(kube_node_info{site=\"$site\"}, node)",
         "hide": 0,
         "includeAll": true,
         "label": "Node",
@@ -2083,8 +2083,8 @@
         "name": "node",
         "options": [],
         "query": {
-          "query": "label_values(node)",
-          "refId": "Platform Cluster (mlab-oti)-node-Variable-Query"
+          "query": "label_values(kube_node_info{site=\"$site\"}, node)",
+          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "/(mlab[1-4]).*/",
