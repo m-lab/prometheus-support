@@ -273,7 +273,7 @@
             "uid": "${datasource}"
           },
           "exemplar": false,
-          "expr": "kube_node_labels{node=~\"$node-$site.*\"}",
+          "expr": "max by (label_mlab_type) (kube_node_labels{node=~\"$node-$site.*\"})",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -281,7 +281,7 @@
           "refId": "A"
         }
       ],
-      "title": "Machine type",
+      "title": "Site type",
       "type": "stat"
     },
     {
