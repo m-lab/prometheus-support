@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": 246,
-  "iteration": 1646762660954,
+  "iteration": 1657921475306,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -273,7 +273,7 @@
             "uid": "${datasource}"
           },
           "exemplar": false,
-          "expr": "kube_node_labels{node=~\"mlab1-$site.*\"}",
+          "expr": "max by (label_mlab_type) (kube_node_labels{node=~\"$node-$site.*\"})",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -281,7 +281,7 @@
           "refId": "A"
         }
       ],
-      "title": "Machine type",
+      "title": "Site type",
       "type": "stat"
     },
     {
@@ -2003,7 +2003,41 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
+          "text": [
+            "physical",
+            "virtual"
+          ],
+          "value": [
+            "physical",
+            "virtual"
+          ]
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Type",
+        "multi": true,
+        "name": "type",
+        "options": [
+          {
+            "selected": true,
+            "text": "physical",
+            "value": "physical"
+          },
+          {
+            "selected": true,
+            "text": "virtual",
+            "value": "virtual"
+          }
+        ],
+        "query": "physical, virtual",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": true,
           "text": "akl01",
           "value": "akl01"
         },
@@ -2011,7 +2045,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(site)",
+        "definition": "label_values(kube_node_labels{label_mlab_type=~\"$type\"}, site)",
         "hide": 0,
         "includeAll": false,
         "label": "Site",
@@ -2019,8 +2053,8 @@
         "name": "site",
         "options": [],
         "query": {
-          "query": "label_values(site)",
-          "refId": "Platform Cluster (mlab-oti)-site-Variable-Query"
+          "query": "label_values(kube_node_labels{label_mlab_type=~\"$type\"}, site)",
+          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "",
@@ -2041,7 +2075,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(node)",
+        "definition": "label_values(kube_node_info{site=\"$site\"}, node)",
         "hide": 0,
         "includeAll": true,
         "label": "Node",
@@ -2049,8 +2083,8 @@
         "name": "node",
         "options": [],
         "query": {
-          "query": "label_values(node)",
-          "refId": "Platform Cluster (mlab-oti)-node-Variable-Query"
+          "query": "label_values(kube_node_info{site=\"$site\"}, node)",
+          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "/(mlab[1-4]).*/",
@@ -2126,6 +2160,6 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 47,
+  "version": 51,
   "weekStart": ""
 }
