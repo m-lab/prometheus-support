@@ -893,7 +893,7 @@ groups:
     expr: |
       bq_annotation_asn_success / bq_annotation_total < 0.98
         or absent(bq_annotation_asn_success / bq_annotation_total)
-    for: 60m
+    for: 3h
     labels:
       repo: dev-tracker
       severity: ticket
@@ -910,7 +910,7 @@ groups:
     expr: |
       bq_annotation_geo_success / bq_annotation_total < 0.98
         or absent(bq_annotation_geo_success / bq_annotation_total)
-    for: 60m
+    for: 3h
     labels:
       repo: dev-tracker
       severity: ticket
