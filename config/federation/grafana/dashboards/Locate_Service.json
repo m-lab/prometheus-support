@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1659037622157,
+  "iteration": 1659037622163,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -146,7 +146,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "points",
+            "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
@@ -155,7 +155,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 4,
             "scaleDistribution": {
               "type": "linear"
@@ -384,7 +384,7 @@
           "exemplar": true,
           "expr": "sum(rate(locate_requests_total{type=\"heartbeat\"}[5m]))",
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "Rate",
           "refId": "A"
         }
       ],
@@ -486,7 +486,7 @@
           "exemplar": true,
           "expr": "(sum(rate(locate_app_engine_total{country!=\"\"}[1h])) /\nsum(rate(locate_app_engine_total[1h])))",
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "Rate",
           "refId": "A"
         }
       ],
@@ -520,7 +520,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
