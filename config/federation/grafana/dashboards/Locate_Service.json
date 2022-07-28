@@ -21,10 +21,23 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1659028472600,
+  "iteration": 1659028472622,
   "links": [],
   "liveNow": false,
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 12,
+      "panels": [],
+      "title": "Nearest",
+      "type": "row"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -89,7 +102,7 @@
         "h": 9,
         "w": 9,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 2,
       "options": {
@@ -109,7 +122,7 @@
             "uid": "${datasource}"
           },
           "exemplar": true,
-          "expr": "sum(locate_requests_total)",
+          "expr": "sum(locate_requests_total{type=\"nearest\"})",
           "interval": "",
           "legendFormat": "Requests",
           "refId": "A"
@@ -133,7 +146,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
+            "drawStyle": "points",
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
@@ -143,12 +156,12 @@
             },
             "lineInterpolation": "linear",
             "lineWidth": 1,
-            "pointSize": 5,
+            "pointSize": 4,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": true,
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -171,7 +184,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -179,7 +192,7 @@
         "h": 9,
         "w": 8,
         "x": 9,
-        "y": 0
+        "y": 1
       },
       "id": 4,
       "options": {
@@ -200,7 +213,7 @@
             "uid": "${datasource}"
           },
           "exemplar": true,
-          "expr": "(sum(rate(locate_requests_total{status!=\"OK\"}[1h])) by (status) /\nsum(rate(locate_requests_total[1h])) by (status))",
+          "expr": "(sum by (status) (rate(locate_requests_total{type=\"nearest\", status!=\"OK\"}[1h]))\n/ ignoring (status) group_left \nsum(rate(locate_requests_total{type=\"nearest\"}[1h])))",
           "interval": "",
           "legendFormat": "{{status}}",
           "refId": "A"
@@ -210,11 +223,89 @@
       "type": "timeseries"
     },
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 14,
+      "panels": [],
+      "title": "Heartbeat",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Number of Heartbeat connections.",
+      "description": "Number of currently active Heartbeat connections.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-purple",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 11
+      },
+      "id": 10,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "exemplar": true,
+          "expr": "sum(locate_current_heartbeat_connections)",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Heartbeat Connections",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "The 5 min rate of Heartbeat connection requests.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -268,11 +359,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 9,
-        "x": 0,
-        "y": 9
+        "w": 8,
+        "x": 9,
+        "y": 11
       },
-      "id": 10,
+      "id": 18,
       "options": {
         "legend": {
           "calcs": [],
@@ -290,14 +381,27 @@
             "uid": "${datasource}"
           },
           "exemplar": true,
-          "expr": "sum(locate_current_heartbeat_connections)",
+          "expr": "sum(rate(locate_requests_total{type=\"heartbeat\"}[5m]))",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Heartbeat Connections",
+      "title": "Heartbeat Connection Request Rate (5 min)",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 16,
+      "panels": [],
+      "title": "App Engine",
+      "type": "row"
     },
     {
       "datasource": {
@@ -358,8 +462,8 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 9,
-        "y": 9
+        "x": 0,
+        "y": 20
       },
       "id": 6,
       "options": {
