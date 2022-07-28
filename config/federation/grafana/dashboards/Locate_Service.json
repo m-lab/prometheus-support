@@ -21,8 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 394,
-  "iteration": 1659014170651,
+  "iteration": 1659027292356,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -107,7 +106,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "xIXR1_LMz"
+            "uid": "${datasource}"
           },
           "exemplar": true,
           "expr": "sum(locate_requests_total)",
@@ -200,7 +199,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "xIXR1_LMz"
+            "uid": "${datasource}"
           },
           "exemplar": true,
           "expr": "(sum(rate(locate_requests_total{status!=\"OK\"}[1h])) /\nsum(rate(locate_requests_total[1h])))",
@@ -354,7 +353,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "xIXR1_LMz"
+            "uid": "${datasource}"
           },
           "exemplar": true,
           "expr": "(sum(rate(locate_app_engine_total{country!=\"\"}[1h])) /\nsum(rate(locate_app_engine_total[1h])))",
@@ -400,6 +399,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
