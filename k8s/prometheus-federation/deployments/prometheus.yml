@@ -101,7 +101,7 @@ spec:
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
-      - image: measurementlab/gcp-service-discovery:cristinaleon
+      - image: measurementlab/gcp-service-discovery:v1.5.1
         name: service-discovery
         args: [ "--aef-target=/targets/aeflex-targets/aeflex.json",
                 "--gke-target=/targets/federation-targets/prometheus-clusters.json",
@@ -140,8 +140,26 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/bmc-targets/bmc_e2e.json",
                 "--http-target=/targets/switch-monitoring-targets/switch-monitoring.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/switch-monitoring-targets/switch-monitoring.json",
-                "--project={{GCLOUD_PROJECT}}",
-                "--aef-project=mlab-ns"]
+                "--project={{GCLOUD_PROJECT}}"]
+        ports:
+          - containerPort: 9373
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "150m"
+          limits:
+            memory: "150Mi"
+            cpu: "150m"
+        volumeMounts:
+        # Mount the the prometheus-storage for write access to the target
+        # directories.
+        - mountPath: /targets
+          name: prometheus-storage
+
+      - image: measurementlab/gcp-service-discovery:v1.5.1
+        name: service-discovery-locate
+        args: [ "--aef-target=/targets/aeflex-targets/aeflex-locate.json",
+                "--project=mlab-ns"]
         ports:
           - containerPort: 9373
         resources:
