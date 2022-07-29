@@ -103,8 +103,7 @@ spec:
           name: prometheus-config
       - image: measurementlab/gcp-service-discovery:v1.5.1
         name: service-discovery
-        args: [ "--aef-target=/targets/aeflex-targets/aeflex.json",
-                "--gke-target=/targets/federation-targets/prometheus-clusters.json",
+        args: [ "--gke-target=/targets/federation-targets/prometheus-clusters.json",
                 "--http-target=/targets/blackbox-targets/ssh.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/ssh.json",
                 "--http-target=/targets/blackbox-targets-ipv6/ssh_ipv6.json",
