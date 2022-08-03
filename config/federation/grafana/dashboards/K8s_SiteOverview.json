@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": 246,
-  "iteration": 1657921475306,
+  "iteration": 1659542413927,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -42,7 +42,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "OSuRJ_YMz"
+        "uid": "${gkedatasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -118,10 +118,17 @@
       "pluginVersion": "8.3.4",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${gkedatasource}"
+          },
+          "exemplar": false,
           "expr": "probe_success{module=\"icmp\", instance=\"s1-$site.measurement-lab.org\"}",
           "format": "time_series",
           "instant": true,
+          "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -131,7 +138,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "OSuRJ_YMz"
+        "uid": "${gkedatasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -207,10 +214,17 @@
       "pluginVersion": "8.3.4",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${gkedatasource}"
+          },
+          "exemplar": false,
           "expr": "gmx_site_maintenance{site=\"$site\"}",
           "format": "time_series",
           "instant": true,
+          "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -466,7 +480,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "OSuRJ_YMz"
+        "uid": "${gkedatasource}"
       },
       "description": "",
       "fieldConfig": {
@@ -544,10 +558,17 @@
       "pluginVersion": "8.3.4",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${gkedatasource}"
+          },
+          "exemplar": false,
           "expr": "gmx_machine_maintenance{machine=~\"$node-$site.*\"}",
           "format": "time_series",
           "instant": true,
+          "interval": "",
           "intervalFactor": 1,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
@@ -1997,13 +2018,32 @@
         "query": "prometheus",
         "queryValue": "",
         "refresh": 1,
-        "regex": "",
+        "regex": "/Platform Cluster.*/",
         "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "current": {
           "selected": true,
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "GKE Datasource",
+        "multi": false,
+        "name": "gkedatasource",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/Prometheus \\([a-z-]+\\)/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
           "text": [
             "physical",
             "virtual"
@@ -2037,7 +2077,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "akl01",
           "value": "akl01"
         },
@@ -2160,6 +2200,6 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 51,
+  "version": 57,
   "weekStart": ""
 }
