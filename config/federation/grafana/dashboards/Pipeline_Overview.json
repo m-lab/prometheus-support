@@ -1615,7 +1615,7 @@
                 "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
-              "expr": "(sum by(datatype) (rate(gardener_jobs_total{status!=\"success\"}[1d])) / sum by(datatype) (rate(gardener_jobs_total[1d]))) > 0.01",
+              "expr": "(sum by(datatype) (rate(gardener_jobs_total{status!=\"success\"}[1d])) / sum by(datatype) (rate(gardener_jobs_total[1d])))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{datatype}}",
