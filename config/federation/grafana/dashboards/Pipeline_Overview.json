@@ -15,7 +15,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "iteration": 1659642678392,
+  "iteration": 1659993956987,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -1608,6 +1608,18 @@
               "interval": "",
               "legendFormat": "{{status}}",
               "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${Gardener2_DS}"
+              },
+              "exemplar": true,
+              "expr": "(sum by(datatype) (rate(gardener_jobs_total{status!=\"success\"}[1d])) / sum by(datatype) (rate(gardener_jobs_total[1d]))) > 0.01",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{datatype}}",
+              "refId": "C"
             }
           ],
           "title": "Gardener Errors",
@@ -2441,7 +2453,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "mlab-oti",
           "value": "mlab-oti"
         },
@@ -2510,7 +2522,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "complete"
           ],
@@ -2544,7 +2556,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "tcpinfo"
           ],
@@ -2575,7 +2587,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
@@ -2606,6 +2618,6 @@
   "timezone": "utc",
   "title": "Pipeline: Overview",
   "uid": "UTgnK-jMz",
-  "version": 15,
+  "version": 17,
   "weekStart": ""
 }
