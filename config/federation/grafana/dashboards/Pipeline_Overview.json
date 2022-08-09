@@ -1592,7 +1592,7 @@
                 "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
-              "expr": "sum by(status)(increase(gardener_warning_total[5m]))",
+              "expr": "sum by(status)(increase(gardener_warning_total[10m]))",
               "interval": "5m",
               "legendFormat": "{{status}}",
               "refId": "A"
@@ -1603,7 +1603,7 @@
                 "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
-              "expr": "sum by(status) (increase(gardener_fail_total[5m]))",
+              "expr": "sum by(status) (increase(gardener_fail_total[10m]))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{status}}",
@@ -1615,7 +1615,7 @@
                 "uid": "${Gardener2_DS}"
               },
               "exemplar": true,
-              "expr": "(sum by(datatype) (rate(gardener_jobs_total{status!=\"success\"}[1d])) / sum by(datatype) (rate(gardener_jobs_total[1d])))",
+              "expr": "(sum by(datatype) (rate(gardener_jobs_total{status!=\"success\"}[10m])) / sum by(datatype) (rate(gardener_jobs_total[10m])))",
               "hide": false,
               "interval": "",
               "legendFormat": "{{datatype}}",
