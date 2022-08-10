@@ -1,0 +1,24 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cloud-build-deployer
+rules:
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["validatingwebhookconfigurations"]
+  verbs: ["get", "update"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "create"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cloud-build-deployer
+subjects:
+- kind: User
+  name: 581276032543@cloudbuild.gserviceaccount.com
+roleRef:
+  kind: ClusterRole
+  name: cloud-build-deployer
+  apiGroup: rbac.authorization.k8s.io
+

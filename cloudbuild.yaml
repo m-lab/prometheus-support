@@ -1,0 +1,118 @@
+options:
+  dynamic_substitutions: true
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-alertmanager-slack-channel-url/versions/latest
+    env: AM_SLACK_CHANNEL_URL
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-grafana-client-secret-name/versions/latest
+    env: GF_AUTH_GOOGLE_CLIENT_SECRET
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-grafana-client-id-name/versions/latest
+    env: GF_AUTH_GOOGLE_CLIENT_ID
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-github-receiver-auth-token/versions/latest
+    env: GITHUB_RECEIVER_AUTH_TOKEN
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-script-exporter-monitoring-signer-key/versions/latest
+    env: MONITORING_SIGNER_KEY
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-client-id/versions/latest
+    env: OAUTH_PROXY_CLIENT_ID
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-client-secret/versions/latest
+    env: OAUTH_PROXY_CLIENT_SECRET
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-cookie-secret/versions/latest
+    env: OAUTH_PROXY_COOKIE_SECRET
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-pagerduty-service-key/versions/latest
+    env: PAGERDUTY_SERVICE_KEY
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-platform-prom-auth-user/versions/latest
+    env: PLATFORM_PROMETHEUS_BASIC_AUTH_USER
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-platform-prom-auth-pass/versions/latest
+    env: PLATFORM_PROMETHEUS_BASIC_AUTH_PASS
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-prom-auth-user/versions/latest
+    env: PROMETHEUS_BASIC_AUTH_USER
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-prom-auth-pass/versions/latest
+    env: PROMETHEUS_BASIC_AUTH_PASS
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-rebootapi-basic-auth-user/versions/latest
+    env: REBOOTAPI_BASIC_AUTH
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-rebootapi-basic-auth-pass/versions/latest
+    env: REBOOTAPI_BASIC_AUTH_PASS
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-rebootapi-coreos-ssh-key/versions/latest
+    env: REBOOTAPI_COREOS_SSH_KEY
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-service-account-discuss/versions/latest
+    env: SERVICE_ACCOUNT_discuss
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-service-account-mlab-ns/versions/latest
+    env: SERVICE_ACCOUNT_mlab_ns
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-switch-monitoring-ssh-key/versions/latest
+    env: SWITCH_MONITORING_SSH_KEY
+
+steps:
+# Prepare the environment.
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: bash
+  env:
+  - 'CLUSTER=prometheus-federation'
+  secretEnv:
+  - AM_SLACK_CHANNEL_URL
+  - GF_AUTH_GOOGLE_CLIENT_SECRET
+  - GF_AUTH_GOOGLE_CLIENT_ID
+  - GITHUB_RECEIVER_AUTH_TOKEN
+  - MONITORING_SIGNER_KEY
+  - OAUTH_PROXY_CLIENT_ID
+  - OAUTH_PROXY_CLIENT_SECRET
+  - OAUTH_PROXY_COOKIE_SECRET
+  - PAGERDUTY_SERVICE_KEY
+  - PLATFORM_PROMETHEUS_BASIC_AUTH_USER
+  - PLATFORM_PROMETHEUS_BASIC_AUTH_PASS
+  - PROMETHEUS_BASIC_AUTH_USER
+  - PROMETHEUS_BASIC_AUTH_PASS
+  - REBOOTAPI_BASIC_AUTH
+  - REBOOTAPI_BASIC_AUTH_PASS
+  - REBOOTAPI_COREOS_SSH_KEY
+  - SERVICE_ACCOUNT_discuss
+  - SERVICE_ACCOUNT_mlab_ns
+  - SWITCH_MONITORING_SSH_KEY
+  args:
+  - -c
+  - |-
+    export PROJECT=$PROJECT_ID
+
+    # Cloud Build does not support variable substitution in any location execpt
+    # "steps" and "images". Here we take the secret values and assign them to
+    # variables that apply-global-prometheus.sh expects.
+    export AM_SLACK_CHANNEL_URL_${PROJECT/-/_}=$$AM_SLACK_CHANNEL_URL
+    export GF_AUTH_GOOGLE_CLIENT_SECRET_${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_SECRET
+    export GF_AUTH_GOOGLE_CLIENT_ID_${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_ID
+    export OAUTH_PROXY_CLIENT_ID_${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_ID
+    export OAUTH_PROXY_CLIENT_SECRET_${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_SECRET
+    export OAUTH_PROXY_COOKIE_SECRET_${PROJECT/-/_}=$$OAUTH_PROXY_COOKIE_SECRET
+    export PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_USER
+    export PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_PASS
+    export REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH
+    export REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH_PASS
+
+    # Install Go
+    curl --location --remote-name  https://go.dev/dl/go1.18.5.linux-amd64.tar.gz
+    tar -C /usr/local -xf go1.18.5.linux-amd64.tar.gz
+    export PATH=$$PATH:/usr/local/go/bin
+
+    # Install promtool
+    curl --location --remote-name \
+      "https://github.com/prometheus/prometheus/releases/download/v2.37.0/prometheus-2.37.0.linux-amd64.tar.gz"
+    tar xf prometheus-2.37.0.linux-amd64.tar.gz prometheus-2.37.0.linux-amd64/promtool
+    mv prometheus-2.37.0.linux-amd64/promtool /usr/local/bin/
+
+    # Install kexpand
+    go install github.com/kopeio/kexpand@latest
+    export PATH=$$PATH:~/go/bin
+
+    # Install new GKE kubectl auth plugin
+    # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
+    apt update && apt install -y google-cloud-sdk-gke-gcloud-auth-plugin
+    export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+    # Check alert and recording rules
+    promtool check rules ./config/federation/prometheus/alerts.yml
+    promtool check rules ./config/federation/prometheus/rules.yml
+
+    # Get cluster credentials
+    gcloud container clusters get-credentials prometheus-federation --project mlab-sandbox --zone us-central1-c
+
+    # Apply cluster configurations!
+    ./apply-global-prometheus.sh
