@@ -172,7 +172,7 @@
           "exemplar": true,
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"download\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
           "interval": "",
-          "legendFormat": "Download",
+          "legendFormat": "Download Tests",
           "refId": "A"
         },
         {
@@ -184,7 +184,7 @@
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"upload\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
           "hide": false,
           "interval": "",
-          "legendFormat": "Upload",
+          "legendFormat": "Upload Tests",
           "refId": "B"
         },
         {
@@ -196,7 +196,7 @@
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
           "hide": false,
           "interval": "",
-          "legendFormat": "Total",
+          "legendFormat": "Total Tests",
           "refId": "C"
         },
         {
