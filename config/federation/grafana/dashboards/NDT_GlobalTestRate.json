@@ -15,8 +15,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 195,
-  "iteration": 1651097042352,
+  "id": 396,
+  "iteration": 1660154758348,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -37,148 +37,183 @@
       "type": "text"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
+        "type": "mixed",
+        "uid": "-- Mixed --"
       },
-      "decimals": 1,
       "fieldConfig": {
         "defaults": {
-          "links": []
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Tests / Min",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#56A64B",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Download"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5794F2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Upload"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FADE2A",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
-      "fill": 0,
-      "fillGradient": 0,
       "gridPos": {
         "h": 11,
         "w": 24,
         "x": 0,
         "y": 3
       },
-      "hiddenSeries": false,
       "id": 22,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
       "links": [],
-      "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.3.4",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Total",
-          "color": "#56A64B",
-          "linewidth": 2
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        {
-          "alias": "Download",
-          "color": "#5794F2"
-        },
-        {
-          "alias": "Upload",
-          "color": "#FADE2A"
+        "tooltip": {
+          "mode": "single"
         }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
+      },
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${prometheusPlatform}"
           },
           "exemplar": true,
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"s2c\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"download\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Download",
-          "refId": "A",
-          "step": 120
+          "interval": "",
+          "legendFormat": "Download Tests",
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${prometheusPlatform}"
           },
           "exemplar": true,
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{direction=\"c2s\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{direction=\"upload\", result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
-          "format": "time_series",
-          "interval": "1m",
-          "intervalFactor": 1,
-          "legendFormat": "Upload",
-          "refId": "B",
-          "step": 120
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Upload Tests",
+          "refId": "B"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${prometheusPlatform}"
           },
           "exemplar": true,
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
-          "format": "time_series",
           "hide": false,
           "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "Total",
-          "refId": "C",
-          "step": 240
-        }
-      ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "NDT Global Test Rate (Up, Down) (5m average)",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:44",
-          "format": "short",
-          "label": "Tests / Min",
-          "logBase": 1,
-          "min": "0",
-          "show": true
+          "legendFormat": "Total Tests",
+          "refId": "C"
         },
         {
-          "$$hashKey": "object:45",
-          "format": "short",
-          "logBase": 1,
-          "show": true
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheusFederation}"
+          },
+          "exemplar": true,
+          "expr": "60 *sum  (rate(locate_app_engine_total[5m]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Total Locate Requests",
+          "refId": "D"
         }
       ],
-      "yaxis": {
-        "align": false
-      }
+      "title": "NDT Global Test Rate (Up, Down) (5m average)",
+      "type": "timeseries"
     },
     {
       "aliasColors": {},
@@ -187,7 +222,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "${prometheusPlatform}"
       },
       "decimals": 1,
       "fieldConfig": {
@@ -229,15 +264,18 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:249",
           "alias": "Current",
           "color": "#37872D",
           "linewidth": 2
         },
         {
+          "$$hashKey": "object:250",
           "alias": "One Week",
           "color": "rgba(117, 207, 105, 0.53)"
         },
         {
+          "$$hashKey": "object:251",
           "alias": "Two Week",
           "color": "rgba(135, 150, 132, 0.67)"
         }
@@ -249,7 +287,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${prometheusPlatform}"
           },
           "exemplar": true,
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m])) or vector(0))",
@@ -264,7 +302,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${prometheusPlatform}"
           },
           "exemplar": true,
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 7d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 7d)) or vector(0))",
@@ -279,7 +317,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${prometheusPlatform}"
           },
           "exemplar": true,
           "expr": "(60 * sum(rate(ndt5_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 14d)) or vector(0))\n+ (60 * sum(rate(ndt7_client_test_results_total{result!=\"error-without-rate\", site_type=~\"$sitetype\"}[5m] offset 14d)) or vector(0))",
@@ -335,26 +373,78 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
-        "label": "Datasource",
+        "label": "",
         "multi": false,
-        "name": "datasource",
+        "name": "prometheusPlatform",
         "options": [],
         "query": "prometheus",
         "queryValue": "",
         "refresh": 1,
-        "regex": "/Platform/",
+        "regex": "Platform Cluster \\($project\\)",
         "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
+          "text": "Prometheus (mlab-oti)",
+          "value": "Prometheus (mlab-oti)"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "prometheusFederation",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "Prometheus \\($project\\)",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "mlab-oti",
+          "value": "mlab-oti"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Project",
+        "multi": false,
+        "name": "project",
+        "options": [
+          {
+            "selected": true,
+            "text": "mlab-oti",
+            "value": "mlab-oti"
+          },
+          {
+            "selected": false,
+            "text": "mlab-staging",
+            "value": "mlab-staging"
+          },
+          {
+            "selected": false,
+            "text": "mlab-sandbox",
+            "value": "mlab-sandbox"
+          }
+        ],
+        "query": "mlab-oti,mlab-staging,mlab-sandbox",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
           "text": [
             "Physical",
             "Virtual"
@@ -389,7 +479,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
@@ -420,6 +510,6 @@
   "timezone": "utc",
   "title": "NDT: Global Test Rate",
   "uid": "Cyq7WeNiz",
-  "version": 156,
+  "version": 157,
   "weekStart": ""
 }
