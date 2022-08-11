@@ -30,4 +30,4 @@ popd
 # total size of the JSON files exceeds the maximium size for a ConfigMap (1MB).
 kubectl create configmap grafana-dashboards \
     --from-file=config/federation/grafana/dashboards-minified \
-    --dry-run -o json | kubectl replace -f -
+    --dry-run="client" -o json | kubectl replace -f -
