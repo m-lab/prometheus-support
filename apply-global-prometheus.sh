@@ -27,7 +27,7 @@ export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
 
 # Version numbers for Helm and Helm charts.
 K8S_HELM_VERSION="v3.3.0"
-K8S_INGRESS_NGINX_VERSION="2.11.2"
+K8S_INGRESS_NGINX_VERSION="4.2.1"
 
 # GCP doesn't support IPv6, so we have a Linode VM running three instances of
 # the blackbox_exporter, on three separate ports... one port/instance for each
