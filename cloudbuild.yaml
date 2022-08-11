@@ -11,6 +11,8 @@ availableSecrets:
     env: GF_AUTH_GOOGLE_CLIENT_ID
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-github-receiver-auth-token/versions/latest
     env: GITHUB_RECEIVER_AUTH_TOKEN
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-linode-private-key-ipv6-monitoring/versions/latest
+    env: LINODE_PRIVATE_KEY_ipv6_monitoring
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-script-exporter-monitoring-signer-key/versions/latest
     env: MONITORING_SIGNER_KEY
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-client-id/versions/latest
@@ -46,13 +48,12 @@ steps:
 # Prepare the environment.
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   entrypoint: bash
-  env:
-  - 'CLUSTER=prometheus-federation'
   secretEnv:
   - AM_SLACK_CHANNEL_URL
   - GF_AUTH_GOOGLE_CLIENT_SECRET
   - GF_AUTH_GOOGLE_CLIENT_ID
   - GITHUB_RECEIVER_AUTH_TOKEN
+  - LINODE_PRIVATE_KEY_ipv6_monitoring
   - MONITORING_SIGNER_KEY
   - OAUTH_PROXY_CLIENT_ID
   - OAUTH_PROXY_CLIENT_SECRET
@@ -107,12 +108,28 @@ steps:
     apt update && apt install -y google-cloud-sdk-gke-gcloud-auth-plugin
     export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
+    # Install any other needed system packages
+    apt install -y jq
+
     # Check alert and recording rules
     promtool check rules ./config/federation/prometheus/alerts.yml
     promtool check rules ./config/federation/prometheus/rules.yml
 
-    # Get cluster credentials
-    gcloud container clusters get-credentials prometheus-federation --project mlab-sandbox --zone us-central1-c
+    export CLUSTER=prometheus-federation
 
-    # Apply cluster configurations!
+    # Get cluster credentials for the prometheus-federation cluster
+    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone us-central1-c
+
+    # Apply various things in the prometheus-federation cluster
     ./apply-global-prometheus.sh
+    ./apply-grafana-dashboards.sh
+    ./deploy-prometheus-targets.sh $$PROJECT
+
+    export CLUSTER=data-processing
+
+    # Get cluster credentials for the data-processing cluster
+    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --region us-east1
+    ./apply-cluster.sh
+
+    # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
+    ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
