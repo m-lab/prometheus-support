@@ -73,6 +73,7 @@ steps:
   - -c
   - |-
     export PROJECT=$PROJECT_ID
+    export PROJECT_NUMBER=$PROJECT_NUMBER
 
     # Cloud Build does not support variable substitution in any location execpt
     # "steps" and "images". Here we take the secret values and assign them to
@@ -87,6 +88,13 @@ steps:
     export PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_PASS
     export REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH
     export REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH_PASS
+
+    function get_cluster_zone() {
+      local cluster=$1
+      gcloud container clusters list --filter "name=${cluster}" \
+        --format="value(location)" \
+        --project mlab-sandbox
+    }
 
     # Install Go
     curl --location --remote-name  https://go.dev/dl/go1.18.5.linux-amd64.tar.gz
@@ -118,7 +126,7 @@ steps:
     export CLUSTER=prometheus-federation
 
     # Get cluster credentials for the prometheus-federation cluster
-    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone us-central1-c
+    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
 
     # Apply various things in the prometheus-federation cluster
     ./apply-global-prometheus.sh
@@ -128,7 +136,7 @@ steps:
     export CLUSTER=data-processing
 
     # Get cluster credentials for the data-processing cluster
-    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --region us-east1
+    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
     ./apply-cluster.sh
 
     # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.

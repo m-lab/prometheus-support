@@ -307,7 +307,11 @@ sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
 # since the configmap is not yet up to date.
 # curl -X POST https://prometheus.${PROJECT}.measurementlab.net/-/reload || :
 
-#
+# Evaluate the RBAC template for the Cloud Build service account
+sed -i -e 's|{{PROJECT_NUMBER}}|'$PROJECT_NUMBER'|g' \
+  k8s/prometheus-federation/roles/cloud-build.yml.template > \
+  k8s/prometheus-federation/roles/cloud-build.yml \
+
 # Additional k8s resources installed via Helm
 #
 # Download Helm
