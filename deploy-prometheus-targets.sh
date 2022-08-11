@@ -29,6 +29,6 @@ else
 fi
 
 # Copy the configs to GCS.
-gsutil -h "$CACHE_CONTROL" cp -r \
+gsutil -m -h "$CACHE_CONTROL" cp -r \
   ${BASEDIR}/gen/${PROJECT}/prometheus \
   gs://operator-${PROJECT}
