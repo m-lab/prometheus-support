@@ -13,7 +13,6 @@
 #   PROJECT=mlab-sandbox \
 #     CLUSTER=prometheus-federation ./apply-global-prometheus.sh
 
-set -x
 set -e
 set -u
 
@@ -53,13 +52,13 @@ export OAUTH_PROXY_COOKIE_SECRET=OAUTH_PROXY_COOKIE_SECRET_${PROJECT/-/_}
 
 ## Credentials for accessing Stackdriver monitoring for mlab-ns.
 ### Write key to a file to prevent printing key in travis logs.
-( set +x; echo "${SERVICE_ACCOUNT_mlab_ns}" > /tmp/mlabns.json )
+echo "${SERVICE_ACCOUNT_mlab_ns}" > /tmp/mlabns.json
 kubectl create secret generic mlabns-credentials \
     "--from-file=/tmp/mlabns.json" \
     --dry-run -o json | kubectl apply -f -
 
 ## Credentials for accessing BigQuery using discuss@measurementlab.net permissions.
-( set +x; echo "${SERVICE_ACCOUNT_discuss}" > /tmp/discuss.json )
+echo "${SERVICE_ACCOUNT_discuss}" > /tmp/discuss.json
 kubectl create secret generic discuss-credentials \
     "--from-file=/tmp/discuss.json" \
     --dry-run -o json | kubectl apply -f -
@@ -147,8 +146,6 @@ kubectl create configmap grafana-datasource-provisioning \
     --from-file=config/federation/grafana/provisioning/datasources \
     --dry-run -o json | kubectl apply -f -
 
-# Keep the password a secret.
-set +x
 # It does not really matter what the admin password is.
 export GRAFANA_PASSWORD=$( echo $RANDOM | md5sum | awk '{print $1}' )
 kubectl create secret generic grafana-secrets \
@@ -168,8 +165,6 @@ kubectl create configmap configmap-reload-urls \
     "--from-literal=prometheus_reload_url=${PROM_RELOAD_URL}" \
     "--from-literal=alertmanager_reload_url=${ALERTMANAGER_URL}/-/reload" \
     --dry-run -o json | kubectl apply -f -
-set -x
-
 
 # Per-project client secrets and client ids should be stored in travis
 # environment variables. If they are not set, then login won't work.
@@ -187,12 +182,10 @@ kubectl create configmap script-exporter-config \
   --from-file=config/federation/script-exporter/script_exporter.yml \
   --dry-run -o json | kubectl apply -f -
 
-( set +x; echo "${MONITORING_SIGNER_KEY}" | base64 -d \
-    > /tmp/monitoring-signer-key.json )
+echo "${MONITORING_SIGNER_KEY}" | base64 -d > /tmp/monitoring-signer-key.json
 kubectl create secret generic script-exporter-secret \
   "--from-file=/tmp/monitoring-signer-key.json" \
   --dry-run -o json | kubectl apply -f -
-
 
 ## Alertmanager
 
@@ -266,9 +259,7 @@ fi
 
 # Create credentials as Kubernetes secrets.
 ### Write keys to a file to prevent printing key in travis logs.
-( set +x; echo "${REBOOTAPI_COREOS_SSH_KEY}" | base64 -d \
-  > /tmp/reboot-api-ssh.key )
-
+echo "${REBOOTAPI_COREOS_SSH_KEY}" | base64 -d > /tmp/reboot-api-ssh.key
 kubectl create secret generic reboot-api-credentials\
     "--from-file=/tmp/reboot-api-ssh.key" \
     --dry-run -o json | kubectl apply -f -
@@ -296,10 +287,7 @@ fi
 ## Switch Monitoring
 
 # Create credentials as Kubernetes secrets.
-### Write keys to a file to prevent printing key in travis logs.
-( set +x; echo "${SWITCH_MONITORING_SSH_KEY}" | base64 -d \
-  > /tmp/switch-monitoring.key )
-
+echo "${SWITCH_MONITORING_SSH_KEY}" | base64 -d > /tmp/switch-monitoring.key
 kubectl create secret generic switch-monitoring-credentials\
   "--from-file=/tmp/switch-monitoring.key" \
   --dry-run -o json | kubectl apply -f -
