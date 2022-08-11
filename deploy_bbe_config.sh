@@ -24,7 +24,9 @@ SSH_OPTS="-i $LOCAL_KEY_FILE -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
 # is base64 encoded to avoid the need for shell escaping and newlines. Set the
 # mode of the file appropriately, as SSH will refuse to use it if the
 # permissions are not strict enough.
+set +x
 echo "${!KEYNAME}" | base64 -d > $LOCAL_KEY_FILE
+set -x
 chmod 600 $LOCAL_KEY_FILE
 
 # Copy blackbox_exporter config file to the Linode VM.
