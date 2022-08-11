@@ -8,7 +8,7 @@
 # Create provisioning configuration for grafana dashboards.
 kubectl create configmap grafana-dashboard-provisioning \
     --from-file=config/federation/grafana/provisioning/dashboards \
-    --dry-run client -o json | kubectl apply -f -
+    --dry-run="client" -o json | kubectl apply -f -
 
 # Minify the JSON dashboards to help get around the limitation that ConfigMaps
 # cannot be larger than 1MB. Like below, this is just a stopgap until even the
