@@ -132,7 +132,7 @@ kubectl create clusterrolebinding additional-cluster-admins \
 This repository uses Cloud Build to build and deploy changes to the cluster. The
 default Cloud Build service account cannot deploy the cluster without having
 certain RBAC permissions assigned to it in the cluster in advance, before
-`apply-global-prometheus.sh` gets run for the first time. In order to apply
+`apply-global-prometheus.sh` runs for the first time. In order to apply
 these changes, run the following script (located in this directory):
 
 ```

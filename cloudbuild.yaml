@@ -95,7 +95,7 @@ steps:
       local cluster=$1
       gcloud container clusters list --filter "name=${cluster}" \
         --format="value(location)" \
-        --project mlab-sandbox
+        --project $PROJECT
     }
 
     # Install Go
