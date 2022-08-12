@@ -225,7 +225,7 @@ groups:
 #
 # The following alerts are based on the exact queries that mlab-ns runs to
 # determine the state of NDT services.
-# https://github.com/m-lab/mlab-ns/blob/master/server/mlabns/util/prometheus_status.py
+# https://github.com/m-lab/mlab-ns/blob/main/server/mlabns/util/prometheus_status.py
 #
 # The expression in the denominator of the queries can be read as:
 # count `probe_success`es _unless_ the node is in GMX _and_ the node does not
@@ -658,15 +658,15 @@ groups:
 # GCS Transfer SLO
 #
 # We run daily GCS transfers between project buckets and to the public archive.
-# See: https://github.com/m-lab/gcp-config/blob/master/daily-archive-transfers.yaml
+# See: https://github.com/m-lab/gcp-config/blob/main/daily-archive-transfers.yaml
 #
 # This alert enforces that daily transfers are working for all datatypes.
 # Periodic delays are expected either to data volume or GCS Transfer service
 # variance, so the expression must be firing for over 36h.
-  - alert: GCSTransfers_ArchiveFilesDoNotMatchOrMissing
+  - alert: GCSTransfers_ArchiveFilesMissing
     expr: |
-      sum(increase(gcs_archive_files_total{bucket="archive-mlab-oti"}[1d]) - ignoring(bucket)
-         increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d]) != 0)
+      sum by (experiment, datatype) (increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d])) == 0
+        and (sum by (experiment, datatype) (increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d] offset 1d)) > 0)
       OR
       absent(gcs_archive_files_total)
     for: 36h
@@ -676,7 +676,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: GCS Transfers may not include all files.
-      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#GCSTransfers_ArchiveFilesDoNotMatchOrMissing
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#GCSTransfers_ArchiveFilesMissing
 
 # Pipeline: GCS Archives Not Found in BigQuery
 #
