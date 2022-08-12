@@ -665,7 +665,8 @@ groups:
 # variance, so the expression must be firing for over 36h.
   - alert: GCSTransfers_ArchiveFilesMissing
     expr: |
-      increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d]) == 0
+      sum by (experiment, datatype) (increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d])) == 0
+        and (sum by (experiment, datatype) (increase(gcs_archive_files_total{bucket="archive-measurement-lab"}[1d] offset 1d)) > 0)
       OR
       absent(gcs_archive_files_total)
     for: 36h
