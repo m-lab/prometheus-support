@@ -112,6 +112,7 @@ Before you can run either of the `apply-cluster.sh` or
 `cluster-admin` role.
 
 To assign this role:
+
 * You may assign yourself the 'cluster-admin' role directly for the cluster.
 
 ```
@@ -126,6 +127,16 @@ kubectl create clusterrolebinding additional-cluster-admins \
 kubectl create clusterrolebinding additional-cluster-admins \
     --clusterrole=cluster-admin \
     --user=<service-account-address>
+```
+
+This repository uses Cloud Build to build and deploy changes to the cluster. The
+default Cloud Build service account cannot deploy the cluster without having
+certain RBAC permissions assigned to it in the cluster in advance, before
+`apply-global-prometheus.sh` gets run for the first time. In order to apply
+these changes, run the following script (located in this directory):
+
+```
+./bootstrap-prometheus-federation.sh <cluster project> <cluster zone or region>
 ```
 
 [rbac]: https://kubernetes.io/docs/admin/authorization/rbac/
@@ -206,7 +217,7 @@ For example, this will look something like (with abbreviated configuration):
           name: prometheus-federation-config
 
 Note: Configmaps only support text data. Secrets may be an alternative for
-binary data. https://github.com/kubernetes/kubernetes/issues/32432
+binary data. <https://github.com/kubernetes/kubernetes/issues/32432>
 
 [dockerhub]: https://hub.docker.com/r/prom/prometheus/
 [configmaps]: https://kubernetes.io/docs/user-guide/configmap/
@@ -251,7 +262,7 @@ restarted for the change to take effect.
 
 The deployment replica set will automatically recreate the pod and the new
 prometheus server will use the updated configmap. This is a known issue:
-https://github.com/kubernetes/kubernetes/issues/13488
+<https://github.com/kubernetes/kubernetes/issues/13488>
 
 Preferably the process (like prometheus) will support a 'reload' operation.
 However, it can take several minutes for the configmap to be updated from the
@@ -377,7 +388,7 @@ container under the `/legacy-targets` directory.
 
 In the Prometheus server, targets are listed under:
 
- * Status -> Targets -> "legacy-targets"
+* Status -> Targets -> "legacy-targets"
 
 ## Federation Targets
 
@@ -386,7 +397,7 @@ prometheus container under the `/federation-targets` directory.
 
 In the Prometheus server, targets are listed under:
 
- * Status -> Targets -> "federation-targets"
+* Status -> Targets -> "federation-targets"
 
 # Delete deployment
 
@@ -452,7 +463,7 @@ Datasources are provisioned through YAML files located in
 not support having a provisioned datasource deleted automatically from the
 database once its YAML file goes away.  The official way to delete a
 provisioned datasource is to [add a `deleteDatasources` section]
-(https://grafana.com/docs/administration/provisioning/#datasources) to the
+(<https://grafana.com/docs/administration/provisioning/#datasources>) to the
 provisioning YAML. However, this is cumbersome and awkward and somewhat
 pollutes the git history. There is another way that is fairly manual, but not
 hard.
@@ -545,7 +556,7 @@ can send alerts to the github receiver and they are converted into Github
 issues.
 
 The github receiver authenticates using Github access tokens. Generate a new one
-at: https://github.com/settings/tokens
+at: <https://github.com/settings/tokens>
 
 Actions authenticated using the token will be associated with your account.
 
@@ -722,7 +733,7 @@ Then continue your deployment as normal.
 ## Public IP appears to hang
 
 After `kubectl get service prometheus-server` assigns a public IP, you can visit
-the service at that IP, e.g. http://[public-ip]:9090. If the service appears to
+the service at that IP, e.g. <http://[public-ip>]:9090. If the service appears to
 hang, the docker instance may have failed to start.
 
 Check using:
