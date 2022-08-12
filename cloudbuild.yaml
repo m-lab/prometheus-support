@@ -1,5 +1,10 @@
-options:
-  dynamic_substitutions: true
+# A note about Cloud Build variable substitution in this file: where you see a
+# variable with a single `$`, those are built-in substitutions supported by
+# Cloud Build and will be replaced with the value Cloud Build knows about
+# _before_ the build takes place. Where you see variables with a double `$$`,
+# that is the way to escape the `$` such that Cloud Build will ignore the
+# variable and will render a single `$` before the build takes place, such that
+# the variable is interpreted at run time by the build, bash in this case.
 
 availableSecrets:
   secretManager:
@@ -80,22 +85,22 @@ steps:
     # Cloud Build does not support variable substitution in any location execpt
     # "steps" and "images". Here we take the secret values and assign them to
     # variables that apply-global-prometheus.sh expects.
-    export AM_SLACK_CHANNEL_URL_${PROJECT/-/_}=$$AM_SLACK_CHANNEL_URL
-    export GF_AUTH_GOOGLE_CLIENT_SECRET_${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_SECRET
-    export GF_AUTH_GOOGLE_CLIENT_ID_${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_ID
-    export OAUTH_PROXY_CLIENT_ID_${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_ID
-    export OAUTH_PROXY_CLIENT_SECRET_${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_SECRET
-    export OAUTH_PROXY_COOKIE_SECRET_${PROJECT/-/_}=$$OAUTH_PROXY_COOKIE_SECRET
-    export PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_USER
-    export PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_PASS
-    export REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH
-    export REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH_PASS
+    export AM_SLACK_CHANNEL_URL_$${PROJECT/-/_}=$$AM_SLACK_CHANNEL_URL
+    export GF_AUTH_GOOGLE_CLIENT_SECRET_$${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_SECRET
+    export GF_AUTH_GOOGLE_CLIENT_ID_$${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_ID
+    export OAUTH_PROXY_CLIENT_ID_$${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_ID
+    export OAUTH_PROXY_CLIENT_SECRET_$${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_SECRET
+    export OAUTH_PROXY_COOKIE_SECRET_$${PROJECT/-/_}=$$OAUTH_PROXY_COOKIE_SECRET
+    export PROMETHEUS_BASIC_AUTH_USER_$${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_USER
+    export PROMETHEUS_BASIC_AUTH_PASS_$${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_PASS
+    export REBOOTAPI_BASIC_AUTH_$${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH
+    export REBOOTAPI_BASIC_AUTH_PASS_$${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH_PASS
 
     function get_cluster_zone() {
-      local cluster=$1
-      gcloud container clusters list --filter "name=${cluster}" \
+      local cluster=$$1
+      gcloud container clusters list --filter "name=$${cluster}" \
         --format="value(location)" \
-        --project $PROJECT
+        --project $$PROJECT
     }
 
     # Install Go
