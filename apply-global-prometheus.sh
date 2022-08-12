@@ -300,18 +300,6 @@ sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
     k8s/prometheus-federation/deployments/oauth2-proxy.yml
 
-# Reload configurations. If the deployment configuration has changed then this
-# request may fail becuase the container has already shutdown.
-# TODO: there is an indeterminate delay between the time that a configmap is
-# updated and it becomes available to the container. So, this reload may fail
-# since the configmap is not yet up to date.
-# curl -X POST https://prometheus.${PROJECT}.measurementlab.net/-/reload || :
-
-# Evaluate the RBAC template for the Cloud Build service account
-sed -i -e 's|{{PROJECT_NUMBER}}|'$PROJECT_NUMBER'|g' \
-  k8s/prometheus-federation/roles/cloud-build.yml.template > \
-  k8s/prometheus-federation/roles/cloud-build.yml \
-
 # Additional k8s resources installed via Helm
 #
 # Download Helm
