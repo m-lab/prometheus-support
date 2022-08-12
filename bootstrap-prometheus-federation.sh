@@ -22,9 +22,13 @@ gcloud container clusters get-credentials prometheus-federation --project $PROJE
 # https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#permission_to_create_or_update_roles_and_role_bindings
 #
 # Get the project's "projectNumber" so that we can evaluate the
-# ClusterRoleBinding template, and then apply that the cluster.
+# ClusterRoleBinding template, and then apply that the cluster. Remove the
+# evaluated template .yml file after it has been applied so that the file does
+# not remain in the operator's local filesystem, and possibly get accidentally
+# applied to the wrong project.
 project_number=$(gcloud projects describe $PROJECT --format="value(projectNumber)")
 sed -e 's|{{PROJECT_NUMBER}}|'$project_number'|g' \
   k8s/prometheus-federation/roles/cloud-build.yml.template > \
   k8s/prometheus-federation/roles/cloud-build.yml
 kubectl apply -f k8s/prometheus-federation/roles/cloud-build.yml
+rm k8s/prometheus-federation/roles/cloud-build.yml
