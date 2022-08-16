@@ -34,8 +34,10 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
     # Set authentication URL and sign-in URL for OAuth.
-    nginx.ingress.kubernetes.io/auth-url: "https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net/oauth2/auth"
-    nginx.ingress.kubernetes.io/auth-signin: "https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net/oauth2/start?rd=https://grafana.{{GCLOUD_PROJECT}}.measurementlab.net$escaped_request_uri"
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+    #nginx.ingress.kubernetes.io/auth-url: "https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net/oauth2/auth"
+    #nginx.ingress.kubernetes.io/auth-signin: "https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net/oauth2/start?rd=https://grafana.{{GCLOUD_PROJECT}}.measurementlab.net$escaped_request_uri"
     # Make sure the user and email are available to the proxied application
     # in the X-User and X-Email headers.
     nginx.ingress.kubernetes.io/configuration-snippet: |
