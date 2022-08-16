@@ -26,6 +26,7 @@ spec:
         - --cookie-secret={{OAUTH_PROXY_COOKIE_SECRET}}
         - --github-org=m-lab
         - --email-domain=*
+        - --redirect-url=https://prometheus.{{GCLOUD_PROJECT}}.measurementlab.net/oauth2/callback
         - --set-xauthrequest=true
         image: quay.io/oauth2-proxy/oauth2-proxy:v7.3.0
         name: oauth2-proxy
