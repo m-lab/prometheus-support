@@ -83,7 +83,7 @@ deploy:
 #########################################
 ## Staging
 - provider: script
-  # NOTE: on merge with staging (master branch), we deploy to mlab-staging and
+  # NOTE: on merge with staging (main branch), we deploy to mlab-staging and
   # also deploy *only the grafana dashboards* to mlab-oti.
   script:
     $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging prometheus-federation ./apply-global-prometheus.sh
@@ -93,7 +93,7 @@ deploy:
   on:
     repo: m-lab/prometheus-support
     all_branches: true
-    condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
+    condition: $TRAVIS_BRANCH == main && $TRAVIS_EVENT_TYPE == push
 
 - provider: script
   script:
@@ -103,7 +103,7 @@ deploy:
   on:
     repo: m-lab/prometheus-support
     all_branches: true
-    condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
+    condition: $TRAVIS_BRANCH == main && $TRAVIS_EVENT_TYPE == push
 
 - provider: script
   script: $TRAVIS_BUILD_DIR/kubectl.sh mlab-staging data-processing ./apply-cluster.sh
@@ -111,14 +111,14 @@ deploy:
   on:
     repo: m-lab/prometheus-support
     all_branches: true
-    condition: $TRAVIS_BRANCH == master && $TRAVIS_EVENT_TYPE == push
+    condition: $TRAVIS_BRANCH == main && $TRAVIS_EVENT_TYPE == push
 
 - provider: script
   script: "$TRAVIS_BUILD_DIR/deploy_bbe_config.sh mlab-staging LINODE_PRIVATE_KEY_ipv6_monitoring"
   skip_cleanup: true
   on:
     repo: m-lab/prometheus-support
-    branch: master
+    branch: main
     condition: "$TRAVIS_EVENT_TYPE == push"
 
 #########################################
