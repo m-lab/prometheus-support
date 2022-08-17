@@ -35,7 +35,7 @@ metadata:
     kubernetes.io/tls-acme: "true"
     # Set authentication URL and sign-in URL for OAuth.
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
-    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=https://$host$escaped_request_uri"
     # Make sure the user and email are available to the proxied application
     # in the X-User and X-Email headers.
     nginx.ingress.kubernetes.io/configuration-snippet: |
