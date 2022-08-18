@@ -124,7 +124,10 @@ steps:
     export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
     # Install any other needed system packages
-    apt install -y apache2-utils jq
+    apt install -y apache2-utils jq jsonlint
+
+    # Check all JSON files, mostly (likely only) provisioned Grafana dashboards
+    find . -type f -name '*.json' | xargs jsonlint-php -q
 
     # Check alert and recording rules
     promtool check rules ./config/federation/prometheus/alerts.yml
