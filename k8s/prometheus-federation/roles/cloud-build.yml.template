@@ -1,0 +1,34 @@
+# These RBAC configs were necessary to get builds of prometheus-support working
+# correctly in Cloud Build. See this for more information:
+#
+# https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control#permission_to_create_or_update_roles_and_role_bindings
+#
+# Addtionally, theses IAM permissions were added to the
+# cloud-kubernetes-deployer custom role:
+#
+# * container.validatingWebhookConfigurations.update
+# * container.mutatingWebhookConfigurations.update
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cloud-build-deployer
+rules:
+- apiGroups: ["admissionregistration.k8s.io"]
+  resources: ["validatingwebhookconfigurations"]
+  verbs: ["get", "update"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "create"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cloud-build-deployer
+subjects:
+- kind: User
+  name: {{PROJECT_NUMBER}}@cloudbuild.gserviceaccount.com
+roleRef:
+  kind: ClusterRole
+  name: cloud-build-deployer
+  apiGroup: rbac.authorization.k8s.io

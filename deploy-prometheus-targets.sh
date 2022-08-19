@@ -16,7 +16,9 @@ BASEDIR=${PWD}
 ${BASEDIR}/generate-prometheus-targets.sh > /dev/null
 
 # Be sure that gcloud is PATH
-source "${HOME}/google-cloud-sdk/path.bash.inc"
+if [[ -f "${HOME}/google-cloud-sdk/path.bash.inc" ]]; then
+  source "${HOME}/google-cloud-sdk/path.bash.inc"
+fi
 
 # Authenticate all operations using the given service account.
 if [[ -f /tmp/${PROJECT}.json ]] ; then
@@ -27,6 +29,6 @@ else
 fi
 
 # Copy the configs to GCS.
-gsutil -h "$CACHE_CONTROL" cp -r \
+gsutil -m -h "$CACHE_CONTROL" cp -r \
   ${BASEDIR}/gen/${PROJECT}/prometheus \
   gs://operator-${PROJECT}

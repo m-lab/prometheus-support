@@ -24,7 +24,7 @@ sed -e 's|{{CLUSTER}}|'${CLUSTER}'|g' \
 # Prometheus config map.
 kubectl create configmap prometheus-cluster-config \
     --from-file=config/cluster/prometheus \
-    --dry-run -o json | kubectl apply -f -
+    --dry-run="client" -o json | kubectl apply -f -
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then

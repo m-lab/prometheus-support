@@ -1,0 +1,153 @@
+# A note about Cloud Build variable substitution in this file: where you see a
+# variable with a single `$`, those are built-in substitutions supported by
+# Cloud Build and will be replaced with the value Cloud Build knows about
+# _before_ the build takes place. Where you see variables with a double `$$`,
+# that is the way to escape the `$` such that Cloud Build will ignore the
+# variable and will render a single `$` before the build takes place, such that
+# the variable is interpreted at run time by the build, bash in this case.
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-alertmanager-slack-channel-url/versions/latest
+    env: AM_SLACK_CHANNEL_URL
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-grafana-client-secret-name/versions/latest
+    env: GF_AUTH_GOOGLE_CLIENT_SECRET
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-grafana-client-id-name/versions/latest
+    env: GF_AUTH_GOOGLE_CLIENT_ID
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-github-receiver-auth-token/versions/latest
+    env: GITHUB_RECEIVER_AUTH_TOKEN
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-linode-private-key-ipv6-monitoring/versions/latest
+    env: LINODE_PRIVATE_KEY_ipv6_monitoring
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-script-exporter-monitoring-signer-key/versions/latest
+    env: MONITORING_SIGNER_KEY
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-client-id/versions/latest
+    env: OAUTH_PROXY_CLIENT_ID
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-client-secret/versions/latest
+    env: OAUTH_PROXY_CLIENT_SECRET
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-cookie-secret/versions/latest
+    env: OAUTH_PROXY_COOKIE_SECRET
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-pagerduty-service-key/versions/latest
+    env: PAGERDUTY_SERVICE_KEY
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-platform-prom-auth-user/versions/latest
+    env: PLATFORM_PROMETHEUS_BASIC_AUTH_USER
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-platform-prom-auth-pass/versions/latest
+    env: PLATFORM_PROMETHEUS_BASIC_AUTH_PASS
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-prom-auth-user/versions/latest
+    env: PROMETHEUS_BASIC_AUTH_USER
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-prom-auth-pass/versions/latest
+    env: PROMETHEUS_BASIC_AUTH_PASS
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-rebootapi-basic-auth-user/versions/latest
+    env: REBOOTAPI_BASIC_AUTH
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-rebootapi-basic-auth-pass/versions/latest
+    env: REBOOTAPI_BASIC_AUTH_PASS
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-rebootapi-coreos-ssh-key/versions/latest
+    env: REBOOTAPI_COREOS_SSH_KEY
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-service-account-discuss/versions/latest
+    env: SERVICE_ACCOUNT_discuss
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-service-account-mlab-ns/versions/latest
+    env: SERVICE_ACCOUNT_mlab_ns
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-switch-monitoring-ssh-key/versions/latest
+    env: SWITCH_MONITORING_SSH_KEY
+
+steps:
+# Prepare the environment.
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: bash
+  secretEnv:
+  - AM_SLACK_CHANNEL_URL
+  - GF_AUTH_GOOGLE_CLIENT_SECRET
+  - GF_AUTH_GOOGLE_CLIENT_ID
+  - GITHUB_RECEIVER_AUTH_TOKEN
+  - LINODE_PRIVATE_KEY_ipv6_monitoring
+  - MONITORING_SIGNER_KEY
+  - OAUTH_PROXY_CLIENT_ID
+  - OAUTH_PROXY_CLIENT_SECRET
+  - OAUTH_PROXY_COOKIE_SECRET
+  - PAGERDUTY_SERVICE_KEY
+  - PLATFORM_PROMETHEUS_BASIC_AUTH_USER
+  - PLATFORM_PROMETHEUS_BASIC_AUTH_PASS
+  - PROMETHEUS_BASIC_AUTH_USER
+  - PROMETHEUS_BASIC_AUTH_PASS
+  - REBOOTAPI_BASIC_AUTH
+  - REBOOTAPI_BASIC_AUTH_PASS
+  - REBOOTAPI_COREOS_SSH_KEY
+  - SERVICE_ACCOUNT_discuss
+  - SERVICE_ACCOUNT_mlab_ns
+  - SWITCH_MONITORING_SSH_KEY
+  args:
+  - -c
+  - |-
+    set -euo pipefail
+
+    export PROJECT=$PROJECT_ID
+    export PROJECT_NUMBER=$PROJECT_NUMBER
+
+    # Cloud Build does not support variable substitution in any location execpt
+    # "steps" and "images". Here we take the secret values and assign them to
+    # variables that apply-global-prometheus.sh expects.
+    export AM_SLACK_CHANNEL_URL_$${PROJECT/-/_}=$$AM_SLACK_CHANNEL_URL
+    export GF_AUTH_GOOGLE_CLIENT_SECRET_$${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_SECRET
+    export GF_AUTH_GOOGLE_CLIENT_ID_$${PROJECT/-/_}=$$GF_AUTH_GOOGLE_CLIENT_ID
+    export OAUTH_PROXY_CLIENT_ID_$${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_ID
+    export OAUTH_PROXY_CLIENT_SECRET_$${PROJECT/-/_}=$$OAUTH_PROXY_CLIENT_SECRET
+    export OAUTH_PROXY_COOKIE_SECRET_$${PROJECT/-/_}=$$OAUTH_PROXY_COOKIE_SECRET
+    export PROMETHEUS_BASIC_AUTH_USER_$${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_USER
+    export PROMETHEUS_BASIC_AUTH_PASS_$${PROJECT/-/_}=$$PROMETHEUS_BASIC_AUTH_PASS
+    export REBOOTAPI_BASIC_AUTH_$${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH
+    export REBOOTAPI_BASIC_AUTH_PASS_$${PROJECT/-/_}=$$REBOOTAPI_BASIC_AUTH_PASS
+
+    function get_cluster_zone() {
+      local cluster=$$1
+      gcloud container clusters list --filter "name=$${cluster}" \
+        --format="value(location)" \
+        --project $$PROJECT
+    }
+
+    # Install Go
+    curl --location --remote-name  https://go.dev/dl/go1.18.5.linux-amd64.tar.gz
+    tar -C /usr/local -xf go1.18.5.linux-amd64.tar.gz
+    export PATH=$$PATH:/usr/local/go/bin
+
+    # Install promtool
+    curl --location --remote-name \
+      "https://github.com/prometheus/prometheus/releases/download/v2.37.0/prometheus-2.37.0.linux-amd64.tar.gz"
+    tar xf prometheus-2.37.0.linux-amd64.tar.gz prometheus-2.37.0.linux-amd64/promtool
+    mv prometheus-2.37.0.linux-amd64/promtool /usr/local/bin/
+
+    # Install kexpand
+    go install github.com/kopeio/kexpand@latest
+    export PATH=$$PATH:~/go/bin
+
+    # Install new GKE kubectl auth plugin
+    # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
+    apt update && apt install -y google-cloud-sdk-gke-gcloud-auth-plugin
+    export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+    # Install any other needed system packages
+    apt install -y apache2-utils jq jsonlint
+
+    # Check all JSON files, mostly (likely only) provisioned Grafana dashboards
+    find . -type f -name '*.json' | xargs jsonlint-php -q
+
+    # Check alert and recording rules
+    promtool check rules ./config/federation/prometheus/alerts.yml
+    promtool check rules ./config/federation/prometheus/rules.yml
+
+    export CLUSTER=prometheus-federation
+
+    # Get cluster credentials for the prometheus-federation cluster
+    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
+
+    # Apply various things in the prometheus-federation cluster
+    ./apply-global-prometheus.sh
+    ./apply-grafana-dashboards.sh
+    ./deploy-prometheus-targets.sh $$PROJECT
+
+    export CLUSTER=data-processing
+
+    # Get cluster credentials for the data-processing cluster
+    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
+    ./apply-cluster.sh
+
+    # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
+    ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring

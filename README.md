@@ -1,8 +1,3 @@
-[![Build Status][svg]][travis]
-
-[svg]: https://travis-ci.org/m-lab/prometheus-support.svg?branch=master
-[travis]: https://travis-ci.org/m-lab/prometheus-support
-
 # prometheus-support
 
 Prometheus configuration for M-Lab.
@@ -112,6 +107,7 @@ Before you can run either of the `apply-cluster.sh` or
 `cluster-admin` role.
 
 To assign this role:
+
 * You may assign yourself the 'cluster-admin' role directly for the cluster.
 
 ```
@@ -120,12 +116,20 @@ kubectl create clusterrolebinding additional-cluster-admins \
     --user=<your-email>
 ```
 
-* You should assign the travis service account deployer as the cluster-admin.
-
 ```
 kubectl create clusterrolebinding additional-cluster-admins \
     --clusterrole=cluster-admin \
     --user=<service-account-address>
+```
+
+This repository uses Cloud Build to build and deploy changes to the cluster. The
+default Cloud Build service account cannot deploy the cluster without having
+certain RBAC permissions assigned to it in the cluster in advance, before
+`apply-global-prometheus.sh` runs for the first time. In order to apply
+these changes, run the following script (located in this directory):
+
+```
+./bootstrap-prometheus-federation.sh <cluster project> <cluster zone or region>
 ```
 
 [rbac]: https://kubernetes.io/docs/admin/authorization/rbac/
@@ -206,7 +210,7 @@ For example, this will look something like (with abbreviated configuration):
           name: prometheus-federation-config
 
 Note: Configmaps only support text data. Secrets may be an alternative for
-binary data. https://github.com/kubernetes/kubernetes/issues/32432
+binary data. <https://github.com/kubernetes/kubernetes/issues/32432>
 
 [dockerhub]: https://hub.docker.com/r/prom/prometheus/
 [configmaps]: https://kubernetes.io/docs/user-guide/configmap/
@@ -251,7 +255,7 @@ restarted for the change to take effect.
 
 The deployment replica set will automatically recreate the pod and the new
 prometheus server will use the updated configmap. This is a known issue:
-https://github.com/kubernetes/kubernetes/issues/13488
+<https://github.com/kubernetes/kubernetes/issues/13488>
 
 Preferably the process (like prometheus) will support a 'reload' operation.
 However, it can take several minutes for the configmap to be updated from the
@@ -377,7 +381,7 @@ container under the `/legacy-targets` directory.
 
 In the Prometheus server, targets are listed under:
 
- * Status -> Targets -> "legacy-targets"
+* Status -> Targets -> "legacy-targets"
 
 ## Federation Targets
 
@@ -386,7 +390,7 @@ prometheus container under the `/federation-targets` directory.
 
 In the Prometheus server, targets are listed under:
 
- * Status -> Targets -> "federation-targets"
+* Status -> Targets -> "federation-targets"
 
 # Delete deployment
 
@@ -452,7 +456,7 @@ Datasources are provisioned through YAML files located in
 not support having a provisioned datasource deleted automatically from the
 database once its YAML file goes away.  The official way to delete a
 provisioned datasource is to [add a `deleteDatasources` section]
-(https://grafana.com/docs/administration/provisioning/#datasources) to the
+(<https://grafana.com/docs/administration/provisioning/#datasources>) to the
 provisioning YAML. However, this is cumbersome and awkward and somewhat
 pollutes the git history. There is another way that is fairly manual, but not
 hard.
@@ -545,7 +549,7 @@ can send alerts to the github receiver and they are converted into Github
 issues.
 
 The github receiver authenticates using Github access tokens. Generate a new one
-at: https://github.com/settings/tokens
+at: <https://github.com/settings/tokens>
 
 Actions authenticated using the token will be associated with your account.
 
@@ -722,7 +726,7 @@ Then continue your deployment as normal.
 ## Public IP appears to hang
 
 After `kubectl get service prometheus-server` assigns a public IP, you can visit
-the service at that IP, e.g. http://[public-ip]:9090. If the service appears to
+the service at that IP, e.g. <http://[public-ip>]:9090. If the service appears to
 hang, the docker instance may have failed to start.
 
 Check using:
@@ -765,4 +769,36 @@ po/grafana-server-1476781881-fhr5z      0/1       RunContainerError   0         
 
 LASTSEEN   FIRSTSEEN   COUNT     NAME                                 KIND      SUBOBJECT                         TYPE      REASON       SOURCE                                                    MESSAGE
 55s        7m          29        ev/grafana-server-1476781881-fhr5z   Pod                                         Warning   FailedSync   {kubelet gke-soltesz-test-2-default-pool-7151d92d-7dd5}   Error syncing pod, skipping: failed to "StartContainer" for "grafana-server" with RunContainerError: "GenerateRunContainerOptions: secrets \"grafana-secrets\" not found"
+```
+
+# Google Cloud Build
+
+The above information describes how to create and bootstrap the clusters. Once
+the clusters already exists, automated builds in Cloud Build update and modify
+the running clusters. Pushes to various branches and tagging the repository will
+trigger these Cloud Builds.
+
+The builds rely a quite a number of secrets (not kubernetes Secrets) and
+credentials. This sensitive information is stored in GCP's Secret Manager. The
+secrets are named like `prometheus-federation-build-<name>`. The secrets have
+already been created, and the builds configured to use them.
+
+Occasionally, it may be necessary to update a secret value. This can be done
+using `gcloud`. First, write the secret to a file in your local development
+environment. *Be careful*, that the file does not end in a newline character,
+as some of the secrets won't work with a newline there. Once you have the file,
+you can update the secret with a command like this:
+
+```sh
+gcloud secrets versions add prometheus-federation-build-<name> \
+  --data-file=<secret file>
+  --project=<project>
+```
+
+Alternatively, you can pipe the secret value in with something like this:
+
+```sh
+echo -n "<secret>" | gcloud secrets versions add prometheus-federation-build-<name> \
+  --data-file=-
+  --project=<project>
 ```
