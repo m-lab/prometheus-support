@@ -1,8 +1,3 @@
-[![Build Status][svg]][travis]
-
-[svg]: https://travis-ci.org/m-lab/prometheus-support.svg?branch=master
-[travis]: https://travis-ci.org/m-lab/prometheus-support
-
 # prometheus-support
 
 Prometheus configuration for M-Lab.
@@ -120,8 +115,6 @@ kubectl create clusterrolebinding additional-cluster-admins \
     --clusterrole=cluster-admin \
     --user=<your-email>
 ```
-
-* You should assign the travis service account deployer as the cluster-admin.
 
 ```
 kubectl create clusterrolebinding additional-cluster-admins \
@@ -776,4 +769,36 @@ po/grafana-server-1476781881-fhr5z      0/1       RunContainerError   0         
 
 LASTSEEN   FIRSTSEEN   COUNT     NAME                                 KIND      SUBOBJECT                         TYPE      REASON       SOURCE                                                    MESSAGE
 55s        7m          29        ev/grafana-server-1476781881-fhr5z   Pod                                         Warning   FailedSync   {kubelet gke-soltesz-test-2-default-pool-7151d92d-7dd5}   Error syncing pod, skipping: failed to "StartContainer" for "grafana-server" with RunContainerError: "GenerateRunContainerOptions: secrets \"grafana-secrets\" not found"
+```
+
+# Google Cloud Build
+
+The above information describes how to create and bootstrap the clusters. Once
+the clusters already exists, automated builds in Cloud Build update and modify
+the running clusters. Pushes to various branches and tagging the repository will
+trigger these Cloud Builds.
+
+The builds rely a quite a number of secrets (not kubernetes Secrets) and
+credentials. This sensitive information is stored in GCP's Secret Manager. The
+secrets are named like `prometheus-federation-build-<name>`. The secrets have
+already been created, and the builds configured to use them.
+
+Occasionally, it may be necessary to update a secret value. This can be done
+using `gcloud`. First, write the secret to a file in your local development
+environment. *Be careful*, that the file does not end in a newline character,
+as some of the secrets won't work with a newline there. Once you have the file,
+you can update the secret with a command like this:
+
+```sh
+gcloud secrets versions add prometheus-federation-build-<name> \
+  --data-file=<secret file>
+  --project=<project>
+```
+
+Alternatively, you can pipe the secret value in with something like this:
+
+```sh
+echo -n "<secret>" | gcloud secrets versions add prometheus-federation-build-<name> \
+  --data-file=-
+  --project=<project>
 ```
