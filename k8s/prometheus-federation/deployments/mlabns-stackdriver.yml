@@ -18,7 +18,18 @@ spec:
         prometheus-node: 'true'
       containers:
       - name: stackdriver
-        image: prometheuscommunity/stackdriver-exporter:v0.11.0
+        # NOTE: we are using a custom built image to incorporate a bug fix
+        # that, as of writing this note (2022-08-22), has not yet been included
+        # in a release. Once a new release of stackdriver_exporter has been
+        # made that includes the fix, we should revert the image path back to
+        # the official one. More details:
+        #
+        # https://github.com/prometheus-community/stackdriver_exporter/issues/85
+        # https://github.com/prometheus-community/stackdriver_exporter/pull/153
+        # https://github.com/m-lab/prometheus-support/issues/896
+        #
+        # image: prometheuscommunity/stackdriver-exporter:<version>
+        image: measurementlab/stackdriver_exporter:v0.12.0-mlab
         args: [
           # Metrics are available with some delay, so look 5 minutes in the past.
           "--monitoring.metrics-offset=5m",
