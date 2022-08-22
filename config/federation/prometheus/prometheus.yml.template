@@ -56,7 +56,7 @@ alerting:
 scrape_configs:
 
   # Kubernetes configurations were inspired by:
-  # https://github.com/prometheus/prometheus/blob/master/documentation/examples
+  # https://github.com/prometheus/prometheus/blob/main/documentation/examples
   #
   # The four kubernetes scrape configs correspond to specific cluster
   # components.
@@ -652,7 +652,7 @@ scrape_configs:
     relabel_configs:
       # The value of the source label named "service" must match the name of a
       # configured script in the script_exporter configuration. See this file:
-      # https://github.com/m-lab/prometheus-support/blob/master/config/federation/script-exporter/script_exporter.yml
+      # https://github.com/m-lab/prometheus-support/blob/main/config/federation/script-exporter/script_exporter.yml
       - source_labels: [service]
         regex: (.*)
         target_label: __param_name

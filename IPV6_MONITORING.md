@@ -35,12 +35,12 @@ Below are first-time setup instructions and requirements for the VM:
   prom/blackbox-exporter:v0.12.0`.
 
 * Manually upload [the blackbox\_exporter config
-  file](https://github.com/m-lab/prometheus-support/blob/master/config/federation/blackbox/config.yml)
+  file](https://github.com/m-lab/prometheus-support/blob/main/config/federation/blackbox/config.yml.template)
   to mlab's home directory, then make three copies of it with the following
   names. If you don't do this, instantiating the Docker instances will fail
   because the blackbox\_exporter will not be able to find its config file.
   Later, these files will be [pushed to the VM automatically on
-  builds](https://github.com/m-lab/prometheus-support/blob/master/deploy_bbe_config.sh)
+  builds](https://github.com/m-lab/prometheus-support/blob/main/deploy_bbe_config.sh)
   of m-lab/prometheus-support repo.
 
 ```text
