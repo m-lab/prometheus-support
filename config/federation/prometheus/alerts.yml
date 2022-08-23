@@ -548,6 +548,25 @@ groups:
         the underlying service. Please check the GAE dashboard and logs to
         determine the cause.
 
+# The alert MlabNS_TooManyServiceErrors will generate a page to operators if it
+# fires. We consider it a fairly serious alert, enough to wake people up at
+# night. If the metric that comprises the alert is missing, then fire an alert.
+  - alert: MlabNS_ServerResponseMetricMissing
+    expr: |
+      absent_over_time(
+        stackdriver_gae_app_appengine_googleapis_com_http_server_response_count{
+          deployment="mlabns-stackdriver", loading="false", module_id="default"
+        }
+      [1h])
+    for: 5m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: A critical metric about mlab-ns is missing.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#mlabns_serverresponsemetricmissing
+
 # If container logs for a node are missing in Stackdriver for too long, then
 # fire an alert, unless the node is in maintenance mode. This somewhat awkward
 # query discovers cases where the stackdriver metric has been absent for too
