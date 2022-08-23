@@ -195,7 +195,11 @@ spec:
         # Mount the prometheus config volume so we can watch it for changes.
         - mountPath: /prometheus-config
           name: prometheus-config
-
+      tolerations:
+      - key: "prometheus-node"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
