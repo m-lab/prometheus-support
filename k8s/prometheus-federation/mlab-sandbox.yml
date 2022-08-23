@@ -2,8 +2,11 @@
 
 GCLOUD_PROJECT: mlab-sandbox
 LOCATE_PROJECT: mlab-sandbox
-PROMETHEUS_RAM: 42Gi
-PROMETHEUS_CPU: 10000m
+# These Prometheus CPU and RAM values are based on a GCE machine type of
+# n2-standard-2. The values below are supposed to be a little lower than the
+# machine type supports: 2 virtual CPUs, 8G RAM.
+PROMETHEUS_RAM: 7900M
+PROMETHEUS_CPU: 1900m
 PROMETHEUS_VOLUME_SIZE: 500Gi
 EXTERNAL_IP: 35.184.166.181
 GITHUB_RECEIVER_INMEMORY: true
