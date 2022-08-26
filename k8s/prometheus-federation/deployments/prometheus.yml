@@ -56,13 +56,6 @@ spec:
                "--enable-feature=memory-snapshot-on-shutdown"]
         ports:
           - containerPort: 9090
-        resources:
-          requests:
-            memory: "{{PROMETHEUS_RAM}}"
-            cpu: "{{PROMETHEUS_CPU}}"
-          limits:
-            memory: "{{PROMETHEUS_RAM}}"
-            cpu: "{{PROMETHEUS_CPU}}"
         volumeMounts:
         # /prometheus stores all metric data. Declared as VOLUME in base image.
         - mountPath: /prometheus
@@ -139,13 +132,6 @@ spec:
                 "--prometheusx.listen-address=:9373"]
         ports:
           - containerPort: 9373
-        resources:
-          requests:
-            memory: "150Mi"
-            cpu: "150m"
-          limits:
-            memory: "150Mi"
-            cpu: "150m"
         volumeMounts:
         # Mount the the prometheus-storage for write access to the target
         # directories.
@@ -159,13 +145,6 @@ spec:
                 "--prometheusx.listen-address=:9374"]
         ports:
           - containerPort: 9374
-        resources:
-          requests:
-            memory: "150Mi"
-            cpu: "150m"
-          limits:
-            memory: "150Mi"
-            cpu: "150m"
         volumeMounts:
         # Mount the the prometheus-storage for write access to the target
         # directories.
@@ -184,18 +163,15 @@ spec:
             configMapKeyRef:
               name: configmap-reload-urls
               key: prometheus_reload_url
-        resources:
-          requests:
-            memory: "400Mi"
-            cpu: "200m"
-          limits:
-            memory: "400Mi"
-            cpu: "200m"
         volumeMounts:
         # Mount the prometheus config volume so we can watch it for changes.
         - mountPath: /prometheus-config
           name: prometheus-config
-
+      tolerations:
+      - key: "prometheus-node"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
       volumes:
