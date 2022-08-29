@@ -21,7 +21,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1659037622179,
+  "iteration": 1661526084053,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -392,12 +392,70 @@
       "type": "timeseries"
     },
     {
+      "cards": {},
+      "color": {
+        "cardColor": "#b4ff00",
+        "colorScale": "sqrt",
+        "colorScheme": "interpolateOranges",
+        "exponent": 0.5,
+        "mode": "spectrum"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${platformdatasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 19
+      },
+      "heatmap": {},
+      "hideZeroBuckets": true,
+      "highlightCards": true,
+      "id": 20,
+      "legend": {
+        "show": true
+      },
+      "reverseYBuckets": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${platformdatasource}"
+          },
+          "exemplar": true,
+          "expr": "sum by(le) (increase(heartbeat_kubernetes_request_time_histogram_bucket{}[5m]))",
+          "format": "heatmap",
+          "interval": "5m",
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Kubernetes API Server Request Time",
+      "tooltip": {
+        "show": true,
+        "showHistogram": true
+      },
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "yAxis": {
+        "format": "short",
+        "logBase": 1,
+        "show": true
+      },
+      "yBucketBound": "auto"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 27
       },
       "id": 16,
       "panels": [],
@@ -464,7 +522,7 @@
         "h": 8,
         "w": 9,
         "x": 0,
-        "y": 20
+        "y": 28
       },
       "id": 6,
       "options": {
@@ -501,12 +559,13 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Prometheus (mlab-sandbox)",
           "value": "Prometheus (mlab-sandbox)"
         },
         "hide": 0,
         "includeAll": false,
+        "label": "Prometheus Datasource",
         "multi": false,
         "name": "datasource",
         "options": [],
@@ -514,6 +573,25 @@
         "queryValue": "",
         "refresh": 1,
         "regex": "/Prometheus \\(/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "Platform Cluster (mlab-sandbox)",
+          "value": "Platform Cluster (mlab-sandbox)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Platform Datasource",
+        "multi": false,
+        "name": "platformdatasource",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/Platform Cluster \\(/",
         "skipUrlSync": false,
         "type": "datasource"
       }
@@ -527,6 +605,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 14,
+  "version": 17,
   "weekStart": ""
 }
