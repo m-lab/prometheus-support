@@ -25,7 +25,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 398,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -398,24 +397,28 @@
           "datasource": {
             "uid": "$datasource"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "8 * avg by (site) (rate(node_network_transmit_bytes_total{device=~\"(eth0|ens4)\", site=\"$site\"}[4m]))",
+          "expr": "8 * sum by (site) (rate(node_network_transmit_bytes_total{device=~\"(eth0|ens4)\", site=\"$site\"}[4m]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "TX",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
             "uid": "$datasource"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "- 8 * avg by (site) (rate(node_network_receive_bytes_total{device=~\"(eth0|ens4)\", site=\"$site\"}[4m]))",
+          "expr": "- 8 * sum by (site) (rate(node_network_receive_bytes_total{device=~\"(eth0|ens4)\", site=\"$site\"}[4m]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "RX",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -711,14 +714,14 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
-            "physical",
-            "virtual"
+            "virtual",
+            "physical"
           ],
           "value": [
-            "physical",
-            "virtual"
+            "virtual",
+            "physical"
           ]
         },
         "hide": 0,
@@ -745,7 +748,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "akl01"
           ],
@@ -811,6 +814,6 @@
   "timezone": "",
   "title": "k8s: Site Overview Terse",
   "uid": "082q1knVz",
-  "version": 16,
+  "version": 17,
   "weekStart": ""
 }
