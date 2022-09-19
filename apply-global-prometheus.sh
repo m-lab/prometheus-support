@@ -292,6 +292,13 @@ kubectl create secret generic switch-monitoring-credentials\
   "--from-file=/tmp/switch-monitoring.key" \
   --dry-run="client" -o json | kubectl apply -f -
 
+## Github Maintenance Exporter
+
+# Create GMX Github webhook secret as a Kubernetes secret.
+kubectl create secret generic gmx-webhook-secret \
+  "--from-literal=gmx-webhook-secret=${GMX_GITHUB_WEBHOOK_SECRET}" \
+  --dry-run="client" -o json | kubectl apply -f -
+
 ## OAuth2 Proxy
 
 # Replace template variables in oauth2-proxy.yml.
