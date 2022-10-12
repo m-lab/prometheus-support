@@ -673,6 +673,14 @@ scrape_configs:
         target_label: site
         replacement: ${1}
 
+      # Create an "fqdn" label for each target host, which will vary depending
+      # on the service. The awkward regexp for the "experiment" label is to
+      # accommodate legacy experiment names like "ndt.iupui".
+      - source_labels: [__address__, experiment]
+        regex: (.*);([a-z0-9]+)\.?.*
+        target_label: fqdn
+        replacement: ${1}-${2}
+
       # Since __address__ is the target that prometheus will contact,
       # unconditionally reset the __address__ label to the script_exporter
       # address.
