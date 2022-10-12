@@ -679,7 +679,7 @@ scrape_configs:
       - source_labels: [__address__, experiment]
         regex: (.*);([a-z0-9]+)\.?.*
         target_label: fqdn
-        replacement: ${1}-${2}
+        replacement: ${2}-${1}
 
       # Since __address__ is the target that prometheus will contact,
       # unconditionally reset the __address__ label to the script_exporter
