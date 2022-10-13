@@ -674,8 +674,9 @@ scrape_configs:
         replacement: ${1}
 
       # Create an "fqdn" label for each target host, which will vary depending
-      # on the service. The awkward regexp for the "experiment" label is to
-      # accommodate legacy experiment names like "ndt.iupui".
+      # on the service. TODO(kinkade): once the ".iupui" suffix is entirely
+      # retired from the platform, modify the regexp to simply use the entire
+      # experiment label's value.
       - source_labels: [__address__, experiment]
         regex: (.*);([a-z0-9]+)\.?.*
         target_label: fqdn
