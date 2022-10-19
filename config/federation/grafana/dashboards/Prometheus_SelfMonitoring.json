@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": false,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -13,18 +16,16 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 192,
-  "iteration": 1638825747083,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
       },
       "gridPos": {
         "h": 1,
@@ -34,12 +35,22 @@
       },
       "id": 35,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "xIXR1_LMz"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Prometheus 2.x",
       "type": "row"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -80,7 +91,6 @@
         "y": 1
       },
       "id": 40,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -98,9 +108,12 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "min(time() - process_start_time_seconds{container=\"prometheus\"})",
           "format": "time_series",
           "interval": "",
@@ -114,8 +127,9 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -156,7 +170,6 @@
         "y": 1
       },
       "id": 41,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -174,9 +187,12 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "max(prometheus_tsdb_blocks_loaded)",
           "format": "time_series",
           "interval": "",
@@ -194,7 +210,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -230,7 +248,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -240,6 +258,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "rate(prometheus_notifications_dropped_total[10m])",
           "format": "time_series",
           "interval": "",
@@ -249,6 +270,9 @@
           "step": 240
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "prometheus_notifications_alertmanagers_discovered",
           "format": "time_series",
           "intervalFactor": 1,
@@ -257,9 +281,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Alert Notifications",
       "tooltip": {
         "shared": true,
@@ -268,33 +290,24 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "s",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -302,7 +315,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -336,7 +351,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -346,6 +361,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "rate(process_cpu_seconds_total{container=\"prometheus\"}[5m])",
           "format": "time_series",
           "hide": false,
@@ -357,9 +375,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Prometheus CPU",
       "tooltip": {
         "shared": true,
@@ -368,9 +384,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -379,22 +393,17 @@
           "format": "percentunit",
           "label": "",
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -405,7 +414,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -439,7 +450,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -449,6 +460,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "process_resident_memory_bytes{container=\"prometheus\"}",
           "format": "time_series",
           "intervalFactor": 2,
@@ -457,6 +471,9 @@
           "step": 240
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "go_memstats_heap_alloc_bytes{container=\"prometheus\"}",
           "format": "time_series",
           "intervalFactor": 2,
@@ -466,9 +483,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Prometheus RAM",
       "tooltip": {
         "shared": true,
@@ -477,18 +492,14 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "decbytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
@@ -496,14 +507,11 @@
           "format": "short",
           "label": "",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -511,7 +519,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -547,7 +557,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -557,6 +567,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "prometheus_rule_evaluation_duration_seconds{quantile!=\"0.01\", quantile!=\"0.05\", container=\"prometheus\"}",
           "format": "time_series",
           "interval": "",
@@ -566,9 +579,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Rule Eval Duration",
       "tooltip": {
         "shared": true,
@@ -577,33 +588,24 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "s",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -611,7 +613,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -647,7 +651,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -657,6 +661,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "max(scrape_duration_seconds)",
           "format": "time_series",
           "interval": "60s",
@@ -666,6 +673,9 @@
           "step": 120
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "quantile(0.99, scrape_duration_seconds)",
           "format": "time_series",
           "interval": "60s",
@@ -675,6 +685,9 @@
           "step": 120
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "quantile(0.95, scrape_duration_seconds)",
           "format": "time_series",
           "interval": "60s",
@@ -684,6 +697,9 @@
           "step": 120
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "quantile(0.5, scrape_duration_seconds)",
           "format": "time_series",
           "interval": "60s",
@@ -694,9 +710,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Prometheus Collection Durations",
       "tooltip": {
         "shared": true,
@@ -705,33 +719,24 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 10,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -739,7 +744,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -775,7 +782,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -785,6 +792,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(up)",
           "format": "time_series",
           "intervalFactor": 2,
@@ -793,6 +803,9 @@
           "step": 240
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(up == 1)",
           "format": "time_series",
           "intervalFactor": 2,
@@ -801,6 +814,9 @@
           "step": 240
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(up == 1) - count(up{job=\"blackbox-targets\"} == 1) ",
           "format": "time_series",
           "intervalFactor": 2,
@@ -808,6 +824,9 @@
           "refId": "C"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "count(up{job=\"blackbox-targets\"} == 1) ",
           "format": "time_series",
           "intervalFactor": 2,
@@ -816,9 +835,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Targets",
       "tooltip": {
         "shared": true,
@@ -827,33 +844,25 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -861,7 +870,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -897,7 +908,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -907,6 +918,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "prometheus_engine_query_duration_seconds{quantile=\"0.9\", container=\"prometheus\"}",
           "format": "time_series",
           "interval": "",
@@ -916,6 +930,9 @@
           "step": 240
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "",
           "format": "time_series",
           "intervalFactor": 1,
@@ -923,9 +940,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Prometheus Engine Query Duration",
       "tooltip": {
         "shared": true,
@@ -934,33 +949,24 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "s",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -968,7 +974,9 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1004,7 +1012,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1014,6 +1022,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "rate(prometheus_tsdb_head_samples_appended_total[5m])*60",
           "format": "time_series",
           "intervalFactor": 1,
@@ -1021,6 +1032,9 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "prometheus_tsdb_head_series",
           "format": "time_series",
           "intervalFactor": 1,
@@ -1029,9 +1043,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Samples",
       "tooltip": {
         "shared": true,
@@ -1040,33 +1052,25 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1074,7 +1078,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1108,7 +1115,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1118,16 +1125,24 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "predict_linear(kubelet_volume_stats_available_bytes{cluster=\"prometheus-federation\", persistentvolumeclaim=\"auto-prometheus-disk0\"}[2d:10m], 10*86400)",
+          "expr": "predict_linear(sum(kubelet_volume_stats_available_bytes{cluster=\"prometheus-federation\", persistentvolumeclaim=\"auto-prometheus-disk0\"})[10d:10m], 10*86400)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
           "legendFormat": "prometheus-federation - 10 days",
+          "range": true,
           "refId": "C"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "kubelet_volume_stats_available_bytes{cluster=\"prometheus-federation\", persistentvolumeclaim=\"auto-prometheus-disk0\"}",
           "format": "time_series",
@@ -1138,16 +1153,24 @@
           "refId": "D"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "predict_linear(node_filesystem_avail_bytes{node=\"prometheus-platform-cluster\", mountpoint=\"/mnt/local\"}[2d:10m], 10*86400)",
+          "expr": "predict_linear(sum(node_filesystem_avail_bytes{node=\"prometheus-platform-cluster\", mountpoint=\"/mnt/local\"})[10d:10m], 10*86400)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
           "legendFormat": "platform - 10 days",
+          "range": true,
           "refId": "E"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "node_filesystem_avail_bytes{node=\"prometheus-platform-cluster\", mountpoint=\"/mnt/local\"}",
           "format": "time_series",
@@ -1158,28 +1181,36 @@
           "refId": "F"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "predict_linear(kubelet_volume_stats_available_bytes{instance=~\"gke-data-processing.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"}[2d:10m], 10*86400)",
+          "expr": "predict_linear(sum(kubelet_volume_stats_available_bytes{instance=~\"gke-data-processing.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"})[10d:10m], 10*86400)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
           "legendFormat": "data-processing - 10 days",
+          "range": true,
           "refId": "A"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
           "exemplar": true,
           "expr": "kubelet_volume_stats_available_bytes{instance=~\"gke-data-processing.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"}",
           "hide": false,
           "interval": "60s",
           "legendFormat": "data-processing - raw",
+          "range": true,
           "refId": "B"
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Filesystem Available Estimate",
       "tooltip": {
         "shared": true,
@@ -1188,53 +1219,43 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "$$hashKey": "object:89",
-          "decimals": null,
           "format": "bytes",
           "label": "",
           "logBase": 1,
-          "max": null,
           "min": "-100000000000",
           "show": true
         },
         {
           "$$hashKey": "object:90",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
   "refresh": "",
-  "schemaVersion": 30,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Data source",
@@ -1282,5 +1303,6 @@
   "timezone": "utc",
   "title": "Prometheus: Self-monitoring",
   "uid": "sVklmeHik",
-  "version": 149
+  "version": 150,
+  "weekStart": ""
 }
