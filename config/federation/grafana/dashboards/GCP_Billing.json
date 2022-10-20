@@ -34,14 +34,14 @@
         "uid": "xIXR1_LMz"
       },
       "gridPos": {
-        "h": 2,
+        "h": 3,
         "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 8,
       "options": {
-        "content": "* GCP Billing data is exported per billing account to tables in `mlab-staging.billing.*` and `mlab-oti.billing.*`\n* Partial data is exported hourly, but usage for a given hour may not be available until 2 days later",
+        "content": "* GCP Billing data is exported per billing account to tables in `mlab-staging.billing.*` and `mlab-oti.billing.*`\n* Partial data is exported hourly, but complete usage for a given hour may not be available until 2 days later\n* Because of the above, the default time range excludes the last 24h",
         "mode": "markdown"
       },
       "pluginVersion": "9.1.5",
@@ -62,7 +62,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 3
       },
       "id": 29,
       "panels": [],
@@ -102,7 +102,7 @@
         "h": 3,
         "w": 5,
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "id": 26,
       "options": {
@@ -191,7 +191,7 @@
         "h": 3,
         "w": 5,
         "x": 5,
-        "y": 3
+        "y": 4
       },
       "id": 27,
       "options": {
@@ -257,7 +257,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 7
       },
       "id": 20,
       "panels": [],
@@ -311,7 +311,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -339,7 +339,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 7
+        "y": 8
       },
       "id": 12,
       "options": {
@@ -393,7 +393,7 @@
           ]
         }
       ],
-      "title": "Cost per project (per day)",
+      "title": "Cost per project per day (stacked)",
       "type": "timeseries"
     },
     {
@@ -430,7 +430,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -458,7 +458,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 7
+        "y": 8
       },
       "id": 14,
       "options": {
@@ -512,7 +512,7 @@
           ]
         }
       ],
-      "title": "Cost per service (per day)",
+      "title": "Cost per service per day (stacked)",
       "type": "timeseries"
     },
     {
@@ -577,15 +577,14 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "id": 15,
       "maxDataPoints": 20000,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max"
+            "mean"
           ],
           "displayMode": "table",
           "placement": "right",
@@ -699,7 +698,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 31,
       "options": {
@@ -744,7 +743,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 32
       },
       "id": 18,
       "panels": [],
@@ -827,7 +826,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 33
       },
       "id": 16,
       "options": {
@@ -946,7 +945,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 33
       },
       "id": 11,
       "options": {
@@ -1066,15 +1065,14 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 41
       },
       "id": 13,
       "maxDataPoints": 8000,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max"
+            "mean"
           ],
           "displayMode": "table",
           "placement": "right",
@@ -1188,8 +1186,8 @@
     ]
   },
   "time": {
-    "from": "now-7d",
-    "to": "now"
+    "from": "now-8d",
+    "to": "now-1d"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -1208,6 +1206,6 @@
   "timezone": "",
   "title": "GCP Billing",
   "uid": "a5mC51ZMk",
-  "version": 47,
+  "version": 48,
   "weekStart": ""
 }
