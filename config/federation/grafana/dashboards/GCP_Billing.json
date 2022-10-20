@@ -640,7 +640,7 @@
         "type": "datasource",
         "uid": "-- Mixed --"
       },
-      "description": "",
+      "description": "octets_out: the sum of the node-exporter metric \"node_network_transmit_bytes_total\" for every GCE virtual platform node, assuming a $0.10/GB cost. This number is likely to be higher than the actual cost, since some amount of octets out on every node will be to destinations within GCP, and billed at a much lower rate.\n\ngce_egress: calcul1ated using the exported GCP billing data in BigQuery where service.description = \"Compute Engine\" and sku.description LIKE \"Network Internet Egress%\". This number will definitely be _much_ higher than the actual cost of virtual platform node Internet egress, because it includes Internet egress costs for _all_ GCE instances, whether they are part of the platform or not. However, it should show us trends and give us a general idea of how much Internet egress is cost M-Lab.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -713,8 +713,8 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -725,12 +725,46 @@
           },
           "editorMode": "code",
           "expr": "sum(\n  (\n    (\n      increase(node_network_transmit_bytes_total{device=\"ens4\", node=~\"mlab[1-4].*\"}[1d])\n        and on(node) kube_node_labels{label_mlab_type=\"virtual\"}\n    ) / 2^30\n  ) * 0.10\n)",
-          "legendFormat": "mlab-oti",
+          "legendFormat": "octets_out",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "0zzHsf77z"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, DAY) AS date,\n  SUM(cost) as gce_egress\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time)\n  AND service.description = 'Compute Engine'\n  AND sku.description LIKE 'Network Internet Egress%'\n  AND cost > 0\n  AND project.id = 'mlab-oti'\nGROUP BY\n  date\nORDER BY\n  date\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
-      "title": "Estimated GCE egress network cost (per day) (mlab-oti)",
+      "title": "GCE egress network cost per day (mlab-oti)",
       "type": "timeseries"
     },
     {
@@ -1048,8 +1082,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1206,6 +1239,6 @@
   "timezone": "",
   "title": "GCP Billing",
   "uid": "a5mC51ZMk",
-  "version": 48,
+  "version": 49,
   "weekStart": ""
 }
