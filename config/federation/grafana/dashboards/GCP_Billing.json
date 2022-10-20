@@ -640,7 +640,7 @@
         "type": "datasource",
         "uid": "-- Mixed --"
       },
-      "description": "octets_out: the sum of the node-exporter metric \"node_network_transmit_bytes_total\" for every GCE virtual platform node, assuming a $0.10/GB cost. This number is likely to be higher than the actual cost, since some amount of octets out on every node will be to destinations within GCP, and billed at a much lower rate.\n\ngce_egress: calcul1ated using the exported GCP billing data in BigQuery where service.description = \"Compute Engine\" and sku.description LIKE \"Network Internet Egress%\". This number will definitely be _much_ higher than the actual cost of virtual platform node Internet egress, because it includes Internet egress costs for _all_ GCE instances, whether they are part of the platform or not. However, it should show us trends and give us a general idea of how much Internet egress is cost M-Lab.",
+      "description": "octets_out: the sum of the node-exporter metric \"node_network_transmit_bytes_total\" for every GCE virtual platform node, assuming a $0.10/GB cost. This number is likely to be higher than the actual cost, since some amount of octets out on every node will be to destinations within GCP, and billed at a much lower rate.\n\ngce_egress: calculated using the exported GCP billing data in BigQuery where service.description = \"Compute Engine\" and sku.description LIKE \"Network Internet Egress%\". This number will definitely be _much_ higher than the actual cost of virtual platform node Internet egress, because it includes Internet egress costs for _all_ GCE instances, whether they are part of the platform or not. However, it should show us trends and give us a general idea of how much Internet egress is costing M-Lab.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -724,7 +724,7 @@
             "uid": "WW1Jk2sGk"
           },
           "editorMode": "code",
-          "expr": "sum(\n  (\n    (\n      increase(node_network_transmit_bytes_total{device=\"ens4\", node=~\"mlab[1-4].*\"}[1d])\n        and on(node) kube_node_labels{label_mlab_type=\"virtual\"}\n    ) / 2^30\n  ) * 0.10\n)",
+          "expr": "sum(\n  (\n    (\n      (\n        increase(node_network_transmit_bytes_total{device=\"ens4\", node=~\"mlab[1-4].*\"}[1d])\n          and on(node) kube_node_labels{label_mlab_type=\"virtual\"}\n      ) / 2^30\n    ) * 0.10\n  )\n)",
           "legendFormat": "octets_out",
           "range": true,
           "refId": "A"
@@ -1082,7 +1082,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
