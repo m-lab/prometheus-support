@@ -1046,101 +1046,120 @@
       "type": "stat"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
+      "description": "Average sec/sec usage across all CPUs available to the machine.",
       "fieldConfig": {
         "defaults": {
-          "links": []
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cached bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 6,
         "w": 6,
         "x": 0,
         "y": 6
       },
-      "hiddenSeries": false,
       "id": 32,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
       "links": [],
-      "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "9.1.5",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Cached bytes",
-          "yaxis": 2
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
         }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
+      },
+      "pluginVersion": "9.1.5",
       "targets": [
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "node_load1{node=~\"$node-$site.*\"}",
+          "editorMode": "code",
+          "expr": "1 - avg by (node) (rate(node_cpu_seconds_total{node=~\"$node-$site.*\", mode=\"idle\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "Load1",
+          "legendFormat": "$node-$site",
+          "range": true,
           "refId": "A"
         }
       ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "Load1",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "none",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      "title": "CPU",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1330,24 +1349,28 @@
           "datasource": {
             "uid": "$datasource"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"(eth0|ens4)\", node=~\"$node-$site.*\"}[4m])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device=~\"(eth0|ens4)\", node=~\"$node-$site.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "TX eth0",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
             "uid": "$datasource"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"(eth0|ens4)\", node=~\"$node-$site.*\"}[4m])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device=~\"(eth0|ens4)\", node=~\"$node-$site.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "RX eth0",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -1389,6 +1412,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "fieldConfig": {
@@ -1446,30 +1470,36 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "rate(node_disk_read_bytes_total{node=~\"$node-$site.*\"}[5m])",
+          "editorMode": "code",
+          "expr": "rate(node_disk_read_bytes_total{node=~\"$node-$site.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read ({{device}})",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "rate(node_disk_written_bytes_total{node=~\"$node-$site.*\"}[5m])",
+          "editorMode": "code",
+          "expr": "rate(node_disk_written_bytes_total{node=~\"$node-$site.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written ({{device}})",
+          "range": true,
           "refId": "B"
         },
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "rate(node_disk_io_time_seconds_total{node=~\"$node-$site.*\"}[5m])",
+          "editorMode": "code",
+          "expr": "rate(node_disk_io_time_seconds_total{node=~\"$node-$site.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "% sec/sec ({{device}})",
+          "range": true,
           "refId": "C"
         }
       ],
@@ -1592,7 +1622,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(\n  container_cpu_usage_seconds_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    container_label_io_kubernetes_pod_namespace=~\"default\",\n    machine=~\"$node-$site.*\"\n  }\n[5m]) > 0.01",
+          "expr": "rate(\n  container_cpu_usage_seconds_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_container_name!=\"POD\",\n    container_label_io_kubernetes_pod_namespace=~\"default\",\n    machine=~\"$node-$site.*\"\n  }\n[$__rate_interval]) > 0.01",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{container_label_io_kubernetes_container_name}} ({{container_label_io_kubernetes_pod_name}})",
@@ -1789,7 +1819,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "-8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node-$site.*\"\n  }\n[5m])",
+          "expr": "-8 * rate(\n  container_network_receive_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node-$site.*\"\n  }\n[$__rate_interval])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1804,7 +1834,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node-$site.*\"\n  }\n[5m])",
+          "expr": "8 * rate(\n  container_network_transmit_bytes_total{\n    container_label_io_kubernetes_pod_name=~\"$pod-.*\",\n    container_label_io_kubernetes_pod_namespace=\"default\",\n    interface=~\"(eth0|net1)\",\n    machine=~\"$node-$site.*\"\n  }\n[$__rate_interval])",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -2205,7 +2235,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "akl01",
           "value": "akl01"
         },
@@ -2235,7 +2265,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "All",
           "value": "$__all"
         },
@@ -2328,6 +2358,6 @@
   "timezone": "",
   "title": "k8s: Site Overview",
   "uid": "rJ7z2Suik",
-  "version": 58,
+  "version": 59,
   "weekStart": ""
 }
