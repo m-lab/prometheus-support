@@ -61,6 +61,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Average sec/sec usage across all CPUs available to all the machines at the selected site.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -112,7 +113,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "percentunit"
         },
         "overrides": [
           {
@@ -149,7 +150,7 @@
           "showLegend": false
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -160,16 +161,18 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "avg by (site) (node_load1{site=\"$site\"})",
+          "expr": "1 - avg by (site) (rate(node_cpu_seconds_total{site=\"$site\", mode=\"idle\"}[$__rate_interval]))",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{site}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Load average (1 min)",
+      "title": "CPU",
       "type": "timeseries"
     },
     {
@@ -247,7 +250,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
@@ -261,13 +264,15 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "avg by (site) (node_memory_Cached_bytes{site=\"$site\"})",
+          "expr": "avg by (site) (\n  node_memory_Cached_bytes{site=\"$site\"}\n  + node_memory_Buffers_bytes\n  + node_memory_SReclaimable_bytes\n)",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Cache",
+          "legendFormat": "Buff/Cache",
+          "range": true,
           "refId": "A"
         },
         {
@@ -275,26 +280,15 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "avg by (site) (node_memory_Buffers_bytes{site=\"$site\"})",
+          "expr": "avg by (site) (\n  node_memory_Active_bytes{site=\"$site\"}\n  + node_memory_Active_anon_bytes\n  + node_memory_Active_file_bytes\n)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Buffers",
+          "legendFormat": "Used",
+          "range": true,
           "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "exemplar": true,
-          "expr": "avg by (site) (node_memory_Active_bytes{site=\"$site\"})",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Active",
-          "refId": "D"
         },
         {
           "datasource": {
@@ -304,6 +298,7 @@
           "exemplar": true,
           "expr": "avg by (site) (node_memory_MemFree_bytes{site=\"$site\"})",
           "format": "time_series",
+          "hide": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "Free",
@@ -385,7 +380,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
@@ -532,7 +527,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
@@ -640,7 +635,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "multi",
@@ -815,6 +810,6 @@
   "timezone": "",
   "title": "k8s: Site Overview Terse",
   "uid": "082q1knVz",
-  "version": 17,
+  "version": 19,
   "weekStart": ""
 }
