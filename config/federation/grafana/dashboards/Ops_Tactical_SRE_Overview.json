@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": false,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -16,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1655496781097,
+  "id": 76,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -62,7 +65,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.5",
       "pointradius": 0.5,
       "points": false,
       "renderer": "flot",
@@ -81,6 +84,9 @@
       "steppedLine": true,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "60 * sum(rate(alertmanager_alerts_received_total{status=\"firing\"}[5m])) by (job)",
           "format": "time_series",
           "hide": false,
@@ -91,6 +97,9 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "sum(alertmanager_alerts{kubernetes_name=\"alertmanager-tls-service\",state=\"suppressed\"}) by (kubernetes_name)",
           "format": "time_series",
           "instant": false,
@@ -176,6 +185,9 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "label_replace(gmx_machine_maintenance == 1, \"site\", \"$1\", \"machine\", \"mlab[1-4]-([a-z]{3}[0-9ct]{2}).+\") unless on(site) gmx_site_maintenance == 1",
           "format": "time_series",
           "instant": true,
@@ -232,7 +244,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -242,6 +254,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$cluster"
+          },
           "expr": "container:kube_pod_container_status_restarts:increase1d",
           "format": "time_series",
           "interval": "",
@@ -338,7 +353,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -515,6 +530,9 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "sum by (alertname, status) (increase(githubreceiver_alerts_total[$__range])) > 0",
           "format": "table",
           "instant": true,
@@ -588,6 +606,9 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "gmx_site_maintenance == 1",
           "format": "time_series",
           "instant": true,
@@ -646,7 +667,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.5",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -656,6 +677,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "sum by (log, priority) (stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_kernel_logs{priority=~\"[0-3]\"})",
           "format": "time_series",
           "interval": "",
@@ -698,6 +722,7 @@
     {
       "columns": [],
       "datasource": {
+        "type": "prometheus",
         "uid": "$cluster"
       },
       "description": "Nodes that are currently in lame-duck mode.",
@@ -738,11 +763,15 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "uid": "$cluster"
+          },
+          "editorMode": "code",
           "expr": "lame_duck_node == 1 OR kube_node_spec_taint{key=\"lame-duck\"} == 1",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
-          "legendFormat": "{{machine}}",
+          "legendFormat": "{{node}}",
           "refId": "A"
         }
       ],
@@ -762,6 +791,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -818,10 +849,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
@@ -896,6 +929,9 @@
       ],
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "(rebot_last_reboot_timestamp{} > time() - 86400) * 1000",
           "format": "time_series",
           "instant": false,
@@ -952,7 +988,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -962,6 +998,10 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$cluster"
+          },
           "exemplar": true,
           "expr": "count by (kubelet_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"physical\"})",
           "interval": "",
@@ -969,6 +1009,10 @@
           "refId": "B"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$cluster"
+          },
           "exemplar": true,
           "expr": "count by (kubelet_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"virtual\"})",
           "interval": "",
@@ -976,6 +1020,10 @@
           "refId": "C"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$cluster"
+          },
           "exemplar": true,
           "expr": "count by (kernel_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"physical\"})",
           "interval": "",
@@ -983,6 +1031,10 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "$cluster"
+          },
           "exemplar": true,
           "expr": "count by (kernel_version) (kube_node_info and on(node) kube_node_labels{label_mlab_type=\"virtual\"})",
           "interval": "",
@@ -1062,7 +1114,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1072,12 +1124,18 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$cluster"
+          },
           "expr": "increase(reloader_reload_executed_total{success=\"true\"}[1d])",
           "interval": "",
           "legendFormat": "Successes",
           "refId": "A"
         },
         {
+          "datasource": {
+            "uid": "$cluster"
+          },
           "expr": "increase(reloader_reload_executed_total{success=\"false\"}[1d])",
           "interval": "",
           "legendFormat": "Failures",
@@ -1116,7 +1174,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 34,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1192,6 +1250,6 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 45,
+  "version": 17,
   "weekStart": ""
 }
