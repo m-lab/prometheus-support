@@ -110,7 +110,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "The 5 min rate of Heartbeat connection requests.",
+      "description": "The 1 min rate of Heartbeat connection requests.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -120,7 +120,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Connection rate",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -191,14 +191,14 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(locate_requests_total{type=\"heartbeat\"}[5m]))",
+          "expr": "sum(rate(locate_requests_total{type=\"heartbeat\"}[10m])/10)",
           "interval": "",
           "legendFormat": "Rate",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Heartbeat Connection Request Rate (5 min)",
+      "title": "Heartbeat Connection Request Rate (per min)",
       "type": "timeseries"
     },
     {
@@ -206,7 +206,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Increase in Prometheus health collections grouped by code.",
+      "description": "One minute Increase in Prometheus health collections grouped by code.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -215,7 +215,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Number of collections",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -293,7 +293,7 @@
           "refId": "A"
         }
       ],
-      "title": "Prometheus Health Collections",
+      "title": "Prometheus Health Collections (per min)",
       "type": "timeseries"
     },
     {
@@ -372,6 +372,7 @@
           "yHistogram": true
         },
         "yAxis": {
+          "axisLabel": "Seconds",
           "axisPlacement": "left",
           "reverse": false,
           "unit": "short"
@@ -387,7 +388,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(le) (increase(prometheus_health_collection_duration_bucket{}[5m]))",
+          "expr": "sum by(le) (increase(prometheus_health_collection_duration_bucket[5m]))",
           "format": "heatmap",
           "interval": "5m",
           "legendFormat": "{{le}}",
@@ -442,7 +443,7 @@
         "type": "prometheus",
         "uid": "${platformdatasource}"
       },
-      "description": "Increase in number of port checks grouped by status.",
+      "description": "One minute increase in number of port checks grouped by status.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -451,7 +452,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Number of checks",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -529,7 +530,7 @@
           "refId": "A"
         }
       ],
-      "title": "Port Checks",
+      "title": "Port Checks (per min)",
       "type": "timeseries"
     },
     {
@@ -537,7 +538,7 @@
         "type": "prometheus",
         "uid": "${platformdatasource}"
       },
-      "description": "Increase in number of health checks grouped by status.",
+      "description": "One minute increase in number of health checks grouped by status.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -546,7 +547,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Number of checks",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -624,7 +625,7 @@
           "refId": "A"
         }
       ],
-      "title": "Health Checks",
+      "title": "Health Checks (per min)",
       "type": "timeseries"
     },
     {
@@ -632,7 +633,7 @@
         "type": "prometheus",
         "uid": "${platformdatasource}"
       },
-      "description": "Increase in requests to the Kubernetes API Server grouped by status.",
+      "description": "One minute increase in requests to the Kubernetes API Server grouped by status.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -641,7 +642,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Number of requests",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -719,7 +720,7 @@
           "refId": "A"
         }
       ],
-      "title": "Kubernetes Requests",
+      "title": "Kubernetes Requests (per min)",
       "type": "timeseries"
     },
     {
@@ -797,6 +798,7 @@
           "yHistogram": true
         },
         "yAxis": {
+          "axisLabel": "Seconds",
           "axisPlacement": "left",
           "reverse": false,
           "unit": "short"
@@ -875,7 +877,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Number of requests",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -962,20 +964,21 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "The hourly rate at which client requests returned status != \"OK\".",
+      "description": "The rate at which client requests returned status != \"OK\".",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-RdYlGr",
+            "seriesBy": "last"
           },
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Failure rate",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 10,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -983,7 +986,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 4,
             "scaleDistribution": {
               "type": "linear"
@@ -999,7 +1002,8 @@
             }
           },
           "mappings": [],
-          "max": 1,
+          "max": 100,
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1043,14 +1047,16 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "(sum by (status) (rate(locate_requests_total{type=\"nearest\", status!=\"OK\"}[1h]))\n/ ignoring (status) group_left \nsum(rate(locate_requests_total{type=\"nearest\"}[1h])))",
+          "expr": "100 * (sum by (status) (locate_requests_total{type=\"nearest\", status!=\"OK\"})\n/ ignoring (status) group_left \nsum(locate_requests_total{type=\"nearest\"}))\n\n",
           "interval": "",
           "legendFormat": "{{status}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Client Request Failure Rate (Hourly)",
+      "title": "Client Request Failure Rate",
       "type": "timeseries"
     },
     {
@@ -1084,7 +1090,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "The hourly rate at which App Engine successfully returns the client's country.",
+      "description": "The rate at which App Engine successfully returns the client's country (i.e., country!=\"ZZ). ",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1093,7 +1099,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Success rate",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -1121,6 +1127,8 @@
             }
           },
           "mappings": [],
+          "max": 100,
+          "noValue": "100",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1162,14 +1170,16 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "(sum(rate(locate_app_engine_total{country!=\"\"}[1h])) /\nsum(rate(locate_app_engine_total[1h])))",
+          "expr": "100 * (sum(locate_app_engine_total{country!=\"ZZ\"})) / sum(locate_app_engine_total)",
           "interval": "",
           "legendFormat": "Rate",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "App Engine Country Success Rate (Hourly)",
+      "title": "App Engine Country Success Rate",
       "type": "timeseries"
     }
   ],
