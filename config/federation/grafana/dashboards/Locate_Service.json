@@ -879,7 +879,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Number of requests",
+            "axisLabel": "Request rate",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -951,14 +951,16 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(locate_requests_total{type=\"nearest\"})",
+          "expr": "sum(rate(locate_requests_total{type=\"nearest\"}[10m])/10)",
           "interval": "",
           "legendFormat": "Requests",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Number of Client Requests",
+      "title": "Client Request Rate (per min)",
       "type": "timeseries"
     },
     {
@@ -1051,14 +1053,14 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "100 * (sum by (status) (locate_requests_total{type=\"nearest\", status!=\"OK\"})\n/ ignoring (status) group_left \nsum(locate_requests_total{type=\"nearest\"}))\n\n",
+          "expr": "100 * (sum by (status) (increase(locate_requests_total{type=\"nearest\", status!=\"OK\"}[10m])/10)\n/ ignoring (status) group_left \nsum(increase(locate_requests_total{type=\"nearest\"}[10m])/10))\n",
           "interval": "",
           "legendFormat": "{{status}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Client Request Failure Rate",
+      "title": "Client Request Failure Rate (per min)",
       "type": "timeseries"
     },
     {
@@ -1092,7 +1094,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "The rate at which App Engine successfully returns the client's country (i.e., country!=\"ZZ). ",
+      "description": "The rate at which App Engine successfully returns the client's country (i.e., country != \"ZZ\"). ",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1119,7 +1121,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": true,
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -1129,8 +1131,6 @@
             }
           },
           "mappings": [],
-          "max": 100,
-          "noValue": "100",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1148,8 +1148,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 24,
+        "h": 8,
+        "w": 12,
         "x": 0,
         "y": 52
       },
@@ -1174,17 +1174,18 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "100 * (sum(locate_app_engine_total{country!=\"ZZ\"})) / sum(locate_app_engine_total)",
+          "expr": "100 * (sum(rate(locate_app_engine_total{country!=\"ZZ\"}[10m])/10) / (sum(rate(locate_app_engine_total[10m])/10)))",
           "interval": "",
           "legendFormat": "Rate",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "App Engine Country Success Rate",
+      "title": "App Engine Country Success Rate (per min)",
       "type": "timeseries"
     }
   ],
+  "refresh": "5s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -1230,14 +1231,14 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
-            "ndt-virtual",
-            "ndt"
+            "ndt",
+            "ndt-virtual"
           ],
           "value": [
-            "ndt-virtual",
-            "ndt"
+            "ndt",
+            "ndt-virtual"
           ]
         },
         "datasource": {
@@ -1271,6 +1272,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 32,
+  "version": 33,
   "weekStart": ""
 }
