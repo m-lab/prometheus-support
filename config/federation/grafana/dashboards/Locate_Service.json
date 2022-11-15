@@ -523,7 +523,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(status)(increase(heartbeat_port_checks_total[10m])/10)",
+          "expr": "sum by(status)(increase(heartbeat_port_checks_total{deployment=~\"$deployment\"}[10m])/10)",
           "interval": "",
           "legendFormat": "{{status}}",
           "range": true,
@@ -618,7 +618,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(status)(increase(heartbeat_health_endpoint_checks_total{}[10m])/10)",
+          "expr": "sum by(status)(increase(heartbeat_health_endpoint_checks_total{deployment=~\"$deployment\"}[10m])/10)",
           "interval": "",
           "legendFormat": "{{status}}",
           "range": true,
@@ -713,7 +713,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by (status) (increase(heartbeat_kubernetes_requests_total[10m])/10)",
+          "expr": "sum by (status) (increase(heartbeat_kubernetes_requests_total{deployment=~\"$deployment\"}[10m])/10)",
           "interval": "",
           "legendFormat": "{{status}}",
           "range": true,
@@ -812,11 +812,13 @@
             "type": "prometheus",
             "uid": "${platformdatasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(le) (increase(heartbeat_kubernetes_request_time_histogram_bucket{}[5m]))",
+          "expr": "sum by(le) (increase(heartbeat_kubernetes_request_time_histogram_bucket{deployment=~\"$deployment\"}[5m]))",
           "format": "heatmap",
           "interval": "5m",
           "legendFormat": "{{le}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1225,6 +1227,39 @@
         "regex": "/Platform Cluster \\(/",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "ndt-virtual",
+            "ndt"
+          ],
+          "value": [
+            "ndt-virtual",
+            "ndt"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${platformdatasource}"
+        },
+        "definition": "label_values(heartbeat_port_checks_total, deployment)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Deployment",
+        "multi": true,
+        "name": "deployment",
+        "options": [],
+        "query": {
+          "query": "label_values(heartbeat_port_checks_total, deployment)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
       }
     ]
   },
@@ -1236,6 +1271,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 29,
+  "version": 32,
   "weekStart": ""
 }
