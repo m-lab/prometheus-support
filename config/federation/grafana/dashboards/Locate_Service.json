@@ -95,10 +95,12 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(locate_current_heartbeat_connections)",
+          "expr": "sum(locate_current_heartbeat_connections{experiment=~\"$experiment\"})",
           "interval": "",
           "legendFormat": "",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -523,7 +525,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(status)(increase(heartbeat_port_checks_total{deployment=~\"$deployment\"}[10m])/10)",
+          "expr": "sum by(status)(increase(heartbeat_port_checks_total{deployment=~\"$experiment.*\"}[10m])/10)",
           "interval": "",
           "legendFormat": "{{status}}",
           "range": true,
@@ -618,7 +620,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(status)(increase(heartbeat_health_endpoint_checks_total{deployment=~\"$deployment\"}[10m])/10)",
+          "expr": "sum by(status)(increase(heartbeat_health_endpoint_checks_total{deployment=~\"$experiment.*\"}[10m])/10)",
           "interval": "",
           "legendFormat": "{{status}}",
           "range": true,
@@ -713,7 +715,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by (status) (increase(heartbeat_kubernetes_requests_total{deployment=~\"$deployment\"}[10m])/10)",
+          "expr": "sum by (status) (increase(heartbeat_kubernetes_requests_total{deployment=~\"$experiment.*\"}[10m])/10)",
           "interval": "",
           "legendFormat": "{{status}}",
           "range": true,
@@ -814,7 +816,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(le) (increase(heartbeat_kubernetes_request_time_histogram_bucket{deployment=~\"$deployment\"}[5m]))",
+          "expr": "sum by(le) (increase(heartbeat_kubernetes_request_time_histogram_bucket{deployment=~\"$experiment.*\"}[5m]))",
           "format": "heatmap",
           "interval": "5m",
           "legendFormat": "{{le}}",
@@ -1231,29 +1233,29 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
-            "ndt",
-            "ndt-virtual"
+            "msak",
+            "ndt"
           ],
           "value": [
-            "ndt",
-            "ndt-virtual"
+            "msak",
+            "ndt"
           ]
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "${platformdatasource}"
+          "uid": "${datasource}"
         },
-        "definition": "label_values(heartbeat_port_checks_total, deployment)",
+        "definition": "label_values(locate_current_heartbeat_connections, experiment)",
         "hide": 0,
         "includeAll": false,
-        "label": "Deployment",
+        "label": "Experiment",
         "multi": true,
-        "name": "deployment",
+        "name": "experiment",
         "options": [],
         "query": {
-          "query": "label_values(heartbeat_port_checks_total, deployment)",
+          "query": "label_values(locate_current_heartbeat_connections, experiment)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
