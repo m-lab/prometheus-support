@@ -11,19 +11,19 @@
 
 WITH recent_ndt_tcpinfo AS (
   SELECT "ndt/tcpinfo" AS datatype, client.Geo.Latitude, client.Geo.Longitude, systems.ASNs AS asn
-  FROM `measurement-lab.ndt.tcpinfo`, UNNEST(client.Network.Systems) AS systems
+  FROM `measurement-lab.ndt.tcpinfo` LEFT JOIN UNNEST(client.Network.Systems) AS systems
   WHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 ), recent_ndt_ndt7 AS (
   SELECT "ndt/ndt7" AS datatype, client.Geo.Latitude, client.Geo.Longitude, systems.ASNs AS asn
-  FROM   `measurement-lab.ndt.ndt7`, UNNEST(client.Network.Systems) AS systems
+  FROM   `measurement-lab.ndt.ndt7` LEFT JOIN UNNEST(client.Network.Systems) AS systems
   WHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 ), recent_ndt_ndt5 AS (
   SELECT "ndt/ndt5" AS datatype, client.Geo.Latitude, client.Geo.Longitude, systems.ASNs AS asn
-  FROM   `measurement-lab.ndt.ndt5`, UNNEST(client.Network.Systems) AS systems
+  FROM   `measurement-lab.ndt.ndt5` LEFT JOIN UNNEST(client.Network.Systems) AS systems
   WHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 ), recent_ndt_scamper1 AS (
   SELECT "ndt/scamper1" AS datatype, client.Geo.Latitude, client.Geo.Longitude, systems.ASNs AS asn
-  FROM   `measurement-lab.ndt.scamper1`, UNNEST(client.Network.Systems) AS systems
+  FROM   `measurement-lab.ndt.scamper1` LEFT JOIN UNNEST(client.Network.Systems) AS systems
   WHERE date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
 )
 
