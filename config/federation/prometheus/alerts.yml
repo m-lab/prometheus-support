@@ -906,11 +906,15 @@ groups:
         triggering archive.
 
 # NDT_AsnAnnotationRatioTooLowOrMissing fires when the client annotations on NDT
-# tests appear to have too many failures or the bq_ndt_annotation_* metrics
+# tests appear to have too many failures or the bq_annotation_* metrics
 # disappear.
+# NOTE: the threshold is significantly lower than the geo annotations because in
+# practice we typically observe about 89-90% success rate, due to ~10% of
+# lookups affirmatively not being found in the routeview dataset, i.e.
+# `client.Network.Missing=True`.
   - alert: DataPipeline_AsnAnnotationRatioTooLowOrMissing
     expr: |
-      bq_annotation_asn_success / bq_annotation_total < 0.98
+      bq_annotation_asn_success / bq_annotation_total < 0.88
         or absent(bq_annotation_asn_success / bq_annotation_total)
     for: 3h
     labels:
