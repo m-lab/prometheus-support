@@ -35,6 +35,124 @@
         "x": 0,
         "y": 0
       },
+      "id": 33,
+      "panels": [],
+      "title": "Rollout",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "xIXR1_LMz"
+          },
+          "editorMode": "code",
+          "expr": "sum (\n    min by (hostname) (\n        prometheus_health_status{hostname=~\"$experiment.*\"} OR\n        heartbeat_health_status{hostname=~\"$experiment.*\"}\n    )\n)",
+          "legendFormat": "locate",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "xIXR1_LMz"
+          },
+          "editorMode": "code",
+          "expr": "sum (\n    min by (experiment, machine) (\n        label_replace(probe_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(script_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n              node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n                node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n                \"experiment\", \"$experiment\", \"\", \"\") < bool 0.95 OR\n        label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"}, \"experiment\", \"$experiment\", \"\", \"\") != bool 1 OR\n        label_replace(lame_duck_experiment{cluster=\"platform\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") != bool 1 OR\n        label_replace(gmx_machine_maintenance, \"experiment\", \"$experiment\", \"\", \"\") != bool 1\n    )\n)",
+          "hide": false,
+          "legendFormat": "mlab-ns",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Healthy Server Count",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
       "id": 29,
       "panels": [],
       "title": "Health Signals from Locate Service",
@@ -73,7 +191,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 13
       },
       "id": 10,
       "options": {
@@ -170,7 +288,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 1
+        "y": 13
       },
       "id": 18,
       "options": {
@@ -265,7 +383,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 22
       },
       "id": 26,
       "options": {
@@ -332,7 +450,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 22
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -424,7 +542,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 32
       },
       "id": 14,
       "panels": [],
@@ -502,7 +620,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 21
+        "y": 33
       },
       "id": 24,
       "options": {
@@ -597,7 +715,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 21
+        "y": 33
       },
       "id": 27,
       "options": {
@@ -692,7 +810,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 42
       },
       "id": 22,
       "options": {
@@ -759,7 +877,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 42
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -850,7 +968,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 52
       },
       "id": 12,
       "panels": [],
@@ -932,7 +1050,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 53
       },
       "id": 2,
       "options": {
@@ -1031,7 +1149,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 53
       },
       "id": 4,
       "options": {
@@ -1075,7 +1193,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 63
       },
       "id": 16,
       "panels": [],
@@ -1137,8 +1255,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1153,7 +1270,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 52
+        "y": 64
       },
       "id": 6,
       "options": {
@@ -1274,6 +1391,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 37,
+  "version": 40,
   "weekStart": ""
 }
