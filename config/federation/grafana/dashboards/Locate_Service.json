@@ -43,7 +43,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "xIXR1_LMz"
+        "uid": "${datasource}"
       },
       "description": "",
       "fieldConfig": {
@@ -121,7 +121,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "xIXR1_LMz"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum (\n    min by (hostname) (\n        prometheus_health_status{hostname=~\"$experiment.*\"} OR\n        heartbeat_health_status{hostname=~\"$experiment.*\"}\n    )\n)",
@@ -132,7 +132,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "xIXR1_LMz"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "expr": "sum (\n    min by (experiment, machine) (\n        label_replace(probe_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(script_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n              node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n                node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n                \"experiment\", \"$experiment\", \"\", \"\") < bool 0.95 OR\n        label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"}, \"experiment\", \"$experiment\", \"\", \"\") != bool 1 OR\n        label_replace(lame_duck_experiment{cluster=\"platform\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") != bool 1 OR\n        label_replace(gmx_machine_maintenance, \"experiment\", \"$experiment\", \"\", \"\") != bool 1\n    )\n)",
@@ -143,6 +143,111 @@
         }
       ],
       "title": "Healthy Server Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "GMX status and end-to-end tests.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 35,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum (\n    min by (hostname) (\n        prometheus_health_status{hostname=~\"$experiment.*\"}\n    )\n)",
+          "legendFormat": "locate",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum (\n    min by (experiment, machine) (\n        label_replace(script_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(gmx_machine_maintenance, \"experiment\", \"$experiment\", \"\", \"\") != bool 1\n    )\n)",
+          "hide": false,
+          "legendFormat": "mlab-ns",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Health Signals from Prometheus",
       "type": "timeseries"
     },
     {
@@ -1352,12 +1457,12 @@
         "current": {
           "selected": true,
           "text": [
-            "msak",
-            "ndt"
+            "ndt",
+            "msak"
           ],
           "value": [
-            "msak",
-            "ndt"
+            "ndt",
+            "msak"
           ]
         },
         "datasource": {
