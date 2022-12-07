@@ -251,12 +251,119 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "${bigquerydatasource}"
+      },
+      "description": "Distribution of distances between client and server.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 37,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "percentile",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "${bigquerydatasource}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\nFROM `mlab-sandbox.ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\nWHERE\n    date > \"2022-11-01\"\n AND raw.Download is not NULL \n AND metadata.Name = \"locate_version\"\n AND metadata.Value = \"v2\"\n AND server.Geo.Longitude IS NOT NULL\n AND server.Geo.Latitude IS NOT NULL\n AND client.Geo.Longitude IS NOT NULL\n AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_others\nFROM `mlab-sandbox.ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\nWHERE\n    date > \"2022-11-01\"\n AND raw.Download is not NULL \n -- TODO(cristinaleon): uncomment this once there is more data.\n -- AND metadata.Name = \"locate_version\"\n -- AND metadata.Value = \"v2_proxy\"\n AND server.Geo.Longitude IS NOT NULL\n AND server.Geo.Latitude IS NOT NULL\n AND client.Geo.Longitude IS NOT NULL\n AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Distance from Client to Server",
+      "type": "barchart"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 22
       },
       "id": 29,
       "panels": [],
@@ -296,7 +403,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 13
+        "y": 23
       },
       "id": 10,
       "options": {
@@ -393,7 +500,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 23
       },
       "id": 18,
       "options": {
@@ -488,7 +595,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 32
       },
       "id": 26,
       "options": {
@@ -555,7 +662,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 32
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -647,7 +754,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 42
       },
       "id": 14,
       "panels": [],
@@ -725,7 +832,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 33
+        "y": 43
       },
       "id": 24,
       "options": {
@@ -820,7 +927,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 43
       },
       "id": 27,
       "options": {
@@ -915,7 +1022,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 42
+        "y": 52
       },
       "id": 22,
       "options": {
@@ -982,7 +1089,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 52
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -1073,7 +1180,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 62
       },
       "id": 12,
       "panels": [],
@@ -1155,7 +1262,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 53
+        "y": 63
       },
       "id": 2,
       "options": {
@@ -1254,7 +1361,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 53
+        "y": 63
       },
       "id": 4,
       "options": {
@@ -1298,7 +1405,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 73
       },
       "id": 16,
       "panels": [],
@@ -1360,7 +1467,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1375,7 +1483,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 64
+        "y": 74
       },
       "id": 6,
       "options": {
@@ -1455,14 +1563,33 @@
       },
       {
         "current": {
+          "selected": false,
+          "text": "BigQuery (mlab-sandbox)",
+          "value": "BigQuery (mlab-sandbox)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "BigQuery Datasource",
+        "multi": false,
+        "name": "bigquerydatasource",
+        "options": [],
+        "query": "doitintl-bigquery-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/BigQuery \\(/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
           "selected": true,
           "text": [
-            "ndt",
-            "msak"
+            "msak",
+            "ndt"
           ],
           "value": [
-            "ndt",
-            "msak"
+            "msak",
+            "ndt"
           ]
         },
         "datasource": {
@@ -1496,6 +1623,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 40,
+  "version": 42,
   "weekStart": ""
 }
