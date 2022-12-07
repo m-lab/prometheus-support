@@ -247,7 +247,7 @@
           "refId": "B"
         }
       ],
-      "title": "Health Signals from Prometheus",
+      "title": "GMX Status and End-to-End Tests",
       "type": "timeseries"
     },
     {
@@ -255,7 +255,7 @@
         "type": "doitintl-bigquery-datasource",
         "uid": "${bigquerydatasource}"
       },
-      "description": "Distribution of distances between client and server.",
+      "description": "Distribution of distances between client and server fot NDT7 tests.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -331,7 +331,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\nFROM `mlab-sandbox.ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\nWHERE\n    date > \"2022-11-01\"\n AND raw.Download is not NULL \n AND metadata.Name = \"locate_version\"\n AND metadata.Value = \"v2\"\n AND server.Geo.Longitude IS NOT NULL\n AND server.Geo.Latitude IS NOT NULL\n AND client.Geo.Longitude IS NOT NULL\n AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_others\nFROM `mlab-sandbox.ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\nWHERE\n    date > \"2022-11-01\"\n AND raw.Download is not NULL \n -- TODO(cristinaleon): uncomment this once there is more data.\n -- AND metadata.Name = \"locate_version\"\n -- AND metadata.Value = \"v2_proxy\"\n AND server.Geo.Longitude IS NOT NULL\n AND server.Geo.Latitude IS NOT NULL\n AND client.Geo.Longitude IS NOT NULL\n AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
+          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\nFROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\nWHERE\n    date > \"2022-11-01\"\n AND raw.Download is not NULL \n AND metadata.Name = \"locate_version\"\n AND metadata.Value = \"v2\"\n AND server.Geo.Longitude IS NOT NULL\n AND server.Geo.Latitude IS NOT NULL\n AND client.Geo.Longitude IS NOT NULL\n AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_others\nFROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\nWHERE\n    date > \"2022-11-01\"\n AND raw.Download is not NULL \n --AND metadata.Name = \"locate_version\"\n --AND metadata.Value = \"v2_proxy\"\n AND server.Geo.Longitude IS NOT NULL\n AND server.Geo.Latitude IS NOT NULL\n AND client.Geo.Longitude IS NOT NULL\n AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
           "refId": "A",
           "select": [
             [
@@ -354,7 +354,114 @@
           ]
         }
       ],
-      "title": "Distance from Client to Server",
+      "title": "Distance from Client to Server (NDT7)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "${bigquerydatasource}"
+      },
+      "description": "Median, min, and max number of NDT7 tests per site per metro.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 39,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "${bigquerydatasource}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "WITH\n agg_locate AS (\n SELECT\n   SUBSTR(server.Site, 0, 3) AS metro,\n   server.Site AS site,\n   COUNT(*) AS total_tests\n FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n WHERE\n   date > \"2022-11-01\"\n   AND raw.Download is not NULL \n   AND metadata.Name = \"locate_version\"\n   AND metadata.Value = \"v2\"\n GROUP BY metro,site\n),\n\nagg_other AS (\n SELECT\n   SUBSTR(server.Site, 0, 3) AS metro,\n   server.Site AS site,\n   COUNT(*) AS total_tests\n FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n WHERE\n   date > \"2022-11-01\"\n GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT\n   MIN(total_tests) AS min_locate,\n   MAX(total_tests) AS max_locate,\n   APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate,\n   metro\n  FROM\n   agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT\n   MIN(total_tests) AS min_other,\n   MAX(total_tests) AS max_other,\n   APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other,\n   metro\n  FROM\n   agg_other\n  GROUP BY metro\n)\n\nSELECT p50_locate AS median_locate, p50_other AS median_mlab_ns, \nmin_locate, min_other AS min_mlab_ns,\nmax_locate, max_other AS max_mlab_ns,\ndistribution_locate.metro\nFROM distribution_locate JOIN distribution_other \nON (distribution_locate.metro = distribution_other.metro)\n\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Distribution of Number of Tests per Site in a Metro (NDT7)",
       "type": "barchart"
     },
     {
@@ -816,8 +923,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -911,8 +1017,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1006,8 +1111,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1246,8 +1350,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1344,8 +1447,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1467,8 +1569,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1563,7 +1664,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "BigQuery (mlab-sandbox)",
           "value": "BigQuery (mlab-sandbox)"
         },
@@ -1582,13 +1683,11 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
-            "msak",
             "ndt"
           ],
           "value": [
-            "msak",
             "ndt"
           ]
         },
@@ -1623,6 +1722,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 42,
+  "version": 43,
   "weekStart": ""
 }
