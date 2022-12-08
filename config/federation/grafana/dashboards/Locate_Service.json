@@ -395,7 +395,98 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "median_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "min_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "median_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "min_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 11,
@@ -437,7 +528,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT p50_locate AS median_locate, p50_other AS median_mlab_ns, \n  min_locate, min_other AS min_mlab_ns,\n  max_locate, max_other AS max_mlab_ns,\n  distribution_locate.metro\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\n\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT min_locate, p50_locate AS median_locate, max_locate,\n  min_other AS min_mlab_ns, p50_other AS median_mlab_ns, max_other AS max_mlab_ns,\n  distribution_locate.metro\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\n\n\n",
           "refId": "A",
           "select": [
             [
@@ -502,7 +593,128 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab1_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab2_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab3_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab4_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab1_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab2_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab3_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab4_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 11,
@@ -544,7 +756,7 @@
           "orderByCol": "2",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT mlab1_locate, mlab1_mlab_ns,\n  mlab2_locate, mlab2_mlab_ns,\n  mlab3_locate, mlab3_mlab_ns,\n  mlab4_locate, mlab4_mlab_ns,\n  agg_locate.site\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\n\n\n\n\n\n\n\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT mlab1_locate, mlab2_locate, mlab3_locate, mlab4_locate, \n  mlab1_mlab_ns, mlab2_mlab_ns, mlab3_mlab_ns, mlab4_mlab_ns,\n  agg_locate.site\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\n\n\n\n\n\n\n\n\n",
           "refId": "A",
           "select": [
             [
