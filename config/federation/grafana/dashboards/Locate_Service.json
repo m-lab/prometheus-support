@@ -99,8 +99,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 11,
-        "w": 12,
+        "h": 14,
+        "w": 10,
         "x": 0,
         "y": 1
       },
@@ -124,7 +124,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum (\n    min by (hostname) (\n        prometheus_health_status{hostname=~\"$experiment.*\"} OR\n        heartbeat_health_status{hostname=~\"$experiment.*\"}\n    )\n)",
+          "expr": "sum (\n    min by (experiment) (\n        locate_health_status{experiment=~\"$experiment.*\"}\n    )\n)",
           "legendFormat": "locate",
           "range": true,
           "refId": "A"
@@ -143,111 +143,6 @@
         }
       ],
       "title": "Healthy Server Count",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "description": "GMX status and end-to-end tests.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 12,
-        "y": 1
-      },
-      "id": 35,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "sum (\n    min by (hostname) (\n        prometheus_health_status{hostname=~\"$experiment.*\"}\n    )\n)",
-          "legendFormat": "locate",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "sum (\n    min by (experiment, machine) (\n        label_replace(script_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(gmx_machine_maintenance, \"experiment\", \"$experiment\", \"\", \"\") != bool 1\n    )\n)",
-          "hide": false,
-          "legendFormat": "mlab-ns",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "GMX Status and End-to-End Tests",
       "type": "timeseries"
     },
     {
@@ -291,10 +186,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 12
+        "h": 14,
+        "w": 14,
+        "x": 10,
+        "y": 1
       },
       "id": 37,
       "options": {
@@ -492,7 +387,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 15
       },
       "id": 39,
       "options": {
@@ -720,7 +615,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 26
       },
       "id": 40,
       "options": {
@@ -788,7 +683,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 37
       },
       "id": 29,
       "panels": [],
@@ -828,7 +723,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 38
       },
       "id": 10,
       "options": {
@@ -925,7 +820,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 46
+        "y": 38
       },
       "id": 18,
       "options": {
@@ -1020,7 +915,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 47
       },
       "id": 26,
       "options": {
@@ -1087,7 +982,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 55
+        "y": 47
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -1179,7 +1074,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 65
+        "y": 57
       },
       "id": 14,
       "panels": [],
@@ -1257,7 +1152,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 66
+        "y": 58
       },
       "id": 24,
       "options": {
@@ -1352,7 +1247,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 66
+        "y": 58
       },
       "id": 27,
       "options": {
@@ -1447,7 +1342,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 75
+        "y": 67
       },
       "id": 22,
       "options": {
@@ -1514,7 +1409,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 75
+        "y": 67
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -1605,7 +1500,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 85
+        "y": 77
       },
       "id": 12,
       "panels": [],
@@ -1687,7 +1582,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 86
+        "y": 78
       },
       "id": 2,
       "options": {
@@ -1786,7 +1681,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 86
+        "y": 78
       },
       "id": 4,
       "options": {
@@ -1830,7 +1725,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 96
+        "y": 88
       },
       "id": 16,
       "panels": [],
@@ -1908,7 +1803,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 97
+        "y": 89
       },
       "id": 6,
       "options": {
@@ -1942,7 +1837,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
+  "refresh": "5m",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -1950,7 +1845,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Prometheus (mlab-sandbox)",
           "value": "Prometheus (mlab-sandbox)"
         },
@@ -1969,7 +1864,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Platform Cluster (mlab-sandbox)",
           "value": "Platform Cluster (mlab-sandbox)"
         },
