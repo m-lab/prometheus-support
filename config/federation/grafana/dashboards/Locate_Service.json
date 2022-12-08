@@ -291,8 +291,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 11,
+        "w": 24,
         "x": 0,
         "y": 12
       },
@@ -398,10 +398,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 12
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 23
       },
       "id": 39,
       "options": {
@@ -464,12 +464,119 @@
       "type": "barchart"
     },
     {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "${bigquerydatasource}"
+      },
+      "description": "Number of NDT7 tests per machine at each site. Y axis shows the number of tests and X axis the machines at each site.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 40,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "${bigquerydatasource}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT mlab1_locate, mlab1_mlab_ns,\n  mlab2_locate, mlab2_mlab_ns,\n  mlab3_locate, mlab3_mlab_ns,\n  mlab4_locate, mlab4_mlab_ns,\n  agg_locate.site\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\n\n\n\n\n\n\n\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Distribution of Number of Tests per Machine in a Site (NDT7)",
+      "type": "barchart"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 45
       },
       "id": 29,
       "panels": [],
@@ -509,7 +616,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 23
+        "y": 46
       },
       "id": 10,
       "options": {
@@ -606,7 +713,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 23
+        "y": 46
       },
       "id": 18,
       "options": {
@@ -701,7 +808,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 55
       },
       "id": 26,
       "options": {
@@ -768,7 +875,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 55
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -860,7 +967,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 65
       },
       "id": 14,
       "panels": [],
@@ -938,7 +1045,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 66
       },
       "id": 24,
       "options": {
@@ -1033,7 +1140,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 66
       },
       "id": 27,
       "options": {
@@ -1128,7 +1235,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 52
+        "y": 75
       },
       "id": 22,
       "options": {
@@ -1195,7 +1302,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 52
+        "y": 75
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -1286,7 +1393,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 85
       },
       "id": 12,
       "panels": [],
@@ -1368,7 +1475,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 63
+        "y": 86
       },
       "id": 2,
       "options": {
@@ -1467,7 +1574,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 63
+        "y": 86
       },
       "id": 4,
       "options": {
@@ -1511,7 +1618,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 73
+        "y": 96
       },
       "id": 16,
       "panels": [],
@@ -1589,7 +1696,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 74
+        "y": 97
       },
       "id": 6,
       "options": {
@@ -1690,12 +1797,10 @@
         "current": {
           "selected": true,
           "text": [
-            "ndt",
-            "msak"
+            "ndt"
           ],
           "value": [
-            "ndt",
-            "msak"
+            "ndt"
           ]
         },
         "datasource": {
