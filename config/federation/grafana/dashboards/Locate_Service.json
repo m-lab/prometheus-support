@@ -159,6 +159,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "fillOpacity": 80,
             "gradientMode": "none",
@@ -224,8 +225,10 @@
           "metricColumn": "none",
           "orderByCol": "2",
           "orderBySort": "1",
+          "partitioned": true,
+          "partitionedField": "date",
           "rawQuery": true,
-          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\n  FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT ST_DISTANCE(ST_GEOGPOINT(server.Geo.Longitude, server.Geo.Latitude), ST_GEOGPOINT(client.Geo.Longitude, client.Geo.Latitude)) / 1000 AS dist_in_kms_others\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
+          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\n  FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT ST_DISTANCE(ST_GEOGPOINT(server.Geo.Longitude, server.Geo.Latitude), ST_GEOGPOINT(client.Geo.Longitude, client.Geo.Latitude)) / 1000 AS dist_in_kms_others\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
           "refId": "A",
           "select": [
             [
@@ -237,8 +240,6 @@
               }
             ]
           ],
-          "partitioned": true,
-          "partitionedField": "date",
           "timeColumn": "date",
           "timeColumnType": "DATE",
           "where": [
@@ -424,8 +425,10 @@
           "metricColumn": "none",
           "orderByCol": "2",
           "orderBySort": "1",
+          "partitioned": true,
+          "partitionedField": "date",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT min_locate, p50_locate AS median_locate, max_locate,\n  min_other AS min_mlab_ns, p50_other AS median_mlab_ns, max_other AS max_mlab_ns,\n  distribution_locate.metro\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\n\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT min_locate, p50_locate AS median_locate, max_locate,\n  min_other AS min_mlab_ns, p50_other AS median_mlab_ns, max_other AS max_mlab_ns,\n  distribution_locate.metro\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\n\n\n",
           "refId": "A",
           "select": [
             [
@@ -437,8 +440,6 @@
               }
             ]
           ],
-          "partitioned": true,
-          "partitionedField": "date",
           "timeColumn": "date",
           "timeColumnType": "DATE",
           "where": [
@@ -654,8 +655,10 @@
           "metricColumn": "none",
           "orderByCol": "2",
           "orderBySort": "1",
+          "partitioned": true,
+          "partitionedField": "date",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE date >= \"2022-12-01\"\n    AND $__timeFilter(a.TestTime)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT mlab1_locate, mlab2_locate, mlab3_locate, mlab4_locate, \n  mlab1_mlab_ns, mlab2_mlab_ns, mlab3_mlab_ns, mlab4_mlab_ns,\n  agg_locate.site\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\n\n\n\n\n\n\n\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT mlab1_locate, mlab2_locate, mlab3_locate, mlab4_locate, \n  mlab1_mlab_ns, mlab2_mlab_ns, mlab3_mlab_ns, mlab4_mlab_ns,\n  agg_locate.site\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\n\n\n\n\n\n\n\n\n",
           "refId": "A",
           "select": [
             [
@@ -667,8 +670,6 @@
               }
             ]
           ],
-          "partitioned": true,
-          "partitionedField": "date",
           "timeColumn": "date",
           "timeColumnType": "DATE",
           "where": [
@@ -905,8 +906,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1142,8 +1142,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1237,8 +1236,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1332,8 +1330,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1572,8 +1569,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1670,8 +1666,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1793,8 +1788,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1851,7 +1845,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Prometheus (mlab-sandbox)",
           "value": "Prometheus (mlab-sandbox)"
         },
@@ -1870,7 +1864,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Platform Cluster (mlab-sandbox)",
           "value": "Platform Cluster (mlab-sandbox)"
         },
@@ -1889,7 +1883,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "BigQuery (mlab-sandbox)",
           "value": "BigQuery (mlab-sandbox)"
         },
@@ -1947,6 +1941,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 44,
+  "version": 50,
   "weekStart": ""
 }
