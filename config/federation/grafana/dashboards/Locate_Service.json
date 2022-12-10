@@ -206,6 +206,9 @@
         "orientation": "auto",
         "showValue": "auto",
         "stacking": "none",
+        "text": {
+          "valueSize": 20
+        },
         "tooltip": {
           "mode": "multi",
           "sort": "none"
@@ -259,7 +262,7 @@
         "type": "doitintl-bigquery-datasource",
         "uid": "${bigquerydatasource}"
       },
-      "description": "Median, min, and max number of NDT7 tests per site across metros Y axis shows the number of tests and X axis shows min, max, and median number of tests for sites within the metro.",
+      "description": "Median, min, and max number of NDT7 tests per site for metro(s). Y axis shows the number of tests and X axis shows min, max, and median number of tests for sites within the selected metro(s).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -428,7 +431,7 @@
           "partitioned": true,
           "partitionedField": "date",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT SUM(min_locate) AS min_locate, SUM(p50_locate) AS median_locate, SUM(max_locate) AS max_locate,\n  SUM(min_other) AS min_mlab_ns, SUM(p50_other) AS median_mlab_ns, SUM(max_other) AS max_mlab_ns,\n  \"Number of tests\" AS number_of_tests\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\n\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT SUM(min_locate) AS min_locate, SUM(p50_locate) AS median_locate, SUM(max_locate) AS max_locate,\n  SUM(min_other) AS min_mlab_ns, SUM(p50_other) AS median_mlab_ns, SUM(max_other) AS max_mlab_ns,\n  \"Min, median, and max\" AS min_median_max\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\nWHERE REGEXP_CONTAINS(distribution_locate.metro, '${metro:regex}')\n\n",
           "refId": "A",
           "select": [
             [
@@ -451,7 +454,7 @@
           ]
         }
       ],
-      "title": "Distribution of Number of Tests per Site across Metros (NDT7)",
+      "title": "Distribution of Number of Tests per Site for Metro (NDT7)",
       "type": "barchart"
     },
     {
@@ -459,7 +462,7 @@
         "type": "doitintl-bigquery-datasource",
         "uid": "${bigquerydatasource}"
       },
-      "description": "Number of NDT7 tests per machine across sites. Y axis shows the number of tests and X axis the machines.",
+      "description": "Number of NDT7 tests per machine for the selected metro(s). Y axis shows the number of tests and X axis the machines.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -658,7 +661,7 @@
           "partitioned": true,
           "partitionedField": "date",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT SUM(mlab1_locate) AS mlab1_locate, SUM(mlab2_locate) as mlab2_locate, SUM(mlab3_locate) AS mlab3_locate, SUM(mlab4_locate) AS mlab4_locate, \n  SUM(mlab1_mlab_ns) AS mlab1_mlab_ns, SUM(mlab2_mlab_ns) AS mlab2_mlab_ns, SUM(mlab3_mlab_ns) AS mlab3_mlab_ns, SUM(mlab4_mlab_ns) AS mlab4_mlab_ns,\n  \"Number of tests\" AS number_of_tests\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\n\n\n\n\n\n\n\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT SUM(mlab1_locate) AS mlab1_locate, SUM(mlab2_locate) as mlab2_locate, SUM(mlab3_locate) AS mlab3_locate, SUM(mlab4_locate) AS mlab4_locate, \n  SUM(mlab1_mlab_ns) AS mlab1_mlab_ns, SUM(mlab2_mlab_ns) AS mlab2_mlab_ns, SUM(mlab3_mlab_ns) AS mlab3_mlab_ns, SUM(mlab4_mlab_ns) AS mlab4_mlab_ns,\n  \"Machines\" AS machines\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\nWHERE REGEXP_CONTAINS(agg_locate.metro, '${metro:regex}')\n\n\n\n\n\n\n",
           "refId": "A",
           "select": [
             [
@@ -681,440 +684,7 @@
           ]
         }
       ],
-      "title": "Distribution of Number of Tests per Machine across Sites (NDT7)",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "${bigquerydatasource}"
-      },
-      "description": "Median, min, and max number of NDT7 tests per site per metro. Y axis shows number of tests and X axis shows min, max, and median number of tests for sites within the metro.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "median_locate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "min_locate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "max_locate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "median_mlab_ns"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "min_mlab_ns"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "max_mlab_ns"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 0,
-        "y": 27
-      },
-      "id": 41,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "groupWidth": 0.9,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "text": {
-          "valueSize": 30
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "9.1.5",
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${bigquerydatasource}"
-          },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "orderByCol": "2",
-          "orderBySort": "1",
-          "partitioned": true,
-          "partitionedField": "date",
-          "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  WHERE metro = '${metro:raw}'\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  WHERE metro = '${metro:raw}'\n  GROUP BY metro\n)\n\nSELECT min_locate, p50_locate AS median_locate, max_locate,\n  min_other AS min_mlab_ns, p50_other AS median_mlab_ns, max_other AS max_mlab_ns,\n  distribution_locate.metro\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\n\n\n",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "date",
-          "timeColumnType": "DATE",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Distribution of Number of Tests per Site in a Metro (NDT7)",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "${bigquerydatasource}"
-      },
-      "description": "Number of NDT7 tests per machine at each site in the selected metro. Y axis shows the number of tests and X axis the machines at each site.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab1_locate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab2_locate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab3_locate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab4_locate"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab1_mlab_ns"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab2_mlab_ns"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab3_mlab_ns"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "mlab4_mlab_ns"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 27
-      },
-      "id": 42,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "groupWidth": 0.9,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "9.1.5",
-      "targets": [
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${bigquerydatasource}"
-          },
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "orderByCol": "2",
-          "orderBySort": "1",
-          "partitioned": true,
-          "partitionedField": "date",
-          "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT mlab1_locate, mlab2_locate, mlab3_locate, mlab4_locate, \n  mlab1_mlab_ns, mlab2_mlab_ns, mlab3_mlab_ns, mlab4_mlab_ns,\n  agg_locate.site\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\nWHERE agg_locate.metro = '${metro:raw}'\n\n\n\n\n\n\n\n\n",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "date",
-          "timeColumnType": "DATE",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "title": "Distribution of Number of Tests per Machine per Site in a Metro (NDT7)",
+      "title": "Distribution of Number of Tests per Machine for Metro (NDT7)",
       "type": "barchart"
     },
     {
@@ -1123,7 +693,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 27
       },
       "id": 29,
       "panels": [],
@@ -1163,7 +733,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 28
       },
       "id": 10,
       "options": {
@@ -1260,7 +830,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 28
       },
       "id": 18,
       "options": {
@@ -1355,7 +925,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 49
+        "y": 37
       },
       "id": 26,
       "options": {
@@ -1422,7 +992,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 49
+        "y": 37
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -1514,7 +1084,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 47
       },
       "id": 14,
       "panels": [],
@@ -1592,7 +1162,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 60
+        "y": 48
       },
       "id": 24,
       "options": {
@@ -1687,7 +1257,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 60
+        "y": 48
       },
       "id": 27,
       "options": {
@@ -1781,7 +1351,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 69
+        "y": 57
       },
       "id": 22,
       "options": {
@@ -1848,7 +1418,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 69
+        "y": 57
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -1939,7 +1509,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 67
       },
       "id": 12,
       "panels": [],
@@ -2020,7 +1590,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 80
+        "y": 68
       },
       "id": 2,
       "options": {
@@ -2118,7 +1688,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 80
+        "y": 68
       },
       "id": 4,
       "options": {
@@ -2162,7 +1732,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 90
+        "y": 78
       },
       "id": 16,
       "panels": [],
@@ -2239,7 +1809,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 91
+        "y": 79
       },
       "id": 6,
       "options": {
@@ -2370,8 +1940,12 @@
       {
         "current": {
           "selected": true,
-          "text": "lga",
-          "value": "lga"
+          "text": [
+            "lga"
+          ],
+          "value": [
+            "lga"
+          ]
         },
         "datasource": {
           "type": "doitintl-bigquery-datasource",
@@ -2379,9 +1953,9 @@
         },
         "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM`ndt.ndt7`\nWHERE date >= \"2022-12-01\"\nGROUP BY metro",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Metro",
-        "multi": false,
+        "multi": true,
         "name": "metro",
         "options": [],
         "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM`ndt.ndt7`\nWHERE date >= \"2022-12-01\"\nGROUP BY metro",
@@ -2394,7 +1968,7 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},
