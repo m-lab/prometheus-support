@@ -35,6 +35,666 @@
         "x": 0,
         "y": 0
       },
+      "id": 33,
+      "panels": [],
+      "title": "Rollout",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 10,
+        "x": 0,
+        "y": 1
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum (\n    min by (experiment) (\n        locate_health_status{experiment=~\"$experiment.*\"}\n    )\n)",
+          "legendFormat": "locate",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(vector(0) AND absent(probe_success{service=~\"$experiment.*\"}))\nOR\nsum (\n    min by (experiment, machine) (\n        label_replace(probe_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(script_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n              node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n                node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n                \"experiment\", \"$experiment\", \"\", \"\") < bool 0.95 OR\n        label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"}, \"experiment\", \"$experiment\", \"\", \"\") != bool 1 OR\n        label_replace(lame_duck_experiment{cluster=\"platform\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") != bool 1 OR\n        label_replace(gmx_machine_maintenance, \"experiment\", \"$experiment\", \"\", \"\") != bool 1\n    )\n)",
+          "hide": false,
+          "legendFormat": "mlab-ns",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Healthy Server Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "${bigquerydatasource}"
+      },
+      "description": "Distribution of distances between client and server fot NDT7 tests. Y axis shows distance in kilometers and X axis shows percentiles.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 14,
+        "x": 10,
+        "y": 1
+      },
+      "id": 37,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {
+          "valueSize": 20
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "percentile",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "${bigquerydatasource}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "partitioned": true,
+          "partitionedField": "date",
+          "rawQuery": true,
+          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\n  FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT ST_DISTANCE(ST_GEOGPOINT(server.Geo.Longitude, server.Geo.Latitude), ST_GEOGPOINT(client.Geo.Longitude, client.Geo.Latitude)) / 1000 AS dist_in_kms_others\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Distance from Client to Server (NDT7)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "${bigquerydatasource}"
+      },
+      "description": "Median, min, and max number of NDT7 tests per site for metro(s). Y axis shows the number of tests and X axis shows min, max, and median number of tests for sites within the selected metro(s).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "median_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "min_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "median_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "min_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 39,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.9,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "${bigquerydatasource}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "partitioned": true,
+          "partitionedField": "date",
+          "rawQuery": true,
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT SUM(min_locate) AS min_locate, SUM(p50_locate) AS median_locate, SUM(max_locate) AS max_locate,\n  SUM(min_other) AS min_mlab_ns, SUM(p50_other) AS median_mlab_ns, SUM(max_other) AS max_mlab_ns,\n  \"Min, median, and max\" AS min_median_max\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\nWHERE REGEXP_CONTAINS(distribution_locate.metro, '${metro:regex}')\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Distribution of Number of Tests per Site for Metro (NDT7)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "${bigquerydatasource}"
+      },
+      "description": "Number of NDT7 tests per machine for the selected metro(s). Y axis shows the number of tests and X axis the machines.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab1_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab2_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab3_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab4_locate"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab1_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab2_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab3_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "mlab4_mlab_ns"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 40,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "groupWidth": 0.9,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "${bigquerydatasource}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "2",
+          "orderBySort": "1",
+          "partitioned": true,
+          "partitionedField": "date",
+          "rawQuery": true,
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT SUM(mlab1_locate) AS mlab1_locate, SUM(mlab2_locate) as mlab2_locate, SUM(mlab3_locate) AS mlab3_locate, SUM(mlab4_locate) AS mlab4_locate, \n  SUM(mlab1_mlab_ns) AS mlab1_mlab_ns, SUM(mlab2_mlab_ns) AS mlab2_mlab_ns, SUM(mlab3_mlab_ns) AS mlab3_mlab_ns, SUM(mlab4_mlab_ns) AS mlab4_mlab_ns,\n  \"Machines\" AS machines\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\nWHERE REGEXP_CONTAINS(agg_locate.metro, '${metro:regex}')\n\n\n\n\n\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "date",
+          "timeColumnType": "DATE",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Distribution of Number of Tests per Machine for Metro (NDT7)",
+      "type": "barchart"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
       "id": 29,
       "panels": [],
       "title": "Health Signals from Locate Service",
@@ -73,7 +733,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 28
       },
       "id": 10,
       "options": {
@@ -170,7 +830,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 1
+        "y": 28
       },
       "id": 18,
       "options": {
@@ -265,7 +925,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 37
       },
       "id": 26,
       "options": {
@@ -332,7 +992,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 37
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -424,7 +1084,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 47
       },
       "id": 14,
       "panels": [],
@@ -502,7 +1162,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 21
+        "y": 48
       },
       "id": 24,
       "options": {
@@ -597,7 +1257,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 21
+        "y": 48
       },
       "id": 27,
       "options": {
@@ -676,8 +1336,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -692,7 +1351,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 57
       },
       "id": 22,
       "options": {
@@ -759,7 +1418,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 57
       },
       "heatmap": {},
       "hideZeroBuckets": true,
@@ -850,7 +1509,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 67
       },
       "id": 12,
       "panels": [],
@@ -916,8 +1575,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -932,7 +1590,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 68
       },
       "id": 2,
       "options": {
@@ -1014,8 +1672,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1031,7 +1688,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 68
       },
       "id": 4,
       "options": {
@@ -1075,7 +1732,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 78
       },
       "id": 16,
       "panels": [],
@@ -1137,8 +1794,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1153,7 +1809,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 52
+        "y": 79
       },
       "id": 6,
       "options": {
@@ -1187,7 +1843,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
+  "refresh": "5m",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -1214,7 +1870,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Platform Cluster (mlab-sandbox)",
           "value": "Platform Cluster (mlab-sandbox)"
         },
@@ -1234,12 +1890,29 @@
       {
         "current": {
           "selected": true,
+          "text": "BigQuery (mlab-sandbox)",
+          "value": "BigQuery (mlab-sandbox)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "BigQuery Datasource",
+        "multi": false,
+        "name": "bigquerydatasource",
+        "options": [],
+        "query": "doitintl-bigquery-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/BigQuery \\(/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
           "text": [
-            "msak",
             "ndt"
           ],
           "value": [
-            "msak",
             "ndt"
           ]
         },
@@ -1263,17 +1936,45 @@
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "lga"
+          ],
+          "value": [
+            "lga"
+          ]
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "${bigquerydatasource}"
+        },
+        "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM`ndt.ndt7`\nWHERE date >= \"2022-12-01\"\nGROUP BY metro",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Metro",
+        "multi": true,
+        "name": "metro",
+        "options": [],
+        "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM`ndt.ndt7`\nWHERE date >= \"2022-12-01\"\nGROUP BY metro",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 37,
+  "version": 51,
   "weekStart": ""
 }
