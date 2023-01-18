@@ -568,17 +568,20 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#mlabns_serverresponsemetricmissing
 
 # If container logs for a node are missing in Stackdriver for too long, then
-# fire an alert, unless the node is in maintenance mode. This somewhat awkward
-# query discovers cases where the stackdriver metric has been absent for too
-# long, indicating a likely issue with the Vector pod on the node, causing it
-# to fail to upload container logs to Stackdriver.
+# fire an alert, unless the node is in maintenance or lame-duck mode. This
+# somewhat awkward query discovers cases where the stackdriver metric has been
+# absent for too long, indicating a likely issue with the Vector pod on the
+# node, causing it to fail to upload container logs to Stackdriver.
   - alert: PlatformCluster_ContainerLogsMissingInStackdriver
     expr: |
       kube_node_status_condition{condition="Ready", status="true", node=~"mlab[1-4].*"} == 1
         unless on(machine) sum_over_time(
           stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_container_logs
         [1h])
-        unless on(machine) gmx_machine_maintenance == 1
+        unless on(machine) (
+          gmx_machine_maintenance == 1 or
+          kube_node_spec_taint{cluster="platform", key="lame-duck"}
+        )
     for: 24h
     labels:
       repo: ops-tracker
