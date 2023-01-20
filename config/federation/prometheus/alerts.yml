@@ -572,8 +572,8 @@ groups:
 # from Prometheus.
   - alert: Locate_TooManyErrors
     expr: |
-      (sum(rate(locate_requests_total{type="nearest", status!="OK"}[10m])/10) /
-      sum(rate(locate_requests_total{type="nearest"}[10m])/10)) > 0.001
+      (sum(rate(locate_requests_total{type="nearest", status!="OK"}[2m]))) /
+      sum(rate(locate_requests_total{type="nearest"}[2m])) > 0.001
     for: 2m
     labels:
       repo: dev-tracker
