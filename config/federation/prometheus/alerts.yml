@@ -568,19 +568,19 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#mlabns_serverresponsemetricmissing
 
 # The alert Locate_TooManyErrors will fire when the rate of /nearest requests to the
-# Locate V2 is greater than 1% for 2 minutes. The locate_requests_total metrics come
+# Locate V2 is greater than 0.1% for 2 minutes. The locate_requests_total metrics come
 # from Prometheus.
   - alert: Locate_TooManyErrors
     expr: |
-      (sum (locate_requests_total{type="nearest", status!="OK"}) /
-      sum(locate_requests_total{type="nearest"})) > 0.01
+      (sum(rate(locate_requests_total{type="nearest", status!="OK"}[10m])/10) /
+      sum(rate(locate_requests_total{type="nearest"}[10m])/10)) > 0.001
     for: 2m
     labels:
       repo: dev-tracker
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: The rate of Locate V2 nearest request errors is greater than 1%.
+      summary: The rate of Locate V2 nearest request errors is greater than 0.1%.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#locate_toomanyerrors
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/8O9tInk4k/locate-service?orgId=1&refresh=5m&var-datasource=Prometheus%20%28mlab-oti%29&var-platformdatasource=Platform%20Cluster%20%28mlab-oti%29&var-bigquerydatasource=BigQuery%20%28mlab-oti%29&var-metro=All&var-experiment=ndt&viewPanel=4
 
