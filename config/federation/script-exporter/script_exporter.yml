@@ -11,5 +11,6 @@ scripts:
   - name: 'wehe_client'
     script: >
       EXPERIMENT=wehe cache_exit_code.sh 600
-      curl http://wehe-${TARGET}/WHATISMYIPMAN
+      monitoring-token -machine=${TARGET} -service=wehe/replay --
+      wehe-client.sh -n applemusic -t wehe-cmdline/res/ -c
     timeout: 50
