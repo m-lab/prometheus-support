@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 76,
+  "id": 266,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -627,9 +627,10 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
-      "description": "",
+      "description": "1m rate of OOM log messages for a node",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -680,17 +681,19 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum by (log, priority) (stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_kernel_logs{priority=~\"[0-3]\"})",
+          "editorMode": "code",
+          "expr": "rate(stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_oom[5m]) * 60",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{log}}",
+          "range": true,
           "refId": "A"
         }
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Kernel logs priority <=3",
+      "title": "OOM Events",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1181,7 +1184,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -1200,7 +1203,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -1211,6 +1214,7 @@
         "name": "cluster",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "/Cluster/",
         "skipUrlSync": false,
@@ -1250,6 +1254,6 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 17,
+  "version": 49,
   "weekStart": ""
 }
