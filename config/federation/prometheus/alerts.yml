@@ -1141,11 +1141,11 @@ groups:
         the kubelet logs (journalctl -u kubelet).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
-  # Fire an alert if the count of OOM log entries is greater than 1 over 2m.
-  # This should never really happen unless there is a serious resource issue,
-  # likely caused by a traffic spike to the machine.
+  # Fire an alert if the sum of OOM log entries over 5m is greater than 1 over
+  # 2m.  This should never really happen unless there is a serious resource
+  # issue, likely caused by a traffic spike to the machine.
   - alert: PlatformCluster_TooManyOOMEvents
-    expr: stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_oom > 1
+    expr: sum_over_time(stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_oom[5m]) > 1
     for: 2m
     labels:
       repo: ops-tracker
