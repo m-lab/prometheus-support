@@ -1141,18 +1141,18 @@ groups:
         the kubelet logs (journalctl -u kubelet).
       dashboard: https://grafana.mlab-staging.measurementlab.net/d/rJ7z2Suik/k8s-site-overview
 
-  # Fire an alert if the 1m rate of OOM log messages exceeds 1. OOM events
-  # should never really happen unless there is a serious resource issue, likely
-  # caused by a traffic spike to the machine.
+  # Fire an alert if the count of OOM log entries is greater than 1 over 2m.
+  # This should never really happen unless there is a serious resource issue,
+  # likely caused by a traffic spike to the machine.
   - alert: PlatformCluster_TooManyOOMEvents
-    expr: (rate(stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_oom[5m]) * 60) > 1
-    for: 1m
+    expr: stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_oom > 1
+    for: 2m
     labels:
       repo: ops-tracker
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: A node has experienced too many OOM events.
+      summary: A node has experienced too many OOM events (more than 0)
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#platformcluster_toomanyoomevents
       dashboard: https://grafana.mlab-sandbox.measurementlab.net/d/_fugwnWZk/ops-tactical-and-sre-overview
 
