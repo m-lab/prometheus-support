@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 76,
+  "id": 266,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -622,102 +622,137 @@
       "type": "table-old"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$datasource"
       },
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "links": []
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": false,
+            "inspect": false
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "node_id"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Node"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Node"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 345
+              }
+            ]
+          }
+        ]
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 6,
         "x": 12,
         "y": 9
       },
-      "hiddenSeries": false,
       "id": 18,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "hideEmpty": true,
-        "hideZero": true,
-        "max": false,
-        "min": false,
-        "rightSide": true,
-        "show": false,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
       "links": [],
-      "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
       },
-      "percentage": false,
       "pluginVersion": "9.1.5",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "sum by (log, priority) (stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_kernel_logs{priority=~\"[0-3]\"})",
-          "format": "time_series",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum_over_time(stackdriver_generic_node_logging_googleapis_com_user_platform_cluster_oom[$__range])",
+          "format": "table",
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{log}}",
+          "range": false,
           "refId": "A"
         }
       ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "Kernel logs priority <=3",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
+      "title": "OOM Events",
+      "transformations": [
         {
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "logBase": 1,
-          "show": true
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": false,
+              "cluster": true,
+              "container": true,
+              "deployment": true,
+              "exported_namespace": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "log": true,
+              "namespace": true,
+              "node": true,
+              "node_id": false,
+              "nodepool": true,
+              "pod": true,
+              "pod_template_hash": true,
+              "project_id": true,
+              "ready": true,
+              "run": true,
+              "unit": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
         }
       ],
-      "yaxis": {
-        "align": false
-      }
+      "type": "table"
     },
     {
       "columns": [],
@@ -1181,7 +1216,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -1211,6 +1246,7 @@
         "name": "cluster",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "/Cluster/",
         "skipUrlSync": false,
@@ -1250,6 +1286,6 @@
   "timezone": "",
   "title": "Ops: Tactical & SRE Overview",
   "uid": "_fugwnWZk",
-  "version": 17,
+  "version": 50,
   "weekStart": ""
 }
