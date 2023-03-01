@@ -777,123 +777,139 @@
           "refId": "A"
         }
       ],
-      "title": "Server Ranking",
+      "title": "Server Ranking Rate",
       "type": "timeseries"
     },
     {
-      "cards": {},
-      "color": {
-        "cardColor": "#b4ff00",
-        "colorScale": "sqrt",
-        "colorScheme": "interpolateOranges",
-        "exponent": 0.5,
-        "mode": "spectrum"
-      },
-      "dataFormat": "tsbuckets",
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "OSuRJ_YMz"
       },
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          }
+          "links": []
         },
         "overrides": []
       },
+      "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 14,
         "w": 12,
         "x": 12,
         "y": 27
       },
-      "heatmap": {},
-      "hideZeroBuckets": true,
-      "highlightCards": true,
-      "id": 42,
+      "hiddenSeries": false,
+      "id": 44,
       "legend": {
-        "show": true
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
       },
+      "libraryPanel": {
+        "meta": {
+          "connectedDashboards": 0,
+          "created": "2023-03-01T22:26:59Z",
+          "createdBy": {
+            "avatarUrl": "/avatar/8a3872d7a86e61570292511a809780e2",
+            "id": 59,
+            "name": "cristinaleon@google.com"
+          },
+          "folderName": "",
+          "folderUid": "",
+          "updated": "2023-03-01T22:28:55.578772459Z",
+          "updatedBy": {
+            "avatarUrl": "/avatar/8a3872d7a86e61570292511a809780e2",
+            "id": 59,
+            "name": "cristinaleon@google.com"
+          }
+        },
+        "name": "Server Ranking Histogram",
+        "uid": "tEL_5bx4k",
+        "version": 2
+      },
+      "lines": false,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
       "options": {
-        "calculate": false,
-        "calculation": {},
-        "cellGap": 2,
-        "cellValues": {},
-        "color": {
-          "exponent": 0.5,
-          "fill": "#b4ff00",
-          "mode": "scheme",
-          "reverse": false,
-          "scale": "exponential",
-          "scheme": "Oranges",
-          "steps": 128
-        },
-        "exemplars": {
-          "color": "rgba(255,0,255,0.7)"
-        },
-        "filterValues": {
-          "le": 1e-9
-        },
-        "legend": {
-          "show": true
-        },
-        "rowsFrame": {
-          "layout": "auto"
-        },
-        "showValue": "never",
-        "tooltip": {
-          "show": true,
-          "yHistogram": true
-        },
-        "yAxis": {
-          "axisLabel": "Ranked Distance",
-          "axisPlacement": "left",
-          "reverse": false,
-          "unit": "short"
-        }
+        "alertThreshold": true
       },
+      "percentage": false,
       "pluginVersion": "9.1.5",
-      "reverseYBuckets": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:267",
+          "alias": "/.*/",
+          "color": "#70dbed"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "OSuRJ_YMz"
           },
           "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum by(le) (increase(locate_server_distance_ranking_bucket{index=\"0\", le=~\".\"}[5m])) ",
+          "expr": "sum by(le) (increase(locate_server_distance_ranking_bucket{index=\"0\", le=~\".\"}[5m]))",
           "format": "heatmap",
+          "hide": false,
           "interval": "5m",
+          "intervalFactor": 1,
           "legendFormat": "{{le}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Server Ranking",
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Server Ranking Histogram",
       "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "series",
         "show": true,
-        "showHistogram": true
+        "values": [
+          "total"
+        ]
       },
-      "type": "heatmap",
-      "xAxis": {
-        "show": true
-      },
-      "yAxis": {
-        "format": "short",
-        "logBase": 1,
-        "show": true
-      },
-      "yBucketBound": "auto"
+      "yaxes": [
+        {
+          "$$hashKey": "object:230",
+          "format": "short",
+          "label": "Selection Count",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:231",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
     },
     {
       "collapsed": false,
@@ -1784,8 +1800,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1882,8 +1897,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2005,8 +2019,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2063,7 +2076,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -2082,7 +2095,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -2101,7 +2114,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "BigQuery (mlab-oti)",
           "value": "BigQuery (mlab-oti)"
         },
@@ -2183,6 +2196,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 54,
+  "version": 55,
   "weekStart": ""
 }
