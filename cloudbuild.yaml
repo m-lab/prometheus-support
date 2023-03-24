@@ -55,6 +55,9 @@ steps:
 # Prepare the environment.
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   entrypoint: bash
+  env:
+  - 'GO_VERSION=1.20.2'
+  - 'PROM_VERSION=2.37.0'
   secretEnv:
   - AM_SLACK_CHANNEL_URL
   - GF_AUTH_GOOGLE_CLIENT_SECRET
@@ -107,15 +110,15 @@ steps:
     }
 
     # Install Go
-    curl --location --remote-name  https://go.dev/dl/go1.18.5.linux-amd64.tar.gz
-    tar -C /usr/local -xf go1.18.5.linux-amd64.tar.gz
+    curl --location --remote-name  https://go.dev/dl/go$${GO_VERSION}.linux-amd64.tar.gz
+    tar -C /usr/local -xf go$${GO_VERSION}.linux-amd64.tar.gz
     export PATH=$$PATH:/usr/local/go/bin
 
     # Install promtool
     curl --location --remote-name \
-      "https://github.com/prometheus/prometheus/releases/download/v2.37.0/prometheus-2.37.0.linux-amd64.tar.gz"
-    tar xf prometheus-2.37.0.linux-amd64.tar.gz prometheus-2.37.0.linux-amd64/promtool
-    mv prometheus-2.37.0.linux-amd64/promtool /usr/local/bin/
+      "https://github.com/prometheus/prometheus/releases/download/v$${PROM_VERSION}/prometheus-$${PROM_VERSION}.linux-amd64.tar.gz"
+    tar xf prometheus-$${PROM_VERSION}.linux-amd64.tar.gz prometheus-$${PROM_VERSION}.linux-amd64/promtool
+    mv prometheus-$${PROM_VERSION}.linux-amd64/promtool /usr/local/bin/
 
     # Install kexpand
     go install github.com/kopeio/kexpand@latest
