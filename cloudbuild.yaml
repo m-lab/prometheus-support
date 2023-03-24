@@ -110,15 +110,15 @@ steps:
     }
 
     # Install Go
-    curl --location --remote-name  https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz
-    tar -C /usr/local -xf go${GO_VERSION}.linux-amd64.tar.gz
+    curl --location --remote-name  https://go.dev/dl/go$${GO_VERSION}.linux-amd64.tar.gz
+    tar -C /usr/local -xf go$${GO_VERSION}.linux-amd64.tar.gz
     export PATH=$$PATH:/usr/local/go/bin
 
     # Install promtool
     curl --location --remote-name \
-      "https://github.com/prometheus/prometheus/releases/download/v${PROM_VERSION}/prometheus-${PROM_VERSION}.linux-amd64.tar.gz"
-    tar xf prometheus-${PROM_VERSION}.linux-amd64.tar.gz prometheus-${PROM_VERSION}.linux-amd64/promtool
-    mv prometheus-${PROM_VERSION}.linux-amd64/promtool /usr/local/bin/
+      "https://github.com/prometheus/prometheus/releases/download/v$${PROM_VERSION}/prometheus-$${PROM_VERSION}.linux-amd64.tar.gz"
+    tar xf prometheus-$${PROM_VERSION}.linux-amd64.tar.gz prometheus-$${PROM_VERSION}.linux-amd64/promtool
+    mv prometheus-$${PROM_VERSION}.linux-amd64/promtool /usr/local/bin/
 
     # Install kexpand
     go install github.com/kopeio/kexpand@latest
