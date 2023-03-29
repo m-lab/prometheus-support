@@ -25,12 +25,12 @@ FROM (
     FROM   `{{PROJECT}}.raw_ndt.ndt7`
     WHERE date > DATE('2019-01-01') -- satisfy required date filter.
   UNION ALL
-    SELECT "ndt/annotation" AS datatype, MIN(Parser.Time) AS min_parse_time
-    FROM   `{{PROJECT}}.raw_ndt.annotation`
+    SELECT "ndt/annotation2" AS datatype, MIN(Parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_ndt.annotation2`
     WHERE date > date('2019-01-01')
   UNION ALL
-    SELECT "ndt/hopannotation1" AS datatype, MIN(Parser.Time) AS min_parse_time
-    FROM   `{{PROJECT}}.raw_ndt.hopannotation1`
+    SELECT "ndt/hopannotation2" AS datatype, MIN(Parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_ndt.hopannotation2`
     WHERE date > date('2019-01-01')
   UNION ALL
     SELECT "ndt/pcap" AS datatype, MIN(Parser.Time) AS min_parse_time

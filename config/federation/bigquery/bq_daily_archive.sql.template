@@ -8,7 +8,7 @@ WHERE -- The ETL SLO for reprocessing is two days, so only count archives from t
 UNION ALL
 
 -- Determines if reprocessing is working e2e.
-SELECT "annotation" as datatype, COUNT(DISTINCT parser.ArchiveURL ) AS value_count,
-FROM `{{PROJECT}}.raw_ndt.annotation`
+SELECT "annotation2" as datatype, COUNT(DISTINCT parser.ArchiveURL ) AS value_count,
+FROM `{{PROJECT}}.raw_ndt.annotation2`
 WHERE -- The ETL SLO for reprocessing is two days, so only count archives from two days ago.
   date = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
