@@ -24,22 +24,22 @@ WITH all_types AS (
     date > date('2019-01-01')
   UNION ALL
   SELECT
-    "annotation" AS datatype,
+    "annotation2" AS datatype,
     id,
     date,
     parser.Time as parseTime,
   FROM
-    `{{PROJECT}}.raw_ndt.annotation`
+    `{{PROJECT}}.raw_ndt.annotation2`
   WHERE
     date > date('2019-01-01')
   UNION ALL
   SELECT
-    "hopannotation1" AS datatype,
+    "hopannotation2" AS datatype,
     id,
     date,
     parser.Time as parseTime,
   FROM
-    `{{PROJECT}}.raw_ndt.hopannotation1`
+    `{{PROJECT}}.raw_ndt.hopannotation2`
   WHERE
     date > date('2019-01-01')
   UNION ALL
