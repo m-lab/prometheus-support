@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 407,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -543,7 +542,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "jobserver_status_count",
+          "expr": "sum by(status) (jobserver_status_count)",
           "legendFormat": "{{status}}",
           "range": true,
           "refId": "A"
@@ -829,7 +828,7 @@
         "x": 0,
         "y": 22
       },
-      "id": 23,
+      "id": 12,
       "options": {
         "legend": {
           "calcs": [],
@@ -849,13 +848,26 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(increase(repacker_query_results_total[2m]))",
-          "legendFormat": "__auto",
+          "expr": "sum(increase(repacker_dates_started_total[5m]))",
+          "hide": false,
+          "legendFormat": "Dates started",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "jobserver_status_count{status=\"leased\"}",
+          "hide": false,
+          "legendFormat": "Jobs Leased",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "Query results processed",
+      "title": "Total Jobs Started",
       "type": "timeseries"
     },
     {
@@ -1012,7 +1024,7 @@
         "x": 0,
         "y": 30
       },
-      "id": 12,
+      "id": 23,
       "options": {
         "legend": {
           "calcs": [],
@@ -1032,26 +1044,13 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(increase(repacker_dates_started_total[5m]))",
-          "hide": false,
-          "legendFormat": "Dates started",
+          "expr": "sum(increase(repacker_query_results_total[2m]))",
+          "legendFormat": "Query Results",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "jobserver_status_count{status=\"leased\"}",
-          "hide": false,
-          "legendFormat": "Jobs Leased",
-          "range": true,
-          "refId": "B"
         }
       ],
-      "title": "Total Jobs Started",
+      "title": "Query results processed",
       "type": "timeseries"
     },
     {
@@ -1538,7 +1537,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Value"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -1552,7 +1576,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -1568,7 +1592,7 @@
           "editorMode": "code",
           "expr": "sum(rate(repacker_archives_total[2m]))",
           "hide": false,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "Reannotator",
           "range": true,
           "refId": "A"
         },
@@ -1578,7 +1602,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "rate(jobserver_update_duration_seconds_count[2m])  ",
+          "expr": "sum(rate(jobserver_update_duration_seconds_count[2m]))",
           "hide": false,
           "legendFormat": "Updates",
           "range": true,
@@ -1592,7 +1616,7 @@
           "editorMode": "code",
           "expr": "sum(rate(renamer_archives_total[2m]))",
           "hide": false,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "Renamer",
           "range": true,
           "refId": "C"
         }
@@ -1610,8 +1634,8 @@
       {
         "current": {
           "selected": true,
-          "text": "Data Processing (mlab-oti)",
-          "value": "Data Processing (mlab-oti)"
+          "text": "Data Processing (mlab-sandbox)",
+          "value": "Data Processing (mlab-sandbox)"
         },
         "hide": 0,
         "includeAll": false,
@@ -1635,6 +1659,6 @@
   "timezone": "",
   "title": "Archive Repacker (Annotations)",
   "uid": "m4-GH51Vx",
-  "version": 27,
+  "version": 1,
   "weekStart": ""
 }
