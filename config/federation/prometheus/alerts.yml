@@ -843,7 +843,7 @@ groups:
   - alert: GardenerHistoricalThroughputIsStalled
     expr: |
       increase(gardener_jobs_total{status="success", daily="false"}[1d]) > 0
-        UNLESS ON(datatype) bq_gardener_historical_throughput > 0
+        UNLESS ON(experiment, datatype) bq_gardener_historical_throughput > 0
     for: 4h
     labels:
       repo: dev-tracker
@@ -859,7 +859,7 @@ groups:
 # but not in the bq_gardener_historical_throughput query.
   - alert: GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery
     expr: |
-      gardener_config_datatypes UNLESS ON(datatype) bq_gardener_historical_throughput
+      gardener_config_datatypes UNLESS ON(experiment, datatype) bq_gardener_historical_throughput
     for: 4h
     labels:
       repo: dev-tracker
@@ -874,8 +874,8 @@ groups:
 # GardenerFailureRateTooHigh fires when the number of failed Gardener jobs
 # in the last day rises above 1%.
   - alert: GardenerFailureRateTooHighOrMissing
-    expr: (sum(rate(gardener_jobs_total{status!="success"}[1d])) by (datatype) /
-      sum(rate(gardener_jobs_total[1d])) by (datatype)) > 0.01
+    expr: (sum(rate(gardener_jobs_total{status!="success"}[1d])) by (experiment, datatype) /
+      sum(rate(gardener_jobs_total[1d])) by (experiment, datatype)) > 0.01
     for: 10m
     labels:
       repo: dev-tracker
@@ -889,7 +889,7 @@ groups:
 # GardenerJobsTotalMissing fires when the number of total jobs is not reported.
   - alert: GardenerJobsTotalMissing
     expr: absent(gardener_jobs_total)
-    for: 30m
+    for: 24h
     labels:
       repo: dev-tracker
       severity: ticket
@@ -898,7 +898,7 @@ groups:
       summary: gardener_jobs_total metric is missing.
       description: Gardener runs in the "data-processing" cluster. Is the
         gardener running? If it is running has processing slowed below 1 job every
-        30min?
+        24h?
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
 
 # ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
