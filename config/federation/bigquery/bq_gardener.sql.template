@@ -90,6 +90,7 @@ WITH all_types AS (
 
 basic_stats AS (
   SELECT
+    experiment,
     datatype,
     date,
     COUNT(id) AS rowCount,
@@ -109,6 +110,7 @@ basic_stats AS (
 )
 
 SELECT
+  experiment,
   datatype,
   COUNT(date) AS value_total_dates,
 

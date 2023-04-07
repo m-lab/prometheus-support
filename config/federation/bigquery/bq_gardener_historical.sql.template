@@ -53,6 +53,7 @@ WITH all_types AS (
 
 processed_types AS (
   SELECT
+    experiment,
     datatype,
     COUNT(distinct date) AS value_throughput
   FROM
@@ -65,15 +66,15 @@ processed_types AS (
 )
 
 SELECT
-  datatype, value_throughput
+  experiment, datatype, value_throughput
 FROM processed_types
 UNION ALL
 -- export 0 throughput for data types that were not processed
 SELECT
-  all_types.datatype, 0 AS value_throughput
+  all_types.experiment, all_types.datatype, 0 AS value_throughput
 FROM
   all_types LEFT JOIN processed_types
-  ON (all_types.datatype = processed_types.datatype)
+  ON (all_types.datatype = processed_types.datatype AND all_types.experiment = processed_types.experiment)
 WHERE
   processed_types.datatype IS NULL
 GROUP BY
