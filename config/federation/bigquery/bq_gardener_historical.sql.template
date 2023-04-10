@@ -3,89 +3,57 @@
 -- processed in the last 24 hours for each v2 datatype.
 
 WITH all_types AS (
-  SELECT
-    "ndt7" AS datatype,
-    id,
-    date,
-    parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_ndt.ndt7`
-  WHERE
-    date > date('2019-01-01')
+  -- NDT
+  SELECT "ndt" AS experiment, "ndt7" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_ndt.ndt7`
+  WHERE date > date('2019-01-01')
   UNION ALL
-  SELECT
-    "ndt5" AS datatype,
-    id,
-    date,
-    parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_ndt.ndt5`
-  WHERE
-    date > date('2019-01-01')
+  SELECT "ndt" AS experiment, "ndt5" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_ndt.ndt5`
+  WHERE date > date('2019-01-01')
   UNION ALL
-  SELECT
-    "annotation2" AS datatype,
-    id,
-    date,
-    parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_ndt.annotation2`
-  WHERE
-    date > date('2019-01-01')
+  SELECT "ndt" AS experiment, "annotation2" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_ndt.annotation2`
+  WHERE date > date('2019-01-01')
   UNION ALL
-  SELECT
-    "hopannotation2" AS datatype,
-    id,
-    date,
-    parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_ndt.hopannotation2`
-  WHERE
-    date > date('2019-01-01')
+  SELECT "ndt" AS experiment, "hopannotation2" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_ndt.hopannotation2`
+  WHERE date > date('2019-01-01')
   UNION ALL
-  SELECT
-    "pcap" AS datatype,
-    id,
-    date,
-    parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_ndt.pcap`
-  WHERE
-    date > date('2019-01-01')
+  SELECT "ndt" AS experiment, "pcap" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_ndt.pcap`
+  WHERE date > date('2019-01-01')
   UNION ALL
-  SELECT
-    "scamper1" AS datatype,
-    id,
-    date,
-    parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_ndt.scamper1`
-  WHERE
-    date > date('2019-03-28')
+  SELECT "ndt" AS experiment, "scamper1" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_ndt.scamper1`
+  WHERE date > date('2019-03-28')
   UNION ALL
-  SELECT
-    "switch" AS datatype,
-    id,
-    date,
-    parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_utilization.switch`
-  WHERE
-    date > date('2015-11-19')
+  SELECT "ndt" AS experiment, "tcpinfo" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_ndt.tcpinfo`
+  WHERE date > DATE('2019-01-01')
   UNION ALL
-  SELECT
-   "tcpinfo" AS datatype,
-   id,
-   date,
-   parser.Time as parseTime,
-  FROM
-    `{{PROJECT}}.raw_ndt.tcpinfo`
-  WHERE
-    date > DATE('2019-01-01')
+  -- UTILIZATION
+  SELECT "utilization" AS experiment, "switch" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_utilization.switch`
+  WHERE date > date('2015-11-19')
+  UNION ALL
+  -- WEHE
+  SELECT "wehe" AS experiment, "annotation2" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_wehe.annotation2`
+  WHERE date > DATE('2019-01-01')
+  UNION ALL
+  SELECT "wehe" AS experiment, "hopannotation2" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_wehe.hopannotation2`
+  WHERE date > DATE('2019-01-01')
+  UNION ALL
+  SELECT "wehe" AS experiment, "scamper1" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.wehe.scamper1`
+  WHERE date > DATE('2019-01-01')
 ),
 
 processed_types AS (
   SELECT
+    experiment,
     datatype,
     COUNT(distinct date) AS value_throughput
   FROM
@@ -94,20 +62,20 @@ processed_types AS (
     (parseTime BETWEEN TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR) AND CURRENT_TIMESTAMP())
     AND date < DATE_SUB(DATE(parseTime), INTERVAL 1 DAY) -- exclude daily.
   GROUP BY
-    datatype
+    experiment, datatype
 )
 
 SELECT
-  datatype, value_throughput
+  experiment, datatype, value_throughput
 FROM processed_types
 UNION ALL
 -- export 0 throughput for data types that were not processed
 SELECT
-  all_types.datatype, 0 AS value_throughput
+  all_types.experiment, all_types.datatype, 0 AS value_throughput
 FROM
   all_types LEFT JOIN processed_types
-  ON (all_types.datatype = processed_types.datatype)
+  ON (all_types.datatype = processed_types.datatype AND all_types.experiment = processed_types.experiment)
 WHERE
   processed_types.datatype IS NULL
 GROUP BY
-  datatype
+  experiment, datatype

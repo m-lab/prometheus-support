@@ -44,4 +44,16 @@ FROM (
     SELECT "ndt/tcpinfo" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.tcpinfo`
     WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+  UNION ALL
+    SELECT "wehe/scamper1" AS datatype, MIN(parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.wehe.scamper1`
+    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+  UNION ALL
+    SELECT "wehe/annotation2" AS datatype, MIN(parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_wehe.annotation2`
+    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+  UNION ALL
+    SELECT "wehe/hopannotation2" AS datatype, MIN(parser.Time) AS min_parse_time
+    FROM   `{{PROJECT}}.raw_wehe.hopannotation2`
+    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
 )
