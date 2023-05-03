@@ -1298,7 +1298,8 @@ groups:
 # Pipeline_AutoloaderDownOrMissing fires when the autoloader is down or missing.
   - alert: Pipeline_AutoloaderDownOrMissing
     expr: |
-      up{container="autoloader"} == 0 OR absent(up{container="autoloader"})
+      up{container="autoloader", instance=~".*:9990"} == 0
+        OR absent(up{container="autoloader", instance=~".*:9990"})
     for: 10m
     labels:
       repo: dev-tracker
