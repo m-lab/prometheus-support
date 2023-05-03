@@ -1330,7 +1330,7 @@ groups:
   - alert: Pipeline_AutoloaderDailyJobMissing
     expr: |
       sum by (experiment, datatype) (increase(autoloader_duration_count{period="daily"}[6h])) == 0
-    for: 10m
+    for: 3h
     labels:
       repo: dev-tracker
       severity: ticket
