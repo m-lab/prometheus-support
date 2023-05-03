@@ -1294,3 +1294,47 @@ groups:
       summary: Queries run by discuss@ users may be broken or return zero results.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_dailydiscussaccesszeroormissing
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/UTgnK-jMz/pipeline-overview?orgId=1&refresh=5m
+
+# Pipeline_AutoloaderDownOrMissing fires when the autoloader is down or missing.
+  - alert: Pipeline_AutoloaderDownOrMissing
+    expr: |
+      up{container="autoloader"} == 0 OR absent(up{container="autoloader"})
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: The Pipeline autoloader down or missing.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_autoloaderdownormissing
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/OKQmdgs4k/pipeline-autoloader?orgId=1
+
+# Pipeline_AutoloaderCreateOrUpdateError fires when the autoloader fails to create or update
+# a dataset or table in BigQuery.
+  - alert: Pipeline_AutoloaderCreateOrUpdateError
+    expr: |
+      autoloader_bigquery_operations_total{operation=~"create.*|update.*", status!="OK"}
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: The Pipeline autoloader has failed to perform a {{ $labels.operation }} operation in BigQuery.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_autoloadercreateorupdateerror
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/OKQmdgs4k/pipeline-autoloader?orgId=1&viewPanel=15
+
+# Pipeline_AutoloaderDailyJobMissing fires when the autoloader's daily job for a datatype
+# has not run in 6 hours.
+  - alert: Pipeline_AutoloaderDailyJobMissing
+    expr: |
+      sum by (experiment, datatype) (increase(autoloader_duration_count{period="daily"}[6h])) == 0
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: The Pipeline autoloader has failed to run the daily job for {{ $labels.experiment}}.{{ $labels.datatype }}.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_autoloaderdailyjobmissing
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/OKQmdgs4k/pipeline-autoloader?orgId=1&viewPanel=12
