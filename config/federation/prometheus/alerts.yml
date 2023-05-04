@@ -1326,10 +1326,10 @@ groups:
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/OKQmdgs4k/pipeline-autoloader?orgId=1&viewPanel=15
 
 # Pipeline_AutoloaderDailyJobErrorOrMissing fires when the autoloader's daily job for a datatype
-# has not run or has returned an error in 6 hours.
+# has not successfully run or has returned an error in 6 hours.
   - alert: Pipeline_AutoloaderDailyJobErrorOrMissing
     expr: |
-      sum by (experiment, datatype) (increase(autoloader_duration_count{period="daily"}[6h])) == 0
+      sum by (experiment, datatype) (increase(autoloader_duration_count{period="daily", status="OK"}[6h])) == 0
         OR sum by (experiment, datatype) (increase(autoloader_duration_count{period="daily", status!="OK"}[6h])) > 0
     for: 3h
     labels:
@@ -1337,7 +1337,7 @@ groups:
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: The Pipeline autoloader has failed to run the daily job or the job has returned an error
+      summary: The Pipeline autoloader has failed to successfully run the daily job or the job has returned an error
         for {{ $labels.experiment}}.{{ $labels.datatype }}.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_autoloaderdailyjoberrorormissing
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/OKQmdgs4k/pipeline-autoloader?orgId=1&viewPanel=12
