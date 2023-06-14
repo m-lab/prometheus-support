@@ -24,14 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 413,
+  "id": 431,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 16,
@@ -65,8 +65,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -1.01,
-              3.470000000000003
+              -0.9899999999999997,
+              3.5500000000000025
             ],
             "title": {
               "text": "Mbps"
@@ -77,8 +77,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0010525970212179744,
-              0.019999343403141516
+              -0.0010608259132194094,
+              0.020155692351168777
             ],
             "type": "linear"
           }
@@ -90,7 +90,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${datasource}"
           },
           "format": "table",
           "group": [],
@@ -98,7 +98,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH xbins AS (\n\n  SELECT x, POW(10, x-.01) AS xleft, POW(10, x+.01) AS xright\n  FROM UNNEST(GENERATE_ARRAY(-1, 3.5, .02)) AS x\n\n), ndt7 AS (\n\n  SELECT *\n  FROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\n  WHERE $__timeFilter(date) --date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\n   AND REGEXP_CONTAINS(server.Site, \"${site:regex}\")\n   AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n\n), ndt7_into_xbins AS (\n\n  SELECT\n    xleft, xright, server.Site as site,\n    IF(a.MeanThroughputMbps BETWEEN xleft AND xright, 1, 0) AS mbps_present,\n  FROM ndt7, xbins\n\n), ndt7_xbins_counts AS (  \n\n  SELECT\n    xleft, site,\n    SUM(mbps_present) AS mbps_bin_count,\n  FROM   ndt7_into_xbins\n  GROUP BY xleft, site\n  ORDER BY xleft\n\n), ndt7_xbins_counts_site_sum AS (\n\n  SELECT  \n    xleft,\n    site,\n    mbps_bin_count,\n    SUM(mbps_bin_count) OVER (partition by site) AS mbps_site_sum,\n\n  FROM ndt7_xbins_counts\n  ORDER BY xleft\n\n), pdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    mbps_bin_count / mbps_site_sum AS mbps_site_pdf,\n\n  FROM ndt7_xbins_counts_site_sum\n\n), cdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    mbps_site_pdf, SUM(mbps_site_pdf) OVER (PARTITION BY site ORDER BY xleft ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS mbps_site_cdf,\n\n  FROM pdf_norm\n\n)\n\nSELECT\n  xleft,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN mbps_site_pdf\n    ELSE mbps_site_cdf\n  END AS data,\n  site,\n\nFROM cdf_norm\n",
+          "rawSql": "SELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\nFROM `mlab-sandbox.ops.ndt7_download_pdf`(0.1, 3500, \"MeanThroughputMbps\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${site:regex}\")",
           "refId": "A",
           "select": [
             [
@@ -127,7 +127,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 16,
@@ -161,8 +161,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -1.01,
-              2.670000000000002
+              -0.9899999999999997,
+              2.4700000000000024
             ],
             "title": {
               "text": "Milliseconds"
@@ -173,8 +173,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.003160780886527397,
-              0.06005483684402054
+              -0.003137657931395629,
+              0.05961550069651694
             ],
             "type": "linear"
           }
@@ -186,7 +186,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${datasource}"
           },
           "format": "table",
           "group": [],
@@ -194,7 +194,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH xbins AS (\n\n  SELECT x, POW(10, x-.01) AS xleft, POW(10, x+.01) AS xright\n  FROM UNNEST(GENERATE_ARRAY(-1, 2.7, .02)) AS x\n\n), ndt7 AS (\n\n  SELECT *\n  FROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\n  WHERE $__timeFilter(date) --date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\n   AND REGEXP_CONTAINS(server.Site, \"${site:regex}\")\n   AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n\n), ndt7_into_xbins AS (\n\n  SELECT\n    xleft, xright, server.Site as site,\n    IF(a.MinRTT BETWEEN xleft AND xright, 1, 0) AS minrtt_present,\n  FROM ndt7, xbins\n\n), ndt7_xbins_counts AS (  \n\n  SELECT\n    xleft, site,\n    SUM(minrtt_present) AS minrtt_bin_count,\n  FROM   ndt7_into_xbins\n  GROUP BY xleft, site\n  ORDER BY xleft\n\n), ndt7_xbins_counts_site_sum AS (\n\n  SELECT  \n    xleft,\n    site,\n    minrtt_bin_count,\n    SUM(minrtt_bin_count) OVER (partition by site) AS minrtt_site_sum,\n  FROM ndt7_xbins_counts\n  ORDER BY xleft\n\n), pdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    minrtt_bin_count / minrtt_site_sum AS minrtt_site_pdf,\n  FROM ndt7_xbins_counts_site_sum\n\n), cdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    minrtt_site_pdf, SUM(minrtt_site_pdf) OVER (PARTITION BY site ORDER BY xleft ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS minrtt_site_cdf,\n  FROM pdf_norm\n\n)\n\nSELECT\n  xleft,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN minrtt_site_pdf\n    ELSE minrtt_site_cdf\n  END AS data,\n  site,\n\nFROM cdf_norm\n",
+          "rawSql": "SELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\n\nFROM `ops.ndt7_download_pdf`(0.1, 300, \"MinRTT\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${site:regex}\")",
           "refId": "A",
           "select": [
             [
@@ -223,7 +223,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 16,
@@ -257,8 +257,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -6.009999999999999,
-              -0.010000000000039328
+              -5.989999999999998,
+              0.009999999999961536
             ],
             "title": {
               "text": "Loss ratio"
@@ -269,8 +269,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0006508626390695986,
-              0.012366390142322372
+              -0.0006491720471555683,
+              0.012334268895955798
             ],
             "type": "linear"
           }
@@ -282,7 +282,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${datasource}"
           },
           "format": "table",
           "group": [],
@@ -290,7 +290,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH xbins AS (\n\n  SELECT x, POW(10, x-.01) AS xleft, POW(10, x+.01) AS xright\n  FROM UNNEST(GENERATE_ARRAY(-6, 0, .02)) AS x\n\n), ndt7 AS (\n\n  SELECT *\n  FROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\n  WHERE $__timeFilter(date) --date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\n   AND REGEXP_CONTAINS(server.Site, \"${site:regex}\")\n   AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n\n), ndt7_into_xbins AS (\n\n  SELECT\n    xleft, xright, server.Site as site,\n    IF(a.LossRate BETWEEN xleft AND xright, 1, 0) AS lossrate_present,\n  FROM ndt7, xbins\n\n), ndt7_xbins_counts AS (  \n\n  SELECT\n    xleft, site,\n    SUM(lossrate_present) AS lossrate_bin_count,\n  FROM   ndt7_into_xbins\n  GROUP BY xleft, site\n  ORDER BY xleft\n\n), ndt7_xbins_counts_site_sum AS (\n\n  SELECT  \n    xleft,\n    site,\n    lossrate_bin_count,\n    SUM(lossrate_bin_count) OVER (partition by site) AS lossrate_site_sum,\n  FROM ndt7_xbins_counts\n  ORDER BY xleft\n\n), pdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    SAFE_DIVIDE(lossrate_bin_count, lossrate_site_sum) AS lossrate_site_pdf,\n  FROM ndt7_xbins_counts_site_sum\n\n), cdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    lossrate_site_pdf, SUM(lossrate_site_pdf) OVER (PARTITION BY site ORDER BY xleft ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS lossrate_site_cdf,\n  FROM pdf_norm\n\n)\n\nSELECT\n  xleft,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN lossrate_site_pdf\n    ELSE lossrate_site_cdf\n  END AS data,\n  site,\n\nFROM cdf_norm",
+          "rawSql": "SELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\n\nFROM `ops.ndt7_download_pdf`(1e-6, 1, \"LossRate\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${site:regex}\")",
           "refId": "A",
           "select": [
             [
@@ -303,14 +303,7 @@
             ]
           ],
           "timeColumn": "-- time --",
-          "timeColumnType": "DATE",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+          "timeColumnType": "DATE"
         }
       ],
       "title": "Download LossRate ($mode)",
@@ -319,7 +312,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 16,
@@ -365,8 +358,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.013869715071140563,
-              0.2635245863516707
+              -0.013599027856240472,
+              0.25838152926856894
             ],
             "type": "linear"
           }
@@ -378,7 +371,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${datasource}"
           },
           "format": "table",
           "group": [],
@@ -415,7 +408,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${datasource}"
       },
       "description": "",
       "gridPos": {
@@ -462,8 +455,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.006858042074228344,
-              0.13030279941033854
+              -0.006795339531599387,
+              0.12911145110038835
             ],
             "type": "linear"
           }
@@ -475,7 +468,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${datasource}"
           },
           "format": "table",
           "group": [],
@@ -512,7 +505,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -590,7 +583,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${datasource}"
           },
           "format": "time_series",
           "group": [],
@@ -631,6 +624,24 @@
   "tags": [],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "BigQuery (mlab-sandbox)",
+          "value": "BigQuery (mlab-sandbox)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "doitintl-bigquery-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/(mlab-oti|mlab-staging|mlab-sandbox)/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
       {
         "current": {
           "selected": true,
