@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 431,
+  "id": 428,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -98,7 +98,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\nFROM `mlab-sandbox.ops.ndt7_download_pdf`(0.1, 3500, \"MeanThroughputMbps\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${site:regex}\")",
+          "rawSql": "SELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\nFROM `ops.ndt7_download_pdf`(0.1, 3500, \"MeanThroughputMbps\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${site:regex}\")",
           "refId": "A",
           "select": [
             [
@@ -346,8 +346,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -1.01,
-              3.470000000000003
+              -0.9899999999999997,
+              3.5500000000000025
             ],
             "title": {
               "text": "Mbps"
@@ -358,8 +358,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.013599027856240472,
-              0.25838152926856894
+              -0.001631173495506043,
+              0.030992296414614817
             ],
             "type": "linear"
           }
@@ -379,7 +379,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH xbins AS (\n\n  SELECT x, POW(10, x-.01) AS xleft, POW(10, x+.01) AS xright\n  FROM UNNEST(GENERATE_ARRAY(-1, 3.5, .02)) AS x\n\n), ndt7 AS (\n\n  SELECT *\n  FROM `measurement-lab.ndt_intermediate.extended_ndt7_uploads`\n  WHERE -- date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\n    $__timeFilter(date) \n   AND REGEXP_CONTAINS(server.Site, \"${site:regex}\")\n   AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n   AND IF(\"${maskUpload}\" = \"off\", TRUE, NOT a.MeanThroughputMbps BETWEEN 0.42 AND 0.43)\n\n), ndt7_into_xbins AS (\n\n  SELECT\n    xleft, xright, server.Site as site,\n    IF(a.MeanThroughputMbps BETWEEN xleft AND xright, 1, 0) AS mbps_present,\n  FROM ndt7, xbins\n\n), ndt7_xbins_counts AS (  \n\n  SELECT\n    xleft, site,\n    SUM(mbps_present) AS mbps_bin_count,\n  FROM   ndt7_into_xbins\n  GROUP BY xleft, site\n  ORDER BY xleft\n\n), ndt7_xbins_counts_site_sum AS (\n\n  SELECT  \n    xleft,\n    site,\n    mbps_bin_count,\n    SUM(mbps_bin_count) OVER (partition by site) AS mbps_site_sum,\n  FROM ndt7_xbins_counts\n  ORDER BY xleft\n\n), pdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    mbps_bin_count / mbps_site_sum AS mbps_site_pdf,\n  FROM ndt7_xbins_counts_site_sum\n\n), cdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    mbps_site_pdf, SUM(mbps_site_pdf) OVER (PARTITION BY site ORDER BY xleft ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS mbps_site_cdf,\n  FROM pdf_norm\n\n)\n\nSELECT\n  xleft,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN mbps_site_pdf\n    ELSE mbps_site_cdf\n  END AS data,\n  site,\n\nFROM cdf_norm\n\n",
+          "rawSql": "SELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\nFROM `ops.ndt7_upload_pdf`(0.1, 3500, \"MeanThroughputMbps\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${site:regex}\", \"${maskUpload}\" = \"on\")",
           "refId": "A",
           "select": [
             [
@@ -443,8 +443,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -1.01,
-              2.670000000000002
+              -0.9899999999999997,
+              2.6900000000000026
             ],
             "title": {
               "text": "Milliseconds"
@@ -455,8 +455,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.006795339531599387,
-              0.12911145110038835
+              -0.001995754663980842,
+              0.037919338615636
             ],
             "type": "linear"
           }
@@ -476,7 +476,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH xbins AS (\n\n  SELECT x, POW(10, x-.01) AS xleft, POW(10, x+.01) AS xright\n  FROM UNNEST(GENERATE_ARRAY(-1, 2.7, .02)) AS x\n\n), ndt7 AS (\n\n  SELECT *\n  FROM `measurement-lab.ndt_intermediate.extended_ndt7_uploads`\n  WHERE -- date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\n       $__timeFilter(date) \n   AND REGEXP_CONTAINS(server.Site, \"${site:regex}\")\n   AND (filter.IsComplete AND filter.IsProduction AND NOT filter.IsError AND NOT filter.IsOAM AND NOT filter.IsPlatformAnomaly\n        AND NOT filter.IsSmall AND NOT filter.IsShort AND NOT filter.IsLong AND NOT filter._IsRFC1918)\n   AND IF(\"${maskUpload}\" = \"off\", TRUE, NOT a.MeanThroughputMbps BETWEEN 0.42 AND 0.43)\n\n\n), ndt7_into_xbins AS (\n\n  SELECT\n    xleft, xright, server.Site as site,\n    IF(a.MinRTT BETWEEN xleft AND xright, 1, 0) AS minrtt_present,\n  FROM ndt7, xbins\n\n), ndt7_xbins_counts AS (  \n\n  SELECT\n    xleft, site,\n    SUM(minrtt_present) AS minrtt_bin_count,\n  FROM   ndt7_into_xbins\n  GROUP BY xleft, site\n  ORDER BY xleft\n\n), ndt7_xbins_counts_site_sum AS (\n\n  SELECT  \n    xleft,\n    site,\n    minrtt_bin_count,\n    SUM(minrtt_bin_count) OVER (partition by site) AS minrtt_site_sum,\n  FROM ndt7_xbins_counts\n  ORDER BY xleft\n\n), pdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    minrtt_bin_count / minrtt_site_sum AS minrtt_site_pdf,\n  FROM ndt7_xbins_counts_site_sum\n\n), cdf_norm AS (\n\n  SELECT\n    xleft,\n    site,\n    minrtt_site_pdf, SUM(minrtt_site_pdf) OVER (PARTITION BY site ORDER BY xleft ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS minrtt_site_cdf,\n  FROM pdf_norm\n\n)\n\nSELECT\n  xleft,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN minrtt_site_pdf\n    ELSE minrtt_site_cdf\n  END AS data,\n  site,\n\nFROM cdf_norm\n\n",
+          "rawSql": "SELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\nFROM `ops.ndt7_upload_pdf`(0.1, 500, \"MinRTT\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${site:regex}\", \"${maskUpload}\" = \"on\")",
           "refId": "A",
           "select": [
             [
@@ -626,7 +626,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "BigQuery (mlab-sandbox)",
           "value": "BigQuery (mlab-sandbox)"
         },
@@ -742,9 +742,9 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "off",
-          "value": "off"
+          "selected": true,
+          "text": "on",
+          "value": "on"
         },
         "description": "Masks the Upload spike at 0.4Mbps",
         "hide": 0,
@@ -754,12 +754,12 @@
         "name": "maskUpload",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "off",
             "value": "off"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "on",
             "value": "on"
           }
@@ -779,6 +779,6 @@
   "timezone": "",
   "title": "NDT: Site Performance Distributions",
   "uid": "ZeMq_Ya4k",
-  "version": 23,
+  "version": 2,
   "weekStart": ""
 }
