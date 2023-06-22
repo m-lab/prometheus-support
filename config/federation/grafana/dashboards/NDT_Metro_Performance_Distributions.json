@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 430,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -89,8 +88,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.001046069847020934,
-              0.019875327093397743
+              -0.0010763954493664726,
+              0.020451513537962977
             ],
             "type": "linear"
           }
@@ -183,8 +182,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.00315602951411648,
-              0.05996456076821312
+              -0.0031723594122624824,
+              0.060274828832987154
             ],
             "type": "linear"
           }
@@ -277,8 +276,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0005958825356060797,
-              0.011321768176515513
+              -0.0007333601562907096,
+              0.013933842969523482
             ],
             "type": "linear"
           }
@@ -451,7 +450,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "BigQuery (mlab-sandbox)",
           "value": "BigQuery (mlab-sandbox)"
         },
@@ -469,6 +468,23 @@
       },
       {
         "current": {
+          "selected": false,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "prometheus",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Platform Cluster .*mlab-oti.*/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
           "selected": true,
           "text": [
             "lga"
@@ -479,7 +495,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "WW1Jk2sGk"
+          "uid": "${prometheus}"
         },
         "definition": "label_values(ndt_test_rate_mbps_count{site_type=~\"$type\"}, machine)",
         "hide": 0,
@@ -567,6 +583,6 @@
   "timezone": "",
   "title": "NDT: Metro Performance Distributions",
   "uid": "ZCG2vk8Vk",
-  "version": 17,
+  "version": 18,
   "weekStart": ""
 }

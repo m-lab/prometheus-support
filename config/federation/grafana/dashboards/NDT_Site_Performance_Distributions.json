@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 428,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -77,8 +76,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0010608259132194094,
-              0.020155692351168777
+              -0.005871860730593608,
+              0.11156535388127854
             ],
             "type": "linear"
           }
@@ -173,8 +172,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.003137657931395629,
-              0.05961550069651694
+              -0.005031808906493818,
+              0.09560436922338256
             ],
             "type": "linear"
           }
@@ -269,8 +268,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0006491720471555683,
-              0.012334268895955798
+              -0.000919766422108618,
+              0.017475562020063742
             ],
             "type": "linear"
           }
@@ -358,8 +357,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.001631173495506043,
-              0.030992296414614817
+              -0.00832269888407854,
+              0.15813127879749228
             ],
             "type": "linear"
           }
@@ -455,8 +454,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.001995754663980842,
-              0.037919338615636
+              -0.004116466423733763,
+              0.07821286205094151
             ],
             "type": "linear"
           }
@@ -627,8 +626,8 @@
       {
         "current": {
           "selected": false,
-          "text": "BigQuery (mlab-sandbox)",
-          "value": "BigQuery (mlab-sandbox)"
+          "text": "BigQuery (mlab-oti)",
+          "value": "BigQuery (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -644,25 +643,34 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "prometheus",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Platform Cluster .*mlab-oti.*/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
           "text": [
-            "lga04",
-            "lga05",
-            "lga06",
-            "lga08",
-            "lga09"
+            "akl01"
           ],
           "value": [
-            "lga04",
-            "lga05",
-            "lga06",
-            "lga08",
-            "lga09"
+            "akl01"
           ]
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "WW1Jk2sGk"
+          "uid": "${prometheus}"
         },
         "definition": "label_values(ndt_test_rate_mbps_count{site_type=~\"$type\"}, machine)",
         "hide": 0,
@@ -742,7 +750,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "on",
           "value": "on"
         },
@@ -779,6 +787,6 @@
   "timezone": "",
   "title": "NDT: Site Performance Distributions",
   "uid": "ZeMq_Ya4k",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
