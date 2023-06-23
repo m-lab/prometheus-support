@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 430,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -89,8 +88,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.001046069847020934,
-              0.019875327093397743
+              -0.0010875993975004274,
+              0.020664388552508118
             ],
             "type": "linear"
           }
@@ -183,8 +182,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.00315602951411648,
-              0.05996456076821312
+              -0.0031575176653435713,
+              0.05999283564152785
             ],
             "type": "linear"
           }
@@ -277,8 +276,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0005958825356060797,
-              0.011321768176515513
+              -0.0007428484769035815,
+              0.014114121061168047
             ],
             "type": "linear"
           }
@@ -452,10 +451,10 @@
       {
         "current": {
           "selected": true,
-          "text": "BigQuery (mlab-sandbox)",
-          "value": "BigQuery (mlab-sandbox)"
+          "text": "BigQuery (mlab-oti)",
+          "value": "BigQuery (mlab-oti)"
         },
-        "hide": 0,
+        "hide": 1,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
@@ -464,6 +463,23 @@
         "queryValue": "",
         "refresh": 1,
         "regex": "/(mlab-oti|mlab-staging|mlab-sandbox)/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
+        },
+        "hide": 1,
+        "includeAll": false,
+        "multi": false,
+        "name": "prometheus",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Platform Cluster/",
         "skipUrlSync": false,
         "type": "datasource"
       },
@@ -479,7 +495,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "WW1Jk2sGk"
+          "uid": "${prometheus}"
         },
         "definition": "label_values(ndt_test_rate_mbps_count{site_type=~\"$type\"}, machine)",
         "hide": 0,
@@ -567,6 +583,6 @@
   "timezone": "",
   "title": "NDT: Metro Performance Distributions",
   "uid": "ZCG2vk8Vk",
-  "version": 17,
+  "version": 19,
   "weekStart": ""
 }
