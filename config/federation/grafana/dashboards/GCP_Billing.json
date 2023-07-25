@@ -71,7 +71,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "description": "",
       "fieldConfig": {
@@ -123,7 +123,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "table",
           "group": [],
@@ -160,7 +160,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "description": "",
       "fieldConfig": {
@@ -212,7 +212,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "table",
           "group": [],
@@ -275,7 +275,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "description": "",
       "fieldConfig": {
@@ -361,7 +361,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -398,7 +398,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -480,7 +480,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -517,7 +517,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "description": "Recent data may be delayed by 48 hours",
       "fieldConfig": {
@@ -601,7 +601,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -721,7 +721,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WW1Jk2sGk"
+            "uid": "${promSource}"
           },
           "editorMode": "code",
           "expr": "sum(\n  (\n    (\n      (\n        increase(node_network_transmit_bytes_total{device=\"ens4\", node=~\"mlab[1-4].*\"}[1d])\n          and on(node) kube_node_labels{label_mlab_type=\"virtual\"}\n      ) / 2^30\n    ) * 0.10\n  )\n)",
@@ -732,7 +732,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -766,7 +766,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -831,7 +831,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "description": "",
       "fieldConfig": {
@@ -917,7 +917,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -954,7 +954,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1036,7 +1036,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -1073,7 +1073,7 @@
     {
       "datasource": {
         "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "uid": "${bqSource}"
       },
       "description": "Recent data may be delayed by 48 hours",
       "fieldConfig": {
@@ -1157,7 +1157,7 @@
         {
           "datasource": {
             "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "uid": "${bqSource}"
           },
           "format": "time_series",
           "group": [],
@@ -1224,18 +1224,37 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "BigQuery (mlab-oti)",
           "value": "BigQuery (mlab-oti)"
         },
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "multi": false,
-        "name": "datasource",
+        "name": "bqSource",
         "options": [],
         "query": "doitintl-bigquery-datasource",
+        "queryValue": "",
         "refresh": 1,
         "regex": "/mlab-oti/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "Platform Cluster (mlab-oti)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "promSource",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/Platform Cluster .*mlab-oti/",
         "skipUrlSync": false,
         "type": "datasource"
       }
@@ -1262,6 +1281,6 @@
   "timezone": "",
   "title": "GCP Billing",
   "uid": "a5mC51ZMk",
-  "version": 54,
+  "version": 55,
   "weekStart": ""
 }
