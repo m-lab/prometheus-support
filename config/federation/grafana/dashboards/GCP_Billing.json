@@ -349,7 +349,7 @@
           "displayMode": "table",
           "placement": "right",
           "showLegend": true,
-          "sortBy": "Max",
+          "sortBy": "Mean",
           "sortDesc": true
         },
         "tooltip": {
@@ -877,7 +877,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -995,7 +996,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1114,7 +1116,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1162,7 +1165,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, HOUR) AS date,\n  service.description AS metric,\n  SUM(cost) AS value,\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time) and project.id = \"$project\"\nGROUP BY\n  date,\n  metric\nHAVING value > 1\nORDER BY\n  date\n",
+          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, HOUR) AS date,\n  service.description AS metric,\n  SUM(cost) AS value,\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time) and project.id = \"$project\"\nGROUP BY\n  date,\n  metric\nHAVING value > .1\nORDER BY\n  date\n",
           "refId": "A",
           "select": [
             [
@@ -1197,13 +1200,13 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "measurement-lab",
           "value": "measurement-lab"
         },
         "datasource": {
           "type": "doitintl-bigquery-datasource",
-          "uid": "0zzHsf77z"
+          "uid": "${datasource}"
         },
         "definition": "SELECT project.id FROM `mlab-oti.billing.unified` WHERE project.id IS NOT NULL GROUP BY project.id",
         "hide": 0,
@@ -1218,6 +1221,23 @@
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "BigQuery (mlab-oti)",
+          "value": "BigQuery (mlab-oti)"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "doitintl-bigquery-datasource",
+        "refresh": 1,
+        "regex": "/mlab-oti/",
+        "skipUrlSync": false,
+        "type": "datasource"
       }
     ]
   },
@@ -1242,6 +1262,6 @@
   "timezone": "",
   "title": "GCP Billing",
   "uid": "a5mC51ZMk",
-  "version": 53,
+  "version": 54,
   "weekStart": ""
 }
