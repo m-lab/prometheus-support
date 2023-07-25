@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 339,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -878,8 +877,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -997,8 +995,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1200,56 +1197,27 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "mlab-oti",
-          "value": "mlab-oti"
+          "selected": true,
+          "text": "measurement-lab",
+          "value": "measurement-lab"
         },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "0zzHsf77z"
+        },
+        "definition": "SELECT project.id FROM `mlab-oti.billing.unified` WHERE project.id IS NOT NULL GROUP BY project.id",
         "hide": 0,
         "includeAll": false,
         "label": "Project",
         "multi": false,
         "name": "project",
-        "options": [
-          {
-            "selected": false,
-            "text": "mlab-sandbox",
-            "value": "mlab-sandbox"
-          },
-          {
-            "selected": false,
-            "text": "mlab-staging",
-            "value": "mlab-staging"
-          },
-          {
-            "selected": true,
-            "text": "mlab-oti",
-            "value": "mlab-oti"
-          },
-          {
-            "selected": false,
-            "text": "measurement-lab",
-            "value": "measurement-lab"
-          },
-          {
-            "selected": false,
-            "text": "mlab-ns",
-            "value": "mlab-ns"
-          },
-          {
-            "selected": false,
-            "text": "mlab-collaboration",
-            "value": "mlab-collaboration"
-          },
-          {
-            "selected": false,
-            "text": "mlab-edgenet",
-            "value": "mlab-edgenet"
-          }
-        ],
-        "query": "mlab-sandbox,mlab-staging,mlab-oti,measurement-lab,mlab-ns,mlab-collaboration,mlab-edgenet",
-        "queryValue": "",
+        "options": [],
+        "query": "SELECT project.id FROM `mlab-oti.billing.unified` WHERE project.id IS NOT NULL GROUP BY project.id",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 1,
+        "type": "query"
       }
     ]
   },
@@ -1274,6 +1242,6 @@
   "timezone": "",
   "title": "GCP Billing",
   "uid": "a5mC51ZMk",
-  "version": 50,
+  "version": 53,
   "weekStart": ""
 }
