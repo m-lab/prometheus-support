@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 339,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -350,7 +349,7 @@
           "displayMode": "table",
           "placement": "right",
           "showLegend": true,
-          "sortBy": "Max",
+          "sortBy": "Mean",
           "sortDesc": true
         },
         "tooltip": {
@@ -1117,7 +1116,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1165,7 +1165,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, HOUR) AS date,\n  service.description AS metric,\n  SUM(cost) AS value,\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time) and project.id = \"$project\"\nGROUP BY\n  date,\n  metric\nHAVING value > 1\nORDER BY\n  date\n",
+          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, HOUR) AS date,\n  service.description AS metric,\n  SUM(cost) AS value,\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time) and project.id = \"$project\"\nGROUP BY\n  date,\n  metric\nHAVING value > .1\nORDER BY\n  date\n",
           "refId": "A",
           "select": [
             [
@@ -1201,55 +1201,43 @@
       {
         "current": {
           "selected": false,
-          "text": "mlab-oti",
-          "value": "mlab-oti"
+          "text": "measurement-lab",
+          "value": "measurement-lab"
         },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT project.id FROM `mlab-oti.billing.unified` WHERE project.id IS NOT NULL GROUP BY project.id",
         "hide": 0,
         "includeAll": false,
         "label": "Project",
         "multi": false,
         "name": "project",
-        "options": [
-          {
-            "selected": false,
-            "text": "mlab-sandbox",
-            "value": "mlab-sandbox"
-          },
-          {
-            "selected": false,
-            "text": "mlab-staging",
-            "value": "mlab-staging"
-          },
-          {
-            "selected": true,
-            "text": "mlab-oti",
-            "value": "mlab-oti"
-          },
-          {
-            "selected": false,
-            "text": "measurement-lab",
-            "value": "measurement-lab"
-          },
-          {
-            "selected": false,
-            "text": "mlab-ns",
-            "value": "mlab-ns"
-          },
-          {
-            "selected": false,
-            "text": "mlab-collaboration",
-            "value": "mlab-collaboration"
-          },
-          {
-            "selected": false,
-            "text": "mlab-edgenet",
-            "value": "mlab-edgenet"
-          }
-        ],
-        "query": "mlab-sandbox,mlab-staging,mlab-oti,measurement-lab,mlab-ns,mlab-collaboration,mlab-edgenet",
-        "queryValue": "",
+        "options": [],
+        "query": "SELECT project.id FROM `mlab-oti.billing.unified` WHERE project.id IS NOT NULL GROUP BY project.id",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "BigQuery (mlab-oti)",
+          "value": "BigQuery (mlab-oti)"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "doitintl-bigquery-datasource",
+        "refresh": 1,
+        "regex": "/mlab-oti/",
+        "skipUrlSync": false,
+        "type": "datasource"
       }
     ]
   },
@@ -1274,6 +1262,6 @@
   "timezone": "",
   "title": "GCP Billing",
   "uid": "a5mC51ZMk",
-  "version": 50,
+  "version": 54,
   "weekStart": ""
 }
