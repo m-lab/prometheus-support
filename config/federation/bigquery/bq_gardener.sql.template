@@ -87,6 +87,8 @@ WITH all_types AS (
   FROM `{{PROJECT}}.wehe.scamper1`
   WHERE date > DATE('2019-01-01')
   UNION ALL
+
+  -- MSAK
   SELECT "raw_msak.tcpinfo" as datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_msak.tcpinfo`
   WHERE date > DATE('2023-01-01')
