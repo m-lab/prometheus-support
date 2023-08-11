@@ -1,61 +1,23 @@
 #standardSQL
--- bq_billing_hourly calculates the hourly GCP billing costs and credits from
--- two days prior. Because GCP billing information is exported to BigQuery
--- periodically, it may take up to 1.6 days after a given billing hour before
--- all billing information is available in BigQuery. To keep the offset simple,
--- we round up to 2days.
---
--- This query exports two values:
---   bq_billing_hourly_costs - total real costs.
---   bq_billing_hourly_credits - total credits that offset costs, this includes
---     the sum of billing credits and "sustained usage" discounts.
---
--- Each metric above has multiple labels that allow aggregation across various
--- dimensions.
 
-WITH recent_billing AS (
-  SELECT
-    -- Calculate the most recent hour boundary where we're confident all data is up to date.
-    TIMESTAMP_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR), INTERVAL 2 DAY) AS start_hour_minus_2d,
-    *
-  FROM
-    `mlab-oti.billing.unified`
-  WHERE
-    -- Rows for a given billing hour may be exported up to 1.6 days later.
-    -- So, only look for updates over the last two days.
-    partition_time >= TIMESTAMP(DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY))
-)
-
-, net_hourly_billing AS (
-  SELECT
-    service.description AS service,
-    sku.description AS product,
-    SUBSTR(TO_BASE64(md5(billing_account_id)), 0, 8) AS billing, -- obscure the actual ids.
-    project.id AS project,
-    location.location AS location,
-    invoice.month AS month,
-    -- Multiple credits are possible. i.e. "sustained use" discounts and billing account credits.
-    -- This calcluates the effective, net credits for a given row by grouping on all other fields.
-    SUM(credits.amount) AS net_credits,
-    cost
-  FROM
-    recent_billing, UNNEST(credits) AS credits
-  WHERE
-    -- Select only rows from "recent_billing" that match the current usage hour from 2 days ago.
-    start_hour_minus_2d = usage_start_time
-  GROUP BY
-    service, product, billing, project, location, month, cost
-)
+-- bq_billing calculates the average GCP billing costs from the last 30 days.
+-- Because GCP billing information is exported to BigQuery periodically, it may
+-- take up to 1.6 days after a given billing hour before all billing information
+-- is available in BigQuery. To keep the offset simple, we skip the most recent 2 days.
+--
+-- This query exports three values:
+--    bq_billing_average_daily - average daily costs calculated from the last 30 days.
+--    bq_billing_monthly - actual costs from the last 30 days.
+--    bq_billing_average_annual - average annual costs calculated from the daily average * 365.
+--
+-- These metrics have no additional labels and are meant for use in billing alerts.
 
 SELECT
-  -- metric labels.
-  service, product, billing, project, location, month,
-  -- metric values.
-  SUM(net_credits) AS value_credits,
-  SUM(cost) AS value_costs
+  SUM(cost)/30 AS value_average_daily,
+  SUM(cost) AS value_average_monthly,
+  365*SUM(cost)/30 AS value_average_annual,
 FROM
-  net_hourly_billing
-GROUP BY
-  service, product, billing, project, location, month
-ORDER BY
-  value_costs DESC
+  `mlab-oti.billing.unified`
+WHERE
+  DATE(usage_start_time) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 31 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+  AND usage_start_time IS NOT NULL AND project.id IS NOT NULL AND cost IS NOT NULL
