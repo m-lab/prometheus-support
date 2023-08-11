@@ -86,6 +86,34 @@ WITH all_types AS (
   SELECT "wehe.scamper1" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.wehe.scamper1`
   WHERE date > DATE('2019-01-01')
+  UNION ALL
+  SELECT "raw_msak.tcpinfo" as datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.tcpinfo`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "raw_msak.pcap" as datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.pcap`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "raw_msak.scamper1" as datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.scamper1`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "raw_msak.annotation2" as datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.annotation2`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "raw_msak.hopannotation2" as datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.hopannotation2`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "msak.scamper1" as datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.msak.scamper1`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "msak.tcpinfo" as datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.msak.tcpinfo`
+  WHERE date > DATE('2023-01-01')
 ),
 
 basic_stats AS (
