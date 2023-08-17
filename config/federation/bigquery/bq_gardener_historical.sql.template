@@ -49,6 +49,27 @@ WITH all_types AS (
   SELECT "wehe" AS experiment, "scamper1" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.wehe.scamper1`
   WHERE date > DATE('2019-01-01')
+  UNION ALL
+  -- MSAK
+  SELECT "msak" AS experiment, "tcpinfo" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.tcpinfo`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "msak" AS experiment, "pcap" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.pcap`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "msak" AS experiment, "scamper1" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.scamper1`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "msak" AS experiment, "annotation2" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.annotation2`
+  WHERE date > DATE('2023-01-01')
+  UNION ALL
+  SELECT "msak" AS experiment, "hopannotation2" AS datatype, id, date, parser.Time as parseTime,
+  FROM `{{PROJECT}}.raw_msak.hopannotation2`
+  WHERE date > DATE('2023-01-01')
 ),
 
 processed_types AS (
