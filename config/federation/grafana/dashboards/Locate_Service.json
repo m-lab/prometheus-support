@@ -2299,7 +2299,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "The duration (in seconds) of /nearest requests served by the Locate service.",
+      "description": "The duration ratio (in seconds) of /nearest requests served by the Locate service.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -2376,7 +2376,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(le) (increase(locate_request_handler_duration_bucket{path=\"/v2/nearest/\"}[5m]))",
+          "expr": "sum by(le) (increase(locate_request_handler_duration_bucket{path=\"/v2/nearest/\"}[5m])) / scalar(sum(increase(locate_request_handler_duration_bucket{path=\"/v2/nearest/\", le=\"+Inf\"}[5m])))",
           "format": "heatmap",
           "interval": "5m",
           "legendFormat": "{{le}}",
@@ -2384,7 +2384,7 @@
           "refId": "A"
         }
       ],
-      "title": "Nearest Request Duration",
+      "title": "Nearest Request Duration (ratio)",
       "tooltip": {
         "show": true,
         "showHistogram": true
@@ -2399,6 +2399,113 @@
         "show": true
       },
       "yBucketBound": "auto"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "The 50th and 90th percentile duration of /nearest requests served by the Locate service.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 10,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 114
+      },
+      "id": 52,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.90, sum by (le) (rate(locate_request_handler_duration_bucket[10m])))",
+          "hide": false,
+          "legendFormat": "90th percentile",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.5, sum by (le) (rate(locate_request_handler_duration_bucket[10m])))",
+          "hide": false,
+          "legendFormat": "Median",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Nearest Request Duration (percentile)",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -2654,6 +2761,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 63,
+  "version": 65,
   "weekStart": ""
 }
