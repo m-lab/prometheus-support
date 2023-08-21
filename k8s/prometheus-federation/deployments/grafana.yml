@@ -36,9 +36,14 @@ spec:
         env:
         - name: GF_PATHS_PROVISIONING
           value: "/etc/provisioning"
-          # doitintl-bigquery-datasource adds the BigQuery datasource.
+          # This semicolon-separated list of plugins will be installed on
+          # server startup.
+          #
+          # Note: The "doitintl" BQ plugin is unmantained and deprecated in
+          # favor of the official one maintained by Grafana. Some dashboards
+          # still use datasources created with this plugin.
         - name: GF_INSTALL_PLUGINS
-          value: "doitintl-bigquery-datasource"
+          value: "doitintl-bigquery-datasource;grafana-bigquery-datasource"
         - name: GF_SECURITY_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
