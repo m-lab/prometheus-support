@@ -147,7 +147,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${bigquerydatasource}"
       },
       "description": "Distribution of distances between client and server fot NDT7 tests. Y axis shows distance in kilometers and X axis shows percentiles.",
@@ -171,6 +171,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -196,6 +199,7 @@
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
+        "fullHighlight": false,
         "groupWidth": 0.7,
         "legend": {
           "calcs": [],
@@ -220,18 +224,21 @@
       "targets": [
         {
           "datasource": {
-            "type": "doitintl-bigquery-datasource",
+            "type": "grafana-bigquery-datasource",
             "uid": "${bigquerydatasource}"
           },
-          "format": "table",
+          "editorMode": "code",
+          "format": 1,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "2",
           "orderBySort": "1",
           "partitioned": true,
           "partitionedField": "date",
+          "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\n  FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT ST_DISTANCE(ST_GEOGPOINT(server.Geo.Longitude, server.Geo.Latitude), ST_GEOGPOINT(client.Geo.Longitude, client.Geo.Latitude)) / 1000 AS dist_in_kms_others\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
+          "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\n  FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT ST_DISTANCE(ST_GEOGPOINT(server.Geo.Longitude, server.Geo.Latitude), ST_GEOGPOINT(client.Geo.Longitude, client.Geo.Latitude)) / 1000 AS dist_in_kms_others\n  FROM `ndt.ndt7`\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
           "refId": "A",
           "select": [
             [
@@ -243,6 +250,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "date",
           "timeColumnType": "DATE",
           "where": [
@@ -259,7 +283,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${bigquerydatasource}"
       },
       "description": "Median, min, and max number of NDT7 tests per site for metro(s). Y axis shows the number of tests and X axis shows min, max, and median number of tests for sites within the selected metro(s).",
@@ -283,6 +307,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -399,6 +426,7 @@
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
+        "fullHighlight": false,
         "groupWidth": 0.9,
         "legend": {
           "calcs": [],
@@ -423,15 +451,18 @@
             "type": "doitintl-bigquery-datasource",
             "uid": "${bigquerydatasource}"
           },
-          "format": "table",
+          "editorMode": "code",
+          "format": 1,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "2",
           "orderBySort": "1",
           "partitioned": true,
           "partitionedField": "date",
+          "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT SUM(min_locate) AS min_locate, SUM(p50_locate) AS median_locate, SUM(max_locate) AS max_locate,\n  SUM(min_other) AS min_mlab_ns, SUM(p50_other) AS median_mlab_ns, SUM(max_other) AS max_mlab_ns,\n  \"Min, median, and max\" AS min_median_max\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\nWHERE REGEXP_CONTAINS(distribution_locate.metro, '${metro:regex}')\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND raw.Download is not NULL\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro, server.Site AS site, COUNT(*) AS total_tests\n  FROM `ndt.ndt7`\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n),\n\ndistribution_locate AS (\n  SELECT MIN(total_tests) AS min_locate, MAX(total_tests) AS max_locate, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_locate, metro\n  FROM agg_locate\n  GROUP BY metro\n),\n\ndistribution_other AS (\n  SELECT MIN(total_tests) AS min_other, MAX(total_tests) AS max_other, APPROX_QUANTILES(total_tests, 100)[OFFSET(50)] AS p50_other, metro\n  FROM agg_other\n  GROUP BY metro\n)\n\nSELECT SUM(min_locate) AS min_locate, SUM(p50_locate) AS median_locate, SUM(max_locate) AS max_locate,\n  SUM(min_other) AS min_mlab_ns, SUM(p50_other) AS median_mlab_ns, SUM(max_other) AS max_mlab_ns,\n  \"Min, median, and max\" AS min_median_max\nFROM distribution_locate JOIN distribution_other ON (distribution_locate.metro = distribution_other.metro)\nWHERE REGEXP_CONTAINS(distribution_locate.metro, '${metro:regex}')\n\n",
           "refId": "A",
           "select": [
             [
@@ -443,6 +474,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "date",
           "timeColumnType": "DATE",
           "where": [
@@ -459,7 +507,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${bigquerydatasource}"
       },
       "description": "Number of NDT7 tests per machine for the selected metro(s). Y axis shows the number of tests and X axis the machines.",
@@ -483,6 +531,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -629,6 +680,7 @@
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
+        "fullHighlight": false,
         "groupWidth": 0.9,
         "legend": {
           "calcs": [],
@@ -653,15 +705,18 @@
             "type": "doitintl-bigquery-datasource",
             "uid": "${bigquerydatasource}"
           },
-          "format": "table",
+          "editorMode": "code",
+          "format": 1,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "2",
           "orderBySort": "1",
           "partitioned": true,
           "partitionedField": "date",
+          "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT SUM(mlab1_locate) AS mlab1_locate, SUM(mlab2_locate) as mlab2_locate, SUM(mlab3_locate) AS mlab3_locate, SUM(mlab4_locate) AS mlab4_locate, \n  SUM(mlab1_mlab_ns) AS mlab1_mlab_ns, SUM(mlab2_mlab_ns) AS mlab2_mlab_ns, SUM(mlab3_mlab_ns) AS mlab3_mlab_ns, SUM(mlab4_mlab_ns) AS mlab4_mlab_ns,\n  \"Machines\" AS machines\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\nWHERE REGEXP_CONTAINS(agg_locate.metro, '${metro:regex}')\n\n\n\n\n\n\n",
+          "rawSql": "WITH agg_locate AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_locate,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_locate,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_locate,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_locate,\n  FROM `ndt.ndt7`\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n  GROUP BY metro,site\n),\n\nagg_other AS (\n  SELECT SUBSTR(server.Site, 0, 3) AS metro,\n    server.Site AS site,\n    COUNTIF(server.Machine LIKE '%mlab1%') AS mlab1_mlab_ns,\n    COUNTIF(server.Machine LIKE '%mlab2%') AS mlab2_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab3%') AS mlab3_mlab_ns,\n    COUNTIF(server.machine LIKE '%mlab4%') AS mlab4_mlab_ns,\n    FROM `ndt.ndt7`\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND raw.Download IS NOT NULL\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n  GROUP BY metro,site\n)\n\nSELECT SUM(mlab1_locate) AS mlab1_locate, SUM(mlab2_locate) as mlab2_locate, SUM(mlab3_locate) AS mlab3_locate, SUM(mlab4_locate) AS mlab4_locate, \n  SUM(mlab1_mlab_ns) AS mlab1_mlab_ns, SUM(mlab2_mlab_ns) AS mlab2_mlab_ns, SUM(mlab3_mlab_ns) AS mlab3_mlab_ns, SUM(mlab4_mlab_ns) AS mlab4_mlab_ns,\n  \"Machines\" AS machines\nFROM agg_locate JOIN agg_other ON (agg_locate.site = agg_other.site)\nWHERE REGEXP_CONTAINS(agg_locate.metro, '${metro:regex}')\n\n\n\n\n\n\n",
           "refId": "A",
           "select": [
             [
@@ -673,6 +728,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "date",
           "timeColumnType": "DATE",
           "where": [
@@ -823,7 +895,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -950,7 +1022,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "targets": [
         {
           "datasource": {
@@ -1242,7 +1314,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1668,7 +1740,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1783,7 +1855,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1911,7 +1983,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2026,7 +2098,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2366,7 +2438,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2630,14 +2702,14 @@
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 37,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -2656,7 +2728,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -2675,9 +2747,9 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": "BigQuery (mlab-oti)",
-          "value": "BigQuery (mlab-oti)"
+          "selected": false,
+          "text": "Google BigQuery (mlab-oti)",
+          "value": "Google BigQuery (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -2685,7 +2757,7 @@
         "multi": false,
         "name": "bigquerydatasource",
         "options": [],
-        "query": "doitintl-bigquery-datasource",
+        "query": "grafana-bigquery-datasource",
         "queryValue": "",
         "refresh": 1,
         "regex": "/BigQuery \\(/",
@@ -2737,14 +2809,138 @@
           "type": "doitintl-bigquery-datasource",
           "uid": "${bigquerydatasource}"
         },
-        "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM`ndt.ndt7`\nWHERE date >= \"2022-12-01\"\nGROUP BY metro",
+        "definition": "",
         "hide": 0,
         "includeAll": true,
         "label": "Metro",
         "multi": true,
         "name": "metro",
         "options": [],
-        "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM`ndt.ndt7`\nWHERE date >= \"2022-12-01\"\nGROUP BY metro",
+        "query": {
+          "0": "S",
+          "1": "E",
+          "2": "L",
+          "3": "E",
+          "4": "C",
+          "5": "T",
+          "6": " ",
+          "7": "S",
+          "8": "U",
+          "9": "B",
+          "10": "S",
+          "11": "T",
+          "12": "R",
+          "13": "(",
+          "14": "s",
+          "15": "e",
+          "16": "r",
+          "17": "v",
+          "18": "e",
+          "19": "r",
+          "20": ".",
+          "21": "S",
+          "22": "i",
+          "23": "t",
+          "24": "e",
+          "25": ",",
+          "26": " ",
+          "27": "0",
+          "28": ",",
+          "29": " ",
+          "30": "3",
+          "31": ")",
+          "32": " ",
+          "33": "A",
+          "34": "S",
+          "35": " ",
+          "36": "m",
+          "37": "e",
+          "38": "t",
+          "39": "r",
+          "40": "o",
+          "41": ",",
+          "42": "\n",
+          "43": "F",
+          "44": "R",
+          "45": "O",
+          "46": "M",
+          "47": "`",
+          "48": "n",
+          "49": "d",
+          "50": "t",
+          "51": ".",
+          "52": "n",
+          "53": "d",
+          "54": "t",
+          "55": "7",
+          "56": "`",
+          "57": "\n",
+          "58": "W",
+          "59": "H",
+          "60": "E",
+          "61": "R",
+          "62": "E",
+          "63": " ",
+          "64": "d",
+          "65": "a",
+          "66": "t",
+          "67": "e",
+          "68": " ",
+          "69": ">",
+          "70": "=",
+          "71": " ",
+          "72": "\"",
+          "73": "2",
+          "74": "0",
+          "75": "2",
+          "76": "2",
+          "77": "-",
+          "78": "1",
+          "79": "2",
+          "80": "-",
+          "81": "0",
+          "82": "1",
+          "83": "\"",
+          "84": "\n",
+          "85": "G",
+          "86": "R",
+          "87": "O",
+          "88": "U",
+          "89": "P",
+          "90": " ",
+          "91": "B",
+          "92": "Y",
+          "93": " ",
+          "94": "m",
+          "95": "e",
+          "96": "t",
+          "97": "r",
+          "98": "o",
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM`ndt.ndt7`\nWHERE date >= \"2022-12-01\"\nGROUP BY metro",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2761,6 +2957,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 65,
+  "version": 70,
   "weekStart": ""
 }
