@@ -147,7 +147,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${bigquerydatasource}"
       },
       "description": "Distribution of distances between client and server fot NDT7 tests. Y axis shows distance in kilometers and X axis shows percentiles.",
@@ -171,6 +171,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -196,6 +199,7 @@
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
+        "fullHighlight": false,
         "groupWidth": 0.7,
         "legend": {
           "calcs": [],
@@ -223,13 +227,16 @@
             "type": "doitintl-bigquery-datasource",
             "uid": "${bigquerydatasource}"
           },
+          "editorMode": "code",
           "format": "table",
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "2",
           "orderBySort": "1",
           "partitioned": true,
           "partitionedField": "date",
+          "project": "mlab-oti",
           "rawQuery": true,
           "rawSql": "WITH dist_locate AS (\n  SELECT st_distance(st_geogpoint(server.Geo.Longitude, server.Geo.Latitude), st_geogpoint(client.Geo.Longitude, client.Geo.Latitude)) / 1000 as dist_in_kms_locate\n  FROM `ndt.ndt7`, UNNEST(raw.Download.ClientMetadata) as metadata\n  WHERE $__timeFilter(date)\n    AND (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n      AND \"v2\" IN UNNEST(raw.Download.ClientMetadata.Value))\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\ndist_others AS (\n  SELECT ST_DISTANCE(ST_GEOGPOINT(server.Geo.Longitude, server.Geo.Latitude), ST_GEOGPOINT(client.Geo.Longitude, client.Geo.Latitude)) / 1000 AS dist_in_kms_others\n  FROM `ndt.ndt7`\n  WHERE $__timeFilter(date)\n    AND ( (\"locate_version\" IN UNNEST(raw.Download.ClientMetadata.Name)\n        AND \"v2_proxy\" IN UNNEST(raw.Download.ClientMetadata.Value))\n      OR (\"locate_version\" NOT IN UNNEST(raw.Download.ClientMetadata.Name)) )\n    AND server.Geo.Longitude IS NOT NULL\n    AND server.Geo.Latitude IS NOT NULL\n    AND client.Geo.Longitude IS NOT NULL\n    AND client.Geo.Latitude IS NOT NULL\n),\n\npercentiles_locate AS (\n  SELECT approx_quantiles(dist_in_kms_locate, 10) dist_in_kms_locate\n  FROM dist_locate\n),\n\npercentiles_others AS (\n  SELECT approx_quantiles(dist_in_kms_others, 10) dist_in_kms_others\n  FROM dist_others\n),\n\nunnest_percentiles_locate AS (\n  SELECT dist_in_kms_locate AS locate, (RANK() OVER (ORDER BY dist_in_kms_locate ASC) - 1) * 10 AS percentile \n  FROM percentiles_locate, UNNEST(dist_in_kms_locate) AS dist_in_kms_locate\n),\n\nunnest_percentiles_others AS (\n  SELECT dist_in_kms_others AS mlab_ns, (RANK() OVER (ORDER BY dist_in_kms_others ASC) - 1) * 10 AS percentile \n  FROM percentiles_others, UNNEST(dist_in_kms_others) AS dist_in_kms_others\n)\n\nSELECT locate, mlab_ns, unnest_percentiles_locate.percentile\nFROM unnest_percentiles_locate JOIN unnest_percentiles_others ON (unnest_percentiles_locate.percentile = unnest_percentiles_others.percentile)\nORDER BY percentile\n",
           "refId": "A",
@@ -243,6 +250,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "date",
           "timeColumnType": "DATE",
           "where": [
@@ -283,6 +307,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -399,6 +426,7 @@
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
+        "fullHighlight": false,
         "groupWidth": 0.9,
         "legend": {
           "calcs": [],
@@ -483,6 +511,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -629,6 +660,7 @@
       "options": {
         "barRadius": 0,
         "barWidth": 0.97,
+        "fullHighlight": false,
         "groupWidth": 0.9,
         "legend": {
           "calcs": [],
@@ -823,7 +855,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -950,7 +982,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "targets": [
         {
           "datasource": {
@@ -1242,7 +1274,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1668,7 +1700,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1783,7 +1815,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1911,7 +1943,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2026,7 +2058,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2366,7 +2398,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "9.1.5",
+      "pluginVersion": "10.0.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2630,14 +2662,14 @@
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 37,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Prometheus (mlab-oti)",
           "value": "Prometheus (mlab-oti)"
         },
@@ -2656,7 +2688,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Platform Cluster (mlab-oti)",
           "value": "Platform Cluster (mlab-oti)"
         },
@@ -2676,8 +2708,8 @@
       {
         "current": {
           "selected": true,
-          "text": "BigQuery (mlab-oti)",
-          "value": "BigQuery (mlab-oti)"
+          "text": "Google BigQuery (mlab-oti)",
+          "value": "Google BigQuery (mlab-oti)"
         },
         "hide": 0,
         "includeAll": false,
@@ -2685,7 +2717,7 @@
         "multi": false,
         "name": "bigquerydatasource",
         "options": [],
-        "query": "doitintl-bigquery-datasource",
+        "query": "grafana-bigquery-datasource",
         "queryValue": "",
         "refresh": 1,
         "regex": "/BigQuery \\(/",
@@ -2761,6 +2793,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 65,
+  "version": 68,
   "weekStart": ""
 }
