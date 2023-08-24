@@ -800,10 +800,10 @@ groups:
       description: Login to EB to see if it is in fact crashed. If so, look
         through the logs.
 
-# DataProcessing_GardenerDownOrMissing fires when the etl-gardener-universal is down or absent.
+# DataPipeline_GardenerDownOrMissing fires when the etl-gardener-universal is down or absent.
 # TODO: enable annotations to ignore some container ports, and simplify this query.
 # https://github.com/m-lab/prometheus-support/issues/48
-  - alert: DataProcessing_GardenerDownOrMissing
+  - alert: DataPipeline_GardenerDownOrMissing
     expr: |
       up{cluster="data-pipeline", container="etl-gardener",instance=~".*:9090"} == 0
         or absent(up{cluster="data-pipeline", container="etl-gardener",instance=~".*:9090"})
@@ -815,9 +815,9 @@ groups:
     annotations:
       summary: The Universal Gardener instance is down or missing.
       description: Gardener runs in the "data-pipeline" cluster.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Pipeline%20(mlab-oti)
 
-# DataProcessing_ParserDownOrMissing fires when the k8s etl-parser is down or absent.
+# DataPipeline_ParserDownOrMissing fires when the k8s etl-parser is down or absent.
 # TODO: enable annotations to ignore some container ports, and simplify this query.
 # https://github.com/m-lab/prometheus-support/issues/48
   - alert: UniversalParserDownOrMissing
@@ -833,7 +833,7 @@ groups:
       summary: ETL Parser instance is down or missing {{ $labels.instance }}.
       description: These parsers run in the "data-pipeline" cluster.
       # TODO #736 - update this when k8s dashboard is deployed to production.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Pipeline%20(mlab-oti)
 
 # GardenerDailyParsingIsBehind fires when daily processing has fallen behind
 # There should always be 3 or 4 of the past four dates available, most of time.
@@ -848,7 +848,7 @@ groups:
     annotations:
       summary: Daily processing for {{ $labels.datatype }} has fallen behind.
       description: Gardener runs in the "data-pipeline" cluster.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Pipeline%20(mlab-oti)
 
 # GardenerHistoricalThroughputIsStalled fires when historical reprocessing for
 # datatypes under processing by the v2 pipeline falls below 1 date / day.
@@ -866,7 +866,7 @@ groups:
     annotations:
       summary: Gardener historical throughput below 1 for {{ $labels.datatype }}.
       description: Gardener runs in the "data-pipeline" cluster.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Pipeline%20(mlab-oti)
 
 # GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery fires when
 # a datatype exists in the Gardener config
@@ -883,7 +883,7 @@ groups:
       summary: Datatype {{ $labels.datatype }} in Gardener config missing in
         bq_gardener_historical_throughput query.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#gardenerconfigdatatypemissingingardenerhistoricalthroughputquery
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Pipeline%20(mlab-oti)
 
 # GardenerFailureRateTooHigh fires when the number of failed Gardener jobs
 # in the last day rises above 1%.
@@ -898,7 +898,7 @@ groups:
     annotations:
       summary: Gardener job failure rate above 1% for {{ $labels.datatype }}.
       description: Gardener runs in the "data-pipeline" cluster.
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Pipeline%20(mlab-oti)
 
 # GardenerJobsTotalMissing fires when the number of total jobs is not reported.
   - alert: GardenerJobsTotalMissing
@@ -913,7 +913,7 @@ groups:
       description: Gardener runs in the "data-pipeline" cluster. Is the
         gardener running? If it is running has processing slowed below 1 job every
         24h?
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Pipeline%20(mlab-oti)
 
 # ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
 # in the last hour rises above 1% or the number of total tasks is not reported.
@@ -929,7 +929,7 @@ groups:
     annotations:
       summary: Parser task failure rate above 1% or missing for {{ $labels.table }}.
       description: Parsers filtered by cluster="data-pipeline".
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Pipeline%20(mlab-oti)
 
 # ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
 # may increase due to a transient issue or a short-lived trigger for a parser
