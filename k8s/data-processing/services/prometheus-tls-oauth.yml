@@ -1,0 +1,62 @@
+# This Ingress makes sure oauth2-proxy intercepts requests going to the /oauth2
+# path. This path *must not* be protected with oauth, to prevent a redirection
+# loop when the application redirects to it to authenticate the user.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-tls-oauth
+  namespace: default
+  annotations:
+    kubernetes.io/tls-acme: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - prometheus-data-processing.{{GCLOUD_PROJECT}}.measurementlab.net
+    secretName: prometheus-tls-oauth
+  rules:
+  - host: prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
+    http:
+      paths:
+      - path: /oauth2
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy
+            port:
+              number: 4180
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-tls
+  namespace: default
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    # Set authentication URL and sign-in URL for OAuth.
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=https://$host$escaped_request_uri"
+    # Make sure the user and email are available to the proxied application
+    # in the X-User and X-Email headers.
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request_set $user   $upstream_http_x_auth_request_user;
+      auth_request_set $email  $upstream_http_x_auth_request_email;
+      proxy_set_header X-User  $user;
+      proxy_set_header X-Email $email;
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
+    secretName: prometheus-tls
+  rules:
+  - host: prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus-tls-service
+            port:
+              number: 9090
