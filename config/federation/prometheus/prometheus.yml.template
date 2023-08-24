@@ -381,10 +381,10 @@ scrape_configs:
     static_configs:
       - targets: ['blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:9100']
 
-  # Scrape config for services running in data-processing cluster, which is
+  # Scrape config for services running in data-pipeline cluster, which is
   # region based, so m-lab/gcp-service-discovery#33 causes problems.  These
   # metrics are needed by the alerts like up{container="etl-gardener",instance=~".*:9090"} == 0
-  - job_name: 'federation-data-processing'
+  - job_name: 'federation-data-pipeline'
     honor_labels: true
     metrics_path: '/federate'
     # Allow more time, since the number of metrics may be large.
@@ -405,7 +405,7 @@ scrape_configs:
         - 'autoloader_bigquery_operations_total'
         - 'autoloader_duration_count'
     static_configs:
-      - targets: ['prometheus-data-processing.{{PROJECT}}.measurementlab.net:9090']
+      - targets: ['prometheus-data-pipeline.{{PROJECT}}.measurementlab.net:9090']
 
   # Scrape config for federation.
   #

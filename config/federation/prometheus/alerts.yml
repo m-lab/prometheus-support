@@ -805,8 +805,8 @@ groups:
 # https://github.com/m-lab/prometheus-support/issues/48
   - alert: DataProcessing_GardenerDownOrMissing
     expr: |
-      up{cluster="data-processing", container="etl-gardener",instance=~".*:9090"} == 0
-        or absent(up{cluster="data-processing", container="etl-gardener",instance=~".*:9090"})
+      up{cluster="data-pipeline", container="etl-gardener",instance=~".*:9090"} == 0
+        or absent(up{cluster="data-pipeline", container="etl-gardener",instance=~".*:9090"})
     for: 10m
     labels:
       repo: dev-tracker
@@ -814,7 +814,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: The Universal Gardener instance is down or missing.
-      description: Gardener runs in the "data-processing" cluster.
+      description: Gardener runs in the "data-pipeline" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
 
 # DataProcessing_ParserDownOrMissing fires when the k8s etl-parser is down or absent.
@@ -822,8 +822,8 @@ groups:
 # https://github.com/m-lab/prometheus-support/issues/48
   - alert: UniversalParserDownOrMissing
     expr: |
-      up{cluster="data-processing", container="etl-parser",instance=~".*:9090"} == 0
-        or absent(up{cluster="data-processing", container="etl-parser",instance=~".*:9090"})
+      up{cluster="data-pipeline", container="etl-parser",instance=~".*:9090"} == 0
+        or absent(up{cluster="data-pipeline", container="etl-parser",instance=~".*:9090"})
     for: 10m
     labels:
       repo: dev-tracker
@@ -831,7 +831,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: ETL Parser instance is down or missing {{ $labels.instance }}.
-      description: These parsers run in the "data-processing" cluster.
+      description: These parsers run in the "data-pipeline" cluster.
       # TODO #736 - update this when k8s dashboard is deployed to production.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/eBbUW6oik/pipeline-gardener?var-project=mlab-oti&var-pipelineDatasource=Data%20Processing%20(mlab-oti)
 
@@ -847,7 +847,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: Daily processing for {{ $labels.datatype }} has fallen behind.
-      description: Gardener runs in the "data-processing" cluster.
+      description: Gardener runs in the "data-pipeline" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
 
 # GardenerHistoricalThroughputIsStalled fires when historical reprocessing for
@@ -865,7 +865,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: Gardener historical throughput below 1 for {{ $labels.datatype }}.
-      description: Gardener runs in the "data-processing" cluster.
+      description: Gardener runs in the "data-pipeline" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
 
 # GardenerConfigDatatypeMissingInGardenerHistoricalThroughputQuery fires when
@@ -897,7 +897,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: Gardener job failure rate above 1% for {{ $labels.datatype }}.
-      description: Gardener runs in the "data-processing" cluster.
+      description: Gardener runs in the "data-pipeline" cluster.
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
 
 # GardenerJobsTotalMissing fires when the number of total jobs is not reported.
@@ -910,7 +910,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: gardener_jobs_total metric is missing.
-      description: Gardener runs in the "data-processing" cluster. Is the
+      description: Gardener runs in the "data-pipeline" cluster. Is the
         gardener running? If it is running has processing slowed below 1 job every
         24h?
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
@@ -918,9 +918,9 @@ groups:
 # ParserFailureRateTooHighOrMissing fires when the number of failed parser tasks
 # in the last hour rises above 1% or the number of total tasks is not reported.
   - alert: ParserFailureRateTooHighOrMissing
-    expr: (sum(rate(etl_task_total{status!="OK", cluster="data-processing"}[1h])) by (table) /
-      sum(rate(etl_task_total{cluster="data-processing"}[1h])) by (table)) > 0.01
-      OR absent(etl_task_total{cluster="data-processing"})
+    expr: (sum(rate(etl_task_total{status!="OK", cluster="data-pipeline"}[1h])) by (table) /
+      sum(rate(etl_task_total{cluster="data-pipeline"}[1h])) by (table)) > 0.01
+      OR absent(etl_task_total{cluster="data-pipeline"})
     for: 10m
     labels:
       repo: dev-tracker
@@ -928,7 +928,7 @@ groups:
       cluster: prometheus-federation
     annotations:
       summary: Parser task failure rate above 1% or missing for {{ $labels.table }}.
-      description: Parsers filtered by cluster="data-processing".
+      description: Parsers filtered by cluster="data-pipeline".
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/q4MrNzh7k/pipeline-slis?orgId=1&var-project=mlab-oti&var-PrometheusDS=Prometheus%20(mlab-oti)&var-Gardener2_DS=Data%20Processing%20(mlab-oti)
 
 # ETL_ParserPanicNonZero fires when an ETL parser panics. The number of panics
@@ -1274,11 +1274,11 @@ groups:
 
 # PrometheusPersistentDiskTooFull fires when the persistent
 # disk mounted on the Prometheus VM gets too full (less than 5% free).
-# TODO(cristinaleon): Add an alerts configuration to the data-processing instance
+# TODO(cristinaleon): Add an alerts configuration to the data-pipeline instance
 # that includes its own version of this alert.
   - alert: PrometheusPersistentDiskTooFull
     expr: |
-      ((kubelet_volume_stats_available_bytes{cluster="data-processing", persistentvolumeclaim="auto-prometheus-ssd0"}
+      ((kubelet_volume_stats_available_bytes{cluster="data-pipeline", persistentvolumeclaim="auto-prometheus-ssd0"}
         / kubelet_volume_stats_capacity_bytes) < 0.05) OR
       ((kubelet_volume_stats_available_bytes{cluster="prometheus-federation", persistentvolumeclaim="auto-prometheus-disk0"}
         / kubelet_volume_stats_capacity_bytes) < 0.05)
