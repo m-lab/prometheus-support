@@ -112,7 +112,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -122,7 +122,7 @@
           "step": 240
         },
         {
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -132,7 +132,7 @@
           "step": 240
         },
         {
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -141,7 +141,7 @@
           "step": 240
         },
         {
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -150,7 +150,7 @@
           "step": 240
         },
         {
-          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -159,7 +159,7 @@
           "step": 240
         },
         {
-          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -295,7 +295,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(node_network_receive_bytes_total{nodepool=\"data-processing-stats-pipeline-po\"}[5m])*8",
+          "expr": "irate(node_network_receive_bytes_total{nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])*8",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -304,7 +304,7 @@
           "step": 240
         },
         {
-          "expr": "irate(node_network_transmit_bytes_total{nodepool=\"data-processing-stats-pipeline-po\"}[5m])*8",
+          "expr": "irate(node_network_transmit_bytes_total{nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])*8",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,

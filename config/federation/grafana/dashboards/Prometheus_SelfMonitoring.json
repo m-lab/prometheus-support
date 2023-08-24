@@ -1186,12 +1186,12 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "predict_linear(sum(kubelet_volume_stats_available_bytes{instance=~\"gke-data-processing.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"})[10d:10m], 10*86400)",
+          "expr": "predict_linear(sum(kubelet_volume_stats_available_bytes{instance=~\"gke-data-pipeline.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"})[10d:10m], 10*86400)",
           "format": "time_series",
           "hide": false,
           "interval": "60s",
           "intervalFactor": 2,
-          "legendFormat": "data-processing - 10 days",
+          "legendFormat": "data-pipeline - 10 days",
           "range": true,
           "refId": "A"
         },
@@ -1201,10 +1201,10 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "kubelet_volume_stats_available_bytes{instance=~\"gke-data-processing.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"}",
+          "expr": "kubelet_volume_stats_available_bytes{instance=~\"gke-data-pipeline.*\", persistentvolumeclaim=\"auto-prometheus-ssd0\"}",
           "hide": false,
           "interval": "60s",
-          "legendFormat": "data-processing - raw",
+          "legendFormat": "data-pipeline - raw",
           "range": true,
           "refId": "B"
         }
