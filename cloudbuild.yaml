@@ -149,9 +149,9 @@ steps:
     ./apply-grafana-dashboards.sh
     ./deploy-prometheus-targets.sh $$PROJECT
 
-    export CLUSTER=data-processing
+    export CLUSTER=data-pipeline
 
-    # Get cluster credentials for the data-processing cluster
+    # Get cluster credentials for the data-pipeline cluster
     gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
     ./apply-cluster.sh
 

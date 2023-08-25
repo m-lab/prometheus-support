@@ -30,7 +30,7 @@ spec:
       initContainers:
       - name: reset-perms
         image: busybox:1.34
-        command: ['chown', '-R', '65534:65534', '/work-dir/prometheus-data2', '/work-dir/legacy-targets']
+        command: ['chown', '-R', '65534:65534', '/work-dir/']
         volumeMounts:
         - mountPath: /work-dir
           name: prometheus-storage
