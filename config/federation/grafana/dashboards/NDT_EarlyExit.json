@@ -30,8 +30,8 @@
   "panels": [
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
-        "uid": "0zzHsf77z"
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -112,36 +112,33 @@
       "targets": [
         {
           "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "0zzHsf77z"
+            "type": "grafana-bigquery-datasource",
+            "uid": "${datasource}"
           },
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
+          "editorMode": "code",
+          "format": 0,
+          "location": "US",
+          "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT *, CASE metadata.Value WHEN \"early_exit\" THEN \"Early exit\" ELSE \"Full test\" END AS typ\n  FROM `measurement-lab.ndt.ndt7`, UNNEST(raw.Download.ServerMetadata) AS metadata\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n  AND raw.Download is NOT NULL \n)\n\nSELECT time, metric, total / SUM(total) OVER(partition BY time) AS ratio FROM (\n  SELECT TIMESTAMP(date) AS time, typ AS metric, COUNT(*) AS total FROM ndt7 GROUP BY date, metric\n) \n",
+          "rawSql": "WITH ndt7 AS (\n  SELECT *, CASE metadata.Value WHEN \"early_exit\" THEN \"Early exit\" ELSE \"Full test\" END AS typ\n  FROM `measurement-lab.ndt.ndt7`, UNNEST(raw.Download.ServerMetadata) AS metadata\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND raw.Download is NOT NULL\n)\n\nSELECT time, metric, total / SUM(total) OVER(partition BY time) AS ratio FROM (\n  SELECT TIMESTAMP(date) AS time, typ AS metric, COUNT(*) AS total FROM ndt7 GROUP BY date, metric\n)\n",
           "refId": "A",
-          "select": [
-            [
+          "sql": {
+            "columns": [
               {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
+                "parameters": [],
+                "type": "function"
               }
-            ]
-          ],
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Percentage of NDT7 Early Exit Tests",
@@ -152,7 +149,26 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "BigQuery (mlab-oti)",
+          "value": "BigQuery (mlab-oti)"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "doitintl-bigquery-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "/^BigQuery \\(/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
   },
   "time": {
     "from": "now-7d",
@@ -160,8 +176,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "NDT: Early Exit Copy",
+  "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
