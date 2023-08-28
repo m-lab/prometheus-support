@@ -15,7 +15,7 @@ spec:
     - prometheus-data-processing.{{GCLOUD_PROJECT}}.measurementlab.net
     secretName: prometheus-tls-oauth
   rules:
-  - host: prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
+  - host: prometheus-data-processing.{{GCLOUD_PROJECT}}.measurementlab.net
     http:
       paths:
       - path: /oauth2
@@ -47,10 +47,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
+    - prometheus-data-processing.{{GCLOUD_PROJECT}}.measurementlab.net
     secretName: prometheus-tls
   rules:
-  - host: prometheus.{{GCLOUD_PROJECT}}.measurementlab.net
+  - host: prometheus-data-processing.{{GCLOUD_PROJECT}}.measurementlab.net
     http:
       paths:
       - path: /
