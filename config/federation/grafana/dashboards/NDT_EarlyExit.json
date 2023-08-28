@@ -30,7 +30,7 @@
   "panels": [
     {
       "datasource": {
-        "type": "grafana-bigquery-datasource",
+        "type": "doitintl-bigquery-datasource",
         "uid": "${datasource}"
       },
       "fieldConfig": {
@@ -112,33 +112,37 @@
       "targets": [
         {
           "datasource": {
-            "type": "grafana-bigquery-datasource",
+            "type": "doitintl-bigquery-datasource",
             "uid": "${datasource}"
           },
-          "editorMode": "code",
-          "format": 0,
-          "location": "US",
-          "project": "mlab-oti",
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT *, CASE metadata.Value WHEN \"early_exit\" THEN \"Early exit\" ELSE \"Full test\" END AS typ\n  FROM `measurement-lab.ndt.ndt7`, UNNEST(raw.Download.ServerMetadata) AS metadata\n  WHERE date BETWEEN EXTRACT(date FROM TIMESTAMP_MILLIS($__from)) AND EXTRACT(date FROM TIMESTAMP_MILLIS($__to))\n    AND raw.Download is NOT NULL\n)\n\nSELECT time, metric, total / SUM(total) OVER(partition BY time) AS ratio FROM (\n  SELECT TIMESTAMP(date) AS time, typ AS metric, COUNT(*) AS total FROM ndt7 GROUP BY date, metric\n)\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    CASE\n      metadata.Value\n      WHEN \"early_exit\" THEN \"Early exit\"\n      ELSE \"Full test\"\n    END AS typ\n  FROM\n    `measurement-lab.ndt.ndt7`,\n    UNNEST(raw.Download.ServerMetadata) AS metadata\n  WHERE\n    date BETWEEN EXTRACT(\n      date\n      FROM\n        TIMESTAMP_MILLIS($__from)\n    )\n    AND EXTRACT(\n      date\n      FROM\n        TIMESTAMP_MILLIS($__to)\n    )\n    AND raw.Download.ServerMetadata is NOT NULL\n)\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  (\n    SELECT\n      TIMESTAMP(date) AS time,\n      typ AS metric,\n      COUNT(*) AS total\n    FROM\n      ndt7\n    GROUP BY\n      date,\n      metric\n  )\n",
+          "refId": "B",
+          "select": [
+            [
               {
-                "parameters": [],
-                "type": "function"
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
               }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
         }
       ],
       "title": "Percentage of NDT7 Early Exit Tests",
@@ -158,6 +162,7 @@
         },
         "hide": 0,
         "includeAll": false,
+        "label": "BigQuery Datasource",
         "multi": false,
         "name": "datasource",
         "options": [],
@@ -178,6 +183,6 @@
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
