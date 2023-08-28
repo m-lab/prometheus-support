@@ -16,6 +16,10 @@ USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
+# Version numbers for Helm and Helm charts.
+K8S_HELM_VERSION="v3.3.0"
+K8S_INGRESS_NGINX_VERSION="4.2.1"
+
 # Replace the template variables.
 sed -e 's|{{CLUSTER}}|'${CLUSTER}'|g' \
     config/cluster/prometheus/prometheus.yml.template > \
@@ -36,6 +40,26 @@ sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_CLIENT_SECRET}}|'${!OAUTH_PROXY_CLIENT_SECRET}'|g' \
     -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
     k8s/data-pipeline/deployments/oauth2-proxy.yml
+
+# Additional k8s resources installed via Helm
+#
+# Download Helm
+curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
+tar -zxvf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
+
+# Add repos
+./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+#./linux-amd64/helm repo add jetstack https://charts.jetstack.io
+
+# Update local repos
+./linux-amd64/helm repo update
+
+# Install the NGINX ingress controller in the ingress-nginx namespace.
+kubectl create namespace ingress-nginx --dry-run="client" -o json | kubectl apply -f -
+./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --version ${K8S_INGRESS_NGINX_VERSION} \
+  --values helm/data-pipeline/ingress-nginx/${PROJECT}.yml
 
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
