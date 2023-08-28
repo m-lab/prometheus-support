@@ -257,7 +257,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "irate(node_network_receive_bytes_total{nodepool=~\"data-processing-.*annotation.*-export\"}[5m])*8",
+          "expr": "irate(node_network_receive_bytes_total{nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])*8",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -267,7 +267,7 @@
         },
         {
           "exemplar": true,
-          "expr": "irate(node_network_transmit_bytes_total{nodepool=~\"data-processing-.*annotation.*-export\"}[5m])*8",
+          "expr": "irate(node_network_transmit_bytes_total{nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])*8",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -277,7 +277,7 @@
         },
         {
           "exemplar": true,
-          "expr": "irate(node_network_receive_bytes_total{nodepool=\"data-processing-stats-pipeline-po\"}[5m])*8",
+          "expr": "irate(node_network_receive_bytes_total{nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])*8",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -288,7 +288,7 @@
         },
         {
           "exemplar": true,
-          "expr": "irate(node_network_transmit_bytes_total{nodepool=\"data-processing-stats-pipeline-po\"}[5m])*8",
+          "expr": "irate(node_network_transmit_bytes_total{nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])*8",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -440,7 +440,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -451,7 +451,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -462,7 +462,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -473,7 +473,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -484,7 +484,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
+          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -495,7 +495,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=~\"data-processing-.*annotation.*-export\"}[5m])) * 100",
+          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=~\"data-pipeline-.*annotation.*-export\"}[5m])) * 100",
           "format": "time_series",
           "hide": true,
           "interval": "",
@@ -506,7 +506,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=\"system\",nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -517,7 +517,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='user',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -528,7 +528,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode='iowait',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -539,7 +539,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -550,7 +550,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (instance)(irate(node_cpu_seconds_total{mode=~\".*irq\",nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -561,7 +561,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum (irate(node_cpu_seconds_total{mode!='idle',mode!='user',mode!='system',mode!='iowait',mode!='irq',mode!='softirq',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -572,7 +572,7 @@
         },
         {
           "exemplar": true,
-          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=\"data-processing-stats-pipeline-po\"}[5m])) * 100",
+          "expr": "sum by (mode)(irate(node_cpu_seconds_total{mode='idle',nodepool=\"data-pipeline-stats-pipeline-po\"}[5m])) * 100",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -720,7 +720,7 @@
         },
         {
           "exemplar": true,
-          "expr": "node_memory_MemTotal_bytes{nodepool=~\"data-processing-stats-pipeline-po\",} - node_memory_MemFree_bytes{nodepool=~\"data-processing-stats-pipeline-po\",}",
+          "expr": "node_memory_MemTotal_bytes{nodepool=~\"data-pipeline-stats-pipeline-po\",} - node_memory_MemFree_bytes{nodepool=~\"data-pipeline-stats-pipeline-po\",}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -731,7 +731,7 @@
         },
         {
           "exemplar": true,
-          "expr": "node_memory_MemTotal_bytes{nodepool=~\"data-processing-stats-pipeline-po\",} - node_memory_MemAvailable_bytes{nodepool=~\"data-processing-stats-pipeline-po\",}",
+          "expr": "node_memory_MemTotal_bytes{nodepool=~\"data-pipeline-stats-pipeline-po\",} - node_memory_MemAvailable_bytes{nodepool=~\"data-pipeline-stats-pipeline-po\",}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2075,8 +2075,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Data Processing (mlab-staging)",
-          "value": "Data Processing (mlab-staging)"
+          "text": "Data Pipeline (mlab-staging)",
+          "value": "Data Pipeline (mlab-staging)"
         },
         "description": null,
         "error": null,
@@ -2101,7 +2101,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Annotation Export Monitoring",
+  "title": "Stats Pipeline: Annotation Export Monitoring",
   "uid": "XokjBPKnj",
-  "version": 22
+  "version": 24
 }

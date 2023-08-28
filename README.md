@@ -122,6 +122,9 @@ kubectl create clusterrolebinding additional-cluster-admins \
     --user=<service-account-address>
 ```
 
+The above steps also apply to other clusters managed by this repo, e.g.
+data-pipeline.
+
 This repository uses Cloud Build to build and deploy changes to the cluster. The
 default Cloud Build service account cannot deploy the cluster without having
 certain RBAC permissions assigned to it in the cluster in advance, before
