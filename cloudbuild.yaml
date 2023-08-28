@@ -155,8 +155,5 @@ steps:
     gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
     ./apply-cluster.sh
 
-    # Apply config specific to the data-pipeline cluster.
-    ./apply-data-pipeline.sh
-
     # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
     ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
