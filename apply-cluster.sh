@@ -61,6 +61,23 @@ kubectl create namespace ingress-nginx --dry-run="client" -o json | kubectl appl
   --version ${K8S_INGRESS_NGINX_VERSION} \
   --values helm/data-pipeline/ingress-nginx/${PROJECT}.yml
 
+
+# Install cert-manager.
+#
+# NOTE: for testing of cert-manager/certificates which might exhaust
+# our API limits for LetsEncrypt's production ACME servers, please change the
+# defaultIssuerName below to "letsencrypt-staging". Once your testing is done,
+# change it back to "letsencrypt". LE staging ACME servers have much higher
+# quotes/limits, and issue valid certificates, but ones which aren't trusted by
+# most clients (browsers, etc.).
+./linux-amd64/helm upgrade --install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.8.0 \
+  --set installCRDs=true \
+  --set ingressShim.defaultIssuerKind=ClusterIssuer \
+  --set ingressShim.defaultIssuerName=letsencrypt
+  
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
   echo "No template variables found for k8s/${CLUSTER}/${PROJECT}.yml"
