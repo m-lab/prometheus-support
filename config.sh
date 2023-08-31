@@ -6,8 +6,6 @@ USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
 
-# Version numbers for Helm and Helm charts.
-K8S_HELM_VERSION="v3.3.0"
 K8S_INGRESS_NGINX_VERSION="4.2.1"
 
 export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
