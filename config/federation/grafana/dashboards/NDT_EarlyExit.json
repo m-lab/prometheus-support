@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 438,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -45,7 +44,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 30,
+            "fillOpacity": 0,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -273,12 +272,12 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-BlPu"
           },
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "TB Transferred",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -305,6 +304,7 @@
               "mode": "off"
             }
           },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -331,10 +331,12 @@
       "id": 6,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -353,7 +355,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH\n total AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"virtual\", \"physical\") AS typ,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[\n OFFSET\n   (0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   measurement-lab.ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n)\n\n\nSELECT\n TIMESTAMP(date) AS time, typ, SUM(totalMB)/1000000 AS sumTotalTB\nFROM\n total\nGROUP BY date, typ\n \n",
+          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"virtual\", \"physical\") AS typ,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   measurement-lab.ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n)\n\nSELECT TIMESTAMP(date) AS time, typ AS metric, SUM(totalMB) / 1000000 AS totalTB \nFROM ndt7 \nGROUP BY date, metric\n",
           "refId": "A",
           "select": [
             [
@@ -376,7 +378,7 @@
           ]
         }
       ],
-      "title": "Amount of data transferred (TB)",
+      "title": "Amount of data transferred",
       "type": "timeseries"
     }
   ],
@@ -387,7 +389,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "BigQuery (mlab-oti)",
           "value": "BigQuery (mlab-oti)"
         },
@@ -414,6 +416,6 @@
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 10,
+  "version": 12,
   "weekStart": ""
 }
