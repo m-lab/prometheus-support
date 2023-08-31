@@ -13,40 +13,7 @@
 #   PROJECT=mlab-sandbox \
 #     CLUSTER=prometheus-federation ./apply-global-prometheus.sh
 
-set -e
-set -u
-
-# Get project and cluster from the environment.
-
-USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
-PROJECT=${PROJECT:?Please provide project id: $USAGE}
-CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
-
-export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
-
-# Version numbers for Helm and Helm charts.
-K8S_HELM_VERSION="v3.3.0"
-K8S_INGRESS_NGINX_VERSION="4.2.1"
-
-# GCP doesn't support IPv6, so we have a Linode VM running three instances of
-# the blackbox_exporter, on three separate ports... one port/instance for each
-# project. These variables map projects to ports.
-BBE_IPV6_PORT_mlab_oti="9115"
-BBE_IPV6_PORT_mlab_staging="8115"
-BBE_IPV6_PORT_mlab_sandbox="7115"
-
-# Construct the per-project blackbox_exporter port using the passed $PROJECT
-# argument.
-bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
-
-# Construct the per-project HTTP basic auth credentials for the Reboot API.
-export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
-export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
-
-# Construct the per-project CLIENT_ID, CLIENT_SECRET and COOKIE_SECRET for OAuth.
-export OAUTH_PROXY_CLIENT_ID=OAUTH_PROXY_CLIENT_ID_${PROJECT/-/_}
-export OAUTH_PROXY_CLIENT_SECRET=OAUTH_PROXY_CLIENT_SECRET_${PROJECT/-/_}
-export OAUTH_PROXY_COOKIE_SECRET=OAUTH_PROXY_COOKIE_SECRET_${PROJECT/-/_}
+source config.sh
 
 # Config maps and Secrets
 

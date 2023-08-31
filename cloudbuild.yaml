@@ -132,6 +132,18 @@ steps:
     # Install any other needed system packages
     apt install -y apache2-utils jq jsonlint
 
+
+    # Download Helm
+    curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
+    tar -zxf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
+
+    # Add repos
+    ./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    ./linux-amd64/helm repo add jetstack https://charts.jetstack.io
+
+    # Update local repos
+    ./linux-amd64/helm repo update
+
     # Check all JSON files, mostly (likely only) provisioned Grafana dashboards
     find . -type f -name '*.json' | xargs jsonlint-php -q
 
@@ -153,7 +165,7 @@ steps:
 
     # Get cluster credentials for the data-pipeline cluster
     gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
-    ./apply-cluster.sh
+    ./apply-data-pipeline.sh
 
     # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
     ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
