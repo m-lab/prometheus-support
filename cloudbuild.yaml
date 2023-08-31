@@ -132,10 +132,12 @@ steps:
     # Install any other needed system packages
     apt install -y apache2-utils jq jsonlint
 
+    # Version numbers for Helm.
+    K8S_HELM_VERSION="v3.3.0"
 
     # Download Helm
-    curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
-    tar -zxf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
+    curl -O https://get.helm.sh/helm-$${K8S_HELM_VERSION}-linux-amd64.tar.gz
+    tar -zxf helm-$${K8S_HELM_VERSION}-linux-amd64.tar.gz
 
     # Add repos
     ./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx

@@ -13,7 +13,25 @@
 #   PROJECT=mlab-sandbox \
 #     CLUSTER=prometheus-federation ./apply-global-prometheus.sh
 
+set -e
+set -u
+
 source config.sh
+
+# GCP doesn't support IPv6, so we have a Linode VM running three instances of
+# the blackbox_exporter, on three separate ports... one port/instance for each
+# project. These variables map projects to ports.
+BBE_IPV6_PORT_mlab_oti="9115"
+BBE_IPV6_PORT_mlab_staging="8115"
+BBE_IPV6_PORT_mlab_sandbox="7115"
+
+# Construct the per-project blackbox_exporter port using the passed $PROJECT
+# argument.
+bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
+
+# Construct the per-project HTTP basic auth credentials for the Reboot API.
+export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
+export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
 
 # Config maps and Secrets
 
@@ -276,17 +294,6 @@ sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
 
 # Additional k8s resources installed via Helm
 #
-# Download Helm
-curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
-tar -zxvf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
-
-# Add repos
-./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-./linux-amd64/helm repo add jetstack https://charts.jetstack.io
-
-# Update local repos
-./linux-amd64/helm repo update
-
 # Install the NGINX ingress controller in the ingress-nginx namespace.
 kubectl create namespace ingress-nginx --dry-run="client" -o json | kubectl apply -f -
 ./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
