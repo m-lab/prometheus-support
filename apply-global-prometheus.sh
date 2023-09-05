@@ -50,13 +50,6 @@ kubectl create secret generic discuss-credentials \
 
 ## Prometheus
 
-# Generate the basic auth string for Prometheus.
-export PROM_AUTH_USER=PROMETHEUS_BASIC_AUTH_USER_${PROJECT/-/_}
-export PROM_AUTH_PASS=PROMETHEUS_BASIC_AUTH_PASS_${PROJECT/-/_}
-export PLATFORM_PROM_AUTH_USER=PLATFORM_PROMETHEUS_BASIC_AUTH_USER
-export PLATFORM_PROM_AUTH_PASS=PLATFORM_PROMETHEUS_BASIC_AUTH_PASS
-export AUTH="${!PROM_AUTH_USER}:${!PROM_AUTH_PASS}"
-
 # Evaluate the Prometheus configuration template.
 sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
