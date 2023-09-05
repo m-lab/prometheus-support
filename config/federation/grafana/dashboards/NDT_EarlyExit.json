@@ -1,4 +1,4 @@
-{
+{{
   "annotations": {
     "list": [
       {
@@ -121,7 +121,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    `ndt.ndt7`\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n)\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  (\n    SELECT\n      TIMESTAMP(date) AS time,\n      typ AS metric,\n      COUNT(*) AS total\n    FROM\n      ndt7\n    GROUP BY\n      date,\n      metric\n  )",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    `ndt.ndt7`\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg",
           "refId": "B",
           "select": [
             [
@@ -156,7 +156,7 @@
         "defaults": {
           "color": {
             "fixedColor": "blue",
-            "mode": "fixed",
+            "mode": "palette-classic",
             "seriesBy": "min"
           },
           "custom": {
@@ -203,7 +203,7 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -238,7 +238,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "SELECT TIMESTAMP(date) AS time, COUNTIF(\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AS Tests\nFROM `ndt.ndt7` \nWHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\nGROUP By date",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    `ndt.ndt7`\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric",
           "refId": "A",
           "select": [
             [
@@ -409,13 +409,13 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 13,
+  "version": 15,
   "weekStart": ""
 }
