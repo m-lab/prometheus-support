@@ -121,7 +121,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg",
           "refId": "B",
           "select": [
             [
@@ -216,10 +216,12 @@
       "id": 4,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "last"
+          ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -238,7 +240,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric",
           "refId": "A",
           "select": [
             [
