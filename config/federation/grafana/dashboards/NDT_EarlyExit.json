@@ -1,4 +1,4 @@
-{{
+{
   "annotations": {
     "list": [
       {
@@ -121,7 +121,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    `ndt.ndt7`\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg",
           "refId": "B",
           "select": [
             [
@@ -238,7 +238,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    `ndt.ndt7`\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric",
           "refId": "A",
           "select": [
             [
@@ -272,7 +272,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-BlPu"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -328,7 +328,7 @@
         "x": 0,
         "y": 15
       },
-      "id": 6,
+      "id": 7,
       "options": {
         "legend": {
           "calcs": [
@@ -336,7 +336,7 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -355,7 +355,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"virtual\", \"physical\") AS typ,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   measurement-lab.ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n)\n\nSELECT TIMESTAMP(date) AS time, typ AS metric, SUM(totalMB) / 1000000 AS totalTB \nFROM ndt7 \nGROUP BY date, metric\n",
+          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"virtual\", \"physical\") AS machine,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n)\n\nSELECT TIMESTAMP(date) AS time, machine AS metric, SUM(totalMB) / 1000000 AS totalTB \nFROM ndt7 \nGROUP BY date, machine",
           "refId": "A",
           "select": [
             [
@@ -379,6 +379,125 @@
         }
       ],
       "title": "Amount of Data Transferred",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "doitintl-bigquery-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "TB Transferred",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "doitintl-bigquery-datasource",
+            "uid": "${datasource}"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "orderByCol": "1",
+          "orderBySort": "1",
+          "rawQuery": true,
+          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"Virtual\", \"Physical\") AS machine,\n   IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"early exit\", \"full test\") AS length,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n),\n\nagg AS (\n  SELECT TIMESTAMP(date) AS time, machine, length, SUM(totalMB) / 1000000 AS totalTB \n  FROM ndt7 \n  GROUP BY date, machine, length\n)\n\nSELECT time, CONCAT(machine, ' - ', length) AS metric, totalTB\nFROM agg",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "-- value --"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "-- time --",
+          "timeColumnType": "TIMESTAMP",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Amount of Data Transferred (split)",
+      "transformations": [],
       "type": "timeseries"
     }
   ],
