@@ -16,17 +16,7 @@
 set -e
 set -u
 
-# Get project and cluster from the environment.
-
-USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
-PROJECT=${PROJECT:?Please provide project id: $USAGE}
-CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
-
-export GRAFANA_DOMAIN=grafana.${PROJECT}.measurementlab.net
-
-# Version numbers for Helm and Helm charts.
-K8S_HELM_VERSION="v3.3.0"
-K8S_INGRESS_NGINX_VERSION="4.2.1"
+source config.sh
 
 # GCP doesn't support IPv6, so we have a Linode VM running three instances of
 # the blackbox_exporter, on three separate ports... one port/instance for each
@@ -42,11 +32,6 @@ bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
 # Construct the per-project HTTP basic auth credentials for the Reboot API.
 export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
-
-# Construct the per-project CLIENT_ID, CLIENT_SECRET and COOKIE_SECRET for OAuth.
-export OAUTH_PROXY_CLIENT_ID=OAUTH_PROXY_CLIENT_ID_${PROJECT/-/_}
-export OAUTH_PROXY_CLIENT_SECRET=OAUTH_PROXY_CLIENT_SECRET_${PROJECT/-/_}
-export OAUTH_PROXY_COOKIE_SECRET=OAUTH_PROXY_COOKIE_SECRET_${PROJECT/-/_}
 
 # Config maps and Secrets
 
@@ -309,17 +294,6 @@ sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
 
 # Additional k8s resources installed via Helm
 #
-# Download Helm
-curl -O https://get.helm.sh/helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
-tar -zxvf helm-${K8S_HELM_VERSION}-linux-amd64.tar.gz
-
-# Add repos
-./linux-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-./linux-amd64/helm repo add jetstack https://charts.jetstack.io
-
-# Update local repos
-./linux-amd64/helm repo update
-
 # Install the NGINX ingress controller in the ingress-nginx namespace.
 kubectl create namespace ingress-nginx --dry-run="client" -o json | kubectl apply -f -
 ./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \

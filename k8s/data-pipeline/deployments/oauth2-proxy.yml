@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        run: oauth2-proxy
+    spec:
+      containers:
+      - args:
+        - --provider=github
+        - --upstream=file:///dev/null
+        - --http-address=0.0.0.0:4180
+        - --client-id={{OAUTH_PROXY_CLIENT_ID}}
+        - --client-secret={{OAUTH_PROXY_CLIENT_SECRET}}
+        - --cookie-domain={{GCLOUD_PROJECT}}.measurementlab.net
+        - --cookie-refresh=1h
+        - --cookie-secret={{OAUTH_PROXY_COOKIE_SECRET}}
+        - --github-org=m-lab
+        - --email-domain=*
+        - --redirect-url=https://prometheus-data-pipeline.{{GCLOUD_PROJECT}}.measurementlab.net/oauth2/callback
+        - --set-xauthrequest=true
+        - --whitelist-domain=.measurementlab.net
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.2.1
+        name: oauth2-proxy
+        ports:
+        - containerPort: 4180
+          protocol: TCP
