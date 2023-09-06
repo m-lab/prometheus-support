@@ -6,11 +6,7 @@ datasources:
   type: prometheus
   access: proxy
   orgId: 1
-  url: https://prometheus-basicauth.mlab-staging.measurementlab.net
-  basicAuth: true
-  basicAuthUser: {{PROM_AUTH_USER}}
-  secureJsonData:
-    basicAuthPassword: {{PROM_AUTH_PASS}}
+  url: https://prometheus.mlab-staging.measurementlab.net
   isDefault: {{IS_DEFAULT}}
   version: 1
   editable: false
@@ -18,3 +14,7 @@ datasources:
   jsonData:
     timeout: 60
     timeInterval: 60s
+    httpMethod: POST
+    keepCookies:
+    - _oauth2_proxy
+
