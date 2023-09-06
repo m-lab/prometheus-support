@@ -389,6 +389,9 @@ scrape_configs:
     metrics_path: '/federate'
     # Allow more time, since the number of metrics may be large.
     scrape_timeout: 50s
+    basic_auth:
+      username: {{PROM_AUTH_USER}}
+      password: {{PROM_AUTH_PASS}}
     params:
       'match[]':
         - 'up{container="etl-gardener",instance=~".*:9090"}'
@@ -405,7 +408,7 @@ scrape_configs:
         - 'autoloader_bigquery_operations_total'
         - 'autoloader_duration_count'
     static_configs:
-      - targets: ['prometheus-data-pipeline.{{PROJECT}}.measurementlab.net:9090']
+      - targets: ['prometheus-data-pipeline-basic.{{PROJECT}}.measurementlab.net']
 
   # Scrape config for federation.
   #

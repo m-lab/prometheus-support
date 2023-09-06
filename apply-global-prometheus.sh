@@ -57,6 +57,8 @@ sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     -e 's|{{REBOOTAPI_BASIC_AUTH_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
     -e 's|{{PLATFORM_PROM_AUTH_USER}}|'${!PLATFORM_PROM_AUTH_USER}'|g' \
     -e 's|{{PLATFORM_PROM_AUTH_PASS}}|'${!PLATFORM_PROM_AUTH_PASS}'|g' \
+    -e 's|{{PROM_AUTH_USER}}|'${!PROM_AUTH_USER}'|g' \
+    -e 's|{{PROM_AUTH_PASS}}|'${!PROM_AUTH_PASS}'|g' \
     config/federation/prometheus/prometheus.yml.template > \
     config/federation/prometheus/prometheus.yml
 
