@@ -56,30 +56,7 @@
         "config": {
           "displayModeBar": false
         },
-        "data": [
-          {
-            "line": {
-              "color": "green",
-              "width": 1
-            },
-            "marker": {
-              "size": 2
-            },
-            "mode": "markers+lines",
-            "type": "scatter"
-          },
-          {
-            "line": {
-              "color": "yellow",
-              "width": 1
-            },
-            "marker": {
-              "size": 2
-            },
-            "mode": "markers+lines",
-            "type": "scatter"
-          }
-        ],
+        "data": [],
         "layout": {
           "font": {
             "color": "grey"
@@ -96,8 +73,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.22175348662617933,
-              3.678523863111171
+              -0.013228265733755159,
+              3.469998642218747
             ],
             "title": {
               "text": "Mbps bins"
@@ -108,8 +85,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -132915.93013972059,
-              2213933.9301397204
+              -0.0010456036955577863,
+              0.019951883723744245
             ],
             "title": {
               "text": "Test Count"
@@ -117,8 +94,8 @@
             "type": "linear"
           }
         },
-        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data)\nvar Full = {\n  x: data.series[0].fields[0].values.buffer,\n  y: data.series[0].fields[1].values.buffer,\n  name: \"Full test\",\n};\nvar Early = {\n  x: data.series[1].fields[0].values.buffer,\n  y: data.series[1].fields[1].values.buffer,\n  name: \"Early exit\",\n};\nconsole.log(\"okay2\");\nconsole.log(Full);         \nconsole.log(Early);\nreturn {\n  data:[Full, Early],\n};"
+        "onclick": "",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
       },
       "targets": [
         {
@@ -132,7 +109,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"early_exit\" NOT IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true,\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS bytes_sent, sum(present_true) AS total_true,\n  FROM   pdf_sort\n  GROUP BY bucket_left\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    trunc(bytes_sent,2) as bytes_sent,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY bytes_sent\n), cdf_tests_and_bytes AS (\n  SELECT  \n    bytes_sent AS byte_sent_bucket,\n    product_true AS bytes_total_transmitted_true,\n  FROM pdf_product\n  ORDER BY bytes_sent\n)\n\nSELECT\n  byte_sent_bucket,\n  bytes_total_transmitted_true,\n\n\nFROM cdf_tests_and_bytes",
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS bytes_sent, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(bytes_sent,2) as bytes_sent,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY bytes_sent\n), cdf_tests_and_bytes AS (\n  SELECT  \n    bytes_sent AS byte_sent_bucket,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY bytes_sent\n)\nSELECT\n  byte_sent_bucket,\n  normalized,\n  test_type,\n\nFROM cdf_tests_and_bytes",
           "refId": "A",
           "select": [
             [
@@ -146,40 +123,6 @@
           ],
           "timeColumn": "-- time --",
           "timeColumnType": "DATE",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        },
-        {
-          "datasource": {
-            "type": "doitintl-bigquery-datasource",
-            "uid": "${datasource}"
-          },
-          "format": "table",
-          "group": [],
-          "hide": false,
-          "metricColumn": "none",
-          "orderByCol": "1",
-          "orderBySort": "1",
-          "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true,\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS bytes_sent, sum(present_true) AS total_true,\n  FROM   pdf_sort\n  GROUP BY bucket_left\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    trunc(bytes_sent,2) as bytes_sent,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY bytes_sent\n), cdf_tests_and_bytes AS (\n  SELECT  \n    bytes_sent AS byte_sent_bucket,\n    product_true AS bytes_total_transmitted_true,\n  FROM pdf_product\n  ORDER BY bytes_sent\n)\n\nSELECT\n  byte_sent_bucket,\n  bytes_total_transmitted_true,\n\n\nFROM cdf_tests_and_bytes",
-          "refId": "B",
-          "select": [
-            [
-              {
-                "params": [
-                  "-- value --"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "timeColumn": "-- time --",
-          "timeColumnType": "TIMESTAMP",
           "where": [
             {
               "name": "$__timeFilter",
@@ -248,8 +191,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.22175348662617933,
-              3.678523863111171
+              -0.21991395586980672,
+              3.6766843323547986
             ],
             "title": {
               "text": "Test Size bins (bytes)"
@@ -260,8 +203,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -19175702983538.996,
-              319395302819571.3
+              -4364951887978.9277,
+              72703729884149
             ],
             "title": {
               "text": "Total Bytes Sent"
@@ -642,8 +585,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -760,8 +702,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -860,13 +801,13 @@
     ]
   },
   "time": {
-    "from": "now-30d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 21,
+  "version": 22,
   "weekStart": ""
 }
