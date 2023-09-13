@@ -77,7 +77,7 @@
               3.469998642218747
             ],
             "title": {
-              "text": "Mbps bins"
+              "text": "Mbps"
             },
             "type": "log"
           },
@@ -89,13 +89,13 @@
               0.019951883723744245
             ],
             "title": {
-              "text": "Test Count"
+              "text": "Frequency"
             },
             "type": "linear"
           }
         },
         "onclick": "",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
+        "script": "console.log(data);\nvar types = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(type => {\n  types[type] = {\n    x: [],\n    y: [],\n    name: type,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  types[names[i]].x.push(x[i]);\n  types[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(types).sort().forEach(type => {\n  data.push(types[type]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
       },
       "targets": [
         {
@@ -132,7 +132,7 @@
           ]
         }
       ],
-      "title": "Scatter Chart (Download Mbps PDF)",
+      "title": "Scatter Chart (Download Mbps PDF, normalized)",
       "type": "ae3e-plotly-panel"
     },
     {
@@ -172,7 +172,7 @@
               3.469998642218747
             ],
             "title": {
-              "text": "Test Size bins (bytes)"
+              "text": "Test Size (bytes)"
             },
             "type": "log"
           },
@@ -184,13 +184,13 @@
               0.1580254690365819
             ],
             "title": {
-              "text": "Total Bytes Sent"
+              "text": "Frequency"
             },
             "type": "linear"
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
+        "script": "console.log(data);\nvar types = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(type => {\n  types[type] = {\n    x: [],\n    y: [],\n    name: type,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  types[names[i]].x.push(x[i]);\n  types[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(types).sort().forEach(type => {\n  data.push(types[type]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
       },
       "targets": [
         {
@@ -227,7 +227,7 @@
           ]
         }
       ],
-      "title": "Scatter Chart (Bytes Sent PDF)",
+      "title": "Scatter Chart (Bytes Sent PDF, normalized)",
       "type": "ae3e-plotly-panel"
     },
     {
@@ -528,8 +528,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -646,8 +645,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -753,6 +751,6 @@
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 24,
+  "version": 25,
   "weekStart": ""
 }
