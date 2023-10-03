@@ -597,22 +597,6 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#locate_toomanyerrors
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/8O9tInk4k/locate-service?orgId=1&refresh=5m&var-datasource=Prometheus%20%28mlab-oti%29&var-platformdatasource=Platform%20Cluster%20%28mlab-oti%29&var-bigquerydatasource=BigQuery%20%28mlab-oti%29&var-metro=All&var-experiment=ndt&viewPanel=4
 
-# The alert Locate_HighLantecy will fire when the latency of at least 2% of /nearest requests
-# is greater than 1 second. The locate_request_handler_duration metrics come from Prometheus.
-  - alert: Locate_HighLatency
-    expr: |
-      sum(increase(locate_request_handler_duration_bucket{le="1", path="/v2/nearest/"}[5m]))
-      / scalar(sum(increase(locate_request_handler_duration_bucket{path="/v2/nearest/", le="+Inf"}[5m]))) < 0.98
-    for: 2m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-      cluster: prometheus-federation
-    annotations:
-      summary: The latency of at least 2% of /nearest requests is over 1 second.
-      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#locate_highlatency
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/8O9tInk4k/locate-service?orgId=1&refresh=5m&from=now-2d&to=now&viewPanel=50
-
 # One or more generic (non-experiment specific) mlab-ns metrics is missing.
 # These are metrics that mlab-ns relies on to determine whether an experiment
 # should receive production traffic, so we need to make sure that the metrics
