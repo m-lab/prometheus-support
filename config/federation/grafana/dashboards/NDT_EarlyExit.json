@@ -757,14 +757,14 @@
           "type": "doitintl-bigquery-datasource",
           "uid": "${datasource}"
         },
-        "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro",
+        "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro\nORDER BY metro",
         "hide": 0,
         "includeAll": true,
         "label": "Metro",
         "multi": true,
         "name": "metro",
         "options": [],
-        "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro",
+        "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro\nORDER BY metro",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -773,22 +773,26 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "doitintl-bigquery-datasource",
           "uid": "${datasource}"
         },
-        "definition": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site",
+        "definition": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site\nORDER BY site",
         "hide": 0,
         "includeAll": true,
         "label": "Site",
         "multi": true,
         "name": "site",
         "options": [],
-        "query": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site",
+        "query": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site\nORDER BY site",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -797,22 +801,26 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "doitintl-bigquery-datasource",
           "uid": "${datasource}"
         },
-        "definition": "SELECT client.Network.ASNumber AS asn,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(server.Site, '${site:regex}')\nGROUP BY asn",
+        "definition": "SELECT client.Network.ASNumber AS asn,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(server.Site, '${site:regex}')\nGROUP BY asn\nORDER BY asn",
         "hide": 0,
         "includeAll": true,
         "label": "AS",
         "multi": true,
         "name": "asn",
         "options": [],
-        "query": "SELECT client.Network.ASNumber AS asn,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(server.Site, '${site:regex}')\nGROUP BY asn",
+        "query": "SELECT client.Network.ASNumber AS asn,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(server.Site, '${site:regex}')\nGROUP BY asn\nORDER BY asn",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
