@@ -85,8 +85,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0010456036955577863,
-              0.019951883723744245
+              -0.0009871640410263455,
+              0.01890616550365571
             ],
             "title": {
               "text": "Frequency"
@@ -180,8 +180,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.008317129949293785,
-              0.1580254690365819
+              -0.009137135004578323,
+              0.17360556508698813
             ],
             "title": {
               "text": "Frequency"
@@ -528,7 +528,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -645,7 +646,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -740,6 +742,82 @@
         "regex": "/^BigQuery \\(/",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Metro",
+        "multi": true,
+        "name": "metro",
+        "options": [],
+        "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Site",
+        "multi": true,
+        "name": "site",
+        "options": [],
+        "query": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT client.Network.ASNumber AS asn,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(server.Site, '${site:regex}')\nGROUP BY asn",
+        "hide": 0,
+        "includeAll": true,
+        "label": "AS",
+        "multi": true,
+        "name": "asn",
+        "options": [],
+        "query": "SELECT client.Network.ASNumber AS asn,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(server.Site, '${site:regex}')\nGROUP BY asn",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -751,6 +829,6 @@
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 26,
+  "version": 27,
   "weekStart": ""
 }
