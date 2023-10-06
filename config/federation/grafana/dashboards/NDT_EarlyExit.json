@@ -85,8 +85,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0009871640410263455,
-              0.01890616550365571
+              -0.000987135750539539,
+              0.018905637949872066
             ],
             "title": {
               "text": "Frequency"
@@ -109,7 +109,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), cdf_tests_and_bytes AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM cdf_tests_and_bytes",
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), cdf_tests_and_bytes AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM cdf_tests_and_bytes",
           "refId": "A",
           "select": [
             [
@@ -829,6 +829,6 @@
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 27,
+  "version": 28,
   "weekStart": ""
 }
