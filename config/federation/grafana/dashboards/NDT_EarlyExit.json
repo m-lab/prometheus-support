@@ -85,8 +85,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0010456036955577863,
-              0.019951883723744245
+              -0.000987165223714056,
+              0.018906215497638143
             ],
             "title": {
               "text": "Frequency"
@@ -109,7 +109,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), cdf_tests_and_bytes AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM cdf_tests_and_bytes",
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF(a.MeanThroughputMbps BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), cdf_tests_and_bytes AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM cdf_tests_and_bytes",
           "refId": "A",
           "select": [
             [
@@ -180,8 +180,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.008317129949293785,
-              0.1580254690365819
+              -0.009137562669518637,
+              0.17361369072085409
             ],
             "title": {
               "text": "Frequency"
@@ -204,7 +204,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n\n), pdf_sort AS (\n\n  SELECT bucket_left, bucket_right, test_type, IF(raw.Download.ServerMeasurements[OFFSET(dlm_length-1)].TCPInfo.BytesSent/1e6 BETWEEN bucket_left AND bucket_right, 1, 0) AS present,\n  FROM ndt7_and_offset, steps\n\n), pdf_totals AS (  \n\n  SELECT \n    bucket_left AS bytes_sent,\n    test_type,\n    sum(present) AS total_observations, \n  FROM pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n\n), pdf_total_bytes  AS (\n\n  SELECT total_observations, test_type, trunc(bytes_sent,2) as bytes_sent, bytes_sent*total_observations AS total_bytes,\n  FROM pdf_totals\n  ORDER BY bytes_sent\n\n), cdf_tests_and_bytes AS (\n\n  SELECT  \n    bytes_sent AS byte_sent_bucket,\n    test_type,\n    total_bytes AS total_bytes_transmitted,\n    total_bytes / SUM(total_bytes) OVER (PARTITION BY test_type) AS normalized,\n    SUM(total_bytes) OVER (ORDER BY bytes_sent ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total_bytes_transmitted_cumulative,\n    SUM(total_observations) OVER (ORDER BY bytes_sent ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total_tests_cumulative,\n  FROM pdf_total_bytes\n  ORDER BY bytes_sent\n)\n\nSELECT byte_sent_bucket, normalized, test_type\nFROM cdf_tests_and_bytes",
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, \n  IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS test_type\n  FROM ndt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n\n), pdf_sort AS (\n\n  SELECT bucket_left, bucket_right, test_type, IF(raw.Download.ServerMeasurements[OFFSET(dlm_length-1)].TCPInfo.BytesSent/1e6 BETWEEN bucket_left AND bucket_right, 1, 0) AS present,\n  FROM ndt7_and_offset, steps\n\n), pdf_totals AS (  \n\n  SELECT \n    bucket_left AS bytes_sent,\n    test_type,\n    sum(present) AS total_observations, \n  FROM pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n\n), pdf_total_bytes  AS (\n\n  SELECT total_observations, test_type, trunc(bytes_sent,2) as bytes_sent, bytes_sent*total_observations AS total_bytes,\n  FROM pdf_totals\n  ORDER BY bytes_sent\n\n), cdf_tests_and_bytes AS (\n\n  SELECT  \n    bytes_sent AS byte_sent_bucket,\n    test_type,\n    total_bytes AS total_bytes_transmitted,\n    total_bytes / SUM(total_bytes) OVER (PARTITION BY test_type) AS normalized,\n    SUM(total_bytes) OVER (ORDER BY bytes_sent ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total_bytes_transmitted_cumulative,\n    SUM(total_observations) OVER (ORDER BY bytes_sent ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total_tests_cumulative,\n  FROM pdf_total_bytes\n  ORDER BY bytes_sent\n)\n\nSELECT byte_sent_bucket, normalized, test_type\nFROM cdf_tests_and_bytes",
           "refId": "A",
           "select": [
             [
@@ -337,7 +337,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n    AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n    AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n    AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg",
           "refId": "B",
           "select": [
             [
@@ -456,7 +456,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n    AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n    AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n    AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n)\n\nSELECT\n  TIMESTAMP(date) AS time,\n  typ AS metric,\n  COUNT(*) AS total\nFROM\n  ndt7\nGROUP BY\n  date,\n  metric",
           "refId": "A",
           "select": [
             [
@@ -528,7 +528,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -572,7 +573,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"Virtual\", \"Physical\") AS machine,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n)\n\nSELECT TIMESTAMP(date) AS time, machine AS metric, SUM(totalMB) / 1000000 AS totalTB \nFROM ndt7 \nGROUP BY date, machine",
+          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"Virtual\", \"Physical\") AS machine,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n)\n\nSELECT TIMESTAMP(date) AS time, machine AS metric, SUM(totalMB) / 1000000 AS totalTB \nFROM ndt7 \nGROUP BY date, machine",
           "refId": "A",
           "select": [
             [
@@ -645,7 +646,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -689,7 +691,7 @@
           "orderByCol": "1",
           "orderBySort": "1",
           "rawQuery": true,
-          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"Virtual\", \"Physical\") AS machine,\n   IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"early exit\", \"full test\") AS length,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n),\n\nagg AS (\n  SELECT TIMESTAMP(date) AS time, machine, length, SUM(totalMB) / 1000000 AS totalTB \n  FROM ndt7 \n  GROUP BY date, machine, length\n)\n\nSELECT time, CONCAT(machine, ' - ', length) AS metric, totalTB\nFROM agg",
+          "rawSql": "WITH\n ndt7 AS (\n SELECT\n   id,\n   date, \n   IF (\"virtual\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ServerMetadata) AS metadata), \"Virtual\", \"Physical\") AS machine,\n   IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"early exit\", \"full test\") AS length,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   ndt.ndt7\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n),\n\nagg AS (\n  SELECT TIMESTAMP(date) AS time, machine, length, SUM(totalMB) / 1000000 AS totalTB \n  FROM ndt7 \n  GROUP BY date, machine, length\n)\n\nSELECT time, CONCAT(machine, ' - ', length) AS metric, totalTB\nFROM agg",
           "refId": "A",
           "select": [
             [
@@ -740,6 +742,117 @@
         "regex": "/^BigQuery \\(/",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro\nORDER BY metro",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Metro",
+        "multi": true,
+        "name": "metro",
+        "options": [],
+        "query": "SELECT SUBSTR(server.Site, 0, 3) AS metro,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nGROUP BY metro\nORDER BY metro",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "doitintl-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site\nORDER BY site",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Site",
+        "multi": true,
+        "name": "site",
+        "options": [],
+        "query": "SELECT server.Site AS site,\nFROM ndt.ndt7\nWHERE date >= \"2023-09-01\"\nAND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\nGROUP BY site\nORDER BY site",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "description": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "LGA ASNs (sample)",
+        "multi": false,
+        "name": "as",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "21928",
+            "value": "21928"
+          },
+          {
+            "selected": false,
+            "text": "12271",
+            "value": "12271"
+          },
+          {
+            "selected": false,
+            "text": "22616",
+            "value": "22616"
+          },
+          {
+            "selected": false,
+            "text": "14593",
+            "value": "14593"
+          },
+          {
+            "selected": false,
+            "text": "701",
+            "value": "701"
+          },
+          {
+            "selected": false,
+            "text": "6128",
+            "value": "6128"
+          }
+        ],
+        "query": "21928, 12271, 22616, 14593, 701, 6128",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -751,6 +864,6 @@
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 26,
+  "version": 32,
   "weekStart": ""
 }
