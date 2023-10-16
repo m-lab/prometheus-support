@@ -25,7 +25,6 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 442,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -113,9 +112,9 @@
               "uid": "${ds}"
             },
             "editorMode": "code",
-            "expr": "sum(rate(revtr_eventsocket_events_processed_total{event=\"open\", deployment=~\"$deployment\", site=~\"$site\"}[$__rate_interval])) by (deployment)",
+            "expr": "sum(rate(revtr_eventsocket_events_processed_total{event=\"open\", site=~\"$site\", deployment=\"ndt\"}[$__rate_interval])) by (deployment)",
             "interval": "",
-            "legendFormat": "revtr events received ({{deployment}})",
+            "legendFormat": "revtr events received",
             "range": true,
             "refId": "A"
           },
@@ -125,9 +124,9 @@
               "uid": "${ds}"
             },
             "editorMode": "code",
-            "expr": "sum(rate(revtr_eventsocket_events_skipped_total{event=\"open\", deployment=~\"$deployment\", site=~\"$site\"}[$__rate_interval])) by (deployment)",
+            "expr": "sum(rate(revtr_eventsocket_events_skipped_total{event=\"open\", site=~\"$site\", deployment=\"ndt\"}[$__rate_interval])) by (deployment)",
             "hide": false,
-            "legendFormat": "revtr events skipped ({{deployment}})",
+            "legendFormat": "revtr events skipped",
             "range": true,
             "refId": "D"
           },
@@ -137,9 +136,9 @@
               "uid": "${ds}"
             },
             "editorMode": "code",
-            "expr": "sum(rate(tcpinfo_flow_events_total{event=\"open\", deployment=~\"$deployment\", site=~\"$site\"}[$__rate_interval])) by (deployment)",
+            "expr": "sum(rate(tcpinfo_flow_events_total{event=\"open\", site=~\"$site\", deployment=\"ndt\"}[$__rate_interval])) by (deployment)",
             "hide": false,
-            "legendFormat": "tcp-info events sent ({{deployment}})",
+            "legendFormat": "tcp-info events sent",
             "range": true,
             "refId": "B"
           },
@@ -149,10 +148,10 @@
               "uid": "${ds}"
             },
             "editorMode": "code",
-            "expr": "sum(rate(revtr_samples_total{deployment=~\"$deployment\", site=~\"$site\"}[$__rate_interval])) by (deployment)",
+            "expr": "sum(rate(revtr_samples_total{site=~\"$site\", deployment=\"ndt\"}[$__rate_interval])) by (deployment)",
             "hide": false,
             "interval": "",
-            "legendFormat": "revtr samples sent ({{deployment}})",
+            "legendFormat": "revtr samples sent",
             "range": true,
             "refId": "C"
           }
@@ -323,7 +322,7 @@
               "uid": "${ds}"
             },
             "editorMode": "code",
-            "expr": "sum(rate(revtr_api_calls_total{deployment=~\"$deployment\", site=~\"$site\"}[$__rate_interval])) by (deployment)",
+            "expr": "sum(rate(revtr_api_calls_total{site=~\"$site\"}[$__rate_interval])) by (deployment)",
             "legendFormat": "__auto",
             "range": true,
             "refId": "A"
@@ -470,42 +469,11 @@
           "skipUrlSync": false,
           "sort": 0,
           "type": "query"
-        },
-        {
-          "current": {
-            "selected": true,
-            "text": [
-              "ndt"
-            ],
-            "value": [
-              "ndt"
-            ]
-          },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${ds}"
-          },
-          "definition": "label_values(tcpinfo_flow_events_total, deployment)",
-          "hide": 0,
-          "includeAll": false,
-          "label": "Deployment",
-          "multi": true,
-          "name": "deployment",
-          "options": [],
-          "query": {
-            "query": "label_values(tcpinfo_flow_events_total, deployment)",
-            "refId": "StandardVariableQuery"
-          },
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "sort": 0,
-          "type": "query"
         }
       ]
     },
     "time": {
-      "from": "now-24h",
+      "from": "now-2d",
       "to": "now"
     },
     "timepicker": {
@@ -514,6 +482,6 @@
     "timezone": "",
     "title": "Revtr sidecar monitoring",
     "uid": "e4l4LjWIk",
-    "version": 32,
+    "version": 33,
     "weekStart": ""
   }
