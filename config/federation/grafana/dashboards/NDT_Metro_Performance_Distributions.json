@@ -24,6 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 429,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -44,7 +45,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${datasource}"
       },
       "gridPos": {
@@ -88,14 +89,14 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0010875993975004274,
-              0.020664388552508118
+              -0.0014820288296077358,
+              0.02815854776254698
             ],
             "type": "linear"
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
       },
       "targets": [
         {
@@ -103,11 +104,14 @@
             "type": "doitintl-bigquery-datasource",
             "uid": "${datasource}"
           },
-          "format": "table",
+          "editorMode": "code",
+          "format": 0,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
+          "project": "mlab-oti",
           "rawQuery": true,
           "rawSql": "-- $__timeFilter(date) --date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\nSELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\n\nFROM `ops.ndt7_download_pdf`(0.1, 3500, \"MeanThroughputMbps\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${metro:regex}\")",
           "refId": "A",
@@ -121,6 +125,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "-- time --",
           "timeColumnType": "DATE",
           "where": [
@@ -137,7 +158,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${datasource}"
       },
       "description": "",
@@ -182,14 +203,14 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0031575176653435713,
-              0.05999283564152785
+              -0.0031141137971075687,
+              0.05916816214504381
             ],
             "type": "linear"
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
       },
       "targets": [
         {
@@ -197,11 +218,14 @@
             "type": "doitintl-bigquery-datasource",
             "uid": "${datasource}"
           },
-          "format": "table",
+          "editorMode": "code",
+          "format": 0,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
+          "project": "mlab-oti",
           "rawQuery": true,
           "rawSql": "-- $__timeFilter(date) --date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\nSELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\n\nFROM `ops.ndt7_download_pdf`(0.1, 300, \"MinRTT\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${metro:regex}\")",
           "refId": "A",
@@ -215,6 +239,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "-- time --",
           "timeColumnType": "DATE",
           "where": [
@@ -231,7 +272,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${datasource}"
       },
       "description": "",
@@ -276,14 +317,14 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0007428484769035815,
-              0.014114121061168047
+              -0.0006716650081073675,
+              0.012761635154039982
             ],
             "type": "linear"
           }
         },
         "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values.buffer;\nvar y = data.series[0].fields[1].values.buffer;\nvar names = data.series[0].fields[2].values.buffer;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
       },
       "targets": [
         {
@@ -291,11 +332,14 @@
             "type": "doitintl-bigquery-datasource",
             "uid": "${datasource}"
           },
-          "format": "table",
+          "editorMode": "code",
+          "format": 0,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
+          "project": "mlab-oti",
           "rawQuery": true,
           "rawSql": "-- $__timeFilter(date) --date BETWEEN \"2023-03-04\" AND \"2023-03-04\"\nSELECT\n  xright,\n  CASE \"$mode\"\n    WHEN \"pdf\" THEN site_pdf\n    ELSE site_cdf\n  END AS data,\n  site,\n\nFROM `ops.ndt7_download_pdf`(1e-6, 1, \"LossRate\", \"${__from:date:YYYY-MM-DD}\", \"${__to:date:YYYY-MM-DD}\", \"${metro:regex}\")",
           "refId": "A",
@@ -309,6 +353,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "-- time --",
           "timeColumnType": "DATE",
           "where": [
@@ -325,7 +386,7 @@
     },
     {
       "datasource": {
-        "type": "doitintl-bigquery-datasource",
+        "type": "grafana-bigquery-datasource",
         "uid": "${datasource}"
       },
       "fieldConfig": {
@@ -334,6 +395,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -347,6 +409,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineStyle": {
               "fill": "solid"
@@ -409,13 +472,16 @@
             "type": "doitintl-bigquery-datasource",
             "uid": "${datasource}"
           },
-          "format": "time_series",
+          "editorMode": "code",
+          "format": 0,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
+          "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT TIMESTAMP_TRUNC(a.TestTime, HOUR) as date, server.Site as metric, COUNT(*) as total\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\nWHERE\n   $__timeFilter(date)\n AND REGEXP_CONTAINS(server.Site, \"${metro:regex}\")\nGROUP by date, metric\nORDER BY date, metric",
+          "rawSql": "SELECT TIMESTAMP_TRUNC(a.TestTime, HOUR) as date, server.Site as metric, COUNT(*) as total\nFROM `measurement-lab.ndt_intermediate.extended_ndt7_downloads`\nWHERE\n   $__timeFilter(TIMESTAMP(date))\n AND REGEXP_CONTAINS(server.Site, \"${metro:regex}\")\nGROUP by date, metric\nORDER BY date, metric",
           "refId": "A",
           "select": [
             [
@@ -427,6 +493,23 @@
               }
             ]
           ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "timeColumn": "-- time --",
           "timeColumnType": "DATE",
           "where": [
@@ -442,24 +525,23 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
-  "schemaVersion": 37,
-  "style": "dark",
+  "refresh": "",
+  "schemaVersion": 38,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
-          "text": "BigQuery (mlab-oti)",
-          "value": "BigQuery (mlab-oti)"
+          "selected": false,
+          "text": "Google BigQuery (mlab-oti)",
+          "value": "PE8D1C7E267159A85"
         },
         "hide": 1,
         "includeAll": false,
         "multi": false,
         "name": "datasource",
         "options": [],
-        "query": "doitintl-bigquery-datasource",
+        "query": "grafana-bigquery-datasource",
         "queryValue": "",
         "refresh": 1,
         "regex": "/(mlab-oti|mlab-staging|mlab-sandbox)/",
@@ -470,7 +552,7 @@
         "current": {
           "selected": false,
           "text": "Platform Cluster (mlab-oti)",
-          "value": "Platform Cluster (mlab-oti)"
+          "value": "WW1Jk2sGk"
         },
         "hide": 1,
         "includeAll": false,
@@ -515,7 +597,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "physical",
             "virtual"
@@ -583,6 +665,6 @@
   "timezone": "",
   "title": "NDT: Metro Performance Distributions",
   "uid": "ZCG2vk8Vk",
-  "version": 19,
+  "version": 4,
   "weekStart": ""
 }
