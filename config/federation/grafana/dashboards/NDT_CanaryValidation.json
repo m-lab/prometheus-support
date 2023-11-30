@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -19,15 +22,19 @@
     ]
   },
   "description": "This dashboard allows to compare the production version of ndt-server with the current canary release(s).",
-  "editable": false,
-  "gnetId": null,
+  "editable": true,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1639523959931,
+  "id": 369,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -36,11 +43,23 @@
       },
       "id": 24,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "xIXR1_LMz"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Summary",
       "type": "row"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "Variation in the weighted average of download speeds worldwide, averaged over the selected time range to get a single value.",
       "fieldConfig": {
         "defaults": {
@@ -94,14 +113,20 @@
           "values": false
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 1,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -122,6 +147,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -139,7 +181,10 @@
       "type": "stat"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "Variation in the weighted average of logMeanMinRTT for all metros, averaged over the selected time range to get a single value.",
       "fieldConfig": {
         "defaults": {
@@ -180,14 +225,20 @@
           "values": false
         },
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.1",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 1,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -208,6 +259,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -226,7 +294,10 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -235,11 +306,23 @@
       },
       "id": 12,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "xIXR1_LMz"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Global Stats",
       "type": "row"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "Weighted Geometric Mean of log_mean_speed for all metros",
       "fieldConfig": {
         "defaults": {
@@ -247,6 +330,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
@@ -259,6 +345,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -337,17 +424,24 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 0,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -368,6 +462,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -385,7 +496,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "Weighted Geometric Mean of logMeanMinRTT for all metros",
       "fieldConfig": {
         "defaults": {
@@ -393,6 +507,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
@@ -405,6 +522,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -467,17 +585,24 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 0,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -498,6 +623,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -515,7 +657,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -523,6 +668,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "left",
             "barAlignment": 0,
@@ -534,6 +682,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -617,17 +766,24 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 0,
           "group": [],
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -648,6 +804,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -661,6 +834,9 @@
         },
         {
           "dataset": "statistics",
+          "datasource": {
+            "uid": "${datasource}"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -696,6 +872,9 @@
           ]
         },
         {
+          "datasource": {
+            "uid": "${datasource}"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -731,7 +910,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "Weighted Geometric Mean of log_mean_speed for all metros, by client",
       "fieldConfig": {
         "defaults": {
@@ -739,6 +921,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
@@ -751,6 +936,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -813,18 +999,25 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 0,
           "group": [],
           "hide": false,
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -845,6 +1038,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -862,7 +1072,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -870,6 +1083,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -881,6 +1097,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
@@ -926,18 +1143,25 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "right"
+          "placement": "right",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 0,
           "group": [],
           "hide": false,
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -958,6 +1182,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -976,7 +1217,10 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "xIXR1_LMz"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -985,11 +1229,23 @@
       },
       "id": 10,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "xIXR1_LMz"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Download Stats ($metro)",
       "type": "row"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -997,6 +1253,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1008,6 +1267,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1054,18 +1314,25 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 0,
           "group": [],
           "hide": false,
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -1086,6 +1353,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -1103,13 +1387,18 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "uid": "${datasource}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1121,6 +1410,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1166,15 +1456,20 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
+          "datasource": {
+            "uid": "${datasource}"
+          },
           "format": "time_series",
           "group": [],
           "metricColumn": "none",
@@ -1214,7 +1509,9 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "uid": "${datasource}"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1222,6 +1519,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1233,6 +1533,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1279,15 +1580,20 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "dataset": "statistics",
+          "datasource": {
+            "uid": "${datasource}"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -1328,7 +1634,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": "${datasource}",
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "description": "",
       "gridPos": {
         "h": 9,
@@ -1375,9 +1684,14 @@
       "targets": [
         {
           "dataset": "statistics",
-          "format": "time_series",
+          "datasource": {
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 0,
           "group": [],
           "hide": false,
+          "location": "US",
           "metricColumn": "none",
           "orderByCol": "1",
           "orderBySort": "1",
@@ -1398,6 +1712,23 @@
             ]
           ],
           "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
           "table": "ndt_canary_gfr",
           "timeColumn": "test_date",
           "timeColumnType": "DATE",
@@ -1411,6 +1742,9 @@
         },
         {
           "dataset": "statistics",
+          "datasource": {
+            "uid": "${datasource}"
+          },
           "format": "time_series",
           "group": [],
           "hide": false,
@@ -1451,7 +1785,10 @@
       "type": "ae3e-plotly-panel"
     },
     {
-      "datasource": "Platform Cluster (mlab-oti)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WW1Jk2sGk"
+      },
       "description": "NOTE: This should be normalized by number of tests, instead of the raw errors per minute.",
       "fieldConfig": {
         "defaults": {
@@ -1459,6 +1796,9 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1470,6 +1810,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1515,14 +1856,20 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WW1Jk2sGk"
+          },
           "exemplar": true,
           "expr": "60 * avg(\n     label_replace(\n     rate(ndt7_client_sender_errors_total{deployment=\"ndt\", machine=~\".*$metro.*\"}[$interval]),\n      \"site\",\n      \"$1\",\n      \"machine\",\n      \"mlab[1-4]-([a-zA-Z]{3}\\\\d{2}).+\"\n    )\n) by (site, deployment)",
           "interval": "",
@@ -1530,6 +1877,10 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WW1Jk2sGk"
+          },
           "exemplar": true,
           "expr": "60 * avg(\n     label_replace(\n     rate(ndt7_client_sender_errors_total{deployment=\"$canary\", machine=~\".*$metro.*\"}[$interval]),\n      \"site\",\n      \"$1\",\n      \"machine\",\n      \"mlab[1-4]-([a-zA-Z]{3}\\\\d{2}).+\"\n    )\n) by (site, deployment)",
           "hide": false,
@@ -1544,43 +1895,37 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 30,
-  "style": "dark",
+  "schemaVersion": 38,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "BigQuery (mlab-oti)",
-          "value": "BigQuery (mlab-oti)"
+          "text": "Google BigQuery (mlab-oti)",
+          "value": "PE8D1C7E267159A85"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Datasource",
         "multi": false,
         "name": "datasource",
         "options": [],
-        "query": "doitintl-bigquery-datasource",
+        "query": "grafana-bigquery-datasource",
+        "queryValue": "",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
       },
       {
-        "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "mlab-oti",
           "value": "mlab-oti"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "project",
         "options": [
@@ -1606,19 +1951,18 @@
         "type": "custom"
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "mlab-oti.statistics.ndt_canary_2021",
           "value": "mlab-oti.statistics.ndt_canary_2021"
         },
-        "datasource": "BigQuery (mlab-oti)",
+        "datasource": {
+          "uid": "BigQuery (mlab-oti)"
+        },
         "definition": "SELECT CONCAT(table_catalog, \".\", table_schema, \".\", table_name) FROM `$project.statistics.INFORMATION_SCHEMA.TABLES` WHERE STARTS_WITH(table_name, 'ndt') OR STARTS_WITH(table_name, 'gfr')",
         "description": "",
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "table",
         "options": [],
@@ -1630,7 +1974,6 @@
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {
           "selected": true,
           "text": [
@@ -1640,13 +1983,12 @@
             "lga"
           ]
         },
-        "datasource": "BigQuery (mlab-oti)",
+        "datasource": {
+          "uid": "BigQuery (mlab-oti)"
+        },
         "definition": "SELECT DISTINCT METRO FROM $table",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": true,
         "name": "metro",
         "options": [],
@@ -1666,10 +2008,7 @@
           "text": "10m",
           "value": "10m"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
-        "label": null,
         "name": "interval",
         "options": [
           {
@@ -1720,19 +2059,17 @@
         "type": "interval"
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "ist",
           "value": "ist"
         },
-        "datasource": "BigQuery (mlab-oti)",
+        "datasource": {
+          "uid": "BigQuery (mlab-oti)"
+        },
         "definition": "SELECT DISTINCT clientName FROM $table",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "client",
         "options": [],
@@ -1749,10 +2086,7 @@
           "text": "5000",
           "value": "5000"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
-        "label": null,
         "name": "nclients",
         "options": [
           {
@@ -1766,16 +2100,16 @@
         "type": "textbox"
       },
       {
-        "allValue": null,
         "current": {
           "selected": false,
           "text": "ndt-canary",
           "value": "ndt-canary"
         },
-        "datasource": "BigQuery (mlab-oti)",
+        "datasource": {
+          "uid": "BigQuery (mlab-oti)"
+        },
         "definition": "SELECT DISTINCT NDTVersion FROM $table",
         "description": "The canary version to compare",
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Canary version",
@@ -1799,5 +2133,6 @@
   "timezone": "",
   "title": "NDT: Canary Validation",
   "uid": "kFrLGgLVu",
-  "version": 2
+  "version": 78,
+  "weekStart": ""
 }

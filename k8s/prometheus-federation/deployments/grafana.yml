@@ -25,7 +25,7 @@ spec:
       containers:
       # Check https://hub.docker.com/r/grafana/grafana/tags/ for the current
       # stable version.
-      - image: grafana/grafana:9.1.5
+      - image: grafana/grafana:10.2.2
         name: grafana-server
         # NOTE: the official Grafana Docker images may set various environment
         # variables which will override configurations in grafana.ini (which is
@@ -38,12 +38,8 @@ spec:
           value: "/etc/provisioning"
           # This comma-separated list of plugins will be installed on
           # server startup.
-          #
-          # Note: The "doitintl" BQ plugin is unmantained and deprecated in
-          # favor of the official one maintained by Grafana. Some dashboards
-          # still use datasources created with this plugin.
         - name: GF_INSTALL_PLUGINS
-          value: "doitintl-bigquery-datasource,grafana-bigquery-datasource"
+          value: "grafana-bigquery-datasource,ae3e-plotly-panel"
         - name: GF_SECURITY_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
