@@ -1336,7 +1336,7 @@ groups:
     expr: |
       sum by (experiment, datatype) (increase(autoloader_duration_count{period="daily", status="OK"}[6h])) == 0
         OR sum by (experiment, datatype) (increase(autoloader_duration_count{period="daily", status!="OK"}[6h])) > 0
-    for: 3h
+    for: 6h
     labels:
       repo: dev-tracker
       severity: ticket
