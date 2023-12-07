@@ -944,7 +944,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT \n  TIMESTAMP_TRUNC(TIMESTAMP(date), WEEK, \"UTC\") AS time,\n  COUNT(*) AS testCount\nFROM \n  ndt.ndt7\nWHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN ( SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\nGROUP BY time\nORDER BY time",
+          "rawSql": "SELECT \n  TIMESTAMP_TRUNC(TIMESTAMP(date), WEEK, \"UTC\") AS time,\n  COUNT(*) AS testCount\nFROM \n  ndt.ndt7\nWHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND DATE_TRUNC(date, WEEK) != DATE_TRUNC(CURRENT_DATE, WEEK)\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n   AND (\"ist\" IN ( SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\nGROUP BY time\nORDER BY time",
           "refId": "A",
           "select": [
             [
@@ -1084,7 +1084,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT \n  TIMESTAMP_TRUNC(TIMESTAMP(date), WEEK, \"UTC\") AS time,\n  SUM(ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked)/1000000000000 AS totalTB\nFROM \n  ndt.ndt7\nWHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n   AND (\"ist\" IN ( SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\nGROUP BY time\nORDER BY time",
+          "rawSql": "SELECT \n  TIMESTAMP_TRUNC(TIMESTAMP(date), WEEK, \"UTC\") AS time,\n  SUM(ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)].TCPInfo.BytesAcked)/1000000000000 AS totalTB\nFROM \n  ndt.ndt7\nWHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND DATE_TRUNC(date, WEEK) != DATE_TRUNC(CURRENT_DATE, WEEK)\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n   AND (\"ist\" IN ( SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata))\n   AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n   AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n   AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\nGROUP BY time\nORDER BY time",
           "refId": "A",
           "select": [
             [
@@ -1129,7 +1129,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": false,
+  "refresh": "",
   "schemaVersion": 38,
   "tags": [],
   "templating": {
@@ -1274,6 +1274,6 @@
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 35,
+  "version": 39,
   "weekStart": ""
 }
