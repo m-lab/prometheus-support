@@ -879,7 +879,7 @@ groups:
 # GardenerFailureRateTooHigh fires when the number of failed Gardener jobs
 # in the last day rises above 1%.
   - alert: GardenerFailureRateTooHighOrMissing
-    expr: (sum(increase(gardener_jobs_total{status!="success"}[1d])) by (experiment, datatype) > 3
+    expr: sum(increase(gardener_jobs_total{status!="success"}[1d])) by (experiment, datatype) > 3
     for: 24h
     labels:
       repo: dev-tracker
