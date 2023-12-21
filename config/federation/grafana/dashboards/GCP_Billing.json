@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 339,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -860,7 +859,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, DAY) AS date,\n  SUM(cost) as gce_egress_sum\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time)\n  AND service.description = 'Compute Engine'\n  AND sku.description LIKE 'Network Internet Egress%'\n  AND cost > 0\n  AND project.id = 'mlab-oti'\nGROUP BY\n  date\nORDER BY\n  date\n",
+          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, DAY) AS date,\n  SUM(cost) as gce_egress_sum\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time)\n  AND service.description = 'Compute Engine'\n  AND (sku.description LIKE 'Network Internet Egress%' OR sku.description LIKE 'Network Internet Data Transfer Out %')\n  AND cost > 0\n  AND project.id = 'mlab-oti'\nGROUP BY\n  date\nORDER BY\n  date\n",
           "refId": "B",
           "select": [
             [
@@ -914,7 +913,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, DAY) AS date,\n  sku.description as metric,\n  SUM(cost) as gce_egress\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time)\n  AND service.description = 'Compute Engine'\n  AND sku.description LIKE 'Network Internet Egress%'\n  AND cost > 10\n  AND project.id = 'mlab-oti'\nGROUP BY\n  date, metric\nORDER BY\n  date, gce_egress\n",
+          "rawSql": "SELECT\n  TIMESTAMP_TRUNC(usage_start_time, DAY) AS date,\n  sku.description as metric,\n  SUM(cost) as gce_egress\nFROM\n  `mlab-oti.billing.unified`\nWHERE\n  $__timeFilter(usage_start_time)\n  AND service.description = 'Compute Engine'\n  AND (sku.description LIKE 'Network Internet Egress%' OR sku.description LIKE 'Network Internet Data Transfer Out %')\n  AND cost > 10\n  AND project.id = 'mlab-oti'\nGROUP BY\n  date, metric\nORDER BY\n  date, gce_egress\n",
           "refId": "C",
           "select": [
             [
@@ -1588,7 +1587,7 @@
         "current": {
           "selected": false,
           "text": "Platform Cluster (mlab-oti)",
-          "value": "WW1Jk2sGk"
+          "value": "xXLAihsGz"
         },
         "hide": 0,
         "includeAll": false,
@@ -1625,6 +1624,6 @@
   "timezone": "",
   "title": "GCP Billing",
   "uid": "a5mC51ZMk",
-  "version": 57,
+  "version": 58,
   "weekStart": ""
 }
