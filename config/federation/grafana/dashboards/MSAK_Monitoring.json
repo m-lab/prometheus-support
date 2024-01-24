@@ -22,6 +22,19 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 14,
+      "panels": [],
+      "title": "Global statistics",
+      "type": "row"
+    },
+    {
       "circleMaxSize": "10",
       "circleMinSize": "1",
       "colors": [
@@ -42,7 +55,7 @@
         "h": 20,
         "w": 16,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "hideEmpty": false,
       "hideZero": false,
@@ -121,7 +134,7 @@
         "h": 5,
         "w": 7,
         "x": 16,
-        "y": 0
+        "y": 1
       },
       "id": 3,
       "options": {
@@ -147,7 +160,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "count(kube_pod_container_status_running{exported_container=\"msak\"})",
+          "expr": "sum(kube_pod_container_status_running{exported_container=\"msak\"})",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -189,7 +202,7 @@
         "h": 5,
         "w": 7,
         "x": 16,
-        "y": 5
+        "y": 6
       },
       "id": 10,
       "options": {
@@ -288,7 +301,7 @@
         "h": 5,
         "w": 7,
         "x": 16,
-        "y": 10
+        "y": 11
       },
       "id": 4,
       "options": {
@@ -383,7 +396,7 @@
         "h": 5,
         "w": 7,
         "x": 16,
-        "y": 15
+        "y": 16
       },
       "id": 1,
       "options": {
@@ -479,7 +492,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 2,
       "options": {
@@ -601,7 +614,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 20
+        "y": 21
       },
       "id": 9,
       "options": {
@@ -722,7 +735,7 @@
         "h": 7,
         "w": 7,
         "x": 16,
-        "y": 20
+        "y": 21
       },
       "id": 5,
       "options": {
@@ -834,7 +847,7 @@
         "h": 9,
         "w": 23,
         "x": 0,
-        "y": 27
+        "y": 28
       },
       "id": 8,
       "options": {
@@ -842,10 +855,10 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "right",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -880,6 +893,208 @@
       ],
       "title": "Average and topk (5) goroutines",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 13,
+      "panels": [],
+      "title": "Jostler",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "bundles/s",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 38
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "hW1JkhyGk"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(jostler_bytes_per_bundle_count{workload=\"msak\"}[$__rate_interval]))",
+          "instant": false,
+          "legendFormat": "Bundles",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "rate(jostler_bytes_per_bundle_count{workload=\"msak\"}[$__rate_interval])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{machine}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Bundles upload rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          },
+          "fieldMinMax": false
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 12,
+        "y": 38
+      },
+      "id": 12,
+      "options": {
+        "calculate": false,
+        "cellGap": 1,
+        "color": {
+          "exponent": 0.5,
+          "fill": "dark-orange",
+          "mode": "scheme",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "Oranges",
+          "steps": 64
+        },
+        "exemplars": {
+          "color": "red"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": true
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "show": true,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "reverse": false
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "hW1JkhyGk"
+          },
+          "editorMode": "code",
+          "expr": "sum(increase(jostler_bytes_per_bundle_bucket[$__rate_interval])) by (le)",
+          "format": "heatmap",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Bundle size",
+      "type": "heatmap"
     }
   ],
   "refresh": "5s",
@@ -916,6 +1131,6 @@
   "timezone": "",
   "title": "MSAK monitoring",
   "uid": "b00a7fe1-6ceb-449c-b438-a00576e222c2",
-  "version": 17,
+  "version": 18,
   "weekStart": ""
 }
