@@ -993,24 +993,11 @@
             "uid": "hW1JkhyGk"
           },
           "editorMode": "code",
-          "expr": "sum(rate(jostler_bytes_per_bundle_count{workload=\"msak\"}[$__rate_interval]))",
+          "expr": "sum(increase(jostler_bytes_per_bundle_count{workload=\"msak\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "Bundles",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "expr": "rate(jostler_bytes_per_bundle_count{workload=\"msak\"}[$__rate_interval])",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{machine}}",
-          "range": true,
-          "refId": "B"
         }
       ],
       "title": "Bundles upload rate",
@@ -1074,7 +1061,8 @@
         },
         "yAxis": {
           "axisPlacement": "left",
-          "reverse": false
+          "reverse": false,
+          "unit": "decbytes"
         }
       },
       "pluginVersion": "10.2.2",
@@ -1085,7 +1073,7 @@
             "uid": "hW1JkhyGk"
           },
           "editorMode": "code",
-          "expr": "sum(increase(jostler_bytes_per_bundle_bucket[$__rate_interval])) by (le)",
+          "expr": "sum(increase(jostler_bytes_per_bundle_bucket{workload=\"msak\"}[$__rate_interval])) by (le)",
           "format": "heatmap",
           "instant": false,
           "legendFormat": "__auto",
@@ -1104,9 +1092,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "Platform Cluster (mlab-sandbox)",
-          "value": "hW1JkhyGk"
+          "selected": true,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "WW1Jk2sGk"
         },
         "hide": 0,
         "includeAll": false,
@@ -1124,7 +1112,7 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
