@@ -335,12 +335,11 @@ scrape_configs:
       # consistency with our legacy way of doing things.
       #
       # TODO: In the future we may drop the 'experiment' label altogether in
-      # favor of some native k8s one (e.g., 'deployment'), or to at the very
-      # least shorten the name to just 'ndt'
+      # favor of some native k8s one (e.g., 'deployment').
       - source_labels: [deployment]
         regex: ndt.*
         target_label: experiment
-        replacement: ndt.iupui
+        replacement: ndt
 
       # Rewrite the machine label to make it easier to join these metrics with
       # existing metrics that use machine instead of the node label.
@@ -680,11 +679,9 @@ scrape_configs:
         replacement: ${1}
 
       # Create an "fqdn" label for each target host, which will vary depending
-      # on the service. TODO(kinkade): once the ".iupui" suffix is entirely
-      # retired from the platform, modify the regexp to simply use the entire
-      # experiment label's value.
+      # on the service.
       - source_labels: [__address__, experiment]
-        regex: (.*);([a-z0-9]+)\.?.*
+        regex: (.*);(.*)
         target_label: fqdn
         replacement: ${2}-${1}
 
