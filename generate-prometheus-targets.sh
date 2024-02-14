@@ -50,7 +50,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ndt7 \
       --label module=tcp_v4_tls_online \
       --project "${project}" \
-      --select "ndt.iupui" > \
+      --select "ndt" > \
           ${output}/blackbox-targets/ndt7.json
 
   # ndt7 SSL on port 443 over IPv6
@@ -61,7 +61,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
       --project "${project}" \
-      --select "ndt.iupui" \
+      --select "ndt" \
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt7_ipv6.json
 
@@ -72,7 +72,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ndt_raw \
       --label module=tcp_v4_online \
       --project "${project}" \
-      --select "ndt.iupui" > \
+      --select "ndt" > \
           ${output}/blackbox-targets/ndt_raw.json
 
   # NDT "raw" on port 3001 over IPv6
@@ -83,7 +83,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label module=tcp_v6_online \
       --label __blackbox_port=${!bbe_port} \
       --project "${project}" \
-      --select "ndt.iupui" \
+      --select "ndt" \
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt_raw_ipv6.json
 
@@ -94,7 +94,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=ndt_ssl \
       --label module=tcp_v4_tls_online \
       --project "${project}" \
-      --select "ndt.iupui" > \
+      --select "ndt" > \
           ${output}/blackbox-targets/ndt_ssl.json
 
   # NDT SSL on port 3010 over IPv6
@@ -105,7 +105,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label module=tcp_v6_tls_online \
       --label __blackbox_port=${!bbe_port} \
       --project "${project}" \
-      --select "ndt.iupui" \
+      --select "ndt" \
       --decoration "v6" > \
           ${output}/blackbox-targets-ipv6/ndt_ssl_ipv6.json
 
@@ -114,7 +114,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --sites="${sites}" \
       --template_target={{hostname}} \
       --label service=ndt5_client \
-      --label experiment=ndt.iupui \
+      --label experiment=ndt \
       --project "${project}" > \
           ${output}/script-targets/ndt5_client.json
 
@@ -134,7 +134,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=neubot \
       --label module=tcp_v4_online \
       --project "${project}" \
-      --select "neubot.mlab" > \
+      --select "neubot" > \
           ${output}/blackbox-targets/neubot.json
 
   # neubot on port 80 over IPv6
@@ -146,7 +146,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label __blackbox_port=${!bbe_port} \
       --decoration "v6" \
       --project "${project}" \
-      --select "neubot.mlab" > \
+      --select "neubot" > \
           ${output}/blackbox-targets-ipv6/neubot_ipv6.json
 
   # neubot TLS on port 443 over IPv4
@@ -156,7 +156,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label service=neubot_tls \
       --label module=tcp_v4_tls_online \
       --project "${project}" \
-      --select "neubot.mlab" > \
+      --select "neubot" > \
           ${output}/blackbox-targets/neubot_tls.json
 
   # neubot TLS on port 443 over IPv6
@@ -168,7 +168,7 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --label __blackbox_port=${!bbe_port} \
       --decoration "v6" \
       --project "${project}" \
-      --select "neubot.mlab" > \
+      --select "neubot" > \
           ${output}/blackbox-targets-ipv6/neubot_tls_ipv6.json
 
   # ICMP probe for platform switches

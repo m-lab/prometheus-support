@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": false,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -14,25 +17,31 @@
   },
   "description": "Monitor behavior of clients running tests to NDT & Neubot every 6 hours",
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "iteration": 1554149766293,
+  "id": 69,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "$datasource"
+      },
       "description": "The query used to collect these counts is based on the one used by mlab-ns-rate-limiter.\n\nTimestamps are offset 15m later than actual time.",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 14,
         "w": 24,
         "x": 0,
         "y": 0
       },
+      "hiddenSeries": false,
       "id": 2,
       "legend": {
         "avg": false,
@@ -47,7 +56,11 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
+      "pluginVersion": "10.2.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -62,6 +75,9 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "expr": "bq_mlabns_sixhour_requests",
           "format": "time_series",
           "interval": "5m",
@@ -70,17 +86,20 @@
           "refId": "A"
         },
         {
-          "expr": "sum by (index)(8 * rate(sidestream_transmit_bytes_total{index=~\"neubot.mlab|ndt.iupui\"}[5m] offset 15m))",
+          "datasource": {
+            "uid": "$datasource"
+          },
+          "editorMode": "code",
+          "expr": "sum by (index)(8 * rate(sidestream_transmit_bytes_total{index=~\"neubot|ndt\"}[5m] offset 15m))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Bandwidth - {{index}}",
+          "range": true,
           "refId": "B"
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Raw 5m Request Counts to MLAB-NS by 6-hour clients",
       "tooltip": {
         "shared": true,
@@ -89,9 +108,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -100,39 +117,35 @@
           "format": "short",
           "label": "mlab-ns Requests",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "format": "bps",
           "label": "Sidestream Bandwidth",
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
-  "refresh": false,
-  "schemaVersion": 16,
-  "style": "dark",
+  "refresh": "",
+  "schemaVersion": 38,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "tags": [],
+          "selected": false,
           "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "value": "000000008"
         },
         "hide": 0,
+        "includeAll": false,
         "label": "Datasource",
+        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
@@ -175,5 +188,6 @@
   "timezone": "utc",
   "title": "MLAB-NS: 6-hour Client Counts",
   "uid": "CR4zGH6mk",
-  "version": 6
+  "version": 2,
+  "weekStart": ""
 }
