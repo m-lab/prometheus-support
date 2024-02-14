@@ -356,7 +356,7 @@ For example:
             "service": "sidestream"
         },
         "targets": [
-            "ndt-mlab4-mia03.measurement-lab.org:9090"
+            "npad.iupui.mlab4.mia03.measurement-lab.org:9090"
         ]
     }
 ]
