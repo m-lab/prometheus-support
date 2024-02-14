@@ -3,10 +3,7 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": {
-          "type": "datasource",
-          "uid": "grafana"
-        },
+        "datasource": "-- Grafana --",
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -16,20 +13,23 @@
     ]
   },
   "editable": true,
-  "fiscalYearStartMonth": 0,
+  "gnetId": null,
   "graphTooltip": 0,
-  "id": 89,
+  "id": 357,
+  "iteration": 1628630520671,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -57,7 +57,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -67,19 +67,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt_ssl$protocol\"} OR\n    script_success{service=\"ndt5_client\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"ndt\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt_ssl$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
+          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt_ssl$protocol\"} OR\n    script_success{service=\"ndt5_client\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt.iupui\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt_ssl$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
           "interval": "",
           "legendFormat": "",
-          "range": true,
           "refId": "A"
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "ndt5 (wss) $protocol: % up",
       "tooltip": {
         "shared": true,
@@ -88,25 +85,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "percentunit",
+          "label": null,
           "logBase": 1,
+          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -114,9 +119,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -144,7 +152,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -154,19 +162,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt7$protocol\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"ndt\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt7$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
+          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"ndt7$protocol\"} OR\n    label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n      node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n        node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n        \"experiment\", \"ndt.iupui\", \"\", \"\") < bool 0.95 OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"ndt.iupui\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"ndt7$protocol\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
           "interval": "",
           "legendFormat": "",
-          "range": true,
           "refId": "A"
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "ndt7 $protocol: % up",
       "tooltip": {
         "shared": true,
@@ -175,25 +180,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "percentunit",
+          "label": null,
           "logBase": 1,
+          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -201,11 +214,14 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
+      "datasource": "$datasource",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -232,7 +248,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -242,19 +258,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
-          "editorMode": "code",
-          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} OR\n    probe_success{service=\"neubot_tls$protocol\", experiment=\"neubot\"} OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"neubot\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"neubot\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
+          "expr": "sum(\n  min by (experiment, machine) (\n    probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} OR\n    probe_success{service=\"neubot_tls$protocol\", experiment=\"neubot\"} OR\n    label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"},\n      \"experiment\", \"neubot.mlab\", \"\", \"\") != bool 1 OR\n    label_replace(gmx_machine_maintenance, \"experiment\", \"neubot.mlab\", \"\", \"\") != bool 1\n  )\n) /\ncount(\n  probe_success{service=\"neubot$protocol\", experiment=\"neubot\"} unless on(machine)\n  (gmx_machine_maintenance == 1 unless on(machine) kube_node_status_condition)\n)",
           "interval": "",
           "legendFormat": "",
-          "range": true,
           "refId": "A"
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "neubot $protocol: % up",
       "tooltip": {
         "shared": true,
@@ -263,25 +276,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "percentunit",
+          "label": null,
           "logBase": 1,
+          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -289,8 +310,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -318,7 +343,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -328,9 +353,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "sum (\n  node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n  node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}\n)\n              ",
           "interval": "",
           "legendFormat": "",
@@ -338,7 +360,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "Disk space used (sum)",
       "tooltip": {
         "shared": true,
@@ -347,24 +371,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "decbytes",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -372,8 +405,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -401,7 +438,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -411,9 +448,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "sum(probe_success{service=\"ndt_ssl$protocol\"})",
           "interval": "",
           "legendFormat": "",
@@ -421,7 +455,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "ndt5 (wss) $protocol: probe_success",
       "tooltip": {
         "shared": true,
@@ -430,25 +466,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -456,8 +500,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -485,7 +533,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -495,9 +543,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "sum(probe_success{service=\"ndt7$protocol\"})",
           "interval": "",
           "legendFormat": "",
@@ -505,7 +550,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "ndt7 $protocol: probe_success",
       "tooltip": {
         "shared": true,
@@ -514,25 +561,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -540,10 +595,14 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "uid": "$datasource"
-      },
+      "datasource": "$datasource",
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -570,7 +629,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -580,9 +639,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "sum(probe_success{service=\"neubot$protocol\", experiment=\"neubot\"})",
           "interval": "",
           "legendFormat": "",
@@ -590,7 +646,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "neubot $protocol: probe_success",
       "tooltip": {
         "shared": true,
@@ -599,25 +657,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -625,8 +691,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -654,7 +724,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -664,9 +734,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "count(gmx_machine_maintenance == 1)\n              ",
           "interval": "",
           "legendFormat": "",
@@ -674,7 +741,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "GMXed nodes (count)",
       "tooltip": {
         "shared": true,
@@ -683,24 +752,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -708,8 +786,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -737,7 +819,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -747,9 +829,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "sum(script_success{service=\"ndt5_client\"})",
           "interval": "",
           "legendFormat": "",
@@ -757,7 +836,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "ndt5 (wss) IPv4: e2e",
       "tooltip": {
         "shared": true,
@@ -766,25 +847,33 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
           "min": "0",
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     },
     {
@@ -792,8 +881,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": {
-        "uid": "$datasource"
+      "datasource": "$datasource",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
       },
       "fill": 1,
       "fillGradient": 0,
@@ -821,7 +914,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "7.3.5",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -831,18 +924,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "count(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"})\n              ",
           "interval": "",
           "legendFormat": "nodes",
           "refId": "A"
         },
         {
-          "datasource": {
-            "uid": "$datasource"
-          },
           "expr": "count(lame_duck_experiment{cluster=\"platform\"} == 1)",
           "interval": "",
           "legendFormat": "experiments",
@@ -850,7 +937,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "Lame-ducks (count)",
       "tooltip": {
         "shared": true,
@@ -859,29 +948,39 @@
       },
       "type": "graph",
       "xaxis": {
+        "buckets": null,
         "mode": "time",
+        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         },
         {
           "format": "short",
+          "label": null,
           "logBase": 1,
+          "max": null,
+          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false
+        "align": false,
+        "alignLevel": null
       }
     }
   ],
-  "refresh": "",
-  "schemaVersion": 38,
+  "refresh": false,
+  "schemaVersion": 26,
+  "style": "dark",
   "tags": [],
   "templating": {
     "list": [
@@ -889,8 +988,9 @@
         "current": {
           "selected": false,
           "text": "Prometheus (mlab-oti)",
-          "value": "000000008"
+          "value": "Prometheus (mlab-oti)"
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Datasource",
@@ -905,11 +1005,13 @@
         "type": "datasource"
       },
       {
+        "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "IPv4",
           "value": ""
         },
+        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Protocol",
@@ -942,6 +1044,5 @@
   "timezone": "",
   "title": "MLAB-NS: Prometheus Queries",
   "uid": "T-t8rWwGz",
-  "version": 5,
-  "weekStart": ""
+  "version": 20
 }
