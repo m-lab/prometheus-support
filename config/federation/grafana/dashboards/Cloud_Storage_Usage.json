@@ -1,0 +1,446 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 460,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PE8D1C7E267159A85"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Request Count",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 17,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "maxDataPoints": 200000,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "dataset": "ndt",
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PE8D1C7E267159A85"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "US",
+          "partitioned": true,
+          "partitionedField": "date",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email,\n  t\nORDER BY\n  t",
+          "refId": "A",
+          "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "ndt7"
+        }
+      ],
+      "title": "Total User Requests / Hour",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PE8D1C7E267159A85"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 17,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 5,
+          "values": true
+        },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PE8D1C7E267159A85"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email\nORDER BY \n  COUNT DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Top Users",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PE8D1C7E267159A85"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Action Count",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 3,
+      "maxDataPoints": 200000,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "dataset": "ndt",
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PE8D1C7E267159A85"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "US",
+          "partitioned": true,
+          "partitionedField": "date",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  proto_payload.audit_log.method_name AS action,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\nGROUP BY\n  user,\n  action,\n  t\nORDER BY\n  t",
+          "refId": "A",
+          "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "ndt7"
+        }
+      ],
+      "title": "User Actions / Hour (breakdown)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PE8D1C7E267159A85"
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 4,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": false,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PE8D1C7E267159A85"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "SELECT \n    proto_payload.audit_log,\n    timestamp,\nFROM \n    `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Audit Logs",
+      "type": "logs"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Cloud Storage Usage",
+  "uid": "d8145875-e912-484e-b8f2-b77f63bd28a3",
+  "version": 7,
+  "weekStart": ""
+}
