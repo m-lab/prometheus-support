@@ -123,7 +123,7 @@
           "partitionedField": "date",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email,\n  t\nORDER BY\n  t",
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email,\n  t\nORDER BY\n  t",
           "refId": "A",
           "sharded": false,
           "sql": {
@@ -211,7 +211,7 @@
           "location": "US",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email\nORDER BY \n  COUNT DESC",
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email\nORDER BY\n  COUNT DESC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -340,7 +340,7 @@
           "partitionedField": "date",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  proto_payload.audit_log.method_name AS action,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\nGROUP BY\n  user,\n  action,\n  t\nORDER BY\n  t",
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  proto_payload.audit_log.method_name AS action,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  user,\n  action,\n  t\nORDER BY\n  t",
           "refId": "A",
           "sharded": false,
           "sql": {
@@ -387,7 +387,7 @@
         "showLabels": false,
         "showTime": true,
         "sortOrder": "Descending",
-        "wrapLogMessage": false
+        "wrapLogMessage": true
       },
       "pluginVersion": "10.2.2",
       "targets": [
@@ -401,7 +401,7 @@
           "location": "US",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT \n    proto_payload.audit_log,\n    timestamp,\nFROM \n    `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"",
+          "rawSql": "SELECT \n    proto_payload.audit_log,\n    timestamp,\nFROM \n    `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))",
           "refId": "A",
           "sql": {
             "columns": [
@@ -431,7 +431,37 @@
   "schemaVersion": 38,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "0",
+          "value": "0"
+        },
+        "description": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Resource day offset",
+        "multi": false,
+        "name": "offset",
+        "options": [
+          {
+            "selected": true,
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "selected": false,
+            "text": "365",
+            "value": "365"
+          }
+        ],
+        "query": "0, 365",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
   },
   "time": {
     "from": "now-7d",
@@ -441,6 +471,6 @@
   "timezone": "",
   "title": "Cloud Storage Usage",
   "uid": "d8145875-e912-484e-b8f2-b77f63bd28a3",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }
