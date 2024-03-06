@@ -1354,12 +1354,12 @@ groups:
      bq_billing_today_storage > bq_billing_average_daily_storage * 1.5
       OR bq_billing_yesterday_storage > bq_billing_average_daily_storage * 1.5
       OR bq_billing_before_yesterday_storage > bq_billing_average_daily_storage * 1.5
-  for: 10m
-  labels:
-    repo: dev-tracker
-    severity: ticket
-    cluster: prometheus-federation
-  annotations:
-    summary: Daily storage costs are 50% over the average storage costs for the month.
-    description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailystorageincrease
-    dashboard: https://grafana.mlab-oti.measurementlab.net/d/d8145875-e912-484e-b8f2-b77f63bd28a3/cloud-storage-usage?orgId=1
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Daily storage costs are 50% over the average storage costs for the month.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailystorageincrease
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/d8145875-e912-484e-b8f2-b77f63bd28a3/cloud-storage-usage?orgId=1
