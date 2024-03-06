@@ -13,6 +13,7 @@
 -- These metrics have no additional labels and are meant for use in billing alerts.
 
 SELECT
+  SUM(cost)/720 AS value_average_hourly,
   SUM(cost)/30 AS value_average_daily,
   SUM(cost) AS value_average_monthly,
   365*SUM(cost)/30 AS value_average_annual,
