@@ -1346,3 +1346,20 @@ groups:
         for {{ $labels.experiment}}.{{ $labels.datatype }}.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#pipeline_autoloaderdailyjoberrorormissing
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/OKQmdgs4k/pipeline-autoloader?orgId=1&viewPanel=12
+
+# Billing_DailyStorageIncrease fires when the daily storage costs for any of the last 3 days is 50% over
+# the average storage costs for the last 30 days.
+  - alert: Billing_DailyStorageIncrease
+    expr: |
+     bq_billing_today_storage > bq_billing_average_daily_storage * 1.5
+      OR bq_billing_yesterday_storage > bq_billing_average_daily_storage * 1.5
+      OR bq_billing_before_yesterday_storage > bq_billing_average_daily_storage * 1.5
+  for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Daily storage costs are 50% over the average storage costs for the month.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailystorageincrease
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/d8145875-e912-484e-b8f2-b77f63bd28a3/cloud-storage-usage?orgId=1
