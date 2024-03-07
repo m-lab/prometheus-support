@@ -24,7 +24,7 @@ WITH billing AS(
       WHEN DATE(usage_start_time) = CURRENT_DATE() THEN "today"
       WHEN DATE(usage_start_time) = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY) THEN "yesterday"
       WHEN DATE(usage_start_time) = DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY) THEN "before_yesterday"
-      WHEN DATE(usage_start_time) <= DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY) THEN "month"
+      WHEN DATE(usage_start_time) <= CURRENT_DATE() THEN "month"
       END
       AS period,
     IF(service.description LIKE '%Storage%', "storage", "all") AS service,

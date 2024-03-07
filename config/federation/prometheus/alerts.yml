@@ -1349,6 +1349,9 @@ groups:
 
 # Billing_DailyStorageIncrease fires when the daily storage costs for any of the last 3 days is 50% over
 # the average storage costs for the last 30 days.
+# Because the GCP billing export may take over a day to complete, the alert checks as far as 2 days back
+# to get an accurate measure of the daily costs. That said, even if only with partial data, we
+# opportunistically also check today's and yesterday's cost.
   - alert: Billing_DailyStorageIncrease
     expr: |
      bq_billing_today_storage > bq_billing_average_daily_storage * 1.5
