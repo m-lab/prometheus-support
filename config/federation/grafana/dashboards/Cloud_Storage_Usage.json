@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "PE8D1C7E267159A85"
+        "uid": "${datasource}"
       },
       "description": "",
       "fieldConfig": {
@@ -114,7 +114,7 @@
           "dataset": "ndt",
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "PE8D1C7E267159A85"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -123,7 +123,7 @@
           "partitionedField": "date",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email,\n  t\nORDER BY\n  t",
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  COUNT(*) AS Count\nFROM \n  `gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email,\n  t\nORDER BY\n  t",
           "refId": "A",
           "sharded": false,
           "sql": {
@@ -153,7 +153,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "PE8D1C7E267159A85"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -204,14 +204,14 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "PE8D1C7E267159A85"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 1,
           "location": "US",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email\nORDER BY\n  COUNT DESC",
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  COUNT(*) AS Count\nFROM \n  `gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  proto_payload.audit_log.authentication_info.principal_email\nORDER BY\n  COUNT DESC",
           "refId": "A",
           "sql": {
             "columns": [
@@ -239,7 +239,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "PE8D1C7E267159A85"
+        "uid": "${datasource}"
       },
       "description": "",
       "fieldConfig": {
@@ -331,7 +331,7 @@
           "dataset": "ndt",
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "PE8D1C7E267159A85"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 0,
@@ -340,7 +340,7 @@
           "partitionedField": "date",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  proto_payload.audit_log.method_name AS action,\n  COUNT(*) AS Count\nFROM \n  `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  user,\n  action,\n  t\nORDER BY\n  t",
+          "rawSql": "SELECT\n  proto_payload.audit_log.authentication_info.principal_email AS user,\n  TIMESTAMP_TRUNC(timestamp, HOUR) AS t,\n  proto_payload.audit_log.method_name AS action,\n  COUNT(*) AS Count\nFROM \n  `gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))\nGROUP BY\n  user,\n  action,\n  t\nORDER BY\n  t",
           "refId": "A",
           "sharded": false,
           "sql": {
@@ -372,11 +372,142 @@
         "type": "grafana-bigquery-datasource",
         "uid": "PE8D1C7E267159A85"
       },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Cost",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 0,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 5,
+      "maxDataPoints": 200000,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "dataset": "ndt",
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PE8D1C7E267159A85"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "US",
+          "partitioned": true,
+          "partitionedField": "date",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  SUM(cost) AS cost, TIMESTAMP_TRUNC(usage_start_time, HOUR) AS t, sku.description\nFROM \n  `mlab-oti.billing.unified`\nWHERE \n  usage_start_time BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n  AND service.description LIKE '%Storage%'\nGROUP BY \n  t, sku.description\nORDER BY \n  t",
+          "refId": "A",
+          "sharded": false,
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "ndt7"
+        }
+      ],
+      "title": "Cost / Hour (staging/oti)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
       "gridPos": {
         "h": 13,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 27
       },
       "id": 4,
       "options": {
@@ -394,14 +525,14 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "PE8D1C7E267159A85"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": 1,
           "location": "US",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "SELECT \n    proto_payload.audit_log,\n    timestamp,\nFROM \n    `measurement-lab.gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))",
+          "rawSql": "SELECT \n    proto_payload.audit_log,\n    timestamp,\nFROM \n    `gcp_logging._AllLogs`\nWHERE\n    timestamp BETWEEN TIMESTAMP_MILLIS($__from) AND TIMESTAMP_MILLIS($__to)\n    AND proto_payload.audit_log.authentication_info.principal_email IS NOT NULL\n    AND proto_payload.audit_log.method_name LIKE \"storage.%.%\"\n    AND proto_payload.audit_log.authentication_info.principal_email NOT LIKE \"%gserviceaccount.com\"\n    AND IF (${offset} = 0, true, REGEXP_EXTRACT(proto_payload.audit_log.resource_name, r'\\d{4}\\/\\d{2}\\/\\d{2}') <= FORMAT_DATE(\"%E4Y/%m/%d\", DATE_SUB(CURRENT_DATE(), INTERVAL ${offset} DAY)))",
           "refId": "A",
           "sql": {
             "columns": [
@@ -434,7 +565,25 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
+          "text": "Google BigQuery (measurement-lab)",
+          "value": "f126f149-75bd-4e5a-9883-fcd7e62bc80a"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "grafana-bigquery-datasource",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
           "text": "0",
           "value": "0"
         },
@@ -471,6 +620,6 @@
   "timezone": "",
   "title": "Cloud Storage Usage",
   "uid": "d8145875-e912-484e-b8f2-b77f63bd28a3",
-  "version": 10,
+  "version": 12,
   "weekStart": ""
 }
