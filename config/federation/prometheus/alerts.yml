@@ -74,21 +74,18 @@ groups:
         the switch itself, or with the transit provider.
       dashboard: 'https://grafana.mlab-oti.measurementlab.net/d/SuqnZ6Hiz/?orgId=1&var-site_name={{$labels.site}}'
 
-# DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved the files in
-# at least 21 hours, meaning that at least the last two download attempts have failed.
+# DownloaderIsFailingToUpdate: The downloader hasn't successfully retrieved
+# all databases in more than 72 hours.
   - alert: DownloaderIsFailingToUpdate
-    expr: time() - downloader_last_success_time_seconds > (21 * 60 * 60)
+    expr: time() - downloader_last_success_time_seconds > (72 * 60 * 60)
     for: 1h
     labels:
       repo: dev-tracker
       severity: ticket
       cluster: prometheus-federation
     annotations:
-      summary: Neither of the last two attempts to download the maxmind or
-        routeviews feeds were successful.
-      description: Check for errors with the downloader service on grafana with
-        the downloader_error_count metric, or check the stackdriver logs for
-        the downloader cluster.
+      summary: The downloader hasn't successfully retrieved all databases in more than 3d
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#downloaderisfailingtoupdate
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/ZGuYht1mk/
 
 # DownloaderNotRunning: The downloader cluster crashed and not running at all.
