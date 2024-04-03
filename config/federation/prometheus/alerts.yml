@@ -1363,3 +1363,23 @@ groups:
       summary: Daily storage costs are 50% over the average storage costs for the month.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailystorageincrease
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/d8145875-e912-484e-b8f2-b77f63bd28a3/cloud-storage-usage?orgId=1
+
+# Billing_DailyBigQueryIncrease fires when the daily BigQuery costs for any of the last 3 days is 2x
+# the average BigQuery costs for the last 30 days.
+# Because the GCP billing export may take over a day to complete, the alert checks as far as 2 days back
+# to get an accurate measure of the daily costs. That said, even if only with partial data, we
+# opportunistically also check today's and yesterday's cost.
+  - alert: Billing_DailyBigQueryIncrease
+    expr: |
+     bq_billing_today_bigquery > bq_billing_average_daily_bigquery * 2
+      OR bq_billing_yesterday_bigquery > bq_billing_average_daily_bigquery * 2
+      OR bq_billing_before_yesterday_bigquery > bq_billing_average_daily_bigquery * 2
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Daily BigQuery costs are 2x the average BigQuery costs for the month.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailybigqueryincrease
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/f4efc343-661f-4899-a00f-a4ffeb294e5d/bigquery-usage?orgId=1&from=now-7d&to=now

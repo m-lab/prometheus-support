@@ -27,7 +27,7 @@ WITH billing AS(
       WHEN DATE(usage_start_time) <= CURRENT_DATE() THEN "month"
       END
       AS period,
-    IF(service.description LIKE '%Storage%', "storage", "all") AS service,
+    service.description AS service,
     cost
   FROM
     `mlab-oti.billing.unified`
@@ -42,9 +42,14 @@ SELECT
   SUM(IF(period = "month", cost, 0)) AS value_average_monthly,
   365*SUM(IF(period = "month", cost, 0))/30 AS value_average_annual,
   -- Storage metrics.
-  SUM(IF(period = "month" AND service = "storage", cost, 0))/30 AS value_average_daily_storage,
-  SUM(IF(period = "today" AND service = "storage", cost, 0)) AS value_today_storage,
-  SUM(IF(period = "yesterday" AND service = "storage", cost, 0)) AS value_yesterday_storage,
-  SUM(IF(period = "before_yesterday" AND service = "storage", cost, 0)) AS value_before_yesterday_storage
+  SUM(IF(period = "month" AND service = "Cloud Storage", cost, 0))/30 AS value_average_daily_storage,
+  SUM(IF(period = "today" AND service = "Cloud Storage", cost, 0)) AS value_today_storage,
+  SUM(IF(period = "yesterday" AND service = "Cloud Storage", cost, 0)) AS value_yesterday_storage,
+  SUM(IF(period = "before_yesterday" AND service = "Cloud Storage", cost, 0)) AS value_before_yesterday_storage,
+  -- BigQuery metrics.
+  SUM(IF(period = "month" AND service = "BigQuery", cost, 0))/30 AS value_average_daily_bigquery,
+  SUM(IF(period = "today" AND service = "BigQuery", cost, 0)) AS value_today_bigquery,
+  SUM(IF(period = "yesterday" AND service = "BigQuery", cost, 0)) AS value_yesterday_bigquery,
+  SUM(IF(period = "before_yesterday" AND service = "BigQuery", cost, 0)) AS value_before_yesterday_bigquery
 FROM
   billing
