@@ -6,70 +6,70 @@ WITH all_types AS (
   -- NDT
   SELECT "ndt" AS experiment, "ndt7" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_ndt.ndt7`
-  WHERE date > date('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "ndt" AS experiment, "ndt5" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_ndt.ndt5`
-  WHERE date > date('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "ndt" AS experiment, "annotation2" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_ndt.annotation2`
-  WHERE date > date('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "ndt" AS experiment, "hopannotation2" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_ndt.hopannotation2`
-  WHERE date > date('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "ndt" AS experiment, "pcap" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_ndt.pcap`
-  WHERE date > date('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "ndt" AS experiment, "scamper1" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_ndt.scamper1`
-  WHERE date > date('2019-03-28')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "ndt" AS experiment, "tcpinfo" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_ndt.tcpinfo`
-  WHERE date > DATE('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   -- UTILIZATION
   SELECT "utilization" AS experiment, "switch" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_utilization.switch`
-  WHERE date > date('2015-11-19')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   -- WEHE
   SELECT "wehe" AS experiment, "annotation2" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_wehe.annotation2`
-  WHERE date > DATE('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "wehe" AS experiment, "hopannotation2" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_wehe.hopannotation2`
-  WHERE date > DATE('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "wehe" AS experiment, "scamper1" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.wehe.scamper1`
-  WHERE date > DATE('2019-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   -- MSAK
   SELECT "msak" AS experiment, "tcpinfo" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_msak.tcpinfo`
-  WHERE date > DATE('2023-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "msak" AS experiment, "pcap" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_msak.pcap`
-  WHERE date > DATE('2023-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "msak" AS experiment, "scamper1" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_msak.scamper1`
-  WHERE date > DATE('2023-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "msak" AS experiment, "annotation2" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_msak.annotation2`
-  WHERE date > DATE('2023-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
   SELECT "msak" AS experiment, "hopannotation2" AS datatype, id, date, parser.Time as parseTime,
   FROM `{{PROJECT}}.raw_msak.hopannotation2`
-  WHERE date > DATE('2023-01-01')
+  WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
 ),
 
 processed_types AS (
