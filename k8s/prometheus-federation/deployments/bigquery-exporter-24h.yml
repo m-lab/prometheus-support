@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bigquery-exporter-3h
+  name: bigquery-exporter-24h
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: bigquery-exporter-3h
+      run: bigquery-exporter-24h
   template:
     metadata:
       labels:
-        run: bigquery-exporter-3h
+        run: bigquery-exporter-24h
       annotations:
         prometheus.io/scrape: 'true'
     spec:
@@ -18,12 +18,10 @@ spec:
       - name: bigquery-exporter
         image: measurementlab/prometheus-bigquery-exporter:v1.1.1
         args: [ "-project={{GCLOUD_PROJECT}}",
-                "-refresh=3h",
-                "-gauge-query=/queries/bq_annotation.sql",
-                "-gauge-query=/queries/bq_daily_archive.sql",
-                "-gauge-query=/queries/bq_daily_tests.sql",
-                "-gauge-query=/queries/bq_server.sql",
-                "-gauge-query=/queries/bq_billing.sql",
+                "-refresh=24h",
+                "-gauge-query=/queries/bq_gardener_parse_time.sql",
+                "-gauge-query=/queries/bq_gardener.sql",
+                "-gauge-query=/queries/bq_gardener_historical.sql",
               ]
         ports:
         - containerPort: 9348
