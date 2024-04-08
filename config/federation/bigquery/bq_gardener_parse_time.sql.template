@@ -15,45 +15,45 @@ SELECT
 FROM (
     SELECT "utilization/switch" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.utilization.switch`
-    WHERE date > DATE('2015-11-19')
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "ndt/ndt5" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.ndt5`
-    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "ndt/ndt7" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.ndt7`
-    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "ndt/annotation2" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.annotation2`
-    WHERE date > date('2019-01-01')
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "ndt/hopannotation2" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.hopannotation2`
-    WHERE date > date('2019-01-01')
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "ndt/pcap" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.pcap`
-    WHERE date > date('2019-01-01')
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "ndt/scamper1" AS datatype, MIN(Parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.scamper1`
-    WHERE date > date('2019-03-28')
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "ndt/tcpinfo" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_ndt.tcpinfo`
-    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "wehe/scamper1" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.wehe.scamper1`
-    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "wehe/annotation2" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_wehe.annotation2`
-    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
   UNION ALL
     SELECT "wehe/hopannotation2" AS datatype, MIN(parser.Time) AS min_parse_time
     FROM   `{{PROJECT}}.raw_wehe.hopannotation2`
-    WHERE date > DATE('2019-01-01') -- satisfy required date filter.
+    WHERE date > DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
 )
