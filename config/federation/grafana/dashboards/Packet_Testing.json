@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 465,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -106,7 +105,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT m.Bandwidth \nFROM `mlab-sandbox.raw_pt.pair1`, UNNEST(raw.Measurements) AS m\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nAND m.Packets[SAFE_OFFSET(0)].Gap = 0",
+          "rawSql": "SELECT m.Bandwidth \nFROM `raw_pt.pair1`, UNNEST(raw.Measurements) AS m\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nAND m.Packets[SAFE_OFFSET(0)].Gap = 0",
           "refId": "A",
           "sql": {
             "columns": [
@@ -197,7 +196,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT CAST(p.Size AS string) As size, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `mlab-sandbox.raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY size\nORDER BY Percent",
+          "rawSql": "SELECT CAST(p.Size AS string) As size, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY size\nORDER BY Percent",
           "refId": "A",
           "sql": {
             "columns": [
@@ -306,7 +305,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT AVG(m.Bandwidth) AS avg_bandwidth, CAST(p.Size AS string) As size_bytes\nFROM `mlab-sandbox.raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY size_bytes",
+          "rawSql": "SELECT AVG(m.Bandwidth) AS avg_bandwidth, CAST(p.Size AS string) As size_bytes\nFROM `raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY size_bytes",
           "refId": "A",
           "sql": {
             "columns": [
@@ -402,7 +401,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT p.Gap AS Gap, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `mlab-sandbox.raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nAND gap IS NOT NULL\nGROUP BY Gap",
+          "rawSql": "SELECT p.Gap AS Gap, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nAND gap IS NOT NULL\nGROUP BY Gap",
           "refId": "A",
           "sql": {
             "columns": [
@@ -510,7 +509,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT AVG(m.Bandwidth) AS avg_bandwidth, CAST(p.Gap AS string) As gap_usecs\nFROM `mlab-sandbox.raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY gap_usecs",
+          "rawSql": "SELECT AVG(m.Bandwidth) AS avg_bandwidth, CAST(p.Gap AS string) As gap_usecs\nFROM `raw_pt.pair1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY gap_usecs",
           "refId": "A",
           "sql": {
             "columns": [
@@ -614,7 +613,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT m.Bandwidth \nFROM `mlab-sandbox.raw_pt.train1`, UNNEST(raw.Measurements) AS m\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"",
+          "rawSql": "SELECT m.Bandwidth \nFROM `raw_pt.train1`, UNNEST(raw.Measurements) AS m\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"",
           "refId": "A",
           "sql": {
             "columns": [
@@ -705,7 +704,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT CAST(p.Size AS string) As size, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `mlab-sandbox.raw_pt.train1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY size\nORDER BY Percent",
+          "rawSql": "SELECT CAST(p.Size AS string) As size, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `raw_pt.train1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nGROUP BY size\nORDER BY Percent",
           "refId": "A",
           "sql": {
             "columns": [
@@ -796,7 +795,7 @@
           "location": "",
           "project": "mlab-sandbox",
           "rawQuery": true,
-          "rawSql": "SELECT p.Gap AS Gap, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `mlab-sandbox.raw_pt.train1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nAND gap IS NOT NULL\nGROUP BY Gap",
+          "rawSql": "SELECT p.Gap AS Gap, (COUNT(*)/(SUM(COUNT(*)) OVER())) * 100 AS Percent\nFROM `raw_pt.train1`, UNNEST(raw.Measurements) AS m, UNNEST(m.Packets) AS p\nWHERE date between \"${__from:date:YYYY-MM-DD}\" and \"${__to:date:YYYY-MM-DD}\"\nAND gap IS NOT NULL\nGROUP BY Gap",
           "refId": "A",
           "sql": {
             "columns": [
@@ -835,6 +834,6 @@
   "timezone": "",
   "title": "Packet Testing",
   "uid": "d341c044-4e2c-4904-b05f-98e8bf1bbf32",
-  "version": 13,
+  "version": 14,
   "weekStart": ""
 }
