@@ -578,12 +578,12 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#mlabns_serverresponsemetricmissing
 
 # The alert Locate_TooManyErrors will fire when the rate of /nearest requests to the
-# Locate V2 is greater than 0.1% for 2 minutes. The locate_requests_total metrics come
+# Locate V2 is greater than 0.5% for 2 minutes. The locate_requests_total metrics come
 # from Prometheus.
   - alert: Locate_TooManyErrors
     expr: |
       (sum(rate(locate_requests_total{type="nearest", status!~"OK|Too Many Requests", condition!~"client location"}[2m]))) /
-      sum(rate(locate_requests_total{type="nearest"}[2m])) > 0.001
+      sum(rate(locate_requests_total{type="nearest"}[2m])) > 0.005
     for: 2m
     labels:
       repo: dev-tracker
@@ -591,25 +591,9 @@ groups:
       cluster: prometheus-federation
       page_project: mlab-oti
     annotations:
-      summary: The rate of Locate V2 nearest request errors is greater than 0.1%.
+      summary: The rate of Locate V2 nearest request errors is greater than 0.5%.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#locate_toomanyerrors
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/8O9tInk4k/locate-service?orgId=1&refresh=5m&var-datasource=Prometheus%20%28mlab-oti%29&var-platformdatasource=Platform%20Cluster%20%28mlab-oti%29&var-bigquerydatasource=BigQuery%20%28mlab-oti%29&var-metro=All&var-experiment=ndt&viewPanel=4
-
-# The alert Locate_TooManyClientLocationErrors will fire when the rate of /nearest requests to the
-# Locate V2 with client location errors is greater than 1% for 2 minutes.
-  - alert: Locate_TooManyClientLocationErrors
-    expr: |
-      (sum(rate(locate_requests_total{type="nearest", condition="client location"}[2m]))) /
-      sum(rate(locate_requests_total{type="nearest"}[2m])) > 0.01
-    for: 2m
-    labels:
-      repo: dev-tracker
-      severity: ticket
-      cluster: prometheus-federation
-      page_project: mlab-oti
-    annotations:
-      summary: The rate of Locate V2 client location errors is greater than 1%.
-      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#locate_toomanyclientlocationerrors
 
 # The alert Locate_HighLantecy will fire when the latency of at least 2% of /nearest requests
 # is greater than 1 second. The locate_request_handler_duration metrics come from Prometheus.
