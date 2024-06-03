@@ -582,7 +582,7 @@ groups:
 # from Prometheus.
   - alert: Locate_TooManyErrors
     expr: |
-      (sum(rate(locate_requests_total{type="nearest", status!~"OK|Too Many Requests", condition!~"client location"}[2m]))) /
+      (sum(rate(locate_requests_total{type="nearest", status!~"OK|Too Many Requests"}[2m]))) /
       sum(rate(locate_requests_total{type="nearest"}[2m])) > 0.005
     for: 2m
     labels:
