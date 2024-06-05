@@ -1,4 +1,4 @@
-{
+{{
   "annotations": {
     "list": [
       {
@@ -28,6 +28,109 @@
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 12,
+      "panels": [],
+      "title": "Distributions",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PB00E94094811FA13"
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 11,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "legend": {
+            "orientation": "h"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.013228265733755159,
+              3.469998642218747
+            ],
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.02477829942618675,
+              0.47078768909754826
+            ],
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar sites = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(site => {\n  sites[site] = {\n    x: [],\n    y: [],\n    name: site,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  sites[names[i]].x.push(x[i]);\n  sites[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(sites).sort().forEach(site => {\n  data.push(sites[site]);\n});\nconsole.log(data);\nvar site = \"atl03\";\nvar trace = {\n  x: x, //.filter((element, i) => names[i] === site),\n  y: y, //.filter((element, i) => names[i] === site),\n  name: names //.filter((element, i) => names[i] === site)\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\n//return {data:[trace]};\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PB00E94094811FA13"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), ndt7_and_offset AS (\n  SELECT *, ARRAY_LENGTH(raw.Download.ServerMeasurements) AS dlm_length, ARRAY_REVERSE(raw.Download.ServerMeasurements)[OFFSET(0)] AS m,\n  CASE\n    WHEN (\"bbr_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AND (\"early_exit\" NOT IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) THEN \"bbr_exit\"\n    WHEN (\"bbr_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AND (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AND (\"100\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) THEN \"bbr_exit&early_exit100\"\n    WHEN (\"bbr_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AND (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AND (\"200\" IN (SELECT metadata.Value FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) THEN \"bbr_exit&early_exit200\"\n    ELSE \"full_test\"\n    END\n    AS test_type,\n  FROM raw_pt.ndt7\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download is not NULL \n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n), pdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF((m.TCPInfo.BytesAcked/m.TCPInfo.ElapsedTime) BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7_and_offset, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), cdf_tests_and_bytes AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM cdf_tests_and_bytes",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Scatter Chart (Download Mbps PDF, normalized)",
+      "type": "ae3e-plotly-panel"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
       },
       "id": 3,
       "panels": [],
@@ -76,7 +179,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 17
       },
       "id": 4,
       "options": {
@@ -155,7 +258,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 13
+        "y": 29
       },
       "id": 5,
       "options": {
@@ -269,7 +372,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 13
+        "y": 29
       },
       "id": 9,
       "options": {
@@ -368,7 +471,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 40
       },
       "id": 7,
       "options": {
@@ -473,7 +576,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 40
       },
       "id": 10,
       "options": {
@@ -539,7 +642,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 51
       },
       "id": 2,
       "panels": [],
@@ -584,7 +687,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 52
       },
       "id": 1,
       "options": {
@@ -663,7 +766,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 66
       },
       "id": 6,
       "options": {
@@ -767,7 +870,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 50
+        "y": 66
       },
       "id": 8,
       "options": {
@@ -834,6 +937,6 @@
   "timezone": "",
   "title": "Packet Testing",
   "uid": "d341c044-4e2c-4904-b05f-98e8bf1bbf32",
-  "version": 14,
+  "version": 15,
   "weekStart": ""
 }
