@@ -909,7 +909,7 @@ groups:
     expr: (sum(rate(etl_task_total{status!="OK", cluster="data-pipeline"}[1h])) by (table) /
       sum(rate(etl_task_total{cluster="data-pipeline"}[1h])) by (table)) > 0.01
       OR absent(etl_task_total{cluster="data-pipeline"})
-    for: 10m
+    for: 3h
     labels:
       repo: dev-tracker
       severity: ticket
