@@ -1,3 +1,14 @@
+#standardSQL
+-- bq_sidecar calculates the total number of ndt7 tests and how many matching
+-- scamper1 rows per site, since this type of configuration failure may affect
+-- individual sites.
+--
+-- This query exports two values:
+--   bq_sidecar_ndt_total -- number of ndt7 rows.
+--   bq_sidecar_scamper1_matching -- number of scamper1 rows matching ndt7 rows.
+--
+-- Each value above also has a "site" label.
+
 WITH scamper1 AS (
     SELECT
       *
