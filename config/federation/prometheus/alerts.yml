@@ -774,6 +774,22 @@ groups:
         prometheus-federation cluster and bigquery-exporter configurations for errors
         or recent changes.
 
+# How many NDT measurements include matching scamper1 traceroutes?
+  - alert: DataQuality_TooFewNDTSidecarTraceroutes_MetricsMissing
+    expr: bq_sidecar_scamper1_matching / bq_sidecar_ndt_total < 0.90 OR absent(bq_sidecar_ndt_total)
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Too few NDT tests have matching scamper1 traceroute data.
+      description: Most NDT tests should have matching sidecar data including
+        traceroutes. Are the metrics present or missing? If present, check recent
+        deployments for configuration changes or check container logs for errors
+        writing or starting tests. If not, check the prometheus-federation cluster
+        and bigquery-exporter configurations for errors or recent changes.
+
 # The node_exporter running on eb.measurementlab.net is down.
   - alert: NodeExporterOnEbDownOrMissing
     expr: |
