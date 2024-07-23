@@ -27,8 +27,8 @@ WITH scamper1 AS (
 
 SELECT
   n.server.Site AS site,
-  COUNTIF(n.id IS NOT NULL) AS value_ndt_total,
-  COUNTIF(n.id IS NOT NULL AND s.id IS NOT NULL) AS value_scamper1_matching,
+  COUNT(*) AS value_ndt_total,
+  COUNTIF(s.id IS NOT NULL) AS value_scamper1_matching,
 
 FROM ndt7 AS n
   FULL OUTER JOIN scamper1 AS s
