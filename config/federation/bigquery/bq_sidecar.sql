@@ -16,8 +16,8 @@ WITH scamper1 AS (
 
 SELECT
   n.server.Site AS site,
-  COUNTIF(n.id IS NOT NULL) AS value_ndt,
-  COUNTIF(n.id IS NOT NULL AND s.id IS NOT NULL) AS value_matching,
+  COUNTIF(n.id IS NOT NULL) AS value_ndt_total,
+  COUNTIF(n.id IS NOT NULL AND s.id IS NOT NULL) AS value_scamper1_matching,
 
 FROM ndt7 AS n
   FULL OUTER JOIN scamper1 AS s
@@ -30,4 +30,4 @@ GROUP BY
   n.server.Site
 
 HAVING
-  value_ndt > 1000
+  value_ndt_total > 1000
