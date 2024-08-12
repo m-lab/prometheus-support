@@ -41,4 +41,4 @@ GROUP BY
   n.server.Site
 
 HAVING
-  value_ndt_total > 1000
+  value_ndt_total > 1000 AND site IS NOT NULL
