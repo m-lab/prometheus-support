@@ -24,6 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 100,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -52,6 +53,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -65,6 +67,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -135,7 +138,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "(vector(0) AND absent(probe_success{service=~\"$experiment.*\"}))\nOR\nsum (\n    min by (experiment, machine) (\n        label_replace(probe_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(script_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n              node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n                node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n                \"experiment\", \"$experiment\", \"\", \"\") < bool 0.95 OR\n        label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"}, \"experiment\", \"$experiment\", \"\", \"\") != bool 1 OR\n        label_replace(lame_duck_experiment{cluster=\"platform\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") != bool 1 OR\n        label_replace(gmx_machine_maintenance, \"experiment\", \"$experiment\", \"\", \"\") != bool 1\n    )\n)",
+          "expr": "(vector(0) AND absent(probe_success{service=~\"$experiment.*\"}))\nOR\nsum (\n    min by (experiment, machine) (\n        label_replace(probe_success{service=~\"$experiment.*\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") OR\n        label_replace(((node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"} -\n              node_filesystem_avail_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}) /\n                node_filesystem_size_bytes{cluster=\"platform\", mountpoint=\"/cache/data\"}),\n                \"experiment\", \"$experiment\", \"\", \"\") < bool 0.95 OR\n        label_replace(kube_node_spec_taint{cluster=\"platform\", key=\"lame-duck\"}, \"experiment\", \"$experiment\", \"\", \"\") != bool 1 OR\n        label_replace(lame_duck_experiment{cluster=\"platform\"}, \"experiment\", \"$experiment\", \"experiment\", \"$experiment.*\") != bool 1 OR\n        label_replace(gmx_machine_maintenance, \"experiment\", \"$experiment\", \"\", \"\") != bool 1\n    )\n)",
           "hide": false,
           "legendFormat": "mlab-ns",
           "range": true,
@@ -157,6 +160,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -171,6 +175,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -290,6 +297,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -304,6 +312,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -511,6 +522,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -525,6 +537,9 @@
             "lineWidth": 1,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -762,6 +777,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Selection Rate",
@@ -775,6 +791,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -796,7 +813,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -843,10 +861,6 @@
       "type": "timeseries"
     },
     {
-      "aliasColors": {},
-      "bars": true,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
@@ -854,51 +868,77 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "links": []
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 14,
         "w": 12,
         "x": 12,
         "y": 27
       },
-      "hiddenSeries": false,
       "id": 44,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": false,
-      "linewidth": 1,
-      "links": [],
-      "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
-      "percentage": false,
       "pluginVersion": "10.0.3",
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:267",
-          "alias": "/.*/",
-          "color": "#70dbed"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
           "datasource": {
@@ -916,40 +956,18 @@
           "refId": "A"
         }
       ],
-      "thresholds": [],
-      "timeRegions": [],
       "title": "Server Ranking Histogram",
-      "tooltip": {
-        "shared": false,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "mode": "series",
-        "show": true,
-        "values": [
-          "total"
-        ]
-      },
-      "yaxes": [
+      "transformations": [
         {
-          "$$hashKey": "object:230",
-          "format": "short",
-          "label": "Selection Count",
-          "logBase": 1,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:231",
-          "format": "short",
-          "logBase": 1,
-          "show": true
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "total"
+            ]
+          }
         }
       ],
-      "yaxis": {
-        "align": false
-      }
+      "type": "barchart"
     },
     {
       "collapsed": false,
@@ -981,7 +999,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1000,6 +1019,8 @@
       },
       "id": 10,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1009,9 +1030,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.1.3",
       "targets": [
         {
           "datasource": {
@@ -1043,6 +1065,7 @@
             "mode": "fixed"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Connection rate / min",
@@ -1056,6 +1079,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1077,7 +1101,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1137,6 +1162,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Number of collections / min",
@@ -1150,6 +1176,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1171,7 +1198,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1291,7 +1319,8 @@
         },
         "showValue": "never",
         "tooltip": {
-          "show": true,
+          "mode": "single",
+          "showColorScale": false,
           "yHistogram": true
         },
         "yAxis": {
@@ -1301,7 +1330,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.1.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1373,6 +1402,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Number of checks / min",
@@ -1386,6 +1416,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1407,7 +1438,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1467,6 +1499,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Number of checks / min",
@@ -1480,6 +1513,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1501,7 +1535,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1561,6 +1596,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Number of requests / min",
@@ -1574,6 +1610,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1595,7 +1632,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1714,7 +1752,8 @@
         },
         "showValue": "never",
         "tooltip": {
-          "show": true,
+          "mode": "single",
+          "showColorScale": false,
           "yHistogram": true
         },
         "yAxis": {
@@ -1724,7 +1763,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.1.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1829,7 +1868,8 @@
         },
         "showValue": "never",
         "tooltip": {
-          "show": true,
+          "mode": "single",
+          "showColorScale": false,
           "yHistogram": true
         },
         "yAxis": {
@@ -1839,7 +1879,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.1.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -1957,7 +1997,8 @@
         },
         "showValue": "never",
         "tooltip": {
-          "show": true,
+          "mode": "single",
+          "showColorScale": false,
           "yHistogram": true
         },
         "yAxis": {
@@ -1967,7 +2008,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.1.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2072,7 +2113,8 @@
         },
         "showValue": "never",
         "tooltip": {
-          "show": true,
+          "mode": "single",
+          "showColorScale": false,
           "yHistogram": true
         },
         "yAxis": {
@@ -2082,7 +2124,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.1.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2155,6 +2197,7 @@
             "mode": "fixed"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Request rate / min",
@@ -2168,6 +2211,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineStyle": {
               "fill": "solid"
@@ -2192,7 +2236,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2253,6 +2298,7 @@
             "seriesBy": "last"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Failure rate / min",
@@ -2266,6 +2312,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 4,
@@ -2289,7 +2336,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2410,7 +2458,8 @@
         },
         "showValue": "never",
         "tooltip": {
-          "show": true,
+          "mode": "single",
+          "showColorScale": false,
           "yHistogram": true
         },
         "yAxis": {
@@ -2420,7 +2469,7 @@
           "unit": "short"
         }
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.1.3",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -2466,6 +2515,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -2479,6 +2529,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2501,7 +2552,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2598,6 +2650,7 @@
             "mode": "continuous-GrYlRd"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "Success rate / min",
@@ -2611,6 +2664,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2632,7 +2686,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2682,8 +2737,7 @@
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 37,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
@@ -2691,7 +2745,7 @@
         "current": {
           "selected": false,
           "text": "Prometheus (mlab-oti)",
-          "value": "Prometheus (mlab-oti)"
+          "value": "000000008"
         },
         "hide": 0,
         "includeAll": false,
@@ -2710,7 +2764,7 @@
         "current": {
           "selected": false,
           "text": "Platform Cluster (mlab-oti)",
-          "value": "Platform Cluster (mlab-oti)"
+          "value": "xXLAihsGz"
         },
         "hide": 0,
         "includeAll": false,
@@ -2729,7 +2783,7 @@
         "current": {
           "selected": false,
           "text": "Google BigQuery (mlab-oti)",
-          "value": "Google BigQuery (mlab-oti)"
+          "value": "PE8D1C7E267159A85"
         },
         "hide": 0,
         "includeAll": false,
@@ -2937,6 +2991,6 @@
   "timezone": "",
   "title": "Locate Service",
   "uid": "8O9tInk4k",
-  "version": 72,
+  "version": 7,
   "weekStart": ""
 }
