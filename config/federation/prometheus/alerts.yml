@@ -777,7 +777,7 @@ groups:
 # How many NDT measurements include matching scamper1 traceroutes?
   - alert: DataQuality_TooFewNDTSidecarTraceroutes_MetricsMissing
     expr: bq_sidecar_scamper1_matching / bq_sidecar_ndt_total < 0.90 OR absent(bq_sidecar_ndt_total)
-    for: 10m
+    for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
