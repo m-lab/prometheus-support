@@ -104,21 +104,30 @@ groups:
 # Prometheus is unable to get data from the script_exporter deployment.
   - alert: ScriptExporterDownOrMissing
     expr: up{deployment="script-exporter"} == 0 or absent(up{deployment="script-exporter"})
-    for: 10m
+    for: 1h
     labels:
       repo: ops-tracker
       severity: ticket
       cluster: prometheus-federation
     annotations:
       summary: The script_exporter service is down on missing.
-      description: >
-        The script_exporter service runs in the prometheus-federation GKE
-        cluster in each M-Lab GCP project. For deployment details and
-        troubleshooting, you can usually figure out the issue by looking
-        through the [Travis-CI build logs][1]. You can also look for hints
-        in the Kubernetes logs for the pod, or by kexec'ing into the pod
-        itself.
-        [1]: https://travis-ci.org/m-lab/prometheus-support
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#scriptexporterdownormissing
+
+# Some script_exporter metrics are missing from Prometheus. These should always
+# be present. The wait period should be longer than that for the
+# ScriptExporterDownOrMissing alert.
+  - alert: ScriptExporterMissingMetrics
+    expr: |
+      absent(script_success{service="wehe_client"})
+    for: 12h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Expected script_exporter metrics are missing from Prometheus!
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#scriptexportermissingmetrics
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/coR-U9gMx
 
 # Prometheus is unable to get data from the blackbox_exporter service for IPv4
 # probes. The service is down, or the metric is missing.
