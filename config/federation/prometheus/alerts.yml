@@ -101,46 +101,6 @@ groups:
       description: Check the status of Kubernetes clusters on each M-Lab GCP
         project. Look at the travis deployment history for m-lab/downloader.
 
-# Prometheus is unable to get data from the script_exporter deployment.
-  - alert: ScriptExporterDownOrMissing
-    expr: up{deployment="script-exporter"} == 0 or absent(up{deployment="script-exporter"})
-    for: 10m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-      cluster: prometheus-federation
-    annotations:
-      summary: The script_exporter service is down on missing.
-      description: >
-        The script_exporter service runs in the prometheus-federation GKE
-        cluster in each M-Lab GCP project. For deployment details and
-        troubleshooting, you can usually figure out the issue by looking
-        through the [Travis-CI build logs][1]. You can also look for hints
-        in the Kubernetes logs for the pod, or by kexec'ing into the pod
-        itself.
-        [1]: https://travis-ci.org/m-lab/prometheus-support
-
-# Some script_exporter metrics are missing from Prometheus. These should always
-# be present. The wait period should be longer than that for the
-# ScriptExporterDownOrMissing alert.
-  - alert: ScriptExporterMissingMetrics
-    expr: |
-      absent(script_success{service="ndt5_client"})
-    for: 30m
-    labels:
-      repo: ops-tracker
-      severity: ticket
-      cluster: prometheus-federation
-    annotations:
-      summary: Expected script_exporter metrics are missing from Prometheus!
-      description: >
-        If the script_exporter service is running, then there may be a target
-        configuration error. Check the [target definitions in GCS][1] and the [target
-        status in Prometheus][2].
-        [1]: https://console.cloud.google.com/storage/browser/operator-mlab-oti/prometheus/script-targets
-        [2]: https://prometheus.mlab-oti.measurementlab.net/targets
-      dashboard: https://grafana.mlab-oti.measurementlab.net/d/coR-U9gMx
-
 # Prometheus is unable to get data from the blackbox_exporter service for IPv4
 # probes. The service is down, or the metric is missing.
   - alert: BlackboxExporterIpv4DownOrMissing
@@ -252,7 +212,6 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_raw"} OR
-            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"} -
               node_filesystem_avail_bytes{cluster="platform", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"}),
@@ -284,7 +243,6 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_raw_ipv6"} OR
-            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"} -
               node_filesystem_avail_bytes{cluster="platform", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"}),
@@ -316,7 +274,6 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_ssl"} OR
-            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"} -
               node_filesystem_avail_bytes{cluster="platform", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"}),
@@ -349,7 +306,6 @@ groups:
         sum(
           min by (experiment, machine) (
             probe_success{service="ndt_ssl_ipv6"} OR
-            script_success{service="ndt5_client"} OR
             label_replace(((node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"} -
               node_filesystem_avail_bytes{cluster="platform", mountpoint="/cache/data"}) /
                 node_filesystem_size_bytes{cluster="platform", mountpoint="/cache/data"}),
@@ -638,10 +594,7 @@ groups:
 
 # One or more NDT-specific metrics is missing. These are the NDT metrics that
 # mlab-ns relies on to determine whether NDT is up and running, so we need to
-# make sure that the metrics are always present. NOTE: mlab-ns additionally
-# relies on the script_exporter metric 'script_success{service="ndt5_client"}', but
-# alerting for that metric is already handled by the
-# ScriptExporterMissingMetrics alert.
+# make sure that the metrics are always present.
   - alert: MlabNS_NdtMetricsMissing
     expr: |
       absent(probe_success{service="ndt_raw"})
