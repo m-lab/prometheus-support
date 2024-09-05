@@ -32,7 +32,7 @@ kubectl create secret generic prometheus-auth \
 sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_CLIENT_SECRET}}|'${!OAUTH_PROXY_CLIENT_SECRET}'|g' \
     -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
-    k8s/data-pipeline/deployments/oauth2-proxy.yml
+    k8s/${CLUSTER}/deployments/oauth2-proxy.yml
 
 # Additional k8s resources installed via Helm
 #
@@ -41,7 +41,7 @@ kubectl create namespace ingress-nginx --dry-run="client" -o json | kubectl appl
 ./linux-amd64/helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
   --namespace ingress-nginx \
   --version ${K8S_INGRESS_NGINX_VERSION} \
-  --values helm/data-pipeline/ingress-nginx/${PROJECT}.yml
+  --values helm/${CLUSTER}/ingress-nginx/${PROJECT}.yml
 
 
 # Install cert-manager.
@@ -59,7 +59,7 @@ kubectl create namespace ingress-nginx --dry-run="client" -o json | kubectl appl
   --set installCRDs=true \
   --set ingressShim.defaultIssuerKind=ClusterIssuer \
   --set ingressShim.defaultIssuerName=letsencrypt
-  
+
 # Check for per-project template variables.
 if [[ ! -f "k8s/${CLUSTER}/${PROJECT}.yml" ]] ; then
   echo "No template variables found for k8s/${CLUSTER}/${PROJECT}.yml"
