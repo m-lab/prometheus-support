@@ -32,7 +32,7 @@ kubectl create secret generic prometheus-auth \
 sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_CLIENT_SECRET}}|'${!OAUTH_PROXY_CLIENT_SECRET}'|g' \
     -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
-    k8s/${CLUSTER}/deployments/oauth2-proxy.yml
+    k8s/cluster/deployments/oauth2-proxy.yml
 
 # Additional k8s resources installed via Helm
 #
