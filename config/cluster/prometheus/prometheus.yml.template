@@ -275,3 +275,13 @@ scrape_configs:
           - /legacy-targets/*.yaml
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
+
+  # Scrape byos-nodes every minute.
+  - job_name: 'byos-nodes'
+    scrape_timeout: 40s
+    file_sd_configs:
+      - files:
+          - /byos-nodes/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+    scheme: http
