@@ -163,11 +163,15 @@ steps:
     ./apply-grafana-dashboards.sh
     ./deploy-prometheus-targets.sh $$PROJECT
 
-    export CLUSTER=data-pipeline
-
     # Get cluster credentials for the data-pipeline cluster
+    export CLUSTER=data-pipeline
     gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
-    ./apply-data-pipeline.sh
+    ./apply-cluster.sh
+
+    export CLUSTER=autojoin
+    # Get cluster credentials for the autojoin cluster
+    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
+    ./apply-cluster.sh
 
     # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
     ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
