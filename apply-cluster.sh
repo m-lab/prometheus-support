@@ -69,6 +69,6 @@ fi
 
 # Apply templates
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
-kexpand expand --ignore-missing-keys k8s/cluster/*/*.yml \
+kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml k8s/cluster/*/*.yml \
     -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
 kubectl apply -f ${CFG}
