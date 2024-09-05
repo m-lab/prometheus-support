@@ -14,10 +14,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - prometheus-data-pipeline-basic.{{GCLOUD_PROJECT}}.measurementlab.net
+    - prometheus-{{CLUSTER}}-basic.{{GCLOUD_PROJECT}}.measurementlab.net
     secretName: prometheus-basic-tls
   rules:
-  - host: prometheus-data-pipeline-basic.{{GCLOUD_PROJECT}}.measurementlab.net
+  - host: prometheus-{{CLUSTER}}-basic.{{GCLOUD_PROJECT}}.measurementlab.net
     http:
       paths:
       - path: /
