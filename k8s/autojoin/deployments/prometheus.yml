@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      # Used to match pre-existing pods that may be affected during updates.
+      run: prometheus-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  # Pod template.
+  template:
+    metadata:
+      labels:
+        # Note: run=prometheus-server should match a service config with a
+        # public IP and port so that it is publically accessible.
+        run: prometheus-server
+      annotations:
+        # Tell prometheus service discovery to scrape the node-exporter running
+        # within the prometheus-server pod.
+        prometheus.io/scrape: 'true'
+    spec:
+      # TODO: remove this directive after deployment to prod.
+      initContainers:
+      - name: reset-perms
+        image: busybox:1.34
+        command: ['chown', '-R', '65534:65534', '/work-dir/']
+        volumeMounts:
+        - mountPath: /work-dir
+          name: prometheus-storage
+      # References a service account with RBAC permissions for accessing node
+      # metrics. This is required for k8s version 1.6+.
+      serviceAccountName: prometheus
+
+      # Clusters running a prometheus instance must label nodes exclusively for
+      # use by prometheus. See README for steps to create a GKE cluster for
+      # prometheus.
+      nodeSelector:
+        monitoring-node: 'true'
+
+      # When prometheus receives SIGTERM, it begins a new checkpoint. This can
+      # take longer than the default grace period of 30s.
+      terminationGracePeriodSeconds: 240
+
+      containers:
+      # Check https://hub.docker.com/r/prom/prometheus/tags/ for the current
+      # stable version.
+      - image: prom/prometheus:v2.53.1
+        # Note: the container name appears to be ignored and the actual pod name
+        # is derived from the Deployment.metadata.name. However, removing this
+        # value results in a configuration error.
+        name: prometheus
+        # Note: Set retention time to 120 days. (default retention is 15d).
+        args: ["--config.file=/etc/prometheus/prometheus.yml",
+               "--storage.tsdb.retention.time=120d",
+               "--storage.tsdb.path=/data",
+               "--web.enable-lifecycle",
+               "--enable-feature=memory-snapshot-on-shutdown"]
+        ports:
+          - containerPort: 9090
+        resources:
+          requests:
+            memory: "5Gi"
+            cpu: "1500m"
+          limits:
+            memory: "5Gi"
+            cpu: "1500m"
+        volumeMounts:
+        # /prometheus stores all metric data. Declared as VOLUME in base image.
+        - mountPath: /data
+          name: prometheus-storage
+          subPath: prometheus-data2
+        # /legacy-targets should contain legacy target configuration files.
+        - mountPath: /legacy-targets
+          name: prometheus-storage
+          subPath: legacy-targets
+        # /byos-nodes
+        - mountPath: /byos-nodes
+          name: prometheus-storage
+          subPath: byos-nodes
+        # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
+        - mountPath: /etc/prometheus
+          name: prometheus-config
+
+      - image: measurementlab/gcp-service-discovery:v1.5.1
+        name: service-discovery
+        args: [ "--http-target=/targets/byos-nodes/byos-nodes.json",
+                "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=prometheus",
+                "--project={{GCLOUD_PROJECT}}",
+                "--prometheusx.listen-address=:9373"]
+        ports:
+          - containerPort: 9373
+        volumeMounts:
+        # Mount the the prometheus-storage for write access to the target
+        # directories.
+        - mountPath: /targets
+          name: prometheus-storage
+
+      # Check https://hub.docker.com/r/jimmidyson/configmap-reload/tags/ for the current
+      # stable version.
+      - image: jimmidyson/configmap-reload:v0.7.1
+        name: configmap-reload
+        args: ["-webhook-url", "http://prometheus-public-service.default.svc.cluster.local:9090/-/reload",
+               "-volume-dir", "/prometheus-config"]
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "50m"
+          limits:
+            memory: "100Mi"
+            cpu: "50m"
+        volumeMounts:
+        # Mount the prometheus config volume so we can watch it for changes.
+        - mountPath: /prometheus-config
+          name: prometheus-config
+
+      # Disks created manually, can be named here explicitly using
+      # gcePersistentDisk instead of the persistentVolumeClaim.
+      volumes:
+      - name: prometheus-storage
+        persistentVolumeClaim:
+          claimName: auto-prometheus-ssd0
+      - name: prometheus-config
+        configMap:
+          name: prometheus-cluster-config
+
