@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      application: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        application: kube-state-metrics
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      nodeSelector:
+        monitoring-node: 'true'
+      containers:
+      - name: kube-state-metrics
+        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.9.2
+        ports:
+        - containerPort: 8080
