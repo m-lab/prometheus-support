@@ -21,7 +21,7 @@ sed -e 's|{{CLUSTER}}|'${CLUSTER}'|g' \
 
 # Prometheus config map.
 kubectl create configmap prometheus-cluster-config \
-    --from-file=config/cluster/prometheus \
+    --from-file=config/${CLUSTER}/prometheus \
     --dry-run="client" -o json | kubectl apply -f -
 
 kubectl create secret generic prometheus-auth \
