@@ -149,24 +149,30 @@ steps:
     # Check all JSON files, mostly (likely only) provisioned Grafana dashboards
     find . -type f -name '*.json' | xargs jsonlint-php -q
 
-    # Check alert and recording rules
-    promtool check rules ./config/federation/prometheus/alerts.yml
-    promtool check rules ./config/federation/prometheus/rules.yml
+    # TODO(soltesz): Separate configuration steps so we can use cbif conditions.
+    if [[ $$PROJECT = "mlab-sandbox" || $$PROJECT = "mlab-staging" || $$PROJECT = "mlab-oti" ]] ; then
+      # Check alert and recording rules
+      promtool check rules ./config/federation/prometheus/alerts.yml
+      promtool check rules ./config/federation/prometheus/rules.yml
 
-    export CLUSTER=prometheus-federation
+      export CLUSTER=prometheus-federation
 
-    # Get cluster credentials for the prometheus-federation cluster
-    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
+      # Get cluster credentials for the prometheus-federation cluster
+      gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
 
-    # Apply various things in the prometheus-federation cluster
-    ./apply-global-prometheus.sh
-    ./apply-grafana-dashboards.sh
-    ./deploy-prometheus-targets.sh $$PROJECT
+      # Apply various things in the prometheus-federation cluster
+      ./apply-global-prometheus.sh
+      ./apply-grafana-dashboards.sh
+      ./deploy-prometheus-targets.sh $$PROJECT
 
-    # Get cluster credentials for the data-pipeline cluster
-    export CLUSTER=data-pipeline
-    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
-    ./apply-cluster.sh
+      # Get cluster credentials for the data-pipeline cluster
+      export CLUSTER=data-pipeline
+      gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
+      ./apply-cluster.sh
+
+      # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
+      ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
+    fi
 
     # TODO(soltesz): Separate configuration steps so we can use cbif conditions.
     if [[ $$PROJECT = "mlab-sandbox" || $$PROJECT = "mlab-staging" || $$PROJECT = "mlab-autojoin" ]] ; then
@@ -175,6 +181,3 @@ steps:
       gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
       ./apply-cluster.sh
     fi
-
-    # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
-    ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
