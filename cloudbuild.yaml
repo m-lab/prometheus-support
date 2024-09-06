@@ -168,10 +168,13 @@ steps:
     gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
     ./apply-cluster.sh
 
-    export CLUSTER=autojoin
-    # Get cluster credentials for the autojoin cluster
-    gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
-    ./apply-cluster.sh
+    # TODO(soltesz): Separate configuration steps so we can use cbif conditions.
+    if [[ $$PROJECT = "mlab-sandbox" || $$PROJECT = "mlab-staging" || $$PROJECT = "mlab-autojoin" ]] ; then
+      export CLUSTER=autojoin
+      # Get cluster credentials for the autojoin cluster
+      gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
+      ./apply-cluster.sh
+    fi
 
     # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
     ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
