@@ -16,8 +16,8 @@ source config.sh
 
 # Replace the template variables.
 sed -e 's|{{CLUSTER}}|'${CLUSTER}'|g' \
-    config/cluster/prometheus/prometheus.yml.template > \
-    config/cluster/prometheus/prometheus.yml
+    config/${CLUSTER}/prometheus/prometheus.yml.template > \
+    config/${CLUSTER}/prometheus/prometheus.yml
 
 # Prometheus config map.
 kubectl create configmap prometheus-cluster-config \
@@ -32,7 +32,7 @@ kubectl create secret generic prometheus-auth \
 sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_CLIENT_SECRET}}|'${!OAUTH_PROXY_CLIENT_SECRET}'|g' \
     -e 's|{{OAUTH_PROXY_COOKIE_SECRET}}|'${!OAUTH_PROXY_COOKIE_SECRET}'|g' \
-    k8s/cluster/deployments/oauth2-proxy.yml
+    k8s/${CLUSTER}/deployments/oauth2-proxy.yml
 
 # Additional k8s resources installed via Helm
 #
@@ -69,6 +69,6 @@ fi
 
 # Apply templates
 CFG=/tmp/${CLUSTER}-${PROJECT}.yml
-kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml k8s/cluster/*/*.yml \
+kexpand expand --ignore-missing-keys k8s/${CLUSTER}/*/*.yml \
     -f k8s/${CLUSTER}/${PROJECT}.yml > ${CFG}
 kubectl apply -f ${CFG}

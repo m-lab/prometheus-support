@@ -257,21 +257,12 @@ scrape_configs:
         target_label: kubernetes_name
 
 
-  # Scrape config for legacy targets.
-  #
-  # Using an out-of-band process, generated configs can be copied into the
-  # Prometheus container. Prometheus will periodically re-read these files to
-  # load any new targets or remove missing ones.
-  #
-  # The file format is described here:
-  #   https://prometheus.io/docs/operating/configuration/#file_sd_config
-  - job_name: 'legacy-targets'
+  # Scrape byos-nodes every minute.
+  - job_name: 'byos-nodes'
+    scrape_timeout: 40s
     file_sd_configs:
       - files:
-          # NOTE: The path /legacy-targets does not exist in the default
-          # image. Mount this path as a volume with the docker or kubernetes
-          # configuration.
-          - /legacy-targets/*.json
-          - /legacy-targets/*.yaml
+          - /byos-nodes/*.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
+    scheme: http
