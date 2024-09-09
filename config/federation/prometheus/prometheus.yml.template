@@ -801,13 +801,3 @@ scrape_configs:
         regex: .*
         target_label: __address__
         replacement: switch-monitoring-service.default.svc.cluster.local:8080
-
-  # Scrape byos-nodes every minute.
-  - job_name: 'byos-nodes'
-    scrape_timeout: 40s
-    file_sd_configs:
-      - files:
-          - /byos-nodes/*.json
-        # Attempt to re-read files every five minutes.
-        refresh_interval: 5m
-    scheme: http
