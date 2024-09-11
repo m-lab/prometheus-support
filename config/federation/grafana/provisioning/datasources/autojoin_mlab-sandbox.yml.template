@@ -1,0 +1,20 @@
+# config file version
+apiVersion: 1
+
+datasources:
+- name: Autojoin Platform (mlab-sandbox)
+  type: prometheus
+  access: proxy
+  orgId: 1
+  url: https://prometheus-autojoin-basic.mlab-sandbox.measurementlab.net
+  basicAuth: true
+  basicAuthUser: {{PROM_AUTH_USER}}
+  secureJsonData:
+    basicAuthPassword: {{PROM_AUTH_PASS}}
+  isDefault: {{IS_DEFAULT}}
+  version: 1
+  editable: false
+
+  jsonData:
+    timeout: 60
+    timeInterval: 60s
