@@ -80,8 +80,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0020029517183217374,
-              0.03872188377331691
+              -0.0014347451503529546,
+              0.02726015785670613
             ],
             "title": {
               "text": "Frequency"
@@ -204,8 +204,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0028583660723279945,
-              0.05430895537423189
+              -0.0025077160493827168,
+              0.04764660493827161
             ],
             "title": {
               "text": "Frequency"
@@ -290,6 +290,166 @@
         "x": 0,
         "y": 31
       },
+      "id": 15,
+      "panels": [],
+      "title": "Data transferred",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PB00E94094811FA13"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "MB Transferred",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PB00E94094811FA13"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "location": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH\n pt AS (\n SELECT\n   date, \n   CASE\n      WHEN (\"max_cwnd_gain\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AND (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) THEN \"BBR and 50MB\"\n      WHEN (\"max_cwnd_gain\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) AND (\"max_elapsed_time\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) THEN \"BBR and 5s\"\n      WHEN (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) THEN \"50MB\"\n      WHEN (\"max_elapsed_time\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata)) THEN \"5s\"\n      ELSE \"BBR\"\n    END AS test_type,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[SAFE_OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   `mlab-oti.raw_pt.ndt7`\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n)\n\nSELECT TIMESTAMP(date) AS time, test_type AS metric, SUM(totalMB) / COUNT(*) AS avgMB\nFROM pt\nGROUP BY date, test_type\nORDER BY time ASC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PB00E94094811FA13"
+          },
+          "editorMode": "code",
+          "format": 0,
+          "hide": false,
+          "location": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH\n ndt AS (\n SELECT\n   date, \n   \"Full length\" AS test_type,\n   ARRAY_REVERSE(raw.Download.ServerMeasurements)[SAFE_OFFSET(0)].TCPInfo.BytesAcked/1000000 AS totalMB\n FROM\n   `mlab-oti.ndt.ndt7`\n WHERE\n   date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0 \n)\n\nSELECT TIMESTAMP(date) AS time, test_type AS metric, SUM(totalMB) / COUNT(*) AS avgMB\nFROM ndt\nGROUP BY date, test_type\nORDER BY time ASC",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Amount of Data Transferred",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
       "id": 3,
       "panels": [],
       "title": "Packet Pair",
@@ -341,7 +501,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 44
       },
       "id": 4,
       "options": {
@@ -420,7 +580,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 56
       },
       "id": 5,
       "options": {
@@ -534,7 +694,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 44
+        "y": 56
       },
       "id": 9,
       "options": {
@@ -616,7 +776,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -632,7 +793,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 67
       },
       "id": 7,
       "options": {
@@ -653,7 +814,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "11.1.3",
       "targets": [
         {
           "datasource": {
@@ -725,7 +886,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -736,7 +898,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 55
+        "y": 67
       },
       "id": 10,
       "options": {
@@ -802,7 +964,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 66
+        "y": 78
       },
       "id": 2,
       "panels": [],
@@ -827,14 +989,19 @@
               "tooltip": false,
               "viz": false
             },
-            "lineWidth": 1
+            "lineWidth": 1,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -846,7 +1013,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 67
+        "y": 79
       },
       "id": 1,
       "options": {
@@ -925,7 +1092,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 81
+        "y": 93
       },
       "id": 6,
       "options": {
@@ -1012,7 +1179,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1028,7 +1196,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 81
+        "y": 93
       },
       "id": 8,
       "options": {
@@ -1044,7 +1212,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "11.1.3",
       "targets": [
         {
           "datasource": {
@@ -1095,6 +1263,6 @@
   "timezone": "",
   "title": "Packet Testing",
   "uid": "d341c044-4e2c-4904-b05f-98e8bf1bbf32",
-  "version": 20,
+  "version": 23,
   "weekStart": ""
 }
