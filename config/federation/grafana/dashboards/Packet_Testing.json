@@ -45,130 +45,6 @@
         "x": 0,
         "y": 1
       },
-      "id": 11,
-      "maxDataPoints": 80000,
-      "options": {
-        "config": {
-          "displayModeBar": false
-        },
-        "data": [],
-        "layout": {
-          "font": {
-            "color": "grey"
-          },
-          "margin": {
-            "b": 50,
-            "l": 50,
-            "r": 50,
-            "t": 10
-          },
-          "paper_bgcolor": "rgba(0, 0, 0, 0)",
-          "plot_bgcolor": "rgba(0, 0, 0, 0)",
-          "xaxis": {
-            "autorange": true,
-            "gridcolor": "#333",
-            "range": [
-              -0.013228265733755159,
-              3.469998642218747
-            ],
-            "title": {
-              "text": "Mbps"
-            },
-            "type": "log"
-          },
-          "yaxis": {
-            "autorange": true,
-            "gridcolor": "#333",
-            "range": [
-              -0.0014347451503529546,
-              0.02726015785670613
-            ],
-            "title": {
-              "text": "Frequency"
-            },
-            "type": "linear"
-          }
-        },
-        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
-        "script": "console.log(data);\nvar types = {};\n\nvar x = data.series[0].fields[0].values.concat(data.series[1].fields[0].values);\nvar y = data.series[0].fields[1].values.concat(data.series[1].fields[1].values);\nvar names = data.series[0].fields[2].values.concat(data.series[1].fields[2].values);\n\nnames.forEach(type => {\n  types[type] = {\n    x: [],\n    y: [],\n    name: type,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  types[names[i]].x.push(x[i]);\n  types[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(types).sort().forEach(type => {\n  data.push(types[type]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-bigquery-datasource",
-            "uid": "PB00E94094811FA13"
-          },
-          "editorMode": "code",
-          "format": 1,
-          "location": "US",
-          "project": "mlab-oti",
-          "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), \n\n-- Get all the pt data.\npt AS (\n  SELECT ARRAY_REVERSE(raw.Download.ServerMeasurements)[SAFE_OFFSET(0)].TCPInfo AS tcpinfo, \n    metadata.Value AS session_id, \n  FROM `mlab-oti.raw_pt.ndt7`, UNNEST (raw.Download.ClientMetadata) AS metadata\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n  AND raw.Download is not NULL \n  AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n  AND metadata.Name = \"client_session_id\"\n),\n\n-- Select only ndt7 tests with matching pt tests.\nndt7 AS (\n  SELECT ARRAY_REVERSE(raw.Download.ServerMeasurements)[SAFE_OFFSET(0)].TCPInfo AS tcpinfo, \n    \"Full length\" AS test_type,\n  FROM `mlab-oti.ndt.ndt7`, UNNEST (raw.Download.ClientMetadata) AS metadata\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n  AND raw.Download is not NULL \n  AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n  AND metadata.Name = \"client_session_id\"\n  AND metadata.Value IN (SELECT session_id FROM pt)\n),\n\npdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF((SAFE_DIVIDE(tcpinfo.BytesAcked*8,tcpinfo.ElapsedTime)) BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), pdf_normalized AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM pdf_normalized",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        },
-        {
-          "datasource": {
-            "type": "grafana-bigquery-datasource",
-            "uid": "PB00E94094811FA13"
-          },
-          "editorMode": "code",
-          "format": 1,
-          "hide": false,
-          "location": "",
-          "project": "mlab-sandbox",
-          "rawQuery": true,
-          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), \n\n-- Get all the ndt7 data.\nndt7 AS (\n  SELECT ARRAY_REVERSE(raw.Download.ServerMeasurements)[SAFE_OFFSET(0)].TCPInfo AS tcpinfo, \n    metadata.Value AS session_id, \n  FROM `mlab-oti.ndt.ndt7`, UNNEST (raw.Download.ClientMetadata) AS metadata\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n  AND raw.Download is not NULL \n  AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n  AND metadata.Name = \"client_session_id\"\n),\n\n-- Select only pt tests with matching ndt7 tests.\npt AS (\n  SELECT ARRAY_REVERSE(raw.Download.ServerMeasurements)[SAFE_OFFSET(0)].TCPInfo AS tcpinfo, \n    metadata.Value AS session_id, \n    \"BBR-terminated\" AS test_type\n  FROM `mlab-oti.raw_pt.ndt7`, UNNEST (raw.Download.ClientMetadata) AS metadata\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n  AND raw.Download is not NULL \n  AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n  AND metadata.Name = \"client_session_id\"\n  AND metadata.Value IN (SELECT session_id FROM ndt7)\n),\n\npdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF((SAFE_DIVIDE(tcpinfo.BytesAcked*8,tcpinfo.ElapsedTime)) BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM pt, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), pdf_normalized AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM pdf_normalized",
-          "refId": "B",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "BBR-terminated vs. full length test (Download Mbps PDF, normalized)",
-      "type": "ae3e-plotly-panel"
-    },
-    {
-      "datasource": {
-        "type": "grafana-bigquery-datasource",
-        "uid": "PB00E94094811FA13"
-      },
-      "gridPos": {
-        "h": 15,
-        "w": 24,
-        "x": 0,
-        "y": 16
-      },
       "id": 13,
       "maxDataPoints": 80000,
       "options": {
@@ -204,8 +80,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0025077160493827168,
-              0.04764660493827161
+              -0.0027955028866605896,
+              0.0531145548465512
             ],
             "title": {
               "text": "Frequency"
@@ -288,7 +164,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 16
       },
       "id": 15,
       "panels": [],
@@ -359,7 +235,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 17
       },
       "id": 14,
       "options": {
@@ -448,7 +324,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 28
       },
       "id": 3,
       "panels": [],
@@ -501,7 +377,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 29
       },
       "id": 4,
       "options": {
@@ -580,7 +456,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 56
+        "y": 41
       },
       "id": 5,
       "options": {
@@ -694,7 +570,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 56
+        "y": 41
       },
       "id": 9,
       "options": {
@@ -776,8 +652,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -793,7 +668,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 67
+        "y": 52
       },
       "id": 7,
       "options": {
@@ -886,8 +761,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -898,7 +772,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 67
+        "y": 52
       },
       "id": 10,
       "options": {
@@ -964,7 +838,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 78
+        "y": 63
       },
       "id": 2,
       "panels": [],
@@ -1000,8 +874,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1013,7 +886,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 64
       },
       "id": 1,
       "options": {
@@ -1092,7 +965,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 93
+        "y": 78
       },
       "id": 6,
       "options": {
@@ -1179,8 +1052,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1196,7 +1068,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 93
+        "y": 78
       },
       "id": 8,
       "options": {
@@ -1263,6 +1135,6 @@
   "timezone": "",
   "title": "Packet Testing",
   "uid": "d341c044-4e2c-4904-b05f-98e8bf1bbf32",
-  "version": 23,
+  "version": 24,
   "weekStart": ""
 }
