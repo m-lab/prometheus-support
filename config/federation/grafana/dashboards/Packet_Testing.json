@@ -80,8 +80,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0027955028866605896,
-              0.0531145548465512
+              -0.0027657092284174116,
+              0.0525484753399308
             ],
             "title": {
               "text": "Frequency"
@@ -159,12 +159,105 @@
       "type": "ae3e-plotly-panel"
     },
     {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PB00E94094811FA13"
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 16,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.013228265733755159,
+              3.469998642218747
+            ],
+            "title": {
+              "text": "Mbps"
+            },
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0011007296174674966,
+              0.021056601900401588
+            ],
+            "title": {
+              "text": "Frequency"
+            },
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar types = {};\n\nvar x = data.series[0].fields[0].values;\nvar y = data.series[0].fields[1].values;\nvar names = data.series[0].fields[2].values;\n\nnames.forEach(type => {\n  types[type] = {\n    x: [],\n    y: [],\n    name: type,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  types[names[i]].x.push(x[i]);\n  types[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(types).sort().forEach(type => {\n  data.push(types[type]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PB00E94094811FA13"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), \n\nsnapshots AS (\n  SELECT raw.Download.UUID, raw.Download.ServerMeasurements AS serverMeasurements\n  FROM `mlab-oti.ndt.ndt7`\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n  AND raw.Download is not NULL\n  AND ARRAY_LENGTH(raw.Download.ServerMeasurements) >= 3\n),\n\nfiltered AS (\n  SELECT UUID, \n    ARRAY_REVERSE(serverMeasurements)[SAFE_OFFSET(0)] AS fullTest, \n    ARRAY(\n      SELECT m \n      FROM UNNEST(serverMeasurements) AS m \n      WHERE m.BBRInfo.CwndGain >= 512\n      ORDER BY m.TCPInfo.ElapsedTime ASC\n    ) AS pipefull\n  FROM snapshots\n),\n\nselected AS (\n  SELECT UUID,fullTest, pipefull[SAFE_OFFSET(0)] AS pf, pipefull[SAFE_OFFSET(1)] AS pf2\n  FROM filtered\n),\n\nresults AS (\n  SELECT \n    SAFE_DIVIDE(fullTest.TCPInfo.BytesAcked * 8, fullTest.TCPInfo.ElapsedTime) AS fullTest,\n    SAFE_DIVIDE(pf2.TCPInfo.BytesAcked * 8, pf2.TCPInfo.ElapsedTime) AS afterPipefullCummulative,\n    SAFE_DIVIDE((pf2.TCPInfo.BytesAcked - pf.TCPInfo.BytesAcked) * 8, (pf2.TCPInfo.ElapsedTime - pf.TCPInfo.ElapsedTime)) AS afterPipefullCurrent,\n  FROM selected\n  WHERE \n    fullTest IS NOT NULL\n    AND pf IS NOT NULL\n    AND pf2 IS NOT NULL\n),\n\nndt7 AS (\n  SELECT fullTest AS mbps, \"Full Test\" AS test_type\n  FROM results\n  UNION ALL\n  SELECT afterPipefullCummulative AS mbps, \"After pipefull cummulative\" AS test_type\n  FROM results\n  UNION ALL\n  SELECT afterPipefullCurrent AS mbps, \"After pipefull current\" AS test_type\n  FROM results\n),\n\npdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF((mbps) BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), pdf_normalized AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM pdf_normalized",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "After BBR-terminated vs. full length test (Download Mbps PDF, normalized)",
+      "type": "ae3e-plotly-panel"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 31
       },
       "id": 15,
       "panels": [],
@@ -235,7 +328,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 32
       },
       "id": 14,
       "options": {
@@ -324,7 +417,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 43
       },
       "id": 3,
       "panels": [],
@@ -377,7 +470,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 44
       },
       "id": 4,
       "options": {
@@ -456,7 +549,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 56
       },
       "id": 5,
       "options": {
@@ -570,7 +663,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 56
       },
       "id": 9,
       "options": {
@@ -652,7 +745,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -668,7 +762,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 52
+        "y": 67
       },
       "id": 7,
       "options": {
@@ -761,7 +855,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           }
@@ -772,7 +867,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 52
+        "y": 67
       },
       "id": 10,
       "options": {
@@ -838,7 +933,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 78
       },
       "id": 2,
       "panels": [],
@@ -886,7 +981,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 79
       },
       "id": 1,
       "options": {
@@ -965,7 +1060,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 78
+        "y": 93
       },
       "id": 6,
       "options": {
@@ -1068,7 +1163,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 78
+        "y": 93
       },
       "id": 8,
       "options": {
@@ -1135,6 +1230,6 @@
   "timezone": "",
   "title": "Packet Testing",
   "uid": "d341c044-4e2c-4904-b05f-98e8bf1bbf32",
-  "version": 24,
+  "version": 25,
   "weekStart": ""
 }
