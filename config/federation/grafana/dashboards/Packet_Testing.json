@@ -80,8 +80,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0028300316297652744,
-              0.0537706009655402
+              -0.003072375841014273,
+              0.058375140979271184
             ],
             "title": {
               "text": "Frequency"
@@ -205,8 +205,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0010984514417780144,
-              0.02101684380509914
+              -0.0011115749709160931,
+              0.021237281271091906
             ],
             "title": {
               "text": "Frequency"
@@ -253,12 +253,167 @@
       "type": "ae3e-plotly-panel"
     },
     {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "PB00E94094811FA13"
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
+      "id": 17,
+      "maxDataPoints": 80000,
+      "options": {
+        "config": {
+          "displayModeBar": false
+        },
+        "data": [],
+        "layout": {
+          "font": {
+            "color": "grey"
+          },
+          "margin": {
+            "b": 50,
+            "l": 50,
+            "r": 50,
+            "t": 10
+          },
+          "paper_bgcolor": "rgba(0, 0, 0, 0)",
+          "plot_bgcolor": "rgba(0, 0, 0, 0)",
+          "xaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.013228265733755159,
+              3.469998642218747
+            ],
+            "title": {
+              "text": "Mbps"
+            },
+            "type": "log"
+          },
+          "yaxis": {
+            "autorange": true,
+            "gridcolor": "#333",
+            "range": [
+              -0.0011322425424781166,
+              0.021818232681296408
+            ],
+            "title": {
+              "text": "Frequency"
+            },
+            "type": "linear"
+          }
+        },
+        "onclick": "console.log(\"okay\");\nconsole.log(data)\n// window.updateVariables({query:{'var-project':'test'}, partial: true})",
+        "script": "console.log(data);\nvar types = {};\n\nvar x = data.series[0].fields[0].values.concat(data.series[1].fields[0].values).concat(data.series[2].fields[0].values);\nvar y = data.series[0].fields[1].values.concat(data.series[1].fields[1].values).concat(data.series[2].fields[1].values);\nvar names = data.series[0].fields[2].values.concat(data.series[1].fields[2].values).concat(data.series[2].fields[2].values);\n\nnames.forEach(type => {\n  types[type] = {\n    x: [],\n    y: [],\n    name: type,\n    line: {\n      width: 1\n    }\n  }\n}); \nx.forEach((xv, i) => {\n  types[names[i]].x.push(x[i]);\n  types[names[i]].y.push(y[i]);\n})\nvar data = [];\nObject.keys(types).sort().forEach(type => {\n  data.push(types[type]);\n});\nconsole.log(data);\nvar trace = {\n  x: x,\n  y: y,\n  name: names\n};\nconsole.log(\"okay2\");\nconsole.log(trace);\nreturn {data:data};"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PB00E94094811FA13"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "US",
+          "project": "mlab-oti",
+          "rawQuery": true,
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), \n\nthroughput AS (\n  SELECT\n      raw.Download.UUID,\n      measurements.TCPInfo AS tcpInfo,\n      measurements.TCPInfo.ElapsedTime,\n      LAG(measurements.TCPInfo.ElapsedTime) OVER (PARTITION BY raw.Download.UUID ORDER BY measurements.TCPInfo.ElapsedTime ASC) AS prevTime, \n      measurements.TCPInfo.BytesAcked, \n      LAG(measurements.TCPInfo.BytesAcked) OVER (PARTITION BY raw.Download.UUID ORDER BY measurements.TCPInfo.ElapsedTime ASC) AS prevBytes\n  FROM mlab-oti.ndt.ndt7, UNNEST(raw.Download.ServerMeasurements) AS measurements\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n),\n\ncalculated_throughput AS (\n  SELECT *, SAFE_DIVIDE((BytesAcked - prevBytes) * 8, ElapsedTime - prevTime) AS local_throughput\n  FROM throughput\n),\n\nndt7 AS (\n  SELECT UUID, AVG(local_throughput) AS avg_throughput, \"avg\" as test_type\n  FROM calculated_throughput\n  GROUP BY UUID\n),  \n\npdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF((avg_throughput) BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), pdf_normalized AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM pdf_normalized",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PB00E94094811FA13"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "hide": false,
+          "location": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), \n\nthroughput AS (\n  SELECT\n      raw.Download.UUID,\n      measurements.TCPInfo AS tcpInfo,\n      measurements.TCPInfo.ElapsedTime,\n      LAG(measurements.TCPInfo.ElapsedTime) OVER (PARTITION BY raw.Download.UUID ORDER BY measurements.TCPInfo.ElapsedTime ASC) AS prevTime, \n      measurements.TCPInfo.BytesAcked, \n      LAG(measurements.TCPInfo.BytesAcked) OVER (PARTITION BY raw.Download.UUID ORDER BY measurements.TCPInfo.ElapsedTime ASC) AS prevBytes\n  FROM mlab-oti.ndt.ndt7, UNNEST(raw.Download.ServerMeasurements) AS measurements\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n),\n\ncalculated_throughput AS (\n  SELECT *, SAFE_DIVIDE((BytesAcked - prevBytes) * 8, ElapsedTime - prevTime) AS local_throughput\n  FROM throughput\n),\n\nndt7 AS (\n  SELECT UUID, ARRAY_REVERSE(ARRAY_AGG(local_throughput))[0] AS total_throughput, \"total\" as test_type\n  FROM calculated_throughput\n  GROUP BY UUID\n),  \n\npdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF((total_throughput) BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), pdf_normalized AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM pdf_normalized",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "PB00E94094811FA13"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "hide": false,
+          "location": "",
+          "project": "mlab-sandbox",
+          "rawQuery": true,
+          "rawSql": "WITH steps AS (\n  SELECT x, POW(10, x-.01) AS bucket_left, POW(10, x+.01) AS bucket_right\n  FROM UNNEST(GENERATE_ARRAY(0, 3.5, .02)) AS x\n), \n\nthroughput AS (\n  SELECT\n      raw.Download.UUID,\n      measurements.TCPInfo AS tcpInfo,\n      measurements.TCPInfo.ElapsedTime,\n      LAG(measurements.TCPInfo.ElapsedTime) OVER (PARTITION BY raw.Download.UUID ORDER BY measurements.TCPInfo.ElapsedTime ASC) AS prevTime, \n      measurements.TCPInfo.BytesAcked, \n      LAG(measurements.TCPInfo.BytesAcked) OVER (PARTITION BY raw.Download.UUID ORDER BY measurements.TCPInfo.ElapsedTime ASC) AS prevBytes\n  FROM mlab-oti.ndt.ndt7, UNNEST(raw.Download.ServerMeasurements) AS measurements\n  WHERE date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n   AND raw.Download IS NOT NULL\n   AND ARRAY_LENGTH(raw.Download.ServerMeasurements) > 0\n),\n\ncalculated_throughput AS (\n  SELECT *, SAFE_DIVIDE((BytesAcked - prevBytes) * 8, ElapsedTime - prevTime) AS local_throughput\n  FROM throughput\n),\n\nndt7 AS (\n  SELECT UUID, MAX(local_throughput) AS max_throughput, \"max\" as test_type\n  FROM calculated_throughput\n  GROUP BY UUID\n),  \n\npdf_sort AS (\n  SELECT bucket_left, bucket_right, test_type, IF((max_throughput) BETWEEN bucket_left AND bucket_right, 1, 0) AS present_true\n  FROM ndt7, steps\n), pdf_totals AS (  \n  SELECT bucket_left AS buckets, test_type, sum(present_true) AS total_true\n  FROM   pdf_sort\n  GROUP BY bucket_left, test_type\n  ORDER BY bucket_left\n), pdf_product  AS (\n  SELECT\n    total_true,\n    test_type,\n    trunc(buckets,2) as buckets,\n    total_true AS product_true,\n  FROM pdf_totals\n  ORDER BY buckets\n), pdf_normalized AS (\n  SELECT  \n    buckets,\n    test_type,\n    product_true / SUM(product_true) OVER (partition BY test_type) AS normalized,\n    \n  FROM pdf_product\n  ORDER BY buckets\n)\nSELECT\n  buckets,\n  normalized,\n  test_type,\n\nFROM pdf_normalized",
+          "refId": "C",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Total vs. avg vs. max snapshot throughput (PDF)",
+      "type": "ae3e-plotly-panel"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 46
       },
       "id": 15,
       "panels": [],
@@ -329,7 +484,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 47
       },
       "id": 14,
       "options": {
@@ -418,7 +573,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 58
       },
       "id": 3,
       "panels": [],
@@ -470,7 +625,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 59
       },
       "id": 4,
       "options": {
@@ -549,7 +704,7 @@
         "h": 11,
         "w": 12,
         "x": 0,
-        "y": 56
+        "y": 71
       },
       "id": 5,
       "options": {
@@ -662,7 +817,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 56
+        "y": 71
       },
       "id": 9,
       "options": {
@@ -760,7 +915,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 67
+        "y": 82
       },
       "id": 7,
       "options": {
@@ -864,7 +1019,7 @@
         "h": 11,
         "w": 12,
         "x": 12,
-        "y": 67
+        "y": 82
       },
       "id": 10,
       "options": {
@@ -930,7 +1085,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 78
+        "y": 93
       },
       "id": 2,
       "panels": [],
@@ -978,7 +1133,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 94
       },
       "id": 1,
       "options": {
@@ -1057,7 +1212,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 93
+        "y": 108
       },
       "id": 6,
       "options": {
@@ -1160,7 +1315,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 93
+        "y": 108
       },
       "id": 8,
       "options": {
@@ -1227,6 +1382,6 @@
   "timezone": "",
   "title": "Packet Testing",
   "uid": "d341c044-4e2c-4904-b05f-98e8bf1bbf32",
-  "version": 26,
+  "version": 27,
   "weekStart": ""
 }
