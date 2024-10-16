@@ -50,6 +50,12 @@ SELECT
   SUM(IF(period = "month" AND service = "BigQuery", cost, 0))/30 AS value_average_daily_bigquery,
   SUM(IF(period = "today" AND service = "BigQuery", cost, 0)) AS value_today_bigquery,
   SUM(IF(period = "yesterday" AND service = "BigQuery", cost, 0)) AS value_yesterday_bigquery,
-  SUM(IF(period = "before_yesterday" AND service = "BigQuery", cost, 0)) AS value_before_yesterday_bigquery
+  SUM(IF(period = "before_yesterday" AND service = "BigQuery", cost, 0)) AS value_before_yesterday_bigquery,
+  -- Compute Engine metrics.
+  SUM(IF(period = "month" AND service = "Compute Engine", cost, 0))/30 AS value_average_daily_gce,
+  SUM(IF(period = "today" AND service = "Compute Engine", cost, 0)) AS value_today_gce,
+  SUM(IF(period = "yesterday" AND service = "Compute Engine", cost, 0)) AS value_yesterday_gce,
+  SUM(IF(period = "before_yesterday" AND service = "Compute Engine", cost, 0)) AS value_before_yesterday_gce
 FROM
   billing
+
