@@ -1352,3 +1352,28 @@ groups:
       summary: Daily BigQuery costs are 2x the average BigQuery costs for the month.
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailybigqueryincrease
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/f4efc343-661f-4899-a00f-a4ffeb294e5d/bigquery-usage?orgId=1&from=now-7d&to=now
+
+# Billing_DailyGCEIncrease fires when the daily Compute Engine costs for any of
+# the last 3 days is 45% over the average Compute Engine costs for the last 30
+# days. Because the GCP billing export may take over a day to complete, the
+# alert checks as far as 2 days back to get an accurate measure of the daily
+# costs. That said, even if only with partial data, we opportunistically also
+# check today's and yesterday's cost.
+#
+# 45% is not arbitrary. It is the percentage at which this alert would not have
+# caused any false positives during the date range 2024-06-01 and 2024-10-15.
+  - alert: Billing_DailyGCEIncrease
+    expr: |
+     bq_billing_today_gce > bq_billing_average_daily_gce * 1.45
+      OR bq_billing_yesterday_gce > bq_billing_average_daily_gce * 1.45
+      OR bq_billing_before_yesterday_gce > bq_billing_average_daily_gce * 1.45
+    for: 10m
+    labels:
+      repo: dev-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: Daily Compute Engine costs are 45% over the average costs for the month.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailygceincrease
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/a5mC51ZMk/gcp-billing?orgId=1&refresh=5m
+
