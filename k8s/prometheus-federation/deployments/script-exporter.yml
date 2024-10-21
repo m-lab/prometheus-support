@@ -32,12 +32,12 @@ spec:
 
       containers:
       - name: script-exporter
-        image: measurementlab/script-exporter-support:v0.2.10
+        image: measurementlab/script-exporter-support:sandbox-soltesz-add-ndt7
         args:
         - -config.file=/etc/script_exporter/script_exporter.yml
         env:
         - name: LOGX_DEBUG
-          value: 'false'
+          value: 'true'
         - name: MONITORING_SIGNER_KEY
           value: /keys/monitoring-signer-key.json
         - name: LOCATE_URL
