@@ -32,7 +32,7 @@ spec:
 
       containers:
       - name: script-exporter
-        image: measurementlab/script-exporter-support:sandbox-soltesz-add-ndt7
+        image: measurementlab/script-exporter-support:v0.2.11
         args:
         - -config.file=/etc/script_exporter/script_exporter.yml
         env:
@@ -41,7 +41,7 @@ spec:
         - name: MONITORING_SIGNER_KEY
           value: /keys/monitoring-signer-key.json
         - name: LOCATE_URL
-          value: https://locate-dot-{{LOCATE_PROJECT}}.appspot.com/v2/platform/monitoring/
+          value: https://locate-dot-{{LOCATE_PROJECT}}.appspot.com/v2/platform/monitoring/?early_exit=250
         ports:
         - containerPort: 9172
         volumeMounts:
