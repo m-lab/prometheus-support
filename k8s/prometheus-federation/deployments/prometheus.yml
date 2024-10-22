@@ -80,6 +80,9 @@ spec:
         - mountPath: /script-targets-federation
           name: prometheus-storage
           subPath: script-targets-federation
+        - mountPath: /script-targets-autonode
+          name: prometheus-storage
+          subPath: script-targets-autonode
         # /bmc-targets should contain BMC target config files.
         - mountPath: /bmc-targets
           name: prometheus-storage
@@ -102,6 +105,8 @@ spec:
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/script-targets/ndt5_client.json",
                 "--http-target=/targets/script-targets-federation/wehe_client.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/script-targets/wehe_client.json",
+                "--http-target=/targets/script-targets-autonode/byos-nodes.json",
+                "--http-source=https://autojoin-dot-{{AUTOJOIN_PROJECT}}.appspot.com/autojoin/v0/node/list?format=script-exporter&service=ndt7_client",
                 "--http-target=/targets/blackbox-targets/ndt_raw.json",
                 "--http-source=https://storage.googleapis.com/operator-{{GCLOUD_PROJECT}}/prometheus/blackbox-targets/ndt_raw.json",
                 "--http-target=/targets/blackbox-targets-ipv6/ndt_raw_ipv6.json",
