@@ -1393,7 +1393,7 @@
         },
         "orientation": "auto",
         "showValue": "auto",
-        "stacking": "none",
+        "stacking": "normal",
         "tooltip": {
           "mode": "single",
           "sort": "none"
@@ -1412,7 +1412,7 @@
           "location": "",
           "project": "measurement-lab",
           "rawQuery": true,
-          "rawSql": "SELECT TIMESTAMP(DATE_TRUNC(date, MONTH)) as time, COUNT(DISTINCT server.Site) as sites\nFROM `measurement-lab.ndt.ndt7`\nWHERE date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AND CURRENT_DATE()\nGROUP BY time\nORDER BY time",
+          "rawSql": "SELECT\n TIMESTAMP(DATE_TRUNC(date, MONTH)) as time, \n IF( (\"physical\" IN UNNEST(raw.Download.ServerMetadata.Value)),\n   \"physical\", \"virtual\") as metric,\n COUNT(DISTINCT server.Site) as sites\nFROM `measurement-lab.ndt.ndt7`\nWHERE date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AND CURRENT_DATE()\nAND raw.Download is not NULL\nGROUP BY time, metric\nORDER BY time",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1765,6 +1765,6 @@
   "timezone": "",
   "title": "Keep M-Lab Running",
   "uid": "jrd70ZoGx",
-  "version": 19,
+  "version": 15,
   "weekStart": ""
 }
