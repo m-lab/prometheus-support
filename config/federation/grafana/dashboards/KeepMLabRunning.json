@@ -1586,7 +1586,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -1640,7 +1640,7 @@
           "location": "",
           "project": "measurement-lab",
           "rawQuery": true,
-          "rawSql": "SELECT TIMESTAMP(date) as time, COUNT(*) as tests\nFROM `measurement-lab.ndt.ndt7`\nWHERE date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AND CURRENT_DATE()\nGROUP BY time\nORDER BY time",
+          "rawSql": "SELECT TIMESTAMP(date) as time,\n IF( (\"physical\" IN UNNEST(raw.Download.ServerMetadata.Value) OR \"physical\" IN UNNEST(raw.Upload.ServerMetadata.Value)),\n   \"physical\", \"virtual\") as metric,\n  COUNT(*) as tests\nFROM `measurement-lab.ndt.ndt7`\nWHERE date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY) AND CURRENT_DATE()\nGROUP BY time, metric\nORDER BY time",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1726,7 +1726,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Google BigQuery (mlab-oti)",
           "value": "PE8D1C7E267159A85"
         },
@@ -1765,6 +1765,6 @@
   "timezone": "",
   "title": "Keep M-Lab Running",
   "uid": "jrd70ZoGx",
-  "version": 15,
+  "version": 17,
   "weekStart": ""
 }
