@@ -1,83 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_AUTOJOIN_PLATFORM (MLAB-AUTOJOIN)",
-      "label": "Autojoin Platform (mlab-autojoin)",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    },
-    {
-      "name": "DS_PLATFORM_CLUSTER (MLAB-OTI)",
-      "label": "Platform Cluster (mlab-oti)",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    },
-    {
-      "name": "DS_GOOGLE_BIGQUERY (MEASUREMENT-LAB)",
-      "label": "Google BigQuery (measurement-lab)",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "grafana-bigquery-datasource",
-      "pluginName": "Google BigQuery"
-    },
-    {
-      "name": "DS_GOOGLE_BIGQUERY (MLAB-OTI)",
-      "label": "Google BigQuery (mlab-oti)",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "grafana-bigquery-datasource",
-      "pluginName": "Google BigQuery"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "ae3e-plotly-panel",
-      "name": "Plotly panel",
-      "version": "0.5.0"
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.1.3"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-bigquery-datasource",
-      "name": "Google BigQuery",
-      "version": "1.9.3"
-    },
-    {
-      "type": "panel",
-      "id": "heatmap",
-      "name": "Heatmap",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -97,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 466,
   "links": [],
   "panels": [
     {
@@ -179,7 +100,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_AUTOJOIN_PLATFORM (MLAB-AUTOJOIN)}"
+            "uid": "${datasourceAutojoin}"
           },
           "editorMode": "code",
           "expr": "count(sum(ndt7_measurer_bbr_enabled_total{status=\"true\", machine=~\".*${metro:regex}.*\"}) > 0)",
@@ -205,7 +126,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_AUTOJOIN_PLATFORM (MLAB-AUTOJOIN)}"
+            "uid": "${datasourceAutojoin}"
           },
           "editorMode": "code",
           "expr": "count(heartbeat_health_endpoint_checks_total{status=\"OK\", machine=~\".*${metro:regex}.*\"} > 0)",
@@ -231,7 +152,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_AUTOJOIN_PLATFORM (MLAB-AUTOJOIN)}"
+            "uid": "${datasourceAutojoin}"
           },
           "editorMode": "code",
           "expr": "count(traces_performed_total{exported_type=\"scamper\", machine=~\".*${metro:regex}.*\"} > 0)",
@@ -345,7 +266,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PLATFORM_CLUSTER (MLAB-OTI)}"
+            "uid": "${datasourcePlatform}"
           },
           "editorMode": "code",
           "expr": "sum by(site) (rate(controller_access_txcontroller_requests_total{request=\"rejected\", machine=~\".*${metro:regex}.*\"}[15m])) / \n  sum by(site) (rate(controller_access_txcontroller_requests_total{machine=~\".*${metro:regex}.*\"}[15m]) )",
@@ -452,7 +373,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_AUTOJOIN_PLATFORM (MLAB-AUTOJOIN)}"
+            "uid": "${datasourceAutojoin}"
           },
           "editorMode": "code",
           "expr": "60 * sum by(direction, org, site) (label_replace(rate(ndt_test_rate_mbps_count{deployment=\"byos\", direction=\"download\",  machine=~\".*(${metro:regex}).*\"}[5m]), \"site\", \"$1\", \"machine\", \"ndt-([a-z]{3}[^-]+)-.*\"))\n",
@@ -557,7 +478,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_AUTOJOIN_PLATFORM (MLAB-AUTOJOIN)}"
+            "uid": "${datasourceAutojoin}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -590,7 +511,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${DS_GOOGLE_BIGQUERY (MEASUREMENT-LAB)}"
+        "uid": "f126f149-75bd-4e5a-9883-fcd7e62bc80a"
       },
       "fieldConfig": {
         "defaults": {
@@ -669,7 +590,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${DS_GOOGLE_BIGQUERY (MEASUREMENT-LAB)}"
+            "uid": "f126f149-75bd-4e5a-9883-fcd7e62bc80a"
           },
           "editorMode": "code",
           "format": 0,
@@ -703,7 +624,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${DS_GOOGLE_BIGQUERY (MLAB-OTI)}"
+        "uid": "PE8D1C7E267159A85"
       },
       "gridPos": {
         "h": 16,
@@ -749,8 +670,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0016346331303224446,
-              0.031058029476126445
+              -0.0016114953333780972,
+              0.030618411334183845
             ],
             "type": "linear"
           }
@@ -762,7 +683,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${DS_GOOGLE_BIGQUERY (MLAB-OTI)}"
+            "uid": "PE8D1C7E267159A85"
           },
           "editorMode": "code",
           "format": 1,
@@ -796,7 +717,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${DS_GOOGLE_BIGQUERY (MLAB-OTI)}"
+        "uid": "PE8D1C7E267159A85"
       },
       "gridPos": {
         "h": 16,
@@ -842,8 +763,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0016970240528979103,
-              0.032243457005060296
+              -0.0016684022529029079,
+              0.03169964280515525
             ],
             "type": "linear"
           }
@@ -855,7 +776,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${DS_GOOGLE_BIGQUERY (MLAB-OTI)}"
+            "uid": "PE8D1C7E267159A85"
           },
           "editorMode": "code",
           "format": 1,
@@ -889,7 +810,7 @@
     {
       "datasource": {
         "type": "grafana-bigquery-datasource",
-        "uid": "${DS_GOOGLE_BIGQUERY (MLAB-OTI)}"
+        "uid": "PE8D1C7E267159A85"
       },
       "gridPos": {
         "h": 16,
@@ -948,7 +869,7 @@
         {
           "datasource": {
             "type": "grafana-bigquery-datasource",
-            "uid": "${DS_GOOGLE_BIGQUERY (MLAB-OTI)}"
+            "uid": "PE8D1C7E267159A85"
           },
           "editorMode": "code",
           "format": 1,
@@ -985,7 +906,11 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "Autojoin Platform (mlab-autojoin)",
+          "value": "P9963F0EC00120018"
+        },
         "hide": 1,
         "includeAll": false,
         "multi": false,
@@ -999,7 +924,11 @@
         "type": "datasource"
       },
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "Platform Cluster (mlab-oti)",
+          "value": "WW1Jk2sGk"
+        },
         "hide": 1,
         "includeAll": false,
         "multi": false,
@@ -1013,7 +942,11 @@
         "type": "datasource"
       },
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "Google BigQuery (measurement-lab)",
+          "value": "f126f149-75bd-4e5a-9883-fcd7e62bc80a"
+        },
         "hide": 0,
         "includeAll": false,
         "multi": false,
@@ -1026,7 +959,11 @@
         "type": "datasource"
       },
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "equinix",
+          "value": "equinix"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${datasourceAutojoin}"
@@ -1049,10 +986,14 @@
         "type": "query"
       },
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "dfw",
+          "value": "dfw"
+        },
         "datasource": {
           "type": "grafana-bigquery-datasource",
-          "uid": "${DS_GOOGLE_BIGQUERY (MLAB-OTI)}"
+          "uid": "${bigquery}"
         },
         "definition": "",
         "hide": 0,
@@ -1102,6 +1043,6 @@
   "timezone": "",
   "title": "Autojoin",
   "uid": "abcdef37wdji8d",
-  "version": 80,
+  "version": 81,
   "weekStart": ""
 }
