@@ -90,7 +90,7 @@ for ds_tmpl in $ds_tmpls; do
   case "$PROJECT" in
     # Don't include sandbox or staging data sources in the production instance.
     mlab-oti)
-      if [[ $(basename $ds_tmpl) != *mlab-oti* ]]; then
+      if [[ $(basename $ds_tmpl) != *mlab-oti* && $(basename $ds_tmpl) != *mlab-autojoin* ]]; then
         rm $ds_tmpl
         continue
       fi
