@@ -85,8 +85,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.0010087298937641136,
-              0.019376447510975305
+              -0.0010009108759689385,
+              0.01926630069381513
             ],
             "title": {
               "text": "Frequency"
@@ -200,8 +200,8 @@
             "autorange": true,
             "gridcolor": "#333",
             "range": [
-              -0.009505293176164416,
-              0.18060057034712387
+              -0.009832504342387935,
+              0.18681758250537073
             ],
             "title": {
               "text": "Frequency"
@@ -325,7 +325,7 @@
               "mode": "off"
             }
           },
-          "decimals": 3,
+          "decimals": 1,
           "mappings": [],
           "min": 0,
           "thresholds": {
@@ -382,7 +382,7 @@
           "orderBySort": "1",
           "project": "mlab-oti",
           "rawQuery": true,
-          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n    AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n    AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n    AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS ratio\nFROM\n  agg\nORDER BY time ASC",
+          "rawSql": "WITH ndt7 AS (\n  SELECT\n    *,\n    IF (\"early_exit\" IN (SELECT metadata.Name FROM UNNEST(raw.Download.ClientMetadata) AS metadata), \"Early exit\", \"Full test\") AS typ\n  FROM\n    ndt.ndt7\n  WHERE\n    date BETWEEN \"${__from:date:YYYY-MM-DD}\" AND \"${__to:date:YYYY-MM-DD}\"\n    AND raw.Download is not NULL \n    AND REGEXP_CONTAINS(SUBSTR(server.Site, 0, 3), '${metro:regex}')\n    AND REGEXP_CONTAINS(server.Site, '${site:regex}')\n    AND REGEXP_CONTAINS(CAST(client.Network.ASNumber AS string), \"${as:regex}\")\n),\n\nagg AS (\n  SELECT\n    TIMESTAMP(date) AS time,\n    typ AS metric,\n    COUNT(*) AS total\n  FROM\n    ndt7\n  GROUP BY\n    date,\n    metric\n)\n\nSELECT\n  time,\n  metric,\n  total / SUM(total) OVER(partition BY time) AS percentage\nFROM\n  agg\nORDER BY time ASC",
           "refId": "B",
           "select": [
             [
@@ -703,7 +703,6 @@
         }
       ],
       "title": "Amount of Data Transferred",
-      "transformations": [],
       "type": "timeseries"
     },
     {
@@ -843,7 +842,6 @@
         }
       ],
       "title": "Amount of Data Transferred (split)",
-      "transformations": [],
       "type": "timeseries"
     },
     {
@@ -985,7 +983,6 @@
         }
       ],
       "title": "Weekly Tests (IST)",
-      "transformations": [],
       "type": "timeseries"
     },
     {
@@ -1125,12 +1122,11 @@
         }
       ],
       "title": "Weekly Data Transferred (IST)",
-      "transformations": [],
       "type": "timeseries"
     }
   ],
   "refresh": "",
-  "schemaVersion": 38,
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
@@ -1267,13 +1263,13 @@
     ]
   },
   "time": {
-    "from": "now-4M",
+    "from": "now-30d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "NDT: Early Exit",
   "uid": "W8JPPzzIz",
-  "version": 39,
+  "version": 45,
   "weekStart": ""
 }
