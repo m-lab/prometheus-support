@@ -1,10 +1,10 @@
 #standardSQL
 
-bq_billing_per_project calculates the average GCP billing costs from the last
-30 days for each project.  Because GCP billing information is exported to
-BigQuery periodically, it may take up to 1.6 days after a given billing hour
-before all billing information is available in BigQuery. The metrics created by
-this query can be used for alerting.
+-- bq_billing_per_project calculates the average GCP billing costs from the last
+-- 30 days for each project.  Because GCP billing information is exported to
+-- BigQuery periodically, it may take up to 1.6 days after a given billing hour
+-- before all billing information is available in BigQuery. The metrics created by
+-- this query can be used for alerting.
 
 -- This query exports a single value: bq_billing_per_project
 
