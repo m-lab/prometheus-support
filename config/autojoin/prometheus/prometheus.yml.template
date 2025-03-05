@@ -15,7 +15,19 @@ global:
 # Load rules once and periodically evaluate them according to the global
 # 'evaluation_interval'.
 rule_files:
+  - /etc/prometheus/alerts.yml
   # - /etc/prometheus/rules.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets:
+        - alertmanager.{{GCLOUD_PROJECT}}.measurementlab.net
+      api_version: v2
+      basic_auth:
+        username: mlab
+        password_file: /etc/alertmanager/password
+      scheme: https
 
 # Scrape configurations.
 #
@@ -266,3 +278,21 @@ scrape_configs:
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
     scheme: http
+
+  # Scrape AppEngine Flex VMs.
+  #
+  # In order to scrape Prometheus metrics directly from Flex VMs, the app.yaml
+  # configuration must include a rule to forward the container port to the host
+  # VM. The measurementlab/mlab-service-discovery detects these VMs and
+  # generates a targets file.
+  - job_name: 'aeflex-targets'
+    file_sd_configs:
+      - files:
+          - /aeflex-targets/*.json
+        # Attempt to re-read files every five minutes.
+        refresh_interval: 5m
+
+    relabel_configs:
+      # Copy all labels from the aeflex service discovery.
+      - action: labelmap
+        regex: __aef_(.+)

@@ -84,6 +84,10 @@ spec:
         - mountPath: /byos-nodes
           name: prometheus-storage
           subPath: byos-nodes
+        # /aeflex-targets
+        - mountPath: /aeflex-targets
+          name: prometheus-storage
+          subPath: aeflex-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
@@ -92,6 +96,7 @@ spec:
         name: service-discovery
         args: [ "--http-target=/targets/byos-nodes/byos-nodes.json",
                 "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=prometheus",
+                "--aef-target=/targets/aeflex-targets/aeflex.json"
                 "--project={{GCLOUD_PROJECT}}",
                 "--prometheusx.listen-address=:9373"]
         ports:
@@ -119,6 +124,8 @@ spec:
         # Mount the prometheus config volume so we can watch it for changes.
         - mountPath: /prometheus-config
           name: prometheus-config
+        - mountPath: /etc/alertmanager/
+          name: alertmanager-basicauth
 
       # Disks created manually, can be named here explicitly using
       # gcePersistentDisk instead of the persistentVolumeClaim.
@@ -129,4 +136,7 @@ spec:
       - name: prometheus-config
         configMap:
           name: prometheus-cluster-config
+      - name: alertmanager-basicauth
+        secret:
+          secretName: alertmanager-basicauth
 

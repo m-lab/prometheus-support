@@ -1,0 +1,18 @@
+groups:
+- name: alerts.yml
+  rules:
+
+  - alert: AutojoinCluster_AutojoinTooManyRegisterErrors
+    expr: |
+      (sum(rate(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register", code!="200"}[1h]))) /
+        sum(rate(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register"}[1h])) > 0.01
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: The rate of Autojoin register request errors is great than 1%
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__autojointoomanyregistererrors
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
