@@ -20,6 +20,7 @@ kubectl apply -f alertmanager-basicauth.yaml
 
 # Replace the template variables.
 sed -e 's|{{CLUSTER}}|'${CLUSTER}'|g' \
+    -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     config/${CLUSTER}/prometheus/prometheus.yml.template > \
     config/${CLUSTER}/prometheus/prometheus.yml
 
