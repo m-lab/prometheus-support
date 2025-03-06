@@ -53,7 +53,7 @@
           "refId": "A"
         }
       ],
-      "title": "$site",
+      "title": "$site-$machine",
       "type": "row"
     },
     {
@@ -127,7 +127,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "(time() - node_boot_time_seconds{machine=~\"ndt-$site-.*\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{machine=~\"ndt-$site-$machine.*\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -212,7 +212,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_load15{machine=~\"ndt-$site.*\"}",
+          "expr": "node_load15{machine=~\"ndt-$site.$machine.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -297,7 +297,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$site-.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", machine=~\"ndt-$site-.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$site-.*\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$site-$machine.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", machine=~\"ndt-$site-$machine.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$site-$machine.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -504,10 +504,10 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "1 - avg by (machine) (rate(node_cpu_seconds_total{machine=~\"ndt-$site-.*\", mode=\"idle\"}[$__rate_interval]))",
+          "expr": "1 - avg by (machine) (rate(node_cpu_seconds_total{machine=~\"ndt-$site-$machine.*\", mode=\"idle\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "$node-$site",
+          "legendFormat": "$site-$machine",
           "range": true,
           "refId": "A"
         }
@@ -587,6 +587,30 @@
                 "value": "short"
               }
             ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Free"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
           }
         ]
       },
@@ -616,7 +640,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_Cached_bytes{machine=~\"ndt-$site-.*\"}\n+ node_memory_Buffers_bytes\n+ node_memory_SReclaimable_bytes",
+          "expr": "node_memory_Cached_bytes{machine=~\"ndt-$site-$machine.*\"}\n+ node_memory_Buffers_bytes\n+ node_memory_SReclaimable_bytes",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Buff/Cache",
@@ -628,7 +652,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_Active_bytes{machine=~\"ndt-$site-.*\"}\n+ node_memory_Active_anon_bytes\n+ node_memory_Active_file_bytes",
+          "expr": "node_memory_Active_bytes{machine=~\"ndt-$site-$machine.*\"}\n+ node_memory_Active_anon_bytes\n+ node_memory_Active_file_bytes",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Used",
@@ -640,7 +664,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_MemFree_bytes{machine=~\"ndt-$site-.*\"}",
+          "expr": "node_memory_MemFree_bytes{machine=~\"ndt-$site-$machine.*\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Free",
@@ -739,7 +763,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "8 * rate(node_network_transmit_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$site-.*\"}[$__rate_interval])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -753,7 +777,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$site.*\"}[$__rate_interval])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -878,7 +902,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_read_bytes_total{machine=~\"ndt-$site.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_read_bytes_total{machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read ({{device}})",
@@ -890,7 +914,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_written_bytes_total{machine=~\"ndt-$site.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_written_bytes_total{machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written ({{device}})",
@@ -902,7 +926,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_io_time_seconds_total{machine=~\"ndt-$site.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_io_time_seconds_total{machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "% sec/sec ({{device}})",
@@ -960,7 +984,7 @@
       {
         "current": {
           "isNone": true,
-          "selected": true,
+          "selected": false,
           "text": "None",
           "value": ""
         },
@@ -1026,13 +1050,10 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": true,
-          "text": [
-            "None"
-          ],
-          "value": [
-            ""
-          ]
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
         },
         "datasource": {
           "type": "prometheus",
@@ -1093,6 +1114,6 @@
   "timezone": "",
   "title": "Autojoin: Site Overview",
   "uid": "deeyimsfzkwe8c",
-  "version": 2,
+  "version": 11,
   "weekStart": ""
 }
