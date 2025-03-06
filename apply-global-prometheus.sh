@@ -52,6 +52,7 @@ kubectl create secret generic discuss-credentials \
 
 # Evaluate the Prometheus configuration template.
 sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
+    -e 's|{{AUTOJOIN_PROJECT}}|'${AUTOJOIN_PROJECT}'|g' \
     -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
     -e 's|{{REBOOTAPI_BASIC_AUTH}}|'${!REBOOTAPI_BASIC_AUTH_USER}'|g' \
     -e 's|{{REBOOTAPI_BASIC_AUTH_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
