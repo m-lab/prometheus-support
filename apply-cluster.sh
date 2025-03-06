@@ -33,6 +33,18 @@ kubectl create secret generic prometheus-auth \
     "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_AUTH_PASS})"\
     --dry-run="client" -o json | kubectl apply -f -
 
+kubectl create configmap script-exporter-config \
+  --from-file=config/autojoin/script-exporter/script_exporter.yml \
+  --dry-run="client" -o json | kubectl apply -f -
+
+# This file should already exist in this location from the
+# apply-global-prometheus.sh script, but it is duplicated here so that it is
+# easier to understand where the file comes from.
+echo "${MONITORING_SIGNER_KEY}" | base64 -d > /tmp/monitoring-signer-key.json
+kubectl create secret generic script-exporter-secret \
+  "--from-file=/tmp/monitoring-signer-key.json" \
+  --dry-run="client" -o json | kubectl apply -f -
+
 # Replace template variables in oauth2-proxy.yml.
 sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \
     -e 's|{{OAUTH_PROXY_CLIENT_SECRET}}|'${!OAUTH_PROXY_CLIENT_SECRET}'|g' \

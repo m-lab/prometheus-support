@@ -80,10 +80,14 @@ spec:
         - mountPath: /legacy-targets
           name: prometheus-storage
           subPath: legacy-targets
-        # /byos-nodes
-        - mountPath: /byos-nodes
+        # /autonode-targets
+        - mountPath: /autonode-targets
           name: prometheus-storage
-          subPath: byos-nodes
+          subPath: autonode-targets
+        # /script-targets
+        - mountPath: /script-targets
+          name: prometheus-storage
+          subPath: script-targets
         # /aeflex-targets
         - mountPath: /aeflex-targets
           name: prometheus-storage
@@ -97,8 +101,10 @@ spec:
 
       - image: measurementlab/gcp-service-discovery:v1.5.1
         name: service-discovery
-        args: [ "--http-target=/targets/byos-nodes/byos-nodes.json",
+        args: [ "--http-target=/targets/autonode-targets/autonodes.json",
                 "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=prometheus",
+                "--http-target=/targets/script-targets/autonodes.json",
+                "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=script-exporter&service=ndt7_client",
                 "--aef-target=/targets/aeflex-targets/aeflex.json",
                 "--project={{GCLOUD_PROJECT}}",
                 "--prometheusx.listen-address=:9373"]
