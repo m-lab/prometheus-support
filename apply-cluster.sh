@@ -14,19 +14,8 @@ set -x
 
 source config.sh
 
-# Fetch the prometheus-federation Alertmanager basic auth credentials. Each
-# cluster can generate its own alerts, but we only run a single instance of
-# Alertmanager.
-#
-# TODO(kinkade): figure out a better way to do this. It is awkward and
-# architecturally wrong to be pulling credentials from GCS in possibly a
-# different project from a bucket related to our kubernetes platform cluster.
-# A better solution is probably to leverage SecretManager. This command
-# statically targets the k8s-support-mlab-oti bucket, since the credentials are
-# the same for Alertmanager instances in all projects.
-gsutil cp gs://k8s-support-mlab-oti/alertmanager-basicauth.yaml .
-
 # Create the alertmanager-basicauth secret
+echo "${AM_BASIC_AUTH_SECRET}" > alertmanager-basicauth.yaml
 kubectl apply -f alertmanager-basicauth.yaml
 
 # Replace the template variables.
