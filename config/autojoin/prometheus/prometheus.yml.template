@@ -269,12 +269,13 @@ scrape_configs:
         target_label: kubernetes_name
 
 
-  # Scrape byos-nodes every minute.
-  - job_name: 'byos-nodes'
+  # Scrape autonodes every minute. This picks up metrics from all services
+  # running (e.g., ndt-server, tcp-info, node-exporter, etc.).
+  - job_name: 'autonodes'
     scrape_timeout: 40s
     file_sd_configs:
       - files:
-          - /byos-nodes/*.json
+          - /autonode-targets/*.json
         # Attempt to re-read files every five minutes.
         refresh_interval: 5m
     scheme: http
