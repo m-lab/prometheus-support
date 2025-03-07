@@ -372,9 +372,9 @@ scrape_configs:
       # Here, we set (i.e. "replace") a request parameter "target" equal to the
       # host value. NOTE: we also insert a trailing "." to optimize DNS lookup.
       - source_labels: [__address__]
-        regex: ([a-z0-9-.]+)(:[0-9]+)?
+        regex: (.*)
         target_label: __param_target
-        replacement: ${1}.${2}
+        replacement: ${1}
 
       # Sets the module query parameter to tcp_v4_online. The source label of
       # "org" is arbitrary, since we don't any part of it, but it is a required
@@ -430,7 +430,7 @@ scrape_configs:
       - source_labels: [__address__]
         regex: (.*)
         target_label: __param_target
-        replacement: ${1}.443
+        replacement: ${1}.:443
 
       # Sets the module query parameter to tcp_v4_tls_online. The source label
       # of "org" is arbitrary, since we don't any part of it, but it is a
