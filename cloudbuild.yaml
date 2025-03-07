@@ -10,6 +10,8 @@ availableSecrets:
   secretManager:
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-alertmanager-slack-channel-url/versions/latest
     env: AM_SLACK_CHANNEL_URL
+  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-alertmanager-basic-auth-secret/versions/latest
+    env: AM_BASIC_AUTH_SECRET
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-grafana-client-secret-name/versions/latest
     env: GF_AUTH_GOOGLE_CLIENT_SECRET
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-grafana-client-id-name/versions/latest
@@ -60,6 +62,7 @@ steps:
   - 'PROM_VERSION=2.37.0'
   secretEnv:
   - AM_SLACK_CHANNEL_URL
+  - AM_BASIC_AUTH_SECRET
   - GF_AUTH_GOOGLE_CLIENT_SECRET
   - GF_AUTH_GOOGLE_CLIENT_ID
   - GITHUB_RECEIVER_AUTH_TOKEN
