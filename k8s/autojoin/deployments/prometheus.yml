@@ -103,6 +103,10 @@ spec:
         name: service-discovery
         args: [ "--http-target=/targets/autonode-targets/autonodes.json",
                 "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=prometheus",
+                "--http-target=/targets/blackbox-targets/sidecars.json",
+                "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=prometheus",
+                "--http-target=/targets/blackbox-targets/ndt-server.json",
+                "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=script-exporter&service=ndt7",
                 "--http-target=/targets/script-targets/autonodes.json",
                 "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=script-exporter&service=ndt7_client",
                 "--aef-target=/targets/aeflex-targets/aeflex.json",

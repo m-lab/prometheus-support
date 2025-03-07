@@ -29,6 +29,11 @@ kubectl create configmap prometheus-cluster-config \
     --from-file=config/${CLUSTER}/prometheus \
     --dry-run="client" -o json | kubectl apply -f -
 
+# Create the blackbox_exporter config ConfigMap
+kubectl create configmap blackbox-config \
+    --from-file=config/autojoin/blackbox \
+    --dry-run="client" -o json | kubectl replace -f -
+
 kubectl create secret generic prometheus-auth \
     "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_AUTH_PASS})"\
     --dry-run="client" -o json | kubectl apply -f -
