@@ -1377,3 +1377,27 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailygceincrease
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/a5mC51ZMk/gcp-billing?orgId=1&refresh=5m
 
+# A DNS record for an M-Lab autojoined machine is too close to expiring. The
+# Autojoin system will delete a DNS record for an autojoin client if it hasn't
+# heard from that client more than 14d. Autojoin clients are supposed to
+# checkin every hour. This alert conservatively allows an M-Lab autojoined
+# machine to not checkin for 4 days before firing. Since this alert is only
+# meant to uncover issues with the Autojoin client successfully registering, or
+# some bug in the Autojoin API where client registrations are not properly
+# updated in Memorystore, we only trigger this alert when script_exporter E2E
+# tests are succeeding. If E2E test are failing, then there is some other issue
+# and k8s alerts should cover them.
+  - alert: AutojoinDNSRecordTooCloseToExpiring
+    expr: |
+      ((autojoin_dns_expiration - time()) / 86400) < 10
+        unless on(fqdn) script_success == 0
+    for: 10m
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: prometheus-federation
+    annotations:
+      summary: A DNS record for an Autojoin machine is too close to expiring
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoindnsrecordtooclosetoexpiring
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
