@@ -409,6 +409,8 @@ scrape_configs:
         - 'autoloader_duration_count'
     static_configs:
       - targets: ['prometheus-data-pipeline-basic.{{PROJECT}}.measurementlab.net']
+        labels:
+          cluster: "data-pipeline"
 
   # Scrape config for services running in autojoin cluster.
   - job_name: 'federation-autojoin'
@@ -424,6 +426,8 @@ scrape_configs:
         - 'script_success'
     static_configs:
       - targets: ['prometheus-autojoin-basic.{{PROJECT}}.measurementlab.net']
+        labels:
+          cluster: "autojoin"
 
   # Scrape config for federation.
   #
