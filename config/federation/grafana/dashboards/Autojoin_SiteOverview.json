@@ -97,7 +97,7 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 6,
+        "w": 4,
         "x": 0,
         "y": 1
       },
@@ -182,8 +182,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 6,
-        "x": 6,
+        "w": 5,
+        "x": 4,
         "y": 1
       },
       "id": 36,
@@ -267,8 +267,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 6,
-        "x": 12,
+        "w": 5,
+        "x": 9,
         "y": 1
       },
       "id": 21,
@@ -357,8 +357,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 6,
-        "x": 18,
+        "w": 5,
+        "x": 14,
         "y": 1
       },
       "id": 37,
@@ -396,6 +396,104 @@
         }
       ],
       "title": "E2E Status",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "999": {
+                  "color": "dark-green",
+                  "index": 0,
+                  "text": "OK"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "from": 0,
+                "result": {
+                  "color": "dark-red",
+                  "index": 1,
+                  "text": "FAIL"
+                },
+                "to": 100
+              },
+              "type": "range"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 80
+              },
+              {
+                "color": "#d44a3a",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 19,
+        "y": 1
+      },
+      "id": 38,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count(probe_success{deployment=\"byos\", machine=~\"ndt-oma396982-2248791f.*\"}) != sum(probe_success{deployment=\"byos\", machine=~\"ndt-oma396982-2248791f.*\"}) OR vector(999)",
+          "format": "time_series",
+          "instant": true,
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "title": "Port Status",
       "type": "stat"
     },
     {
@@ -945,9 +1043,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "Autojoin Platform (mlab-sandbox)",
-          "value": "P60A8177CFC1B8B4B"
+          "selected": true,
+          "text": "Autojoin Platform (mlab-autojoin)",
+          "value": "P9963F0EC00120018"
         },
         "hide": 0,
         "includeAll": false,
@@ -964,9 +1062,10 @@
       },
       {
         "current": {
+          "isNone": true,
           "selected": false,
-          "text": "mlab",
-          "value": "mlab"
+          "text": "None",
+          "value": ""
         },
         "datasource": {
           "type": "prometheus",
@@ -994,7 +1093,7 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -1030,9 +1129,10 @@
       {
         "allValue": ".*",
         "current": {
+          "isNone": true,
           "selected": false,
-          "text": "2248791f",
-          "value": "2248791f"
+          "text": "None",
+          "value": ""
         },
         "datasource": {
           "type": "prometheus",
