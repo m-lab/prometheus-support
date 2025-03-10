@@ -2,7 +2,9 @@ groups:
 - name: alerts.yml
   rules:
 
-  - alert: AutojoinCluster_AutojoinTooManyRegisterErrors
+  # Fires when the rate of registation errors (non-200 responses) is greater
+  # than 1% for more than 1h.
+  - alert: AutojoinCluster_TooManyRegistrationErrors
     expr: |
       (sum(rate(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register", code!="200"}[1h]))) /
         sum(rate(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register"}[1h])) > 0.01
@@ -13,6 +15,35 @@ groups:
       cluster: autojoin
     annotations:
       summary: The rate of Autojoin register request errors is great than 1%
-      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__autojointoomanyregistererrors
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__toomanyregistrationerrors
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
+  # Fires when the there have been no successful registrations in the last
+  # hour.
+  - alert: AutojoinCluster_TooFewRegistrations
+    expr: sum (increase(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register", code="200"}[1h])) == 0
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: There have been no successful registrations in the last hour
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__toofewregistrations
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
+  # Fires when the metric autojoin_request_hander_duration_sum does not exist
+  # for more than 1h.
+  # hour.
+  - alert: AutojoinCluster_APIMetricsMissing
+    expr: absent(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register"})
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: The metric autojoin_request_hander_duration_sum is missing
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__apimetricsmissing
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
 
