@@ -34,6 +34,11 @@ kubectl create configmap blackbox-config \
     --from-file=config/autojoin/blackbox \
     --dry-run="client" -o json | kubectl apply -f -
 
+# Evaluate bq queries as templates.
+for filename in config/autojoin/bigquery/*.template ; do
+  sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
+      $filename > ${filename%%.template}
+done
 # Apply the bigquery exporter configurations.
 kubectl create configmap bigquery-exporter-config \
     --from-file=config/autojoin/bigquery \
