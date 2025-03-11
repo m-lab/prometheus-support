@@ -34,6 +34,11 @@ kubectl create configmap blackbox-config \
     --from-file=config/autojoin/blackbox \
     --dry-run="client" -o json | kubectl apply -f -
 
+# Apply the bigquery exporter configurations.
+kubectl create configmap bigquery-exporter-config \
+    --from-file=config/autojoin/bigquery \
+    --dry-run="client" -o json | kubectl apply -f -
+
 kubectl create secret generic prometheus-auth \
     "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_AUTH_PASS})"\
     --dry-run="client" -o json | kubectl apply -f -

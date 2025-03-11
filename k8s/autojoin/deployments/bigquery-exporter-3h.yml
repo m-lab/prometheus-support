@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bigquery-exporter-3h
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: bigquery-exporter-3h
+  template:
+    metadata:
+      labels:
+        run: bigquery-exporter-3h
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+      - name: bigquery-exporter
+        image: measurementlab/prometheus-bigquery-exporter:v1.1.1
+        args: [ "-project={{GCLOUD_PROJECT}}",
+                "-refresh=3h",
+                "-gauge-query=/queries/bq_ndt7_test.sql",
+              ]
+        ports:
+        - containerPort: 9348
+        volumeMounts:
+        - mountPath: /queries
+          name: bigquery-config
+
+      volumes:
+      - name: bigquery-config
+        configMap:
+          name: bigquery-exporter-config
