@@ -47,3 +47,40 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__apimetricsmissing
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
 
+  # Fires when the skew between ndt7 tests to autonodes and autojoin ndt7
+  # BigQuery rows exceeds more than 25% for a day. In an ideal world, every
+  # ndt7 test would result in one BigQuery row. This alert allow for a margin
+  # of realworld errors. It is not meant to uncover every error, but to
+  # generally alert when there is something very wrong with the data pipeline
+  # for the autojoin cluster.
+  #
+  # The 4h offset is to account for the fact that it could take up to that
+  # amount of time for test data from an autonode to make it into BigQuery,
+  # roughly. Daily autoloader jobs run every 3 hours, and Jostler may wait up
+  # to an hour before uploading a bundle. That is, the data in BigQuery could
+  # be up to 4 hours old, while the ndt7_client_test_results_total metric has
+  # data not more than around 1m old.
+  #
+  # The expression calculates the absolute percentage difference between the
+  # two totals. It doesn't care which one is more or less, only that they are
+  # within 25% of each other, roughly.
+  - alert: AutojoinCluster_TooMuchBigQueryRowCountSkew
+    expr: |
+      ((
+        abs(
+          sum(increase(ndt7_client_test_results_total[1d] offset 4h)) - scalar(bq_ndt7_test_total)
+        )
+      ) /
+      (
+        (sum(increase(ndt7_client_test_results_total[1d] offset 4h)) + scalar(bq_ndt7_test_total)) / 2
+      )) > 0.25
+    for: 1d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: The number of ndt7 tests is too skewed from the number of BigQuery rows
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster_toomuchbigqueryrowcountskew
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
