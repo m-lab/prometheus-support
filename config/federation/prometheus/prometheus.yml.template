@@ -409,6 +409,25 @@ scrape_configs:
         - 'autoloader_duration_count'
     static_configs:
       - targets: ['prometheus-data-pipeline-basic.{{PROJECT}}.measurementlab.net']
+        labels:
+          cluster: "data-pipeline"
+
+  # Scrape config for services running in autojoin cluster.
+  - job_name: 'federation-autojoin'
+    honor_labels: true
+    metrics_path: '/federate'
+    # Allow more time, since the number of metrics may be large.
+    scrape_timeout: 50s
+    basic_auth:
+      username: {{PROM_AUTH_USER}}
+      password: {{PROM_AUTH_PASS}}
+    params:
+      'match[]':
+        - 'script_success'
+    static_configs:
+      - targets: ['prometheus-autojoin-basic.{{PROJECT}}.measurementlab.net']
+        labels:
+          cluster: "autojoin"
 
   # Scrape config for federation.
   #
@@ -695,59 +714,6 @@ scrape_configs:
         regex: .*
         target_label: __address__
         replacement: script-exporter.default.svc.cluster.local:9172
-
-  # Scrape config for the script_exporter for autonodes.
-  - job_name: 'script-targets-autonode'
-    metrics_path: /probe
-    scrape_timeout: 50s
-
-    file_sd_configs:
-      - files:
-          - /script-targets-autonode/*.json
-        # Attempt to re-read files every five minutes.
-        refresh_interval: 5m
-
-    # The relabel config sets the script exporter address with the correct
-    # parameters for the target node.
-    relabel_configs:
-      # The value of the source label named "service" must match the name of a
-      # configured script in the script_exporter configuration. See this file:
-      # https://github.com/m-lab/prometheus-support/blob/main/config/federation/script-exporter/script_exporter.yml
-      - source_labels: [service]
-        regex: (.*)
-        target_label: __param_name
-        replacement: ${1}
-
-      # The default __address__ value is a target host from the config file.
-      # Here, we set (i.e. "replace") a request parameter "target" equal to the
-      # host value.
-      - source_labels: [__address__]
-        regex: (.*)
-        target_label: __param_target
-        replacement: ${1}
-
-      # Extract the site name from the FQDN of the node/service and drop it
-      # into a label named "site'.
-      - source_labels: [__address__]
-        regex: ^[a-z0-9^-]+-([a-z]{3}[0-9]{1,10})-.*
-        target_label: site
-        replacement: ${1}
-
-      # Since __address__ is the target that prometheus will contact,
-      # unconditionally reset the __address__ label to the script_exporter
-      # address.
-      - source_labels: []
-        regex: .*
-        target_label: __address__
-        replacement: script-exporter.default.svc.cluster.local:9172
-
-      # The Locate Service filters on the "fqdn" label when looking for failing
-      # e2e tests. Set the "fqdn" label to be equal to the "machine" label,
-      # which is actually the FQDN of the machine.
-      - source_labels: [machine]
-        regex: (.*)
-        target_label: fqdn
-        replacement: ${1}
 
   # Scrape config for App Engine Flex VMs.
   #

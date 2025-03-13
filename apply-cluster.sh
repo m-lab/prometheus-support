@@ -14,8 +14,13 @@ set -x
 
 source config.sh
 
+# Create the alertmanager-basicauth secret
+echo "${AM_BASIC_AUTH_SECRET}" > alertmanager-basicauth.yaml
+kubectl apply -f alertmanager-basicauth.yaml
+
 # Replace the template variables.
 sed -e 's|{{CLUSTER}}|'${CLUSTER}'|g' \
+    -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     config/${CLUSTER}/prometheus/prometheus.yml.template > \
     config/${CLUSTER}/prometheus/prometheus.yml
 
@@ -24,9 +29,36 @@ kubectl create configmap prometheus-cluster-config \
     --from-file=config/${CLUSTER}/prometheus \
     --dry-run="client" -o json | kubectl apply -f -
 
+# Create the blackbox_exporter config ConfigMap
+kubectl create configmap blackbox-config \
+    --from-file=config/autojoin/blackbox \
+    --dry-run="client" -o json | kubectl apply -f -
+
+# Evaluate bq queries as templates.
+for filename in config/autojoin/bigquery/*.template ; do
+  sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
+      $filename > ${filename%%.template}
+done
+# Apply the bigquery exporter configurations.
+kubectl create configmap bigquery-exporter-config \
+    --from-file=config/autojoin/bigquery \
+    --dry-run="client" -o json | kubectl apply -f -
+
 kubectl create secret generic prometheus-auth \
     "--from-literal=auth=$(htpasswd -nb ${!PROM_AUTH_USER} ${!PROM_AUTH_PASS})"\
     --dry-run="client" -o json | kubectl apply -f -
+
+kubectl create configmap script-exporter-config \
+  --from-file=config/autojoin/script-exporter/script_exporter.yml \
+  --dry-run="client" -o json | kubectl apply -f -
+
+# This file should already exist in this location from the
+# apply-global-prometheus.sh script, but it is duplicated here so that it is
+# easier to understand where the file comes from.
+echo "${MONITORING_SIGNER_KEY}" | base64 -d > /tmp/monitoring-signer-key.json
+kubectl create secret generic script-exporter-secret \
+  "--from-file=/tmp/monitoring-signer-key.json" \
+  --dry-run="client" -o json | kubectl apply -f -
 
 # Replace template variables in oauth2-proxy.yml.
 sed -i -e 's|{{OAUTH_PROXY_CLIENT_ID}}|'${!OAUTH_PROXY_CLIENT_ID}'|g' \

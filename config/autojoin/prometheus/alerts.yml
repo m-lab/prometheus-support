@@ -1,0 +1,72 @@
+groups:
+- name: alerts.yml
+  rules:
+
+  # Fires when the rate of registation errors (non-200 responses) is greater
+  # than 1% for more than 1h.
+  - alert: AutojoinCluster_TooManyRegistrationErrors
+    expr: |
+      (sum(rate(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register", code!="200"}[1h]))) /
+        sum(rate(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register"}[1h])) > 0.01
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: The rate of Autojoin register request errors is great than 1%
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__toomanyregistrationerrors
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
+  # Fires when the there have been no successful registrations in the last
+  # hour.
+  - alert: AutojoinCluster_TooFewRegistrations
+    expr: sum (increase(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register", code="200"}[1h])) == 0
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: There have been no successful registrations in the last hour
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__toofewregistrations
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
+  # Fires when the metric autojoin_request_hander_duration_sum does not exist
+  # for more than 1h.
+  # hour.
+  - alert: AutojoinCluster_APIMetricsMissing
+    expr: absent(autojoin_request_handler_duration_sum{service="autojoin", path="/autojoin/v0/node/register"})
+    for: 1h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: The metric autojoin_request_hander_duration_sum is missing
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster__apimetricsmissing
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+
+  # Fires when the ratio of BigQuery rows over ndt7 tests falls below 75%. In
+  # the fullness of time, rows in BigQuery should exactly match ndt7 test
+  # counts. Since we don't live in a perfect world, this alert allows for 25%
+  # margin of disagreement between the numbers. Additionally, it will tolerate
+  # this condition for a couple days to allow any glitch in the system to
+  # self-heal.
+  #
+  # Since the ndt7 test count metrics are realtime, this query offsets to the
+  # past by 4 hours to try to align the totals a little better. Jostler might
+  # hold on to a bundle for up to an hour, and the autoloader daily cron job
+  # runs every 3 hours.
+  - alert: AutojoinCluster_TooFewBigQueryRows
+    expr: (scalar(bq_ndt7_test_total) / sum(increase(ndt7_client_test_results_total[1d] offset 4h))) < 0.75
+    for: 2d
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: The number BigQuery rows is more than 25% less than actual ndt7 tests
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster_toofewbigqueryrows
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
+

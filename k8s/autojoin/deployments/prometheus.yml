@@ -80,18 +80,36 @@ spec:
         - mountPath: /legacy-targets
           name: prometheus-storage
           subPath: legacy-targets
-        # /byos-nodes
-        - mountPath: /byos-nodes
+        - mountPath: /autonode-targets
           name: prometheus-storage
-          subPath: byos-nodes
+          subPath: autonode-targets
+        - mountPath: /script-targets
+          name: prometheus-storage
+          subPath: script-targets
+        - mountPath: /aeflex-targets
+          name: prometheus-storage
+          subPath: aeflex-targets
+        - mountPath: /blackbox-targets
+          name: prometheus-storage
+          subPath: blackbox-targets
         # /etc/prometheus/prometheus.yml contains the M-Lab Prometheus config.
         - mountPath: /etc/prometheus
           name: prometheus-config
+        # prometheus-federation Alertmanager basic auth credentials
+        - mountPath: /etc/alertmanager/
+          name: alertmanager-basicauth
 
       - image: measurementlab/gcp-service-discovery:v1.5.1
         name: service-discovery
-        args: [ "--http-target=/targets/byos-nodes/byos-nodes.json",
+        args: [ "--http-target=/targets/autonode-targets/autonodes.json",
                 "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=prometheus",
+                "--http-target=/targets/blackbox-targets/sidecars.json",
+                "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=prometheus",
+                "--http-target=/targets/blackbox-targets/ndt-server.json",
+                "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=script-exporter&service=ndt7",
+                "--http-target=/targets/script-targets/autonodes.json",
+                "--http-source=https://autojoin-dot-{{GCLOUD_PROJECT}}.appspot.com/autojoin/v0/node/list?format=script-exporter&service=ndt7_client",
+                "--aef-target=/targets/aeflex-targets/aeflex.json",
                 "--project={{GCLOUD_PROJECT}}",
                 "--prometheusx.listen-address=:9373"]
         ports:
@@ -129,4 +147,7 @@ spec:
       - name: prometheus-config
         configMap:
           name: prometheus-cluster-config
+      - name: alertmanager-basicauth
+        secret:
+          secretName: alertmanager-basicauth
 

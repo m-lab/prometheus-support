@@ -1,0 +1,15 @@
+#standardSQL
+-- bq_ndt7_test calculates the number of BigQuery rows that exist for Autojoin
+-- clients for the last 24 hours.
+--
+-- This query exports a single metric:
+--   bq_ndt7_test_total -- number of ndt7 rows.
+
+SELECT
+  COUNT(*) AS value_total
+FROM
+  `{{PROJECT}}.autoload_v2_ndt.ndt7_union`
+WHERE
+  date > DATE_SUB(CURRENT_DATE(), INTERVAL 2 DAY)
+  AND raw.StartTime > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
+

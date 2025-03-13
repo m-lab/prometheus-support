@@ -1,0 +1,11 @@
+# NOTE: monitoring-token requires these variables in the environment.
+# MONITORING_SIGNER_KEY=<path to signing key>
+# LOCATE_URL=<locate service url>
+scripts:
+  - name: 'ndt7_client'
+    script: >
+      EXPERIMENT=ndt7 cache_exit_code.sh 3600
+      monitoring-token -machine=${TARGET} -service=ndt/ndt7 -service-url --env-name SERVICE_URL -service-url-key-name wss:///ndt/v7/download --
+      ndt7-client -client-name="mlab-e2e-monitoring"
+    timeout: 50
+

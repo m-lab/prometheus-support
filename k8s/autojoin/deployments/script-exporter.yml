@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: script-exporter
+spec:
+  # Run two so that we can make sure we have failover.
+  replicas: 2
+  selector:
+    matchLabels:
+      run: script-exporter
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: script-exporter
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values:
+                - script-exporter
+            topologyKey: kubernetes.io/hostname
+
+      containers:
+      - name: script-exporter
+        image: measurementlab/script-exporter-support:v0.2.13
+        args:
+        - -config.file=/etc/script_exporter/script_exporter.yml
+        env:
+        - name: LOGX_DEBUG
+          value: 'false'
+        - name: MONITORING_SIGNER_KEY
+          value: /keys/monitoring-signer-key.json
+        - name: LOCATE_URL
+          value: https://locate-dot-{{LOCATE_PROJECT}}.appspot.com/v2/platform/monitoring/?early_exit=250&monitoring=true
+        ports:
+        - containerPort: 9172
+        volumeMounts:
+        - mountPath: /etc/script_exporter
+          name: script-exporter-config
+        - mountPath: /keys
+          name: script-exporter-keys
+
+      volumes:
+      - name: script-exporter-config
+        configMap:
+          name: script-exporter-config
+      - name: script-exporter-keys
+        secret:
+          secretName: script-exporter-secret

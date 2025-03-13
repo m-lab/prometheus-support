@@ -1,0 +1,43 @@
+# M-Lab blackbox exporter configuration.
+#
+# The blackbox exporter allows probes of endpoints over HTTP, HTTPS, DNS, TCP
+# and ICMP.
+#
+# Every probe takes a "target" and "module" as parameters. The probe runs
+# synchronously with the request. Typically, Prometheus will issue the request
+# to the blackbox exporter.
+#
+# The prober timeout setting must be less than the prometheus scrape timeout
+# or the prometheus server will give up and conclude that the blackbox service
+# is down and never receive the probe failure metrics from the blackbox
+# exporter.
+#
+# We can run a sample check. For example:
+#    target=mlab1.lga02.measurement-lab.org:806
+#    module=ssh_v4_online
+#    wget "http://<blackbox-ip>:9115/probe?target=${target}&module=${module}"
+#
+# Returns:
+#
+#    probe_ip_protocol 4
+#    probe_duration_seconds 0.179516
+#    probe_success 1
+#
+# See https://github.com/prometheus/blackbox_exporter for additional examples.
+
+modules:
+  # IPv4: target=<hostname:port>
+  tcp_v4_online:
+    prober: tcp
+    timeout: 9s
+    tcp:
+      preferred_ip_protocol: "ip4"
+
+  # IPv4: target=<hostname:port>
+  tcp_v4_tls_online:
+    prober: tcp
+    timeout: 9s
+    tcp:
+      preferred_ip_protocol: "ip4"
+      tls: true
+
