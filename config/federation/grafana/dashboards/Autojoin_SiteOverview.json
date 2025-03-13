@@ -42,7 +42,7 @@
       },
       "id": 34,
       "panels": [],
-      "repeat": "site",
+      "repeat": "machine",
       "repeatDirection": "h",
       "targets": [
         {
@@ -53,7 +53,7 @@
           "refId": "A"
         }
       ],
-      "title": "$site-$machine",
+      "title": "$machine",
       "type": "row"
     },
     {
@@ -127,7 +127,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "(time() - node_boot_time_seconds{machine=~\"ndt-$site-$machine.*\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{machine=~\"ndt-$machine.*\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -212,7 +212,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_load15{machine=~\"ndt-$site.$machine.*\"}",
+          "expr": "node_load15{machine=~\"ndt-$machine.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -297,7 +297,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$site-$machine.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", machine=~\"ndt-$site-$machine.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$site-$machine.*\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -388,7 +388,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "script_success{machine=~\"ndt-$site-$machine.*\"}",
+          "expr": "script_success{machine=~\"ndt-$machine.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -486,7 +486,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "count(probe_success{deployment=\"byos\", machine=~\"ndt-oma396982-2248791f.*\"}) != sum(probe_success{deployment=\"byos\", machine=~\"ndt-oma396982-2248791f.*\"}) OR vector(999)",
+          "expr": "count(probe_success{deployment=\"byos\", machine=~\"ndt-$machine.*\"}) != sum(probe_success{deployment=\"byos\", machine=~\"ndt-$machine.*\"}) OR vector(999)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -602,10 +602,10 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "1 - avg by (machine) (rate(node_cpu_seconds_total{machine=~\"ndt-$site-$machine.*\", mode=\"idle\"}[$__rate_interval]))",
+          "expr": "1 - avg by (machine) (rate(node_cpu_seconds_total{machine=~\"ndt-$machine.*\", mode=\"idle\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "$site-$machine",
+          "legendFormat": "$machine",
           "range": true,
           "refId": "A"
         }
@@ -664,53 +664,12 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
           "unit": "bytes"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Cached bytes"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "short"
-              }
-            ]
-          },
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "Free"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 7,
@@ -738,8 +697,9 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_Cached_bytes{machine=~\"ndt-$site-$machine.*\"}\n+ node_memory_Buffers_bytes\n+ node_memory_SReclaimable_bytes",
+          "expr": "node_memory_Cached_bytes{machine=~\"ndt-$machine.*\"}\n+ node_memory_Buffers_bytes\n+ node_memory_SReclaimable_bytes",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 1,
           "legendFormat": "Buff/Cache",
           "range": true,
@@ -750,8 +710,9 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_Active_bytes{machine=~\"ndt-$site-$machine.*\"}\n+ node_memory_Active_anon_bytes\n+ node_memory_Active_file_bytes",
+          "expr": "node_memory_Active_bytes{machine=~\"ndt-$machine.*\"}\n+ node_memory_Active_anon_bytes\n+ node_memory_Active_file_bytes",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 1,
           "legendFormat": "Used",
           "range": true,
@@ -762,8 +723,9 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_MemFree_bytes{machine=~\"ndt-$site-$machine.*\"}",
+          "expr": "node_memory_MemFree_bytes{machine=~\"ndt-$machine.*\"}",
           "format": "time_series",
+          "hide": false,
           "intervalFactor": 1,
           "legendFormat": "Free",
           "range": true,
@@ -861,7 +823,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "8 * rate(node_network_transmit_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -875,7 +837,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -1000,7 +962,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_read_bytes_total{machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_read_bytes_total{machine=~\"ndt-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read ({{device}})",
@@ -1012,7 +974,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_written_bytes_total{machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_written_bytes_total{machine=~\"ndt-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written ({{device}})",
@@ -1024,7 +986,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_io_time_seconds_total{machine=~\"ndt-$site-$machine.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_io_time_seconds_total{machine=~\"ndt-$machine.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "% sec/sec ({{device}})",
@@ -1043,7 +1005,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Autojoin Platform (mlab-autojoin)",
           "value": "P9963F0EC00120018"
         },
@@ -1062,10 +1024,9 @@
       },
       {
         "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
+          "selected": true,
+          "text": "rnp",
+          "value": "rnp"
         },
         "datasource": {
           "type": "prometheus",
@@ -1094,12 +1055,8 @@
         "allValue": ".*",
         "current": {
           "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": {
           "type": "prometheus",
@@ -1108,39 +1065,6 @@
         "definition": "label_values(node_time_seconds,machine)",
         "hide": 0,
         "includeAll": true,
-        "label": "Site",
-        "multi": true,
-        "name": "site",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(node_time_seconds,machine)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "/ndt-([a-z0-9]+)-[a-z0-9]+\\.$org\\.+/",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {
-          "isNone": true,
-          "selected": false,
-          "text": "None",
-          "value": ""
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "$datasource"
-        },
-        "definition": "label_values(node_time_seconds,machine)",
-        "hide": 2,
-        "includeAll": false,
         "label": "Machine",
         "multi": false,
         "name": "machine",
@@ -1151,9 +1075,9 @@
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/ndt-[a-z0-9]+-([a-z0-9]+)\\.$org\\.+/",
+        "regex": "/ndt-([a-z0-9]+-[a-z0-9]+)\\.$org\\.+/",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -1193,6 +1117,6 @@
   "timezone": "",
   "title": "Autojoin: Site Overview",
   "uid": "deeyimsfzkwe8c",
-  "version": 12,
+  "version": 14,
   "weekStart": ""
 }
