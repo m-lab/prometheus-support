@@ -1,0 +1,8 @@
+groups:
+- name rules.yml
+  rules:
+
+  # This rule optimizes the alert query used for JostlerDailyDataVolumeTooLow.
+  - record: datatype:jostler_bytes_per_bundle:increase24h
+    expr: sum by(datatype) (increase(jostler_bytes_per_bundle_sum[1d]))
+
