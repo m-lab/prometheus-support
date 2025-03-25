@@ -70,3 +70,22 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster_toofewbigqueryrows
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/abcdef37wdji8d/autojoin?orgId=1
 
+  # Fires when Autojoin data volume pushed to GCS is much lower than on
+  # previous days.
+  - alert: PlatformCluster_JostlerDailyDataVolumeTooLow
+    expr: |
+      datatype:jostler_bytes_per_bundle:increase24h
+        < (0.7 * quantile by(datatype)(0.5,
+          label_replace(datatype:jostler_bytes_per_bundle:increase24h offset 1d, "delay", "1d", "", ".*") or
+          label_replace(datatype:jostler_bytes_per_bundle:increase24h offset 3d, "delay", "3d", "", ".*") or
+          label_replace(datatype:jostler_bytes_per_bundle:increase24h offset 5d, "delay", "5d", "", ".*") or
+          label_replace(datatype:jostler_bytes_per_bundle:increase24h offset 1w, "delay", "7d", "", ".*")))
+    for: 2h
+    labels:
+      repo: ops-tracker
+      severity: ticket
+      cluster: autojoin
+    annotations:
+      summary: Autojoin test data volume for one or more datatypes is too low.
+      description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#autojoincluster_jostlerdailydatavolumetoolow
+      dashboard: https://grafana.mlab-oti.measurementlab.net/d/deeyimsfzkwe8c/autojoin3a-site-overview
