@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 118,
+  "id": 529,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -961,7 +961,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "60 * sum(rate(ndt7_client_test_results_total{org=\"$org\", result!=\"error-without-rate\"}[5m]))",
+          "expr": "60 * sum(rate(ndt7_client_test_results_total{org=\"$org\", machine=~\"ndt-$machine.*\", result!=\"error-without-rate\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Tests/minute",
@@ -1240,6 +1240,6 @@
   "timezone": "",
   "title": "Autojoin: Site Overview",
   "uid": "deeyimsfzkwe8c",
-  "version": 1,
+  "version": 16,
   "weekStart": ""
 }
