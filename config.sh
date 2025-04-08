@@ -5,6 +5,13 @@ set -x
 USAGE="PROJECT=<projectid> CLUSTER=<cluster> $0"
 PROJECT=${PROJECT:?Please provide project id: $USAGE}
 CLUSTER=${CLUSTER:?Please provide cluster name: $USAGE}
+AUTOJOIN_PROJECT=$PROJECT
+
+# The production Autojoin GCP project is different from the usual mlab-oti
+# production project.
+if [[ $PROJECT == "mlab-oti" ]]; then
+  AUTOJOIN_PROJECT="mlab-autojoin"
+fi
 
 K8S_INGRESS_NGINX_VERSION="4.2.1"
 
