@@ -127,7 +127,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "(time() - node_boot_time_seconds{machine=~\"ndt-$machine.*\"}) / (60 * 60 * 24)",
+          "expr": "(time() - node_boot_time_seconds{machine=~\"ndt-$machine.$org.*\"}) / (60 * 60 * 24)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -212,7 +212,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_load15{machine=~\"ndt-$machine.*\"}",
+          "expr": "node_load15{machine=~\"ndt-$machine.$org.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -297,7 +297,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.*\"}",
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.$org.*\"} -\n    node_filesystem_avail_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.$org.*\"})\n/ node_filesystem_size_bytes{mountpoint=\"/\", machine=~\"ndt-$machine.$org.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -388,7 +388,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "script_success{machine=~\"ndt-$machine.*\"}",
+          "expr": "script_success{machine=~\"ndt-$machine.$org.*\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -486,7 +486,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "count(probe_success{deployment=\"byos\", machine=~\"ndt-$machine.*\"}) != sum(probe_success{deployment=\"byos\", machine=~\"ndt-$machine.*\"}) OR vector(999)",
+          "expr": "count(probe_success{deployment=\"byos\", machine=~\"ndt-$machine.$org.*\"}) != sum(probe_success{deployment=\"byos\", machine=~\"ndt-$machine.$org.*\"}) OR vector(999)",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -602,7 +602,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "1 - avg by (machine) (rate(node_cpu_seconds_total{machine=~\"ndt-$machine.*\", mode=\"idle\"}[$__rate_interval]))",
+          "expr": "1 - avg by (machine) (rate(node_cpu_seconds_total{machine=~\"ndt-$machine.$org.*\", mode=\"idle\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "$machine",
@@ -697,7 +697,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_Cached_bytes{machine=~\"ndt-$machine.*\"}\n+ node_memory_Buffers_bytes\n+ node_memory_SReclaimable_bytes",
+          "expr": "node_memory_Cached_bytes{machine=~\"ndt-$machine.$org.*\"}\n+ node_memory_Buffers_bytes\n+ node_memory_SReclaimable_bytes",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -710,7 +710,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_Active_bytes{machine=~\"ndt-$machine.*\"}\n+ node_memory_Active_anon_bytes\n+ node_memory_Active_file_bytes",
+          "expr": "node_memory_Active_bytes{machine=~\"ndt-$machine.$org.*\"}\n+ node_memory_Active_anon_bytes\n+ node_memory_Active_file_bytes",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -723,7 +723,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "node_memory_MemFree_bytes{machine=~\"ndt-$machine.*\"}",
+          "expr": "node_memory_MemFree_bytes{machine=~\"ndt-$machine.$org.*\"}",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -823,7 +823,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "8 * rate(node_network_transmit_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$machine.*\"}[$__rate_interval])",
+          "expr": "8 * rate(node_network_transmit_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$machine.$org.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -837,7 +837,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "- 8 * rate(node_network_receive_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$machine.*\"}[$__rate_interval])",
+          "expr": "- 8 * rate(node_network_receive_bytes_total{device!~\"(lo|br-.+|docker[0-9])\", machine=~\"ndt-$machine.$org.*\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -961,7 +961,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "60 * sum(rate(ndt7_client_test_results_total{org=\"$org\", machine=~\"ndt-$machine.*\", result!=\"error-without-rate\"}[5m]))",
+          "expr": "60 * sum(rate(ndt7_client_test_results_total{org=\"$org\", machine=~\"ndt-$machine.$org.*\", result!=\"error-without-rate\"}[5m]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Tests/minute",
@@ -1085,7 +1085,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_read_bytes_total{machine=~\"ndt-$machine.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_read_bytes_total{machine=~\"ndt-$machine.$org.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Read ({{device}})",
@@ -1097,7 +1097,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_written_bytes_total{machine=~\"ndt-$machine.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_written_bytes_total{machine=~\"ndt-$machine.$org.*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Written ({{device}})",
@@ -1109,7 +1109,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "rate(node_disk_io_time_seconds_total{machine=~\"ndt-$machine.*\"}[$__rate_interval])",
+          "expr": "rate(node_disk_io_time_seconds_total{machine=~\"ndt-$machine.$org*\"}[$__rate_interval])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "% sec/sec ({{device}})",
@@ -1177,7 +1177,7 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "All",
           "value": "$__all"
         },
@@ -1240,6 +1240,6 @@
   "timezone": "",
   "title": "Autojoin: Site Overview",
   "uid": "deeyimsfzkwe8c",
-  "version": 16,
+  "version": 17,
   "weekStart": ""
 }
