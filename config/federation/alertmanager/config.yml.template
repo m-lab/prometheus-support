@@ -36,13 +36,13 @@ route:
   - receiver: 'pagerduty-pages'
     continue: true
     matchers:
-    - severity = "page"
-    - page_project = "mlab-{{SHORT_PROJECT}}"
+    - severity = page
+    - page_project = mlab-{{SHORT_PROJECT}}
   - receiver: 'slack-fyis'
     continue: false
     matchers:
-    - severity = "fyi"
-    - fyi_project = "mlab-{{SHORT_PROJECT}}"
+    - severity = fyi
+    - fyi_project = mlab-{{SHORT_PROJECT}}
   - receiver: 'slack-alerts-ticket'
     matchers:
     - severity != fyi
