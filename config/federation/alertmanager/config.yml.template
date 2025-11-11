@@ -36,16 +36,16 @@ route:
   - receiver: 'pagerduty-pages'
     continue: true
     matchers:
-    - severity=='page'
-    - page_project=='mlab-{{SHORT_PROJECT}}'
+    - severity = "page"
+    - page_project = "mlab-{{SHORT_PROJECT}}"
   - receiver: 'slack-fyis'
     continue: false
     matchers:
-    - severity=='fyi'
-    - fyi_project=='mlab-{{SHORT_PROJECT}}'
+    - severity = "fyi"
+    - fyi_project = "mlab-{{SHORT_PROJECT}}"
   - receiver: 'slack-alerts-ticket'
     matchers:
-    - severity!='fyi'
+    - severity != fyi
 
 # When two alerts are firing at the same time, we can "inhibit" one based on
 # the other. For example, a host is offline and a service on that host is not
