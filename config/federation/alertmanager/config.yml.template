@@ -29,8 +29,11 @@ route:
   # By default, wait 'repeat_interval' before resending a notification.
   repeat_interval: 12h
 
-  # When no other routes match, use the default receiver.
+  # When no other routes match, use the default receiver, and don't ever send
+  # FYI "alerts" to this default, fall-through receiver.
   receiver: slack-alerts-ticket
+  matchers:
+  - severity != fyi
 
   routes:
   - receiver: 'pagerduty-pages'
@@ -43,9 +46,6 @@ route:
     matchers:
     - severity = fyi
     - fyi_project = mlab-{{SHORT_PROJECT}}
-  - receiver: 'slack-alerts-ticket'
-    matchers:
-    - severity != fyi
 
 # When two alerts are firing at the same time, we can "inhibit" one based on
 # the other. For example, a host is offline and a service on that host is not
