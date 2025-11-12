@@ -29,11 +29,8 @@ route:
   # By default, wait 'repeat_interval' before resending a notification.
   repeat_interval: 12h
 
-  # When no other routes match, use the default receiver, and don't ever send
-  # FYI "alerts" to this default, fall-through receiver.
+  # When no other routes match, use the default receiver.
   receiver: slack-alerts-ticket
-  matchers:
-  - severity != fyi
 
   routes:
   - receiver: 'pagerduty-pages'
@@ -46,6 +43,9 @@ route:
     matchers:
     - severity = fyi
     - fyi_project = mlab-{{SHORT_PROJECT}}
+  - receiver 'null'
+    matchers:
+    - severity = fyi
 
 # When two alerts are firing at the same time, we can "inhibit" one based on
 # the other. For example, a host is offline and a service on that host is not
@@ -195,3 +195,7 @@ receivers:
   pagerduty_configs:
   - send_resolved: true
     service_key: {{PAGERDUTY_SERVICE_KEY}}
+
+# A null/void receiver that can be used to discard certain alerts without
+# taking any sort of action. It will be use to squelch certain FYI "alerts".
+- name: 'null'
