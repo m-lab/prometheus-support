@@ -43,9 +43,9 @@ route:
     matchers:
     - severity = fyi
     - fyi_project = mlab-{{SHORT_PROJECT}}
-  - receiver: 'slack-alerts-ticket'
+  - receiver: 'null'
     matchers:
-    - severity != fyi
+    - severity = fyi
 
 # When two alerts are firing at the same time, we can "inhibit" one based on
 # the other. For example, a host is offline and a service on that host is not
@@ -195,3 +195,7 @@ receivers:
   pagerduty_configs:
   - send_resolved: true
     service_key: {{PAGERDUTY_SERVICE_KEY}}
+
+# A null/void receiver that can be used to discard certain alerts without
+# taking any sort of action. It will be use to squelch certain FYI "alerts".
+- name: 'null'
