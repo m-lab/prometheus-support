@@ -1,0 +1,952 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Estimate load and costs in a table and on a globe, to help prioritize BYOS marketing.  ",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 536,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 15,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Mapped Fleet Serving and Egress Inventory\n\nTo support server placement planning and\nload balancing (adjusting server probabilities).\n\nSince the project's inception Measurement Lab (M-Lab) has\nnever directly paid for network egress traffic.\nAll egress has been provided as in-kind contributions\nby Google or other ISPs.\n\nThis dashboard estimates the value of these in-kind contributions,\nassuming a flat rate of $0.10 per GB.\nThis overestimates the value in North American and Europe and\nunder estimates the prices in most of the rest of the world.\n\nA future version will support additional, more authentic, pricing models.\n\nFor definitions of the notation and other information see the description [In-Kind Egress Contributions to M-Lab](https://docs.google.com/document/d/1AGxZ8mvM8H7ehHxhE7CpNycRGjnCsEnJnHW0pHd2ErM/edit?usp=sharing).\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.1.3",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "color"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "palette-classic"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 25,
+        "w": 23,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": true,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "field": "color",
+                  "fixed": "dark-blue"
+                },
+                "opacity": 0.3,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 4,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "text": {
+                  "field": "metro",
+                  "fixed": "metro",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 20,
+                  "offsetY": -5,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "location": {
+              "latitude": "latitude",
+              "longitude": "longitude",
+              "mode": "auto"
+            },
+            "name": "Fleet",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "coords",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 3
+        }
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "\nSELECT * EXCEPT (tag)\nFROM (\n    SELECT latitude, longitude,\n        CASE level \n            WHEN 'Subtotal by Metro' THEN FORMAT(' %t total egressMbps:%t Servers:%t Sites:%t', metro, egressMbps, Servers, Sites ) \n            WHEN 'Subtotal by Metro-SKU' THEN FORMAT('%t egressMbps:%t Servers:%t Sites%t', MLabSKU, egressMbps, Servers, Sites )\n            ELSE CAST(NULL AS STRING)\n        END AS S,  -- Reduce clutter\n        FORMAT('%t estDailyCostUSD:%t at estPrice:%t per GB', MLabSKU, estDailyCostUSD, estPrice) AS C,  -- Reduce clutter\n        MLabSKU, metro, tag\n    FROM `mm_preproduction.global_fleet_inventory`(DATE_SUB(\"$endDate\", INTERVAL ${duration:raw}-1 DAY), DATE(\"$endDate\"))\n    WHERE tag NOT LIKE '%!'\n)\nWHERE S is not NULL\nORDER BY tag, MLabSKU DESC\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "MLab Fleet Average Load for ${duration:raw} days ending $endDate",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "MLabSKU": true,
+              "latitude": false,
+              "longitude": false
+            },
+            "includeByName": {},
+            "indexByName": {
+              "C": 1,
+              "MLabSKU": 2,
+              "S": 0,
+              "latitude": 4,
+              "longitude": 5,
+              "metro": 3
+            },
+            "renameByName": {
+              "MLabSKU": "",
+              "color": "_color",
+              "latitude": "_lat",
+              "longitude": "_long",
+              "metro": ""
+            }
+          }
+        }
+      ],
+      "type": "geomap"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "P116E76923C5457A4"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pctTests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pctEgress"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 92
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "egressGB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 101
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "egressMbps"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 102
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "zone"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 69
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metro"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 89
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "egressPrice"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 113
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metroTests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 107
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Country"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 59
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "servers"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 67
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sites"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 58
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hotServerMbps"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 124
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "loadbalanced"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "server"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 101
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hotMbps"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 82
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "LB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 45
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "dailyTests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 84
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "GCPdailyTests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hotServer"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 126
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "location"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 139
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "estAnualCostKUSD"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 163
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "estMonthlyCostKUSD"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 191
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Daily_USD"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 89
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Monthly_kUSD"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 125
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anual_kUSD"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 104
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "GCPserver"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 111
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pctHot"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 71
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Mbps"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 64
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pct"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "latitude"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 91
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "longitude"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 97
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "estPrice"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 82
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "estDailyCostUSD"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 140
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MLabSKU"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 113
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Location"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 172
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metros"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 66
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "level"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 174
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "egrMonthlyTiB"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 111
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 26,
+        "w": 23,
+        "x": 0,
+        "y": 33
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "tag"
+          }
+        ]
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "P116E76923C5457A4"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "mlab-collaboration",
+          "rawQuery": true,
+          "rawSql": "SELECT * EXCEPT (latitude, longitude)\nFROM `mm_preproduction.global_fleet_inventory`(DATE_SUB(\"$endDate\", INTERVAL ${duration:raw}-1 DAY), DATE(\"$endDate\"))\nWHERE\n  (level NOT LIKE 'Subtotal by Metro-SKU' AND \"${display}\" = 'details')\n  OR (level != 'Site' AND \"${display}\" = 'summaries')\n\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Server egress value estimated from TCPinfo using ${costModel}  for ${duration} days ending ${endDate}",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Flat $0.10 per Gigabyte",
+          "value": "Flat $0.10 per Gigabyte"
+        },
+        "description": "Regional per SKU costs used to generate overall costs",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cost Model",
+        "multi": false,
+        "name": "costModel",
+        "options": [
+          {
+            "selected": true,
+            "text": "Flat $0.10 per Gigabyte",
+            "value": "Flat $0.10 per Gigabyte"
+          }
+        ],
+        "query": "Flat $0.10 per Gigabyte",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "7",
+          "value": "7"
+        },
+        "description": "Number of days to include in the sampel",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "duration",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": true,
+            "text": "7",
+            "value": "7"
+          },
+          {
+            "selected": false,
+            "text": "30",
+            "value": "30"
+          }
+        ],
+        "query": "1, 7, 30",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "2025-10-15",
+          "value": "2025-10-15"
+        },
+        "description": "Sample end",
+        "hide": 0,
+        "name": "endDate",
+        "options": [
+          {
+            "selected": true,
+            "text": "2025-10-15",
+            "value": "2025-10-15"
+          }
+        ],
+        "query": "2025-09-01",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "details",
+          "value": "details"
+        },
+        "description": "Select between site details and site summaries.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Level of detail",
+        "multi": false,
+        "name": "display",
+        "options": [
+          {
+            "selected": true,
+            "text": "details",
+            "value": "details"
+          },
+          {
+            "selected": false,
+            "text": "summaries",
+            "value": "summaries"
+          }
+        ],
+        "query": "details, summaries",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Mapped Fleet and Egress Load",
+  "uid": "fex489gqpxcsgb",
+  "version": 22,
+  "weekStart": ""
+}
