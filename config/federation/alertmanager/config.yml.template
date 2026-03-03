@@ -142,6 +142,10 @@ receivers:
           {{- printf "}" | urlquery }}
         {{- end -}}
 
+  # All alerts sent to slack are also sent to the github webhook receiver.
+  webhook_configs:
+  - url: '{{GITHUB_RECEIVER_URL}}'
+
 - name: 'slack-fyis'
   slack_configs:
   - send_resolved: false
@@ -186,10 +190,6 @@ receivers:
           {{- end -}}
           {{- printf "}" | urlquery }}
         {{- end -}}
-
-  # All alerts sent to slack are also sent to the github webhook receiver.
-  webhook_configs:
-  - url: '{{GITHUB_RECEIVER_URL}}'
 
 - name: 'pagerduty-pages'
   pagerduty_configs:
