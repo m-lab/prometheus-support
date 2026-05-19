@@ -1,36 +1,50 @@
 #!/bin/bash
 #
-# Deploys the blackbox_exporter config to an external (e.g., Linode) VM which
-# will perform IPv6 probes, since GCP doesn't currently support IPv6.
+# Deploys the blackbox_exporter config to the GCE monitoring VM which performs
+# IPv6 probes for the given project.
 #
 #  Example usage:
-#    ./deploy_bbe_config.sh mlab-sandbox LINODE_PRIVATE_KEY_ipv6_monitoring
+#    ./deploy_bbe_config.sh mlab-sandbox
 
 set -e
 set -u
 set -x
 
 BASE_DIR=$( dirname ${BASH_SOURCE[0]} )
-USAGE="Usage: $0 <project> <keyname>"
+USAGE="Usage: $0 <project>"
 PROJECT=${1:?Please provide project name: $USAGE}
-KEYNAME=${2:?Please provide an authentication key name: $USAGE}
 BBE_CONFIG="${BASE_DIR}/config/federation/blackbox/config.yml"
-LINODE_DOMAIN="blackbox-exporter-ipv6.${PROJECT}.measurementlab.net"
-LINODE_USER="mlab"
-LOCAL_KEY_FILE="id_rsa_linode"
-SSH_OPTS="-i $LOCAL_KEY_FILE -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+VM_NAME="ipv6-monitoring"
+VM_CONFIG_DIR="/etc/blackbox-exporter"
+VM_CONFIG_FILE="${VM_CONFIG_DIR}/config.yml"
+BBE_IMAGE="prom/blackbox-exporter:v0.20.0"
+CONTAINER_NAME="blackbox-exporter"
 
-# Extract the SSH key from the configured Travis environment variable. The key
-# is base64 encoded to avoid the need for shell escaping and newlines. Set the
-# mode of the file appropriately, as SSH will refuse to use it if the
-# permissions are not strict enough.
-set +x
-echo "${!KEYNAME}" | base64 -d > $LOCAL_KEY_FILE
-set -x
-chmod 600 $LOCAL_KEY_FILE
+# Map projects to zones where the monitoring VM is deployed.
+ZONE_mlab_sandbox="us-central1-c"
+ZONE_mlab_staging="us-east1-c"
+ZONE_mlab_oti="us-central1-a"
 
-# Copy blackbox_exporter config file to the Linode VM.
-scp $SSH_OPTS $BBE_CONFIG $LINODE_USER@$LINODE_DOMAIN:blackbox-exporter-config-$PROJECT.yml
+zone_var=ZONE_${PROJECT/-/_}
+ZONE="${!zone_var}"
 
-# HUP the blackbox_exporter so it reads the new config.
-ssh $SSH_OPTS $LINODE_USER@$LINODE_DOMAIN "docker exec ${PROJECT} kill -HUP 1"
+GCE_OPTS="--tunnel-through-iap --project=${PROJECT} --zone=${ZONE}"
+
+# Copy blackbox_exporter config to the VM.
+gcloud compute scp ${GCE_OPTS} \
+    "${BBE_CONFIG}" "${VM_NAME}:/tmp/blackbox-exporter-config.yml"
+
+# Ensure config directory exists, install config, then start or reload the container.
+gcloud compute ssh ${GCE_OPTS} "${VM_NAME}" --command=" \
+    sudo mkdir -p ${VM_CONFIG_DIR} && \
+    sudo mv /tmp/blackbox-exporter-config.yml ${VM_CONFIG_FILE} && \
+    sudo chmod 644 ${VM_CONFIG_FILE} && \
+    if sudo docker inspect ${CONTAINER_NAME} > /dev/null 2>&1; then \
+        sudo docker kill --signal=HUP ${CONTAINER_NAME}; \
+    else \
+        sudo docker run --detach --network=host \
+            --volume ${VM_CONFIG_DIR}:${VM_CONFIG_DIR}:ro \
+            --restart always --name ${CONTAINER_NAME} ${BBE_IMAGE} \
+            --config.file=${VM_CONFIG_FILE}; \
+    fi \
+"
