@@ -20,8 +20,6 @@ availableSecrets:
     env: GITHUB_RECEIVER_AUTH_TOKEN
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-gmx-github-webhook-secret/versions/latest
     env: GMX_GITHUB_WEBHOOK_SECRET
-  - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-linode-private-key-ipv6-monitoring/versions/latest
-    env: LINODE_PRIVATE_KEY_ipv6_monitoring
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-script-exporter-monitoring-signer-key/versions/latest
     env: MONITORING_SIGNER_KEY
   - versionName: projects/${PROJECT_NUMBER}/secrets/prometheus-support-build-oauth-proxy-client-id/versions/latest
@@ -67,7 +65,6 @@ steps:
   - GF_AUTH_GOOGLE_CLIENT_ID
   - GITHUB_RECEIVER_AUTH_TOKEN
   - GMX_GITHUB_WEBHOOK_SECRET
-  - LINODE_PRIVATE_KEY_ipv6_monitoring
   - MONITORING_SIGNER_KEY
   - OAUTH_PROXY_CLIENT_ID
   - OAUTH_PROXY_CLIENT_SECRET
@@ -173,8 +170,8 @@ steps:
       gcloud container clusters get-credentials $$CLUSTER --project $$PROJECT --zone $$(get_cluster_zone $$CLUSTER)
       ./apply-cluster.sh
 
-      # Deploy the IPv6 monitoring BBE configs to the IPv6 Linode.
-      ./deploy_bbe_config.sh $$PROJECT LINODE_PRIVATE_KEY_ipv6_monitoring
+      # Deploy the IPv6 monitoring BBE configs to the GCE monitoring VM.
+      ./deploy_bbe_config.sh $$PROJECT
     fi
 
     # TODO(soltesz): Separate configuration steps so we can use cbif conditions.

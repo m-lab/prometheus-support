@@ -18,17 +18,6 @@ set -u
 
 source config.sh
 
-# GCP doesn't support IPv6, so we have a Linode VM running three instances of
-# the blackbox_exporter, on three separate ports... one port/instance for each
-# project. These variables map projects to ports.
-BBE_IPV6_PORT_mlab_oti="9115"
-BBE_IPV6_PORT_mlab_staging="8115"
-BBE_IPV6_PORT_mlab_sandbox="7115"
-
-# Construct the per-project blackbox_exporter port using the passed $PROJECT
-# argument.
-bbe_port=BBE_IPV6_PORT_${PROJECT/-/_}
-
 # Construct the per-project HTTP basic auth credentials for the Reboot API.
 export REBOOTAPI_BASIC_AUTH_USER=REBOOTAPI_BASIC_AUTH_${PROJECT/-/_}
 export REBOOTAPI_BASIC_AUTH_PASS=REBOOTAPI_BASIC_AUTH_PASS_${PROJECT/-/_}
@@ -53,7 +42,6 @@ kubectl create secret generic discuss-credentials \
 # Evaluate the Prometheus configuration template.
 sed -e 's|{{PROJECT}}|'${PROJECT}'|g' \
     -e 's|{{AUTOJOIN_PROJECT}}|'${AUTOJOIN_PROJECT}'|g' \
-    -e 's|{{BBE_IPV6_PORT}}|'${!bbe_port}'|g' \
     -e 's|{{REBOOTAPI_BASIC_AUTH}}|'${!REBOOTAPI_BASIC_AUTH_USER}'|g' \
     -e 's|{{REBOOTAPI_BASIC_AUTH_PASS}}|'${!REBOOTAPI_BASIC_AUTH_PASS}'|g' \
     -e 's|{{PLATFORM_PROM_AUTH_USER}}|'${!PLATFORM_PROM_AUTH_USER}'|g' \

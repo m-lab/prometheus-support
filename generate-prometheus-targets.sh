@@ -10,14 +10,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
   mkdir -p ${BASEDIR}/gen/${project}/prometheus/{legacy-targets,blackbox-targets,blackbox-targets-ipv6,script-targets,bmc-targets,switch-monitoring-targets}
 done
 
-# GCP doesn't support IPv6, so we have a Linode VM running three instances of
-# the blackbox_exporter, on three separate ports... one port/instance for each
-# project. These variables map projects to ports, and will be transmitted to
-# Prometheus in the form of a new label that will be rewritten.
-BBE_IPV6_PORT_mlab_oti="9115"
-BBE_IPV6_PORT_mlab_staging="8115"
-BBE_IPV6_PORT_mlab_sandbox="7115"
-
 # Switches are not project-specific in siteinfo. To avoid monitoring every
 # switch from every Prometheus instance needlessly, we filter the targets list
 # with these regexes.
@@ -37,10 +29,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
 
   output=${BASEDIR}/gen/${project}/prometheus
 
-  # Construct the per-project blackbox_exporter port variable to use below.
-  # blackbox_exporter on for IPv6 targets.
-  bbe_port=BBE_IPV6_PORT_${project/-/_}
-
   switch_regex=SWITCH_REGEX_${project/-/_}
 
   # ndt7 SSL on port 443 over IPv4
@@ -59,7 +47,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:443 \
       --label service=ndt7_ipv6 \
       --label module=tcp_v6_tls_online \
-      --label __blackbox_port=${!bbe_port} \
       --project "${project}" \
       --select "ndt.iupui" \
       --decoration "v6" > \
@@ -81,7 +68,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:3001 \
       --label service=ndt_raw_ipv6 \
       --label module=tcp_v6_online \
-      --label __blackbox_port=${!bbe_port} \
       --project "${project}" \
       --select "ndt.iupui" \
       --decoration "v6" > \
@@ -103,7 +89,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:3010 \
       --label service=ndt_ssl_ipv6 \
       --label module=tcp_v6_tls_online \
-      --label __blackbox_port=${!bbe_port} \
       --project "${project}" \
       --select "ndt.iupui" \
       --decoration "v6" > \
@@ -143,7 +128,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:80 \
       --label service=neubot_ipv6 \
       --label module=tcp_v6_online \
-      --label __blackbox_port=${!bbe_port} \
       --decoration "v6" \
       --project "${project}" \
       --select "neubot.mlab" > \
@@ -165,7 +149,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:443 \
       --label service=neubot_tls_ipv6 \
       --label module=tcp_v6_tls_online \
-      --label __blackbox_port=${!bbe_port} \
       --decoration "v6" \
       --project "${project}" \
       --select "neubot.mlab" > \
@@ -195,7 +178,6 @@ for project in mlab-sandbox mlab-staging mlab-oti ; do
       --template_target={{hostname}}:22 \
       --label service=ssh \
       --label module=ssh_v6_online \
-      --label __blackbox_port=${!bbe_port} \
       --physical \
       --project "${project}" \
       --decoration "v6" > ${output}/blackbox-targets-ipv6/ssh_ipv6.json
