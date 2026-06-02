@@ -22,7 +22,7 @@ CONTAINER_NAME="blackbox-exporter"
 
 # Map projects to zones where the monitoring VM is deployed.
 ZONE_mlab_sandbox="us-central1-c"
-ZONE_mlab_staging="us-east1-c"
+ZONE_mlab_staging="us-central1-b"
 ZONE_mlab_oti="us-central1-a"
 
 zone_var=ZONE_${PROJECT/-/_}
