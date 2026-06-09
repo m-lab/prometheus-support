@@ -370,16 +370,15 @@ scrape_configs:
     static_configs:
       - targets: ['eb.measurementlab.net:9100']
 
+  # Scrape config for the node_exporter on the IPv6 GCE monitoring VM.
+  - job_name: 'ipv6-node-exporter'
+    static_configs:
+      - targets: ['blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:9100']
+
   # Scrape config for the epoxy-boot-api.
   - job_name: 'epoxy-boot-api'
     static_configs:
       - targets: ['epoxy-boot-api.{{PROJECT}}.measurementlab.net:9000']
-
-  # Scrape config for the node_exporter on the IPv6 Linode VM we use for
-  # monitoring IPv6.
-  - job_name: 'ipv6-node-exporter'
-    static_configs:
-      - targets: ['blackbox-exporter-ipv6.{{PROJECT}}.measurementlab.net:9100']
 
   # Scrape config for services running in data-pipeline cluster, which is
   # region based, so m-lab/gcp-service-discovery#33 causes problems.  These
