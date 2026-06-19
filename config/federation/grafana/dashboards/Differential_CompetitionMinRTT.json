@@ -1,0 +1,598 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "This is NOT for public use, because the data is likely to be extremely sensitive.\n\nThis internal version has a ISP selector, and will be able to select any ISP.\n\nIn the future expect separate dashboards for each ISP, with no option to select any data other than their own. ",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 538,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Competition Report for MinRTT - Internal use only - DO NOT SHARE\n\nThis informs ISPs about suboptimal routing, where\ntheir content is taking \"the scenic route\" to reach some destinations.\n\nISPs are likely to be extremely sensitve about exposing this data\nto their competition.\n\nIMPORTANT: To share the data, export the spreadsheet below as a csv, **not a link to the dashboard itself**.\n(Click the top right dropdown, click inspect, click download csv.)\n\nAlso share the [documentation](https://docs.google.com/document/d/1H6cd2Y2W4ljw-Uw2ADvg8xQSbOjjISjxFUIgaMwL0Qk/edit?usp=sharing)\nfor Competiton Reports.\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.1.3",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-bigquery-datasource",
+        "uid": "${datasource}"
+      },
+      "description": "Find all other MLab server and client ISP pairs, where the other servers have lower minRTT's than the ${organization} server.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "targetSite"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 89
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Gmean"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 62
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "site2"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 81
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "site2name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 208
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Gmean2"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 84
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "KSdistance"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 101
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ratio"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "distance_kM"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 105
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "targetName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 173
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tests2"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 91
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "breadcrumb"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 653
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Amean2"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 91
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "deltaAmean"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 98
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Amean"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "clientISP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 318
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pctExcess"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 86
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tests"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 76
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pctLoad"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 74
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 26,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.1.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-bigquery-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "SELECT *\nFROM `${dataset}.minRTT_competition_report` ('cached', '2025-01-28','2025-01-28', '${organization}', ${radius}, ${ISPcount})\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "MinRTT comparisons  for  the top ${ISPcount} client ISPs and servers within ${radius} km of each ${organization} MLab server for  ${dateRange}",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Google BigQuery (measurement-lab)",
+          "value": "f126f149-75bd-4e5a-9883-fcd7e62bc80a"
+        },
+        "hide": 1,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "grafana-bigquery-datasource",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Autojoin Platform (mlab-autojoin)",
+          "value": "P9963F0EC00120018"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "PromSource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "/Autojoin/",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "hide": 2,
+        "name": "dataset",
+        "query": "mlab-collaboration.mm_preproduction",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "rnp",
+          "value": "rnp"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${PromSource}"
+        },
+        "definition": "label_values(node_time_seconds,machine)",
+        "description": "Automatically detected MLab server host organization.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Organization",
+        "multi": false,
+        "name": "autoOrg",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(node_time_seconds,machine)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/ndt-[a-z0-9]+-[a-z0-9]+\\.([a-z-]+)\\..+/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "rnp",
+          "value": "rnp"
+        },
+        "description": "Manual organization selector, to access non-automatically detected organizations. ",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Organization Overrides",
+        "multi": false,
+        "name": "organization",
+        "options": [
+          {
+            "selected": true,
+            "text": "rnp",
+            "value": "rnp"
+          },
+          {
+            "selected": false,
+            "text": "Google",
+            "value": "Google"
+          }
+        ],
+        "query": "${autoOrg}, Google",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "100",
+          "value": "100"
+        },
+        "description": "How far should servers be included?",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Radius (kM)",
+        "multi": false,
+        "name": "radius",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": true,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1, 100, 500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "20",
+          "value": "20"
+        },
+        "description": "Number of client ISPs to evaluate.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Client ISP count",
+        "multi": false,
+        "name": "ISPcount",
+        "options": [
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": true,
+            "text": "20",
+            "value": "20"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          }
+        ],
+        "query": "5,10,20, 50",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "2025-10-12 - 2025-10-18 Cached",
+          "value": "2025-10-12 - 2025-10-18 Cached"
+        },
+        "datasource": {
+          "type": "grafana-bigquery-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "",
+        "description": "Dates present in the pre-computed data.",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Date Range",
+        "multi": false,
+        "name": "dateRange",
+        "options": [],
+        "query": {
+          "editorMode": "code",
+          "format": 1,
+          "location": "",
+          "project": "measurement-lab",
+          "rawQuery": true,
+          "rawSql": "SELECT SUBSTR(ISPname, 3)\nFROM `${dataset}.cached_metro_report` ('MinRTT', '.', 1)\nLIMIT 1\n",
+          "refId": "tempvar",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "timezone": "utc",
+  "title": "Differential Competition Report for minRTT - Internal use only DO NOT SHARE",
+  "uid": "ef0z90quvshs0c",
+  "version": 9,
+  "weekStart": ""
+}
