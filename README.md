@@ -22,7 +22,7 @@ necessary.
 gcloud container \
   --project "mlab-sandbox" clusters create "prometheus-federation" \
   --zone "us-central1-a" \
-  --machine-type=n1-standard-8 \
+  --machine-type=e2-standard-4 \
   --scopes "https://www.googleapis.com/auth/cloud-platform" \
   --num-nodes 3 \
   --enable-autorepair --enable-autoupgrade \
@@ -42,7 +42,7 @@ gcloud --project=mlab-staging container node-pools create default-pool-N \
   --scopes "https://www.googleapis.com/auth/cloud-platform" \
   --node-labels=prometheus-node=true \
   --enable-autorepair --enable-autoupgrade \
-  --machine-type=n1-standard-8
+  --machine-type=e2-standard-4
 ```
 
 Adjust the project, cluster name, and zone as appropriate. If the cluster is
@@ -82,8 +82,9 @@ No special scopes are required for the prometheus cluster configuration.
 However, node labels can only be added to a new node group using the command
 line.
 
-For very large number of time series (e.g. production prometheus-federation) a
-highmem node pool is necessary.
+Historically a highmem node pool was used here, but observed usage is low (on
+mlab-oti, ~0.3 vCPU / ~5 GiB peak over 14 days), so a large highmem machine is
+not necessary. As of 2026-07-14, mlab-oti uses `e2-standard-4` for this pool.
 
 ```
 gcloud --project=mlab-oti container node-pools create prometheus-pool \
@@ -92,7 +93,7 @@ gcloud --project=mlab-oti container node-pools create prometheus-pool \
   --zone=us-central1-a \
   --node-labels=prometheus-node=true \
   --enable-autorepair --enable-autoupgrade \
-  --machine-type=n1-highmem-16
+  --machine-type=e2-standard-4
 ```
 
 # Roles
@@ -655,7 +656,14 @@ run on it). The machine type will differ depending on project as follows:
 
 * mlab-sandbox: n2-standard-8
 * mlab-staging: n2-highcpu-16
-* mlab-oti: n2-highcpu-48
+* mlab-oti: e2-standard-16
+
+Note: as of 2026-07-14, mlab-oti was right-sized from `n2-highcpu-48` to
+`e2-standard-16` based on 14 days of node_exporter usage (peak ~5 vCPU / ~43 GiB
+per node; memory-bound, driven by script-exporter). `e2-highmem-8` (8 vCPU /
+64 GiB) is the cheaper ideal fit, but `us-central1-a` could not provision it
+(chronic capacity exhaustion), while the `e2-standard` family had ready
+capacity — hence `e2-standard-16` (same 64 GiB).
 
 ```
 gcloud container node-pools create static-outbound-ip \
