@@ -1377,3 +1377,42 @@ groups:
       description: https://github.com/m-lab/ops-tracker/wiki/Alerts-&-Troubleshooting#billing_dailygceincrease
       dashboard: https://grafana.mlab-oti.measurementlab.net/d/a5mC51ZMk/gcp-billing?orgId=1&refresh=5m
 
+
+# The m-lab/automations standard alerts. Any Cloud Run job logging at ERROR
+# severity (logError() lines, stderr from a crash) notifies via the fyi
+# route (Slack only); these alerts deliberately do NOT file GitHub issues,
+# and must not use severity ticket, whose receiver always webhooks the
+# GitHub receiver (default repo dev-tracker). The fyi route matches only
+# when fyi_project equals this instance's project, carried here from the
+# metric's project_id label. The underlying log-based metrics are defined
+# in terraform-support (automations.tf, per project) and reach Prometheus
+# via the stackdriver exporter's logging.googleapis.com/user prefix.
+  - alert: AutomationJobErrors
+    expr: |
+      sum by (job_name, project_id) (sum_over_time(
+        stackdriver_cloud_run_job_logging_googleapis_com_user_automations_job_errors[24h])) > 0
+    for: 5m
+    labels:
+      severity: fyi
+      fyi_project: '{{ $labels.project_id }}'
+      cluster: prometheus-federation
+    annotations:
+      summary: Automation {{ $labels.job_name }} logged errors in the last 24h.
+      description: The {{ $labels.job_name }} Cloud Run job logged at ERROR
+        severity or crashed. Check the execution logs in the project and the
+        runbook in the automation's README in m-lab/automations.
+
+  - alert: AutomationSchedulerErrors
+    expr: |
+      sum by (job_id, project_id) (sum_over_time(
+        stackdriver_cloud_scheduler_job_logging_googleapis_com_user_automations_scheduler_errors[24h])) > 0
+    for: 5m
+    labels:
+      severity: fyi
+      fyi_project: '{{ $labels.project_id }}'
+      cluster: prometheus-federation
+    annotations:
+      summary: Scheduler job {{ $labels.job_id }} is failing to start its automation.
+      description: Cloud Scheduler logged errors while trying to start the
+        {{ $labels.job_id }} Cloud Run job, so the automation may not be
+        running at all. Check the Scheduler job's logs and IAM.
