@@ -1379,22 +1379,21 @@ groups:
 
 
 # The m-lab/automations standard alerts. Any Cloud Run job logging at ERROR
-# severity (logError() lines, stderr from a crash) notifies via the fyi
-# route (Slack only); these alerts deliberately do NOT file GitHub issues,
-# and must not use severity ticket, whose receiver always webhooks the
-# GitHub receiver (default repo dev-tracker). The fyi route matches only
-# when fyi_project equals this instance's project, carried here from the
-# metric's project_id label. The underlying log-based metrics are defined
-# in terraform-support (automations.tf, per project) and reach Prometheus
-# via the stackdriver exporter's logging.googleapis.com/user prefix.
+# severity (logError() lines, stderr from a crash) fires a standard ticket
+# alert: the project's Slack alerts channel plus a GitHub issue in the repo
+# named below. Each project's stackdriver exporter only monitors its own
+# project, so each alert fires in the project whose automation failed. The
+# underlying log-based metrics are defined in terraform-support
+# (automations.tf, per project) and reach Prometheus via the stackdriver
+# exporter's logging.googleapis.com/user prefix.
   - alert: AutomationJobErrors
     expr: |
       sum by (job_name, project_id) (sum_over_time(
         stackdriver_cloud_run_job_logging_googleapis_com_user_automations_job_errors[24h])) > 0
     for: 5m
     labels:
-      severity: fyi
-      fyi_project: '{{ $labels.project_id }}'
+      repo: dev-tracker
+      severity: ticket
       cluster: prometheus-federation
     annotations:
       summary: Automation {{ $labels.job_name }} logged errors in the last 24h.
@@ -1408,8 +1407,8 @@ groups:
         stackdriver_cloud_scheduler_job_logging_googleapis_com_user_automations_scheduler_errors[24h])) > 0
     for: 5m
     labels:
-      severity: fyi
-      fyi_project: '{{ $labels.project_id }}'
+      repo: dev-tracker
+      severity: ticket
       cluster: prometheus-federation
     annotations:
       summary: Scheduler job {{ $labels.job_id }} is failing to start its automation.
