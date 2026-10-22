@@ -699,12 +699,17 @@ groups:
 
 
 # Too many NDT S2C tests on a node are being impacted by switch discards.
+#
+# FYI only: discards are almost always caused by client traffic spikes that
+# saturate a site's uplink, which we cannot control, so this is not actionable
+# and does not create a GitHub issue. The bigquery-exporter in every project
+# reads the same production data, so only mlab-oti posts the FYI.
   - alert: DataQuality_TooManyNdtS2cTestsWithDiscards
     expr: (bq_ndt_s2c_with_discards / bq_ndt_s2c_total) > 0.05
     for: 10m
     labels:
-      repo: ops-tracker
-      severity: ticket
+      severity: fyi
+      fyi_project: mlab-oti
       cluster: prometheus-federation
     annotations:
       summary: More than 5% of NDT tests in a 24h period were affected by discards.
